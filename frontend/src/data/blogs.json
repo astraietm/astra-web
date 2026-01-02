@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Understanding Zero Trust Architecture",
+    "excerpt": "Why the traditional network perimeter is dead and what you should replace it with.",
+    "date": "Sep 28, 2024",
+    "author": "Alex Chen",
+    "category": "Architecture",
+    "image": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80&w=2070"
+  },
+  {
+    "id": 2,
+    "title": "The Rise of AI in Cyber Attacks",
+    "excerpt": "How attackers are leveraging artificial intelligence to launch more sophisticated campaigns.",
+    "date": "Sep 20, 2024",
+    "author": "Sarah Jones",
+    "category": "Trends",
+    "image": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=1965"
+  },
+  {
+    "id": 3,
+    "title": "Securing Your React Applications",
+    "excerpt": "Best practices for preventing XSS, CSRF, and other common vulnerabilities.",
+    "date": "Sep 15, 2024",
+    "author": "Mike Ross",
+    "category": "DevSecOps",
+    "image": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=2070"
+  }
+]
