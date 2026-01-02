@@ -76,8 +76,10 @@
 }
 
 /* Custom Cursor */
-body {
-    cursor: none;
+@media (hover: hover) and (pointer: fine) {
+    body {
+        cursor: none;
+    }
 }
 
 .custom-cursor {
@@ -93,13 +95,7 @@ body {
     transform: translate(-50%, -50%);
     transition: width 0.3s, height 0.3s, background-color 0.3s;
     mix-blend-mode: difference;
-}
-
-.custom-cursor.hovered {
-    width: 50px;
-    height: 50px;
-    background-color: rgba(0, 255, 157, 0.2);
-    border-color: transparent;
+    display: none; /* Hidden by default */
 }
 
 .custom-cursor-dot {
@@ -113,4 +109,18 @@ body {
     top: 0;
     left: 0;
     transform: translate(-50%, -50%);
+    display: none; /* Hidden by default */
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .custom-cursor, .custom-cursor-dot {
+        display: block;
+    }
+}
+
+.custom-cursor.hovered {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 255, 157, 0.2);
+    border-color: transparent;
 }

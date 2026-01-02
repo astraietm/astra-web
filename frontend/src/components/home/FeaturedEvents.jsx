@@ -8,13 +8,13 @@ const FeaturedEvents = () => {
   const featuredEvents = eventsData.slice(0, 4);
 
   return (
-    <section className="py-32 bg-background relative overflow-hidden">
+    <section className="py-12 md:py-32 bg-background relative overflow-hidden">
         {/* Background elements */}
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-6">
             <div>
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
@@ -30,7 +30,7 @@ const FeaturedEvents = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 }}
-                    className="text-4xl md:text-6xl font-display font-bold text-white mb-2"
+                    className="text-3xl md:text-6xl font-display font-bold text-white mb-2"
                 >
                     Mission <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Log</span>
                 </motion.h2>
@@ -43,7 +43,7 @@ const FeaturedEvents = () => {
             </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-6 auto-rows-[300px]">
+        <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-4 md:gap-6 auto-rows-[300px]">
             {featuredEvents.map((event, index) => {
                 const isLarge = index === 0 || index === 3;
                 return (
@@ -68,22 +68,22 @@ const FeaturedEvents = () => {
                         </div>
 
                         {/* Content */}
-                        <div className="absolute inset-0 z-10 p-8 flex flex-col justify-between">
+                        <div className="absolute inset-0 z-10 p-6 md:p-8 flex flex-col justify-between">
                             <div className="flex justify-between items-start">
-                                <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-white border border-white/10 group-hover:bg-primary group-hover:text-black transition-colors">
+                                <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider text-white border border-white/10 group-hover:bg-primary group-hover:text-black transition-colors">
                                     {event.category}
                                 </span>
-                                <Link to={`/events/${event.id}`} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-colors backdrop-blur-md">
-                                    <ArrowUpRight className="w-5 h-5" />
+                                <Link to={`/events/${event.id}`} className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-colors backdrop-blur-md">
+                                    <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5" />
                                 </Link>
                             </div>
                             
                             <div>
-                                <div className="flex items-center gap-4 text-sm text-gray-300 mb-3 font-mono">
-                                    <span className="flex items-center gap-2"><Calendar className="w-4 h-4 text-primary" /> {event.date}</span>
-                                    <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> {event.venue}</span>
+                                <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-300 mb-2 md:mb-3 font-mono">
+                                    <span className="flex items-center gap-1 md:gap-2"><Calendar className="w-3 h-3 md:w-4 md:h-4 text-primary" /> {event.date}</span>
+                                    <span className="flex items-center gap-1 md:gap-2"><MapPin className="w-3 h-3 md:w-4 md:h-4 text-primary" /> {event.venue}</span>
                                 </div>
-                                <h3 className={`font-display font-bold text-white mb-2 leading-tight group-hover:text-primary transition-colors ${isLarge ? 'text-4xl' : 'text-2xl'}`}>
+                                <h3 className={`font-display font-bold text-white mb-2 leading-tight group-hover:text-primary transition-colors ${isLarge ? 'text-2xl md:text-4xl' : 'text-xl md:text-2xl'}`}>
                                     {event.title}
                                 </h3>
                                 <p className="text-gray-400 line-clamp-2">{event.description}</p>

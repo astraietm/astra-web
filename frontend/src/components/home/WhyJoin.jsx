@@ -25,7 +25,7 @@ const features = [
 
 const WhyJoin = () => {
   return (
-    <section className="py-32 relative overflow-hidden">
+    <section className="py-16 md:py-32 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
@@ -44,7 +44,7 @@ const WhyJoin = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.2 }}
-                    className="group relative p-8 rounded-3xl bg-surface/30 border border-white/5 hover:border-white/10 transition-colors"
+                    className="group relative p-6 md:p-8 rounded-3xl bg-surface/30 border border-white/5 hover:border-white/10 transition-colors"
                 >
                     <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl blur-xl`}></div>
                     

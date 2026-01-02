@@ -6,7 +6,7 @@ import ScrollIndicator from './ScrollIndicator';
 
 const Hero = () => {
   return (
-    <section className="relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-background">
+    <section className="relative w-full min-h-[100dvh] flex items-center justify-center overflow-hidden bg-background py-16 lg:py-0">
       {/* Dynamic Background */}
       <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
           {/* Grid Pattern */}
@@ -22,41 +22,41 @@ const Hero = () => {
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-left"
+          className="text-left flex flex-col items-start"
         >
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="inline-flex items-center gap-2 px-3 py-1 mb-8 border border-white/10 rounded-full bg-white/5 backdrop-blur-md"
+                className="inline-flex items-center gap-2 px-3 py-1 mb-6 md:mb-8 border border-white/10 rounded-full bg-white/5 backdrop-blur-md"
             >
                 <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_#00FF9D]"></div>
-                <span className="text-gray-300 text-xs font-mono tracking-widest uppercase">System Operational</span>
+                <span className="text-gray-300 text-[10px] md:text-xs font-mono tracking-widest uppercase">System Operational</span>
             </motion.div>
           
-          <div className="relative mb-8">
-            <h1 className="text-6xl md:text-8xl font-display font-medium leading-tight tracking-tight text-white mb-2">
+          <div className="relative mb-6 md:mb-8">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-display font-medium leading-tight tracking-tight text-white mb-2">
                ASTRA
             </h1>
-             <span className="block text-2xl md:text-3xl font-light text-gray-400 tracking-widest uppercase">
+             <span className="block text-lg sm:text-2xl md:text-3xl font-light text-gray-400 tracking-widest uppercase">
               Association of Cyber Security
             </span>
           </div>
 
-          <p className="text-lg text-gray-400 mb-10 max-w-lg leading-relaxed font-light border-l-2 border-primary/30 pl-6">
+          <p className="text-sm md:text-lg text-gray-400 mb-8 md:mb-10 max-w-lg leading-relaxed font-light border-l-2 border-primary/30 pl-4 md:pl-6">
             Pioneering the future of digital defense. We are a collective of elite researchers and innovators securing the digital frontier.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-5">
+          <div className="flex flex-col sm:flex-row gap-5 w-full sm:w-auto">
             <Link 
                 to="/events" 
-                className="px-8 py-4 bg-white text-black font-semibold text-sm tracking-wide rounded-full hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 group btn-shine"
+                className="px-8 py-4 bg-white text-black font-semibold text-sm tracking-wide rounded-full hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 group btn-shine w-full sm:w-auto"
             >
                 Explore Operations <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
                 to="/contact"
-                className="px-8 py-4 border border-white/10 text-white font-semibold text-sm tracking-wide rounded-full hover:bg-white/5 transition-colors flex items-center justify-center btn-shine"
+                className="px-8 py-4 border border-white/10 text-white font-semibold text-sm tracking-wide rounded-full hover:bg-white/5 transition-colors flex items-center justify-center btn-shine w-full sm:w-auto"
             >
                 Initialize Access
             </Link>
@@ -68,7 +68,7 @@ const Hero = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="relative h-[500px] w-full max-w-lg mx-auto"
+          className="relative h-[350px] md:h-[500px] w-full max-w-lg mx-auto"
         >
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-blue-500/5 rounded-2xl blur-xl"></div>
             

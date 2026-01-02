@@ -3,8 +3,18 @@ import React, { useEffect, useState } from 'react';
 const CustomCursor = () => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isHovered, setIsHovered] = useState(false);
+    const [isEnabled, setIsEnabled] = useState(false);
 
     useEffect(() => {
+        // Only enable custom cursor on devices that support hover (mouse)
+        const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+        
+        if (mediaQuery.matches) {
+            setIsEnabled(true);
+        } else {
+            return; // Exit if not a mouse device
+        }
+
         const updateCursor = (e) => {
             setPosition({ x: e.clientX, y: e.clientY });
         };
@@ -25,6 +35,8 @@ const CustomCursor = () => {
             window.removeEventListener('mouseover', handleMouseOver);
         };
     }, []);
+
+    if (!isEnabled) return null;
 
     return (
         <>
