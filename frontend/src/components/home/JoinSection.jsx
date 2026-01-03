@@ -13,13 +13,21 @@ const JoinSection = () => {
                     <div className="flex flex-col items-center text-center">
                         <FadeInUp>
                             <h2 className="text-4xl font-display font-bold text-white mb-6">
-                                Join ASTRA
+                                Ready to secure the digital world?
                             </h2>
                         </FadeInUp>
                         <FadeInUp delay={0.1}>
-                            <p className="text-gray-400 mb-8 leading-relaxed max-w-2xl">
-                                UI-only form for now—this step focuses on a beautiful, interactive front-end.
+                            <p className="text-gray-400 mb-8 leading-relaxed max-w-2xl font-light text-lg">
+                                Whether you're a beginner curious about ethical hacking or an experienced coder looking for a challenge, ASTRA has a place for you.
                             </p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+                                <a href="https://forms.google.com" target="_blank" rel="noopener noreferrer" className="px-8 py-4 bg-primary text-black font-bold rounded-full hover:bg-cyan-300 transition-colors">
+                                    Apply for Membership
+                                </a>
+                                <a href="mailto:cyber@kmct.edu.in" className="px-8 py-4 bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors border border-white/10">
+                                    Contact Us
+                                </a>
+                            </div>
                         </FadeInUp>
                         
                         <div className="flex flex-wrap justify-center gap-6">

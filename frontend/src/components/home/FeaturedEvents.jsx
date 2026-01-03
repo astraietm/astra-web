@@ -51,19 +51,19 @@ const FeaturedEvents = () => {
             <div className="max-w-xl">
                 <FadeInUp>
                     <h2 className="text-4xl md:text-5xl font-display font-medium text-white mb-6">
-                        Events
+                        Upcoming Events
                     </h2>
                 </FadeInUp>
                 <FadeInUp delay={0.1}>
                     <p className="text-gray-400 font-light text-lg">
-                        Scroll-revealed cards with hover polish—built to feel modern without any external animation libraries.
+                        Stay ahead of the curve with our workshops, hackathons, and seminars.
                     </p>
                 </FadeInUp>
             </div>
             
             <div>
-                <Link to="/contact" className="px-6 py-3 rounded-xl border border-white/10 bg-white/5 text-white font-medium hover:bg-white/10 transition-colors">
-                    Partner / Sponsor
+                <Link to="/events" className="px-6 py-3 rounded-xl border border-white/10 bg-white/5 text-white font-medium hover:bg-white/10 transition-colors flex items-center gap-2">
+                    View All Events <ArrowRight className="w-4 h-4" />
                 </Link>
             </div>
         </div>

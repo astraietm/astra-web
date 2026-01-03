@@ -22,12 +22,12 @@ const GalleryPreview = () => {
 
                         <FadeInUp>
                             <h2 className="text-4xl md:text-5xl font-display font-medium text-white mb-6">
-                                Gallery Preview
+                                Event Gallery
                             </h2>
                         </FadeInUp>
                         <FadeInUp delay={0.1}>
                             <p className="text-gray-400 text-lg font-light">
-                                Hover cards, gentle depth, and a cinematic gradient grid.
+                                Highlights from our recent bootcamps, workshops, and hack nights.
                             </p>
                         </FadeInUp>
                      </div>

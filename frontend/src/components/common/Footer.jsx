@@ -129,7 +129,7 @@ const Footer = () => {
                 <a href="#" className="hover:text-gray-400 transition-colors">Terms of Service</a>
             </div>
           <span className="flex items-center gap-2">
-            Designed & Developed by <span className="text-gray-400 font-bold">KMCT IETM</span>
+            Designed & Developed by <span className="text-gray-400 font-bold">Astra</span>
           </span>
         </div>
 

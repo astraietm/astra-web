@@ -37,40 +37,38 @@ const Hero = () => {
         <ScrollReveal variant="up" delay={0.2}>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-8">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                <span className="text-xs font-mono font-medium text-gray-300 tracking-wider uppercase">Next Gen Cyber Security</span>
+                <span className="text-xs font-mono font-medium text-gray-300 tracking-wider uppercase">Official Cyber Association</span>
             </div>
         </ScrollReveal>
 
         {/* Heading */}
         <h1 className="text-5xl sm:text-7xl md:text-8xl font-display font-medium text-white mb-6 leading-[0.9] tracking-tighter flex flex-col items-center">
-            <TextReveal text="Astra" delay={0.3} />
+            <TextReveal text="ASTRA" delay={0.3} />
             <motion.span 
                  initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                  transition={{ duration: 1, delay: 0.8 }}
-                 className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-blue-500"
+                 className="text-lg md:text-2xl font-sans font-light tracking-wide text-gray-300 mt-4 max-w-3xl"
             >
-                <GlitchText text="Digital Future" />
+                Official Cybersecurity Association of the Cybersecurity Department, <span className="text-primary">KMCT IETM</span>
             </motion.span>
         </h1>
 
-        {/* Description */}
-        {/* Description */}
+        {/* Description / Tagline */}
         <ScrollReveal variant="blur" delay={0.4} width="100%">
-            <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed">
-                ASTRA is the premier student collective dedicated to advancing the frontiers of cybersecurity, cryptography, and network defense.
+            <p className="text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-400 font-light mb-12 italic">
+                "Securing the Future, One Byte at a Time"
             </p>
         </ScrollReveal>
 
-        {/* Buttons */}
         {/* Buttons */}
         <ScrollReveal variant="up" delay={0.5}>
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                 <Link
                     to="/events"
-                    className="group px-8 py-4 bg-white text-black font-bold rounded-full transition-all duration-300 hover:scale-105 hover:bg-gray-100 flex items-center justify-center gap-2"
+                    className="group px-8 py-4 bg-primary text-black font-bold rounded-full transition-all duration-300 hover:scale-105 hover:bg-cyan-300 flex items-center justify-center gap-2"
                 >
-                    Explore Operations 
+                    Explore Events 
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Link>
 
@@ -79,7 +77,7 @@ const Hero = () => {
                     className="group px-8 py-4 bg-white/5 text-white border border-white/10 rounded-full transition-all duration-300 hover:scale-105 hover:bg-white/10 hover:border-white/20 flex items-center justify-center gap-2"
                 >
                     <ShieldCheck className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                    About Architecture
+                    About ASTRA
                 </Link>
             </div>
         </ScrollReveal>
