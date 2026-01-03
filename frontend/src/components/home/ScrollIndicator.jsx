@@ -1,18 +1,17 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
 
 const ScrollIndicator = () => {
   return (
-    <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1, duration: 1, repeat: Infinity, repeatType: "reverse" }}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-gray-400"
+    <div 
+        className="absolute bottom-24 left-1/2 transform -translate-x-1/2 hidden md:flex flex-col items-center gap-3"
       >
-        <span className="text-xs uppercase tracking-widest">Scroll</span>
-        <ChevronDown className="w-6 h-6 animate-bounce" />
-      </motion.div>
+        <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-mono">Scroll to Scan</span>
+        <div className="w-[20px] h-[35px] border-2 border-primary/30 rounded-full flex justify-center p-1">
+            <div 
+                className="w-1 h-1 bg-primary rounded-full animate-bounce"
+            />
+        </div>
+      </div>
   );
 };
 

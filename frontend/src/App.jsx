@@ -8,7 +8,8 @@ import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import ScrollToTop from './components/common/ScrollToTop';
-import CustomCursor from './components/common/CustomCursor';
+import SmoothScroll from './components/common/SmoothScroll';
+
 
 
 
@@ -16,17 +17,19 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <CustomCursor />
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="events" element={<Events />} />
-          <Route path="gallery" element={<Gallery />} />
-          <Route path="about" element={<About />} />
-          <Route path="blog" element={<Blog />} />
-          <Route path="contact" element={<Contact />} />
-        </Route>
-      </Routes>
+
+      <SmoothScroll>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="events" element={<Events />} />
+            <Route path="gallery" element={<Gallery />} />
+            <Route path="about" element={<About />} />
+            <Route path="blog" element={<Blog />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
+        </Routes>
+      </SmoothScroll>
     </Router>
   );
 }

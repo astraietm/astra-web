@@ -1,6 +1,6 @@
 import React from 'react';
-import { Mail, MapPin, Phone, Send, Terminal, Globe, ShieldCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Mail, MapPin, Send, Terminal } from 'lucide-react';
+
 
 const Contact = () => {
   return (
@@ -14,9 +14,9 @@ const Contact = () => {
             
             {/* Contact Info & Map */}
             <div>
-                 <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+            {/* Contact Info & Map */}
+
+                 <div 
                     className="mb-10"
                 >
                     <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-primary/20 rounded-full bg-primary/5 backdrop-blur-sm">
@@ -29,7 +29,7 @@ const Contact = () => {
                      <p className="text-gray-400 text-lg leading-relaxed max-w-md">
                         Establish a direct line to Astra HQ. All transmissions are encrypted and monitored for security.
                     </p>
-                </motion.div>
+                </div>
 
                 <div className="space-y-6 mb-12">
                      <div className="group flex items-center gap-4 p-4 rounded-xl border border-white/5 hover:border-primary/20 bg-surface/50 backdrop-blur-sm transition-colors cursor-pointer">
@@ -54,10 +54,7 @@ const Contact = () => {
             </div>
 
             {/* Terminal Form */}
-            <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
+            <div 
                 className="bg-black/80 backdrop-blur-xl p-1 rounded-2xl border border-white/10 shadow-2xl"
             >
                 <div className="bg-surface rounded-xl border border-white/5 overflow-hidden">
@@ -111,7 +108,7 @@ const Contact = () => {
                         </button>
                     </form>
                 </div>
-            </motion.div>
+            </div>
 
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Calendar, MapPin, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+
 
 const EventCard = ({ event, index }) => {
   const divRef = useRef(null);
@@ -36,10 +36,7 @@ const EventCard = ({ event, index }) => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
+    <div
       ref={divRef}
       onMouseMove={handleMouseMove}
       onFocus={handleFocus}
@@ -110,7 +107,7 @@ const EventCard = ({ event, index }) => {
             Register Now <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

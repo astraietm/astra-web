@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+
 import { Calendar, User, ArrowRight, Tag } from 'lucide-react';
 
 const BlogCard = ({ post, index }) => {
@@ -36,10 +36,7 @@ const BlogCard = ({ post, index }) => {
   };
 
   return (
-    <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: index * 0.1 }}
+    <div
         ref={divRef}
         onMouseMove={handleMouseMove}
         onFocus={handleFocus}
@@ -99,7 +96,7 @@ const BlogCard = ({ post, index }) => {
                 Read Article <ArrowRight className="w-4 h-4" />
             </button>
         </div>
-    </motion.div>
+    </div>
   );
 };
 

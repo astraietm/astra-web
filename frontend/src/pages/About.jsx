@@ -1,6 +1,6 @@
 import React from 'react';
 import { Target, Lightbulb, Users, Shield, Terminal, Cpu } from 'lucide-react';
-import { motion } from 'framer-motion';
+
 
 const About = () => {
     const stats = [
@@ -49,7 +49,7 @@ const About = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative bg-surface p-8 rounded-3xl border border-white/10 h-full overflow-hidden">
                     {/* Scanner Line */}
-                    <div className="absolute top-0 left-0 w-full h-[2px] bg-primary/50 shadow-[0_0_15px_#00FF9D] translate-y-[-10px] group-hover:animate-[scan_2s_linear_infinite]"></div>
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-primary/50 shadow-[0_0_15px_#00E0FF] translate-y-[-10px] group-hover:animate-[scan_2s_linear_infinite]"></div>
                     
                     <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform duration-300">
                         <Target className="w-7 h-7" />
@@ -87,11 +87,8 @@ const About = () => {
             
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[1, 2, 3, 4].map((item, i) => (
-                    <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.1 }}
+
+                    <div 
                         key={item} 
                         className="group bg-surface rounded-none clip-path-polygon p-[1px] relative"
                     >
@@ -122,7 +119,7 @@ const About = () => {
                                 <span>LVL: 0{item}</span>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
              </div>
         </div>

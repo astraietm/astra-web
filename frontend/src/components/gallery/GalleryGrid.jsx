@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+
+
 import { Maximize2 } from 'lucide-react';
 
 const images = [
@@ -17,11 +17,9 @@ const GalleryGrid = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[200px]">
         {images.map((src, index) => (
-            <motion.div
+
+            <div
                 key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.05 }}
                 className={`relative group overflow-hidden rounded-2xl bg-surface border border-white/5 cursor-pointer ${
                     [0, 3, 5, 6].includes(index) ? 'lg:col-span-2 lg:row-span-2' : ''
                 }`}
@@ -34,15 +32,13 @@ const GalleryGrid = () => {
                 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
-                    <motion.div
-                         initial={{ scale: 0.5, rotate: -45 }}
-                         whileHover={{ scale: 1.1, rotate: 0 }}
-                         className="w-12 h-12 bg-primary text-black rounded-full flex items-center justify-center transform transition-transform"
+                    <div
+                         className="w-12 h-12 bg-primary text-black rounded-full flex items-center justify-center transform transition-transform scale-50 -rotate-45 group-hover:scale-110 group-hover:rotate-0 duration-300"
                     >
                         <Maximize2 className="w-6 h-6" />
-                    </motion.div>
+                    </div>
                 </div>
-            </motion.div>
+            </div>
         ))}
     </div>
   );

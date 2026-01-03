@@ -2,7 +2,9 @@ import React from 'react';
 import Hero from '../components/home/Hero';
 import FeaturedEvents from '../components/home/FeaturedEvents';
 import WhyJoin from '../components/home/WhyJoin';
-import CTA from '../components/home/CTA';
+import GalleryPreview from '../components/home/GalleryPreview';
+import BlogPreview from '../components/home/BlogPreview';
+import JoinSection from '../components/home/JoinSection';
 
 const Home = () => {
   return (
@@ -10,7 +12,9 @@ const Home = () => {
       <Hero />
       <WhyJoin />
       <FeaturedEvents />
-      <CTA />
+      <GalleryPreview />
+      <BlogPreview />
+      <JoinSection />
     </div>
   );
 };
