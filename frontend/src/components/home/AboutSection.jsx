@@ -1,111 +1,132 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Terminal, Flag, Cpu, ShieldAlert } from 'lucide-react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { Terminal, Flag, Cpu, ShieldAlert, Zap, Globe, Lock, Server } from 'lucide-react';
+import FadeInUp from '../common/FadeInUp';
 
-const activities = [
+// --- Card Data ---
+const features = [
     {
         icon: Terminal,
-        title: "Cybersecurity Workshops",
-        description: "Hands-on sessions on Linux, Networking, and Security fundamentals."
+        title: "Advanced Wargames",
+        desc: "Simulate real-world cyber attacks in our isolated Red vs Blue environments.",
+        color: "text-cyan-400",
+        bg: "group-hover:shadow-[0_0_30px_-5px_rgba(34,211,238,0.3)]",
+        border: "group-hover:border-cyan-500/50"
     },
     {
-        icon: Flag,
-        title: "CTF Competitions",
-        description: "Participate in Capture The Flag events to test and sharpen your skills."
+        icon: Globe,
+        title: "Global Intelligence",
+        desc: "Access real-time threat maps and OSINT data feeds from international agencies.",
+        color: "text-purple-400",
+        bg: "group-hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]",
+        border: "group-hover:border-purple-500/50"
     },
     {
-        icon: Cpu,
-        title: "Ethical Hacking Labs",
-        description: "Safe, legal environments to practice penetration testing techniques."
+        icon: Lock,
+        title: "Crypto Analysis",
+        desc: "Deep dive into blockchain security, smart contract auditing, and cryptography.",
+        color: "text-pink-400",
+        bg: "group-hover:shadow-[0_0_30px_-5px_rgba(244,114,182,0.3)]",
+        border: "group-hover:border-pink-500/50"
     },
     {
-        icon: ShieldAlert,
-        title: "Cyber Awareness",
-        description: "Educating the community on staying safe in the digital world."
+        icon: Server,
+        title: "Cloud Fortification",
+        desc: "Architecting zero-trust infrastructure for next-gen cloud computing systems.",
+        color: "text-emerald-400",
+        bg: "group-hover:shadow-[0_0_30px_-5px_rgba(52,211,153,0.3)]",
+        border: "group-hover:border-emerald-500/50"
     }
 ];
 
-const staggerContainer = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.2
-        }
-    }
-};
-
-const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    show: { 
-        opacity: 1, 
-        y: 0,
-        transition: {
-            type: "spring",
-            duration: 0.8
-        }
-    }
-};
-
 const AboutSection = () => {
+    const targetRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: targetRef,
+        offset: ["start end", "end start"]
+    });
+
+    const y = useSpring(useTransform(scrollYProgress, [0, 1], [100, -100]), { stiffness: 100, damping: 30 });
+    const rotate = useSpring(useTransform(scrollYProgress, [0, 1], [0, 15]), { stiffness: 100, damping: 30 });
+
     return (
-        <section className="py-20 md:py-32 bg-background relative overflow-hidden">
-            {/* Background elements */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] opacity-30"></div>
-                <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[100px] opacity-30"></div>
-            </div>
+        <section ref={targetRef} className="py-24 md:py-32 bg-background relative overflow-hidden">
+            
+            {/* Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_10%,transparent_100%)] pointer-events-none"></div>
 
             <div className="container mx-auto px-4 relative z-10">
-                <motion.div 
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, margin: "-100px" }}
-                    className="max-w-4xl mx-auto mb-20 text-center"
-                >
-                    <motion.div variants={fadeInUp}>
-                        <h2 className="text-4xl md:text-5xl font-display font-medium text-white mb-6">
-                            About <span className="text-primary">ASTRA</span>
-                        </h2>
-                    </motion.div>
-                    <motion.div variants={fadeInUp}>
-                        <p className="text-gray-400 text-lg md:text-xl font-light leading-relaxed">
-                            ASTRA is the official platform for cybersecurity enthusiasts at KMCT IETM. 
-                            Our mission is to foster a community of ethical hackers, security researchers, and 
-                            technology leaders who are equipped to tackle tomorrow's digital threats. 
-                            We bridge the gap between academic theory and real-world application.
-                        </p>
-                    </motion.div>
-                </motion.div>
-
-                <motion.div 
-                    variants={staggerContainer}
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, margin: "-50px" }}
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-                >
-                    {activities.map((item, index) => (
-                        <motion.div 
-                            key={index} 
-                            variants={fadeInUp}
-                            whileHover={{ y: -10 }}
-                            className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-all duration-300 h-full flex flex-col items-center text-center group relative overflow-hidden"
-                        >
-                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            
-                            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform relative z-10">
-                                <item.icon className="w-6 h-6" />
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+                    
+                    {/* Left Content */}
+                    <div className="relative">
+                         <FadeInUp>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+                                <Zap className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                                <span className="text-xs font-mono text-gray-300 uppercase tracking-widest">Next-Gen Initiative</span>
                             </div>
-                            <h3 className="text-xl font-display font-medium text-white mb-3 relative z-10">
-                                {item.title}
-                            </h3>
-                            <p className="text-gray-400 text-sm leading-relaxed relative z-10">
-                                {item.description}
+                            
+                            <h2 className="text-4xl md:text-6xl font-display font-medium text-white mb-6 leading-[1.1]">
+                                Engineering the <br /> 
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-purple-500">Defenders of Tomorrow</span>
+                            </h2>
+                            
+                            <p className="text-gray-400 text-lg font-light leading-relaxed mb-8 max-w-xl">
+                                We are not just a student club; we are a specialized unit dedicated to mastering the art of cybersecurity. 
+                                From offensive maneuvers to defensive architecture, ASTRA bridges the gap between theory and the digital battlefield.
                             </p>
+
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <button className="px-8 py-4 bg-white text-black font-bold rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2 group">
+                                    Join the Ranks
+                                    <Terminal className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                                <button className="px-8 py-4 bg-transparent border border-white/20 text-white font-medium rounded-lg hover:bg-white/5 transition-colors">
+                                    View Operations
+                                </button>
+                            </div>
+                        </FadeInUp>
+                    </div>
+
+                    {/* Right Interactive Cards */}
+                    <div className="relative h-[600px] hidden lg:block perspective-1000">
+                        {/* Orbiting Decor */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                             <div className="w-[500px] h-[500px] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]"></div>
+                             <div className="w-[350px] h-[350px] border border-dashed border-white/10 rounded-full animate-[spin_40s_linear_infinite_reverse]"></div>
+                        </div>
+
+                        {/* Floating Cards Stack */}
+                        <motion.div style={{ y, rotateX: rotate }} className="relative z-10 grid grid-cols-2 gap-4 w-full h-full p-8">
+                             {features.map((feature, idx) => (
+                                 <motion.div 
+                                    key={idx}
+                                    variants={{
+                                        hidden: { opacity: 0, scale: 0.8 },
+                                        visible: { opacity: 1, scale: 1 }
+                                    }}
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                                    whileHover={{ scale: 1.05, zIndex: 10 }}
+                                    className={`group relative bg-[#0A0A0A]/90 backdrop-blur-xl border border-white/10 p-6 rounded-2xl transition-all duration-300 ${feature.border} hover:-translate-y-2`}
+                                 >
+                                      {/* Hover Glow */}
+                                      <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl ${feature.bg}`}></div>
+                                      
+                                      <div className={`w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 group-hover:bg-white/10 transition-colors`}>
+                                          <feature.icon className={`w-6 h-6 ${feature.color}`} />
+                                      </div>
+                                      
+                                      <h3 className="text-xl font-display font-medium text-white mb-2">{feature.title}</h3>
+                                      <p className="text-sm text-gray-500 leading-relaxed font-light">{feature.desc}</p>
+                                 </motion.div>
+                             ))}
                         </motion.div>
-                    ))}
-                </motion.div>
+                    </div>
+
+                </div>
             </div>
         </section>
     );

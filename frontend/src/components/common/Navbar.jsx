@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Shield } from 'lucide-react';
+import { Menu, X, Shield, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
@@ -13,7 +13,6 @@ const Navbar = () => {
     { name: 'Events', path: '/events' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Blog', path: '/blog' },
-    { name: 'Contact', path: '/contact' },
   ];
 
   // Prevent scrolling when mobile menu is open
@@ -27,27 +26,30 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-6 left-0 w-full z-[100] px-4 md:px-8 pointer-events-none">
+      {/* =======================
+          DESKTOP NAVBAR
+      ======================== */}
+      <nav className="hidden md:block fixed top-6 left-0 w-full z-[100] px-8 pointer-events-none">
         
         <div className="max-w-7xl mx-auto flex items-center justify-between">
             
-            {/* Logo Section (Left Pill) */}
+            {/* Logo Section */}
             <div className="pointer-events-auto bg-black/50 backdrop-blur-md border border-white/10 rounded-full p-1.5 pr-6 shadow-2xl h-[56px] flex items-center">
                 <Link 
                     to="/" 
                     className="flex items-center gap-3 group"
                 >
                     <div className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 group-hover:border-primary/50 transition-colors">
-                    <Shield className="w-4 h-4 text-primary" />
+                        <Shield className="w-4 h-4 text-primary" />
                     </div>
                     <span className="text-lg font-display font-bold text-white tracking-widest group-hover:text-primary transition-colors">
-                    ASTRA
+                        ASTRA
                     </span>
                 </Link>
             </div>
 
-            {/* Desktop Navigation (Right Pill) */}
-            <div className="hidden md:flex pointer-events-auto bg-black/50 backdrop-blur-md border border-white/10 rounded-full p-2 gap-1 shadow-2xl h-[56px] items-center">
+            {/* Desktop Navigation */}
+            <div className="pointer-events-auto bg-black/50 backdrop-blur-md border border-white/10 rounded-full p-2 gap-1 shadow-2xl h-[56px] flex items-center">
                 {navLinks.map((link) => {
                 const isActive = location.pathname === link.path;
                 
@@ -75,55 +77,99 @@ const Navbar = () => {
                     </Link>
                 );
                 })}
+                
+                <Link to="/contact" className="ml-2 px-6 h-[40px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold tracking-wider transition-all">
+                    CONTACT
+                </Link>
             </div>
-
-            {/* Mobile Toggle (Right Pill for Mobile) */}
-            <div className="md:hidden pointer-events-auto bg-black/50 backdrop-blur-md border border-white/10 rounded-full p-2 shadow-2xl h-[56px] flex items-center justify-center aspect-square">
-                <button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                    {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                </button>
-            </div>
-
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-            <motion.div 
-                initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                animate={{ opacity: 1, backdropFilter: "blur(16px)" }}
-                exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-                transition={{ duration: 0.3 }}
-                className="fixed inset-0 z-40 bg-black/95 flex items-center justify-center md:hidden"
-            >
-                <div className="flex flex-col items-center gap-8 font-display">
-                    {navLinks.map((link, index) => (
-                        <motion.div
-                            key={link.name}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            transition={{ delay: index * 0.05, duration: 0.3 }}
-                        >
-                            <Link
-                                to={link.path}
-                                onClick={() => setIsOpen(false)}
-                                className={`text-4xl font-bold tracking-wider transition-colors py-2 px-4 ${
-                                    location.pathname === link.path ? 'text-primary' : 'text-gray-400 hover:text-white'
-                                }`}
-                            >
-                                {link.name}
-                            </Link>
-                        </motion.div>
-                    ))}
-                </div>
-            </motion.div>
-        )}
-      </AnimatePresence>
+      {/* =======================
+          MOBILE NAVBAR (Compact Premium)
+      ======================== */}
+      <nav className="md:hidden fixed top-4 inset-x-0 z-[100] px-4 pointer-events-none flex justify-center items-start">
+          
+          <div className="w-full max-w-[340px] relative pointer-events-auto">
+              {/* Island Header */}
+              <div className="bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl rounded-full p-2 pl-3 flex items-center justify-between h-[60px] relative z-50">
+                  
+                  {/* Logo Orb */}
+                  <Link to="/" className="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center group" onClick={() => setIsOpen(false)}>
+                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 animate-[spin_4s_linear_infinite]" />
+                      <div className="absolute inset-[2px] bg-black rounded-full" />
+                      <div className="relative z-10 w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-300 to-purple-600 shadow-lg"></div>
+                  </Link>
+                  
+                  {/* Menu Toggle */}
+                  <button
+                      onClick={() => setIsOpen(!isOpen)}
+                      className="w-11 h-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors active:scale-95"
+                  >
+                      {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                  </button>
+              </div>
+
+              {/* Compact Dropdown Menu */}
+              <AnimatePresence>
+                  {isOpen && (
+                      <motion.div
+                          initial={{ opacity: 0, scale: 0.95, y: -20 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                          transition={{ type: "spring", duration: 0.4, bounce: 0 }}
+                          className="absolute top-[64px] left-0 right-0 bg-black/40 backdrop-blur-md border border-white/10 rounded-3xl p-1.5 shadow-2xl overflow-hidden z-40 flex flex-col gap-0.5"
+                      >
+                          {navLinks.map((link, i) => (
+                              <motion.div
+                                key={link.name}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: i * 0.05 }}
+                              >
+                                  <Link
+                                      to={link.path}
+                                      onClick={() => setIsOpen(false)}
+                                      className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all group"
+                                  >
+                                      <span>{link.name}</span>
+                                      {/* Tiny dot for active state */}
+                                      {location.pathname === link.path && (
+                                          <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,224,255,1)]" />
+                                      )}
+                                  </Link>
+                              </motion.div>
+                          ))}
+                          
+                          {/* Divider */}
+                          <div className="h-px bg-white/5 my-1 mx-2"></div>
+
+                          {/* CTA Button */}
+                           <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                           >
+                               <Link 
+                                    to="/contact" 
+                                    onClick={() => setIsOpen(false)} 
+                                    className="flex items-center justify-center gap-2 w-full py-2.5 bg-primary text-black text-center text-sm font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all"
+                                >
+                                   <span>Get Started</span>
+                                   <ArrowRight className="w-4 h-4" />
+                               </Link>
+                           </motion.div>
+                      </motion.div>
+                  )}
+              </AnimatePresence>
+          </div>
+          
+          {/* Touch Backdrop */}
+          {isOpen && (
+             <div className="fixed inset-0 bg-black/60 z-30 pointer-events-auto" onClick={() => setIsOpen(false)} />
+          )}
+
+      </nav>
     </>
   );
 };

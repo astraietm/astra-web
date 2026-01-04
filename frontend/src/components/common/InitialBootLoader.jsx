@@ -1,109 +1,73 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import MatrixRain from './MatrixRain';
-
-const bootCommands = [
-  "> INITIALIZING_DAEMON...",
-  "> LOADING_KERNEL_V6.0.4...",
-  "> BYPASSING_FIREWALL [OK]",
-  "> DECRYPTING_USER_DATA...",
-  "> OPTIMIZING_NEURAL_NET...",
-  "> SYSTEM_READY"
-];
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Shield } from 'lucide-react';
 
 const InitialBootLoader = ({ onComplete }) => {
-  const [lines, setLines] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [progress, setProgress] = useState(0);
 
-  // 1. Terminal Typing Effect
   useEffect(() => {
-    if (activeIndex < bootCommands.length) {
-      const timeout = setTimeout(() => {
-        setLines(prev => [...prev, bootCommands[activeIndex]]);
-        setActiveIndex(prev => prev + 1);
-      }, 250); // Speed of each line appearing
-      return () => clearTimeout(timeout);
-    } else {
-      // Finished typing
-      setTimeout(onComplete, 600);
-    }
-  }, [activeIndex, onComplete]);
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          setTimeout(onComplete, 500); 
+          return 100;
+        }
+        return prev + Math.floor(Math.random() * 8) + 3; 
+      });
+    }, 150);
+
+    return () => clearInterval(timer);
+  }, [onComplete]);
 
   return (
     <motion.div
+      className="fixed inset-0 z-[9999] bg-background flex items-center justify-center"
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-      transition={{ duration: 0.8 }}
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] text-[#E0E0E0] font-mono overflow-hidden"
+      exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
     >
-      {/* Matrix Rain Background Effect */}
-      <div className="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none">
-          <MatrixRain />
-      </div>
-
-      {/* Background Ambience Overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_0%,#050505_90%)] pointer-events-none z-0" />
-      
-      {/* Container */}
-      <div className="relative z-10 w-full max-w-2xl p-8">
+        {/* Subtle Background Glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background to-background pointer-events-none" />
         
-        {/* Main Logo - Modern Font */}
-        <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-12 flex flex-col items-center"
-        >
-            <h1 className="text-6xl md:text-8xl font-display font-medium tracking-tight text-white mb-2">
+        <div className="relative flex flex-col items-center justify-center w-full max-w-xs z-10 p-8">
+            
+            {/* Minimal Logo */}
+            <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8 }}
+                className="mb-8 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm"
+            >
+                <Shield className="w-10 h-10 text-primary" />
+            </motion.div>
+
+            {/* Typography */}
+            <motion.h1 
+                className="text-2xl font-display font-medium text-white mb-8 tracking-widest"
+                initial={{ y: 10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+            >
                 ASTRA
-            </h1>
-            <div className="h-[1px] w-24 bg-primary/50 shadow-[0_0_10px_rgba(0,224,255,0.8)]" />
-        </motion.div>
+            </motion.h1>
 
-        {/* Terminal Window */}
-        <div className="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 min-h-[200px] flex flex-col shadow-2xl relative overflow-hidden">
-            {/* Terminal Header */}
-            <div className="flex items-center gap-2 mb-4 opacity-50 border-b border-white/10 pb-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/80" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-                <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                <span className="ml-2 text-xs font-sans tracking-wide">root@astra-sys: ~</span>
+            {/* Minimal Progress Bar */}
+            <div className="w-full h-[2px] bg-white/10 rounded-full overflow-hidden">
+                <motion.div 
+                    className="h-full bg-primary"
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ ease: "linear" }}
+                />
+            </div>
+            
+            {/* Loading Status */}
+            <div className="mt-4 flex justify-between w-full text-[10px] text-gray-500 font-mono uppercase tracking-widest">
+                <span>Loading Assets</span>
+                <span>{Math.min(progress, 100)}%</span>
             </div>
 
-            {/* Typing Lines */}
-            <div className="flex-1 flex flex-col justify-end space-y-2 font-mono text-sm md:text-base">
-                {lines.map((line, i) => (
-                    <motion.div 
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className={`${i === bootCommands.length - 1 ? "text-primary font-bold shadow-primary text-shadow" : "text-gray-400"}`}
-                    >
-                        {line}
-                    </motion.div>
-                ))}
-                
-                {/* Blinking Cursor */}
-                {activeIndex < bootCommands.length && (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: [0, 1, 0] }}
-                        transition={{ repeat: Infinity, duration: 0.8 }}
-                        className="w-2 h-4 bg-primary inline-block ml-1 align-middle"
-                    />
-                )}
-            </div>
-
-            {/* Scanline Overlay for Terminal Only */}
-             <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%)] bg-[length:100%_4px] opacity-10" />
         </div>
-
-        {/* Footer info */}
-        <div className="mt-6 flex justify-between text-[10px] text-gray-500 font-sans tracking-widest uppercase">
-            <span>Secure Connection</span>
-            <span>Est. 2025</span>
-        </div>
-
-      </div>
     </motion.div>
   );
 };
