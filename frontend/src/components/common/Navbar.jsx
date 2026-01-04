@@ -34,7 +34,7 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
             
             {/* Logo Section */}
-            <div className="pointer-events-auto bg-black/50 backdrop-blur-md border border-white/10 rounded-full p-1.5 pr-6 shadow-2xl h-[56px] flex items-center">
+            <div className="pointer-events-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-1.5 pr-6 shadow-lg shadow-black/10 h-[56px] flex items-center hover:bg-white/10 transition-colors duration-300">
                 <Link 
                     to="/" 
                     className="flex items-center gap-3 group"
@@ -49,7 +49,7 @@ const Navbar = () => {
             </div>
 
             {/* Desktop Navigation */}
-            <div className="pointer-events-auto bg-black/50 backdrop-blur-md border border-white/10 rounded-full p-2 gap-1 shadow-2xl h-[56px] flex items-center">
+            <div className="pointer-events-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-2 gap-1 shadow-lg shadow-black/10 h-[56px] flex items-center">
                 {navLinks.map((link) => {
                 const isActive = location.pathname === link.path;
                 
@@ -92,7 +92,7 @@ const Navbar = () => {
           
           <div className="w-full max-w-[340px] relative pointer-events-auto">
               {/* Island Header */}
-              <div className="bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl rounded-full p-2 pl-3 flex items-center justify-between h-[60px] relative z-50">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg shadow-black/20 rounded-full p-2 pl-3 flex items-center justify-between h-[60px] relative z-50">
                   
                   {/* Logo Orb */}
                   <Link to="/" className="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center group" onClick={() => setIsOpen(false)}>
@@ -118,7 +118,7 @@ const Navbar = () => {
                           animate={{ opacity: 1, scale: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95, y: -20 }}
                           transition={{ type: "spring", duration: 0.4, bounce: 0 }}
-                          className="absolute top-[64px] left-0 right-0 bg-black/40 backdrop-blur-md border border-white/10 rounded-3xl p-1.5 shadow-2xl overflow-hidden z-40 flex flex-col gap-0.5"
+                          className="absolute top-[64px] left-0 right-0 bg-black/80 backdrop-blur-xl border border-white/10 rounded-3xl p-1.5 shadow-2xl overflow-hidden z-40 flex flex-col gap-0.5"
                       >
                           {navLinks.map((link, i) => (
                               <motion.div
