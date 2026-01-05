@@ -168,6 +168,20 @@ const Navbar = () => {
                                                     </div>
                                                     <span className="relative z-10">My Tickets</span>
                                                 </Link>
+
+                                                {user && user.is_staff && (
+                                                    <Link 
+                                                        to="/admin" 
+                                                        onClick={() => setIsProfileOpen(false)}
+                                                        className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden"
+                                                    >
+                                                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                        <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
+                                                            <Shield className="w-4 h-4" />
+                                                        </div>
+                                                        <span className="relative z-10">Admin Panel</span>
+                                                    </Link>
+                                                )}
                                                 
                                                 <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-1"></div>
                                                 
@@ -265,6 +279,16 @@ const Navbar = () => {
                                         >
                                             <Ticket className="w-4 h-4 text-primary" /> My Tickets
                                         </Link>
+
+                                        {user && user.is_staff && (
+                                            <Link 
+                                                to="/admin" 
+                                                onClick={() => setIsOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all"
+                                            >
+                                                <Shield className="w-4 h-4 text-primary" /> Admin Panel
+                                            </Link>
+                                        )}
                                         <button 
                                             onClick={handleLogout}
                                             disabled={isLoggingOut}
