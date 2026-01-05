@@ -15,6 +15,7 @@
     "@react-three/drei": "9.99.0",
     "@react-three/fiber": "8.15.16",
     "@studio-freight/lenis": "^1.0.42",
+    "@vercel/analytics": "^1.6.1",
     "classnames": "^2.5.1",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.562.0",
