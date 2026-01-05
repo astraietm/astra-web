@@ -79,146 +79,186 @@ const AdminScanner = () => {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col pt-20"> {/* PT-20 to clear Navbar if present */}
+        <div className="min-h-[100dvh] bg-black text-white flex flex-col overflow-hidden fixed inset-0 z-[200]">
             
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-[#0A0F1C]">
-                <div>
-                    <h1 className="text-xl font-display font-bold flex items-center gap-2">
-                        <Scan className="w-6 h-6 text-primary" /> Admin Scanner
-                    </h1>
-                    <p className="text-xs text-gray-400 font-mono">ASTRA SECURITY PROTOCOL</p>
+            {/* Mobile Optimized Header */}
+            <div className="px-4 py-4 border-b border-white/10 flex justify-between items-center bg-[#0A0F1C] safe-top">
+                <div className="flex items-center gap-3">
+                    <button 
+                        onClick={() => navigate('/admin')}
+                        className="p-2 -ml-2 hover:bg-white/5 rounded-full text-white/50 hover:text-white transition-colors"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
+                    <div>
+                        <h1 className="text-lg font-bold flex items-center gap-2">
+                             Admin Scanner
+                        </h1>
+                        <p className="text-[10px] text-primary font-mono tracking-widest uppercase opacity-70">Astra Protocol v2.4</p>
+                    </div>
                 </div>
-                <div className="px-3 py-1 bg-primary/20 text-primary text-xs font-bold rounded-full border border-primary/20">
+                <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full border border-primary/20">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
                     LIVE
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className="flex-1 flex flex-col relative overflow-hidden">
+            {/* Main Content Area */}
+            <div className="flex-1 relative bg-black overflow-hidden">
                 
                 {/* Scanner Viewport */}
                 {isScanning && !scanResult && (
-                    <div className="flex-1 relative bg-black">
+                    <div className="absolute inset-0">
                         <Scanner 
                             onScan={handleScan}
+                            constraints={{
+                                facingMode: 'environment'
+                            }}
                             styles={{
                                 container: { height: '100%', width: '100%' },
-                                video: { objectFit: 'cover', height: '100%' }
+                                video: { objectFit: 'cover', height: '100%', width: '100%' }
                             }}
                             components={{
                                 audio: false,
-                                finder: false // Custom finder below
+                                finder: false
                             }}
                         />
-                        {/* Custom Finder Overlay */}
-                        <div className="absolute inset-0 border-[40px] border-black/60 z-10">
-                            <div className="w-full h-full border-2 border-primary/50 relative">
-                                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary"></div>
-                                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary"></div>
-                                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary"></div>
-                                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary"></div>
+                        {/* Responsive Finder Overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                            {/* Darkened mask */}
+                            <div className="absolute inset-0 bg-black/40"></div>
+                            
+                            {/* Clear Scanning Area */}
+                            <div className="w-[70vw] h-[70vw] max-w-[300px] max-h-[300px] relative bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
+                                <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
+                                <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
+                                <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
+                                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
                                 
-                                {/* Scan Line Animation */}
-                                <div className="absolute left-0 right-0 h-0.5 bg-primary/80 shadow-[0_0_15px_rgba(0,255,255,0.8)] animate-[scan_2s_linear_infinite] top-[10%]"></div>
+                                {/* Animated Scan Line */}
+                                <motion.div 
+                                    animate={{ top: ['10%', '90%'] }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                    className="absolute left-0 right-0 h-0.5 bg-primary/80 shadow-[0_0_15px_rgba(0,255,255,0.8)] z-20"
+                                />
                             </div>
                         </div>
-                        <div className="absolute bottom-10 left-0 right-0 text-center z-20">
-                            <p className="text-sm font-mono bg-black/50 inline-block px-4 py-2 rounded-full backdrop-blur-md">
-                                Align QR Code within frame
+                        
+                        <div className="absolute bottom-12 left-0 right-0 flex justify-center z-20 px-6">
+                            <p className="text-xs font-mono bg-black/80 text-white/70 px-6 py-3 rounded-2xl backdrop-blur-xl border border-white/10 text-center">
+                                POSITION QR CODE IN THE CENTER
                             </p>
                         </div>
                     </div>
                 )}
 
-                {/* Loading State */}
+                {/* Verification Overlay */}
                 {isLoading && (
-                    <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center z-50">
-                        <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-                        <h2 className="text-xl font-bold animate-pulse">Verifying Token...</h2>
+                    <div className="absolute inset-0 bg-black/95 flex flex-col items-center justify-center z-[60] backdrop-blur-sm">
+                        <div className="relative">
+                            <Loader2 className="w-16 h-16 text-primary animate-spin" />
+                            <div className="absolute inset-0 bg-primary/20 blur-2xl animate-pulse"></div>
+                        </div>
+                        <h2 className="mt-6 text-xl font-bold tracking-widest text-primary animate-pulse">ENCRYPTED VERIFICATION...</h2>
+                        <p className="text-white/40 text-xs mt-2 font-mono">Querying Registration DB</p>
                     </div>
                 )}
 
-                {/* Result Modal - Success */}
+                {/* SUCCESS RESULT */}
                 <AnimatePresence>
                     {scanResult?.status === 'success' && (
                         <motion.div 
-                            initial={{ y: "100%" }}
-                            animate={{ y: 0 }}
-                            exit={{ y: "100%" }}
-                            className="absolute inset-0 bg-[#051a05] z-50 flex flex-col items-center justify-center p-6 text-center"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="absolute inset-0 bg-[#030712] z-[70] flex flex-col p-6 overflow-y-auto"
                         >
-                            <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(34,197,94,0.4)]">
-                                <CheckCircle className="w-12 h-12 text-black" />
-                            </div>
-                            <h2 className="text-4xl font-display font-bold text-green-500 mb-2">ACCESS GRANTED</h2>
-                            <p className="text-green-300 text-lg mb-8">Verification Successful</p>
-                            
-                            <div className="bg-black/30 w-full max-w-sm rounded-xl p-6 border border-green-500/20 mb-8 space-y-4 text-left">
-                                <div>
-                                    <label className="text-xs text-green-500/60 uppercase font-mono">Attendee</label>
-                                    <p className="text-xl font-bold text-white">
-                                        {scanResult.data.registrant.user.name || "Unknown User"}
-                                    </p>
-                                    <p className="text-sm text-gray-400">{scanResult.data.registrant.user.email}</p>
+                            <div className="flex-1 flex flex-col items-center justify-center py-8">
+                                <div className="relative mb-8">
+                                    <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(6,182,212,0.4)] relative z-10">
+                                        <CheckCircle className="w-12 h-12 text-black" strokeWidth={3} />
+                                    </div>
+                                    <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full scale-150"></div>
                                 </div>
-                                <div className="h-px bg-white/10"></div>
-                                <div>
-                                    <label className="text-xs text-green-500/60 uppercase font-mono">Event</label>
-                                    <p className="text-lg font-bold text-white">
-                                        {scanResult.data.registrant.event_details.title}
-                                    </p>
+                                
+                                <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">Access Granted</h2>
+                                <div className="h-1 w-20 bg-primary rounded-full mb-8"></div>
+                                
+                                <div className="w-full space-y-4">
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-left relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10">
+                                            <ShieldCheck size={64} />
+                                        </div>
+                                        <label className="text-[10px] font-bold text-primary uppercase tracking-[0.3em] mb-1 block">Authorized Attendee</label>
+                                        <p className="text-2xl font-bold text-white mb-1">{scanResult.data.registrant.user_name || "Unknown User"}</p>
+                                        <p className="text-sm text-white/50 font-mono italic">{scanResult.data.registrant.user_email}</p>
+                                    </div>
+
+                                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-left">
+                                        <label className="text-[10px] font-bold text-primary uppercase tracking-[0.3em] mb-1 block">Mission/Event</label>
+                                        <p className="text-lg font-bold text-white">{scanResult.data.registrant.event_details.title}</p>
+                                        <div className="flex items-center gap-2 mt-2 text-xs text-white/40 font-mono">
+                                            <Clock className="w-3 h-3" />
+                                            Validated: {new Date().toLocaleTimeString()}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <button 
                                 onClick={resetScan}
-                                className="w-full max-w-xs bg-green-600 hover:bg-green-500 text-black font-bold py-4 rounded-xl text-lg transition-all"
+                                className="w-full bg-primary text-black font-black py-5 rounded-2xl text-lg uppercase tracking-widest shadow-[0_0_30px_rgba(6,182,212,0.3)] active:scale-[0.98] transition-all"
                             >
-                                SCAN NEXT
+                                Scan Next Ticket
                             </button>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                {/* Result Modal - Failure */}
+                {/* ERROR RESULT */}
                 <AnimatePresence>
                     {scanResult?.status === 'error' && (
                         <motion.div 
-                            initial={{ y: "100%" }}
-                            animate={{ y: 0 }}
-                            exit={{ y: "100%" }}
-                            className="absolute inset-0 bg-[#1a0505] z-50 flex flex-col items-center justify-center p-6 text-center"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="absolute inset-0 bg-[#030712] z-[70] flex flex-col p-6 overflow-y-auto"
                         >
-                            <div className="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(220,38,38,0.4)]">
-                                <XCircle className="w-12 h-12 text-black" />
-                            </div>
-                            <h2 className="text-4xl font-display font-bold text-red-500 mb-2">ACCESS DENIED</h2>
-                            <p className="text-red-300 text-lg mb-8">
-                                {scanResult.data.message || "Invalid or Corrupted Ticket"}
-                            </p>
-
-                             {/* If we have registrant details (e.g. reused ticket), show them */}
-                             {scanResult.data.registrant && (
-                                <div className="bg-black/30 w-full max-w-sm rounded-xl p-6 border border-red-500/20 mb-8 space-y-4 text-left opacity-75">
-                                    <div className="flex items-center gap-2 text-red-400 mb-2">
-                                        <AlertTriangle className="w-4 h-4" />
-                                        <span className="text-xs font-bold uppercase">Already Used By:</span>
+                            <div className="flex-1 flex flex-col items-center justify-center py-8">
+                                <div className="relative mb-8">
+                                    <div className="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center shadow-[0_0_60px_rgba(239,68,68,0.4)] relative z-10">
+                                        <XCircle className="w-12 h-12 text-black" strokeWidth={3} />
                                     </div>
-                                    <p className="text-xl font-bold text-white">
-                                        {scanResult.data.registrant.user.name || "Unknown User"}
-                                    </p>
-                                    <p className="text-sm text-gray-400">
-                                        Scanned at: {new Date(scanResult.data.registrant.updated_at).toLocaleTimeString()}
-                                    </p>
+                                    <div className="absolute inset-0 bg-red-500/20 blur-3xl rounded-full scale-150"></div>
                                 </div>
-                             )}
+                                
+                                <h2 className="text-3xl font-black text-red-500 mb-2 uppercase tracking-tighter">Access Denied</h2>
+                                <p className="text-red-500/60 text-sm font-mono font-bold uppercase tracking-widest text-center px-4">
+                                    {scanResult.data.message || "Invalid or Corrupted Signal"}
+                                </p>
+
+                                {scanResult.data.registrant && (
+                                    <div className="w-full mt-8 space-y-4">
+                                        <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 text-left opacity-80">
+                                            <div className="flex items-center gap-2 text-red-400 mb-3">
+                                                <AlertTriangle size={16} />
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Security Alert: Duplicate Entry</span>
+                                            </div>
+                                            <p className="text-xl font-bold text-white mb-1">{scanResult.data.registrant.user_name || "Unknown User"}</p>
+                                            <p className="text-xs text-white/40 font-mono mb-4 italic">{scanResult.data.registrant.user_email}</p>
+                                            <div className="pt-4 border-t border-white/5 text-[10px] text-white/30 uppercase font-mono">
+                                                Original Check-in: {new Date(scanResult.data.registrant.updated_at).toLocaleString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
 
                             <button 
                                 onClick={resetScan}
-                                className="w-full max-w-xs bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-xl text-lg transition-all border border-white/10"
+                                className="w-full bg-white/10 text-white font-black py-5 rounded-2xl text-lg uppercase tracking-widest border border-white/20 active:scale-[0.98] transition-all"
                             >
-                                CANCEL / RETRY
+                                Try Again
                             </button>
                         </motion.div>
                     )}

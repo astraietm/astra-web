@@ -35,11 +35,23 @@ const AdminDashboard = () => {
         }
     }, [user, navigate]);
 
+    const [refreshing, setRefreshing] = useState(false);
+
     useEffect(() => {
         fetchRegistrations();
+        
+        // Real-time polling every 5 seconds
+        const interval = setInterval(() => {
+            fetchRegistrations(true); // pass true for background refresh
+        }, 5000);
+
+        return () => clearInterval(interval);
     }, [token]);
 
-    const fetchRegistrations = async () => {
+    const fetchRegistrations = async (isBackground = false) => {
+        if (!isBackground) setLoading(true);
+        else setRefreshing(true);
+
         try {
             const response = await axios.get(`${API_URL}/admin-registrations/`, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -47,9 +59,11 @@ const AdminDashboard = () => {
             setRegistrations(response.data);
             calculateStats(response.data);
             setLoading(false);
+            setRefreshing(false);
         } catch (error) {
             console.error('Error fetching registrations:', error);
             setLoading(false);
+            setRefreshing(false);
         }
     };
 
@@ -126,6 +140,12 @@ const AdminDashboard = () => {
                         <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-white to-primary/50 bg-clip-text text-transparent flex items-center gap-3">
                             <Shield className="text-primary" />
                             Central Intelligence
+                            <div className="ml-2 flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
+                                <span className={`w-2 h-2 rounded-full bg-primary ${refreshing ? 'animate-ping' : 'animate-pulse'}`}></span>
+                                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
+                                    {refreshing ? 'Syncing...' : 'Live'}
+                                </span>
+                            </div>
                         </h1>
                         <p className="text-white/50 mt-2 font-mono text-sm">Mission Control: Accessing Registration Database v2.4.0</p>
                     </div>
