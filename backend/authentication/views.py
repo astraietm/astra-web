@@ -21,12 +21,21 @@ class GoogleLoginView(APIView):
             return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            import os
+            client_id = os.environ.get('GOOGLE_CLIENT_ID')
+            
             # Verify the token
-            idinfo = id_token.verify_oauth2_token(
-                token, 
-                google_requests.Request(), 
-                "341883886940-vtbo7chmmlqpmc86bqgqbipfa4f495dn.apps.googleusercontent.com"
-            )
+            try:
+                idinfo = id_token.verify_oauth2_token(
+                    token, 
+                    google_requests.Request(), 
+                    client_id
+                )
+            except ValueError as e:
+                # Print directly to stdout to ensure it shows in Railway logs
+                print(f"GOOGLE VERIFICATION FAILED: {str(e)}")
+                print(f"EXPECTED CLIENT_ID: {client_id}")
+                return Response({'error': f"Token verification failed: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
             # Use sub (unique google ID) or email
             google_id = idinfo['sub']
