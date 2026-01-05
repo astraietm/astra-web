@@ -25,6 +25,7 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterEvent, setFilterEvent] = useState('all');
+    const [filterStatus, setFilterStatus] = useState('all'); // all, pending, accessed
     const [stats, setStats] = useState({ total: 0, attended: 0, pending: 0 });
 
     const API_URL = import.meta.env.VITE_API_URL;
@@ -83,9 +84,15 @@ const AdminDashboard = () => {
             reg.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.token?.toLowerCase().includes(searchTerm.toLowerCase());
         
-        const matchesFilter = filterEvent === 'all' || reg.event_details.title === filterEvent;
+        const matchesEvent = filterEvent === 'all' || reg.event_details.title === filterEvent;
         
-        return matchesSearch && matchesFilter;
+        const isAccessed = reg.is_used || reg.status === 'ATTENDED';
+        const matchesStatus = 
+            filterStatus === 'all' || 
+            (filterStatus === 'accessed' && isAccessed) || 
+            (filterStatus === 'pending' && !isAccessed);
+        
+        return matchesSearch && matchesEvent && matchesStatus;
     });
 
     const uniqueEvents = ['all', ...new Set(registrations.map(r => r.event_details.title))];
@@ -98,7 +105,7 @@ const AdminDashboard = () => {
             reg.event_details.title,
             new Date(reg.timestamp).toLocaleString(),
             reg.token,
-            reg.is_used ? 'Attended' : 'Pending'
+            (reg.is_used || reg.status === 'ATTENDED') ? 'Attended' : 'Pending'
         ]);
 
         const csvContent = [headers, ...csvData].map(e => e.join(',')).join('\n');
@@ -179,7 +186,12 @@ const AdminDashboard = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className="bg-white/5 border border-white/10 p-8 rounded-3xl relative overflow-hidden group hover:border-white/20 transition-all"
+                            className="bg-white/5 border border-white/10 p-8 rounded-3xl relative overflow-hidden group hover:border-white/20 transition-all cursor-pointer"
+                            onClick={() => {
+                                if (stat.label.includes('Confirmed')) setFilterStatus('accessed');
+                                else if (stat.label.includes('Awaiting')) setFilterStatus('pending');
+                                else setFilterStatus('all');
+                            }}
                         >
                             <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-10 transition-opacity">
                                 <stat.icon size={80} />
@@ -202,17 +214,30 @@ const AdminDashboard = () => {
                             className="w-full bg-black/40 border border-white/5 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
                         />
                     </div>
-                    <div className="flex items-center gap-2 w-full md:w-auto">
-                        <Filter className="text-white/30" />
-                        <select 
-                            value={filterEvent}
-                            onChange={(e) => setFilterEvent(e.target.value)}
-                            className="w-full md:w-64 bg-black/40 border border-white/5 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all text-sm appearance-none cursor-pointer"
-                        >
-                            {uniqueEvents.map(event => (
-                                <option key={event} value={event} className="bg-[#030712]">{event === 'all' ? 'All Operations' : event}</option>
-                            ))}
-                        </select>
+                    <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                        <div className="relative flex items-center gap-2">
+                            <Filter className="text-white/30" />
+                            <select 
+                                value={filterEvent}
+                                onChange={(e) => setFilterEvent(e.target.value)}
+                                className="w-full sm:w-48 bg-black/40 border border-white/5 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all text-sm appearance-none cursor-pointer"
+                            >
+                                {uniqueEvents.map(event => (
+                                    <option key={event} value={event} className="bg-[#030712]">{event === 'all' ? 'All Operations' : event}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="relative">
+                            <select 
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                                className="w-full sm:w-40 bg-black/40 border border-white/5 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all text-sm appearance-none cursor-pointer"
+                            >
+                                <option value="all" className="bg-[#030712]">All Status</option>
+                                <option value="accessed" className="bg-[#030712]">Accessed</option>
+                                <option value="pending" className="bg-[#030712]">Pending</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
