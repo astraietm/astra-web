@@ -4,18 +4,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
-    FiUsers, 
-    FiCheckCircle, 
-    FiClock, 
-    FiSearch, 
-    FiFilter, 
-    FiDownload, 
-    FiArrowLeft,
-    FiUser,
-    FiMail,
-    FiCalendar,
-    FiShield
-} from 'react-icons/fi';
+    Users, 
+    CheckCircle, 
+    Clock, 
+    Search, 
+    Filter, 
+    Download, 
+    ArrowLeft,
+    User as UserIcon,
+    Mail,
+    Calendar,
+    Shield,
+    Loader2
+} from 'lucide-react';
 
 const AdminDashboard = () => {
     const { user, token } = useAuth();
@@ -102,7 +103,7 @@ const AdminDashboard = () => {
         return (
             <div className="min-h-screen bg-[#030712] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                    <Loader2 className="w-12 h-12 text-primary animate-spin" />
                     <p className="text-white/60 font-medium font-mono animate-pulse uppercase tracking-widest text-sm">Initializing Secure Access...</p>
                 </div>
             </div>
@@ -119,11 +120,11 @@ const AdminDashboard = () => {
                             onClick={() => navigate('/')}
                         className="flex items-center gap-2 text-white/50 hover:text-primary transition-colors mb-4 group"
                         >
-                            <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                            <ArrowLeft className="group-hover:-translate-x-1 transition-transform" />
                             <span className="text-sm font-medium uppercase tracking-wider">Back to Terminal</span>
                         </button>
                         <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-white to-primary/50 bg-clip-text text-transparent flex items-center gap-3">
-                            <FiShield className="text-primary" />
+                            <Shield className="text-primary" />
                             Central Intelligence
                         </h1>
                         <p className="text-white/50 mt-2 font-mono text-sm">Mission Control: Accessing Registration Database v2.4.0</p>
@@ -133,14 +134,14 @@ const AdminDashboard = () => {
                             onClick={() => navigate('/admin/scanner')}
                             className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-primary/50 transition-all duration-300 group"
                         >
-                            <FiSearch className="text-primary group-hover:scale-110 transition-transform" />
+                            <Search className="text-primary group-hover:scale-110 transition-transform" />
                             <span className="font-medium uppercase tracking-wider text-sm">Launch Scanner</span>
                         </button>
                         <button 
                             onClick={exportToCSV}
                             className="flex items-center gap-2 px-6 py-3 bg-primary text-black rounded-xl hover:bg-primary-hover transition-all duration-300 font-bold shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] group"
                         >
-                            <FiDownload className="group-hover:translate-y-0.5 transition-transform" />
+                            <Download className="group-hover:translate-y-0.5 transition-transform" />
                             <span className="uppercase tracking-wider text-sm">Export Data</span>
                         </button>
                     </div>
@@ -149,9 +150,9 @@ const AdminDashboard = () => {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
                     {[
-                        { label: 'Total Enlisted', value: stats.total, icon: FiUsers, color: 'primary' },
-                        { label: 'Confirmed Access', value: stats.attended, icon: FiCheckCircle, color: 'green-500' },
-                        { label: 'Awaiting Entrance', value: stats.pending, icon: FiClock, color: 'yellow-500' }
+                        { label: 'Total Enlisted', value: stats.total, icon: Users, color: 'primary' },
+                        { label: 'Confirmed Access', value: stats.attended, icon: CheckCircle, color: 'green-500' },
+                        { label: 'Awaiting Entrance', value: stats.pending, icon: Clock, color: 'yellow-500' }
                     ].map((stat, i) => (
                         <motion.div
                             key={stat.label}
@@ -172,7 +173,7 @@ const AdminDashboard = () => {
                 {/* Filters & Search */}
                 <div className="bg-white/5 border border-white/10 p-4 rounded-2xl mb-8 flex flex-col md:flex-row gap-4 items-center">
                     <div className="relative flex-1 w-full">
-                        <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
                         <input 
                             type="text" 
                             placeholder="Search by name, email, or token..."
@@ -182,7 +183,7 @@ const AdminDashboard = () => {
                         />
                     </div>
                     <div className="flex items-center gap-2 w-full md:w-auto">
-                        <FiFilter className="text-white/30" />
+                        <Filter className="text-white/30" />
                         <select 
                             value={filterEvent}
                             onChange={(e) => setFilterEvent(e.target.value)}
@@ -223,12 +224,12 @@ const AdminDashboard = () => {
                                                 <td className="px-6 py-5">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center border border-white/10 text-primary">
-                                                            <FiUser className="text-lg" />
+                                                            <UserIcon className="text-lg" />
                                                         </div>
                                                         <div>
                                                             <p className="font-medium text-white group-hover:text-primary transition-colors">{reg.user_name || 'Incognito Agent'}</p>
                                                             <p className="text-xs text-white/40 flex items-center gap-1 mt-0.5">
-                                                                <FiMail className="scale-75" />
+                                                                <Mail className="scale-75" />
                                                                 {reg.user_email}
                                                             </p>
                                                         </div>
@@ -247,7 +248,7 @@ const AdminDashboard = () => {
                                                 </td>
                                                 <td className="px-6 py-5">
                                                     <p className="text-xs text-white/50 flex items-center gap-1.5 font-mono">
-                                                        <FiCalendar className="text-primary/50" />
+                                                        <Calendar className="text-primary/50" />
                                                         {new Date(reg.timestamp).toLocaleDateString()}
                                                         <span className="opacity-30">|</span>
                                                         {new Date(reg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -256,12 +257,12 @@ const AdminDashboard = () => {
                                                 <td className="px-6 py-5">
                                                     {reg.is_used || reg.status === 'ATTENDED' ? (
                                                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-widest border border-green-500/20">
-                                                            <FiCheckCircle />
+                                                            <CheckCircle />
                                                             Accessed
                                                         </span>
                                                     ) : (
                                                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-500 text-[10px] font-bold uppercase tracking-widest border border-yellow-500/20">
-                                                            <FiClock />
+                                                            <Clock />
                                                             Pending
                                                         </span>
                                                     )}
@@ -271,7 +272,7 @@ const AdminDashboard = () => {
                                     ) : (
                                         <tr>
                                             <td colSpan="5" className="px-6 py-20 text-center">
-                                                <FiUsers className="mx-auto text-4xl text-white/10 mb-4" />
+                                                <Users className="mx-auto text-4xl text-white/10 mb-4" />
                                                 <p className="text-white/30 font-mono uppercase tracking-[0.2em] text-sm italic">No records found matching criteria</p>
                                             </td>
                                         </tr>
