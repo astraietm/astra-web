@@ -27,66 +27,58 @@ const Navbar = () => {
   return (
     <>
       {/* =======================
-          DESKTOP NAVBAR
+          DESKTOP NAVBAR (Single Unified Pill Model)
       ======================== */}
-      <nav className="hidden md:block fixed top-6 left-0 w-full z-[100] px-8 pointer-events-none">
+      <nav className="hidden md:flex fixed top-6 inset-x-0 z-[100] justify-center px-4 pointer-events-none">
         
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Single Pill Container */}
+        <div className="pointer-events-auto relative flex items-center justify-between 
+             bg-black/10 backdrop-blur-2xl 
+             border border-white/[0.08] ring-1 ring-white/[0.05]
+             shadow-[0_20px_40px_-12px_rgba(0,0,0,0.8),inset_0_1px_0_0_rgba(255,255,255,0.1)] 
+             rounded-full pl-2 pr-2 py-2 h-[64px] w-full max-w-5xl
+             transition-all duration-300"
+        >
             
-            {/* Logo Section */}
-            <div className="pointer-events-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-1.5 pr-6 shadow-lg shadow-black/10 h-[56px] flex items-center hover:bg-white/10 transition-colors duration-300">
-                <Link 
-                    to="/" 
-                    className="flex items-center gap-3 group"
-                >
-                    <div className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 group-hover:border-primary/50 transition-colors">
-                        <Shield className="w-4 h-4 text-primary" />
-                    </div>
-                    <span className="text-lg font-display font-bold text-white tracking-widest group-hover:text-primary transition-colors">
-                        ASTRA
-                    </span>
-                </Link>
-            </div>
+            {/* 1. Logo (Left) */}
+            <Link 
+                to="/" 
+                className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 hover:scale-105 transition-transform"
+            >
+                <div className="w-[44px] h-[44px] bg-black rounded-full flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-white" fill="currentColor" />
+                </div>
+            </Link>
 
-            {/* Desktop Navigation */}
-            <div className="pointer-events-auto bg-white/5 backdrop-blur-xl border border-white/10 rounded-full p-2 gap-1 shadow-lg shadow-black/10 h-[56px] flex items-center">
+            {/* 2. Navigation Links (ABSOLUTE CENTER) */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-8">
                 {navLinks.map((link) => {
                 const isActive = location.pathname === link.path;
-                
                 return (
                     <Link
                     key={link.name}
                     to={link.path}
                     className={`
-                        relative px-6 h-[40px] flex items-center justify-center rounded-full text-xs font-bold tracking-wider transition-colors duration-300
+                        text-sm md:text-base font-medium tracking-wide transition-all duration-200
                         ${isActive 
-                        ? 'text-black' 
-                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        ? 'text-white font-bold' 
+                        : 'text-gray-400 hover:text-white'
                         }
                     `}
                     >
-                        {isActive && (
-                            <motion.div
-                                layoutId="active-pill"
-                                className="absolute inset-0 bg-primary rounded-full shadow-[0_0_15px_rgba(0,224,255,0.4)]"
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                style={{ zIndex: 0 }}
-                            />
-                        )}
-                        <span className="relative z-10">{link.name}</span>
+                        {link.name}
                     </Link>
                 );
                 })}
-                
-                <Link to="/contact" className="ml-2 px-6 h-[40px] flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold tracking-wider transition-all">
-                    CONTACT
-                </Link>
             </div>
+            
+            {/* 3. Empty spacer or Right Element (Optional, kept empty to maintain shape) */}
+            <div className="w-12"></div> 
         </div>
       </nav>
 
       {/* =======================
-          MOBILE NAVBAR (Compact Premium)
+          MOBILE NAVBAR (Unchanged)
       ======================== */}
       <nav className="md:hidden fixed top-4 inset-x-0 z-[100] px-4 pointer-events-none flex justify-center items-start">
           

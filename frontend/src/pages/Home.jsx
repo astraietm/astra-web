@@ -1,6 +1,7 @@
 import React from 'react';
 import Hero from '../components/home/Hero';
-import AboutSection from '../components/home/AboutSection';
+import ScrollReveal from '../components/common/ScrollReveal';
+
 import FeaturedEvents from '../components/home/FeaturedEvents';
 import WhyJoin from '../components/home/WhyJoin';
 import GalleryPreview from '../components/home/GalleryPreview';
@@ -12,13 +13,30 @@ const Home = () => {
   return (
     <div className="bg-background">
       <Hero />
-      <AboutSection />
-      <VisionMission />
-      <HODMessage />
-      <FeaturedEvents />
-      <WhyJoin />
-      <GalleryPreview />
-      <JoinSection />
+
+      <ScrollReveal variant="up" width="100%">
+        <VisionMission />
+      </ScrollReveal>
+
+      <ScrollReveal variant="blur" width="100%">
+        <HODMessage />
+      </ScrollReveal>
+
+      <ScrollReveal variant="up" width="100%">
+        <FeaturedEvents />
+      </ScrollReveal>
+
+      <ScrollReveal variant="up" width="100%">
+        <WhyJoin />
+      </ScrollReveal>
+
+      <ScrollReveal variant="up" width="100%">
+        <GalleryPreview />
+      </ScrollReveal>
+
+      <ScrollReveal variant="scale" width="100%">
+        <JoinSection />
+      </ScrollReveal>
     </div>
   );
 };

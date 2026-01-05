@@ -80,13 +80,7 @@ const About = () => {
 
                 {/* Active Personnel / Team Section */}
                 <div className="max-w-7xl mx-auto mb-12 md:mb-24 px-4 md:px-0">
-                     <FadeInUp delay={0.6}>
-                        <div className="flex items-center gap-2 md:gap-3 mb-6 md:mb-10 border-b border-white/10 pb-4">
-                            <Shield className="w-4 h-4 md:w-6 md:h-6 text-primary" />
-                            <h2 className="text-xl md:text-3xl font-display font-bold tracking-tight text-white">Active Personnel</h2>
-                            <span className="ml-auto text-[10px] md:text-xs font-mono text-primary bg-primary/10 px-2 md:px-3 py-1 rounded border border-primary/20 animate-pulse">STATUS: ONLINE</span>
-                        </div>
-                     </FadeInUp>
+
                      
                      {/* Faculty Advisors */}
                      <div className="mb-12 md:mb-16">
