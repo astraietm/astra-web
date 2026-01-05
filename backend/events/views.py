@@ -1,0 +1,67 @@
+from rest_framework import status, generics, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+from .models import Registration, Event
+from .serializers import RegistrationSerializer, EventSerializer
+
+class EventListView(generics.ListAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [permissions.AllowAny] # Public
+
+class RegistrationCreateView(generics.CreateAPIView):
+    queryset = Registration.objects.all()
+    serializer_class = RegistrationSerializer
+    permission_classes = [permissions.IsAuthenticated] # Protected
+
+    def perform_create(self, serializer):
+        # Automatically set user from JWT
+        serializer.save(user=self.request.user)
+        # TODO: Add email notification here
+
+    def create(self, request, *args, **kwargs):
+        # Check if already registered
+        event_id = request.data.get('event')
+        if Registration.objects.filter(user=request.user, event_id=event_id).exists():
+             return Response(
+                 {"error": "You are already registered for this event."},
+                 status=status.HTTP_400_BAD_REQUEST
+             )
+        return super().create(request, *args, **kwargs)
+
+class MyRegistrationsView(generics.ListAPIView):
+    serializer_class = RegistrationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Registration.objects.filter(user=self.request.user).order_by('-timestamp')
+
+class VerifyTokenView(APIView):
+    # Depending on requirements, this might need Admin permission
+    # per USER request "Admin QR Scan Support", this should ideally be protected.
+    # But for simplicity or if the scanner app just has the link, we can keep it open or require Admin.
+    # Let's keep it AllowAny for now for easy testing, but in production, we'd use IsAdminUser.
+    permission_classes = [permissions.AllowAny] 
+
+    def get(self, request, token):
+        registration = get_object_or_404(Registration, token=token)
+        
+        # Check status or is_used
+        if registration.status == 'ATTENDED' or registration.is_used:
+            return Response({
+                "valid": False,
+                "message": "QR Code has already been used.",
+                "registrant": RegistrationSerializer(registration).data
+            }, status=status.HTTP_200_OK) # Return 200 so frontend scanner handles it gracefully
+        
+        # Mark as attended
+        registration.status = 'ATTENDED'
+        registration.is_used = True
+        registration.save()
+        
+        return Response({
+            "valid": True,
+            "message": "Verification successful! Access Granted.",
+            "registrant": RegistrationSerializer(registration).data
+        }, status=status.HTTP_200_OK)

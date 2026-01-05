@@ -10,9 +10,12 @@ import Gallery from './pages/Gallery';
 import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
+import Dashboard from './pages/Dashboard';
+import AdminScanner from './pages/AdminScanner';
 import ScrollToTop from './components/common/ScrollToTop';
 import SmoothScroll from './components/common/SmoothScroll';
 import InitialBootLoader from './components/common/InitialBootLoader';
+import LoginModal from './components/auth/LoginModal';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -29,12 +32,17 @@ function App() {
       {!loading && (
         <>
           <ScrollToTop />
+          <LoginModal /> {/* Global Login Modal */}
           <SmoothScroll>
             <Routes>
+              {/* ADMIN SCANNER ROUTE (Outside MainLayout for Fullscreen) */}
+              <Route path="/admin/scanner" element={<AdminScanner />} />
+
               <Route path="/" element={<MainLayout />}>
                 <Route index element={<Home />} />
                 <Route path="events" element={<Events />} />
                 <Route path="register/:id" element={<Register />} />
+                <Route path="my-registrations" element={<Dashboard />} />
                 <Route path="gallery" element={<Gallery />} />
                 <Route path="about" element={<About />} />
                 <Route path="blog" element={<Blog />} />

@@ -1,8 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const EventCard = ({ event, index }) => {
+  const { requireLogin } = useAuth(); // Auth context for conditional login
   const divRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -11,39 +13,27 @@ const EventCard = ({ event, index }) => {
 
   const handleMouseMove = (e) => {
     if (!divRef.current || isFocused) return;
-
     const div = divRef.current;
     const rect = div.getBoundingClientRect();
-
     setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
-  const handleFocus = () => {
-    setIsFocused(true);
-    setOpacity(1);
-  };
+  const handleFocus = () => { setIsFocused(true); setOpacity(1); };
+  const handleBlur = () => { setIsFocused(false); setOpacity(0); };
+  const handleMouseEnter = () => { setOpacity(1); };
+  const handleMouseLeave = () => { setOpacity(0); };
 
-  const handleBlur = () => {
-    setIsFocused(false);
-    setOpacity(0);
-  };
-
-  const handleMouseEnter = () => {
-    setOpacity(1);
-  };
-
-  const handleMouseLeave = () => {
-    setOpacity(0);
-  };
-
-  const hasInternalRegistration = event.registration_config && event.registration_config.isOpen;
   const hasExternalRegistration = !!event.registration_link;
 
   const handleRegisterClick = () => {
-    if (hasInternalRegistration) {
-      navigate(`/register/${event.id}`);
-    } else if (hasExternalRegistration) {
+    if (hasExternalRegistration) {
       window.open(event.registration_link, '_blank', 'noopener,noreferrer');
+    } else {
+      // REQUIRE LOGIN before navigating
+      requireLogin({
+          run: () => navigate(`/register/${event.id}`),
+          type: 'navigate'
+      });
     }
   };
 
@@ -117,14 +107,9 @@ const EventCard = ({ event, index }) => {
 
         <button
           onClick={handleRegisterClick}
-          className={`w-full py-3 bg-white/5 border border-white/10 rounded-xl text-white font-bold text-sm tracking-wide uppercase hover:bg-primary hover:text-black hover:border-primary transition-all flex items-center justify-center gap-2 group/btn ${(!hasInternalRegistration && !hasExternalRegistration) ? 'opacity-50 cursor-not-allowed hover:bg-white/5 hover:text-white hover:border-white/10' : ''}`}
-          disabled={!hasInternalRegistration && !hasExternalRegistration}
+          className="w-full py-3 bg-white/5 border border-white/10 rounded-xl text-white font-bold text-sm tracking-wide uppercase hover:bg-primary hover:text-black hover:border-primary transition-all flex items-center justify-center gap-2 group/btn"
         >
-          {hasInternalRegistration || hasExternalRegistration ? (
-            <>Register Now <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" /></>
-          ) : (
-            "Registration Closed"
-          )}
+          Register Now <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>
