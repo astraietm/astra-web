@@ -12,7 +12,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-development-key')
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+# Allowed Hosts
+ALLOWED_HOSTS_RAW = os.environ.get('ALLOWED_HOSTS', '*')
+if ALLOWED_HOSTS_RAW == '*':
+    ALLOWED_HOSTS = ['*']
+else:
+    # Remove https:// or http:// if user mistakenly added them, and split by comma
+    ALLOWED_HOSTS = [host.replace('https://', '').replace('http://', '').strip() for host in ALLOWED_HOSTS_RAW.split(',')]
+    # Always ensure the common subdomains are there if they aren't already
+    if 'api.astraietm.in' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('api.astraietm.in')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
