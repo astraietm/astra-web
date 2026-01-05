@@ -16,13 +16,17 @@ class GoogleLoginView(APIView):
     permission_classes = []
 
     def post(self, request):
+        print(f"DEBUG: Login request received from {request.META.get('REMOTE_ADDR')}")
         token = request.data.get('token')
+        
         if not token:
+            print("DEBUG: No token provided in request data")
             return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             import os
             client_id = os.environ.get('GOOGLE_CLIENT_ID')
+            print(f"DEBUG: Verifying token with Client ID: {client_id}")
             
             # Verify the token
             try:
@@ -31,6 +35,7 @@ class GoogleLoginView(APIView):
                     google_requests.Request(), 
                     client_id
                 )
+                print(f"DEBUG: Token verified for email: {idinfo.get('email')}")
             except ValueError as e:
                 # Print directly to stdout to ensure it shows in Railway logs
                 print(f"GOOGLE VERIFICATION FAILED: {str(e)}")
