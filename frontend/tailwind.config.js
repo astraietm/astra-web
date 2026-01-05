@@ -40,11 +40,15 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        shine: {
+          '100%': { left: '125%' },
+        },
       },
       animation: {
         scan: 'scan 4s linear infinite',
         flicker: 'flicker 2s infinite',
         'scroll-left': 'scroll 20s linear infinite',
+        shine: 'shine 1s',
       }
     },
   },

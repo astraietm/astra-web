@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import Events from './pages/Events';
+import Register from './pages/Register';
 import Gallery from './pages/Gallery';
 import About from './pages/About';
 import Blog from './pages/Blog';
@@ -33,6 +34,7 @@ function App() {
               <Route path="/" element={<MainLayout />}>
                 <Route index element={<Home />} />
                 <Route path="events" element={<Events />} />
+                <Route path="register/:id" element={<Register />} />
                 <Route path="gallery" element={<Gallery />} />
                 <Route path="about" element={<About />} />
                 <Route path="blog" element={<Blog />} />

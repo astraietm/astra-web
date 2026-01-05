@@ -35,6 +35,8 @@ export const facultyMembers = [
         image: "images/shalna.jpeg", // Upload photo to public/images/shalna.jpg and update this path
         id: "FAC-04"
     }
+
+    
 ];
 
 export const coreMembers = [
