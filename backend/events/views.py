@@ -65,3 +65,8 @@ class VerifyTokenView(APIView):
             "message": "Verification successful! Access Granted.",
             "registrant": RegistrationSerializer(registration).data
         }, status=status.HTTP_200_OK)
+
+class AdminRegistrationsView(generics.ListAPIView):
+    queryset = Registration.objects.all().order_by('-timestamp')
+    serializer_class = RegistrationSerializer
+    permission_classes = [permissions.IsAdminUser] # Restrict to staff/admins
