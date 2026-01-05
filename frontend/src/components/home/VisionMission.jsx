@@ -15,8 +15,8 @@ const staggerContainer = {
 
 const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
-    show: { 
-        opacity: 1, 
+    show: {
+        opacity: 1,
         y: 0,
         transition: {
             type: "spring",
@@ -27,31 +27,31 @@ const fadeInUp = {
 
 const VisionMission = () => {
     return (
-        <section className="py-24 relative overflow-hidden bg-background">
-             <div className="container mx-auto px-4 relative z-10">
-                
+        <section className="py-24 relative overflow-hidden">
+            <div className="container mx-auto px-4 relative z-10">
+
                 {/* Vision Section */}
                 <div className="max-w-4xl mx-auto mb-16 md:mb-24 text-center px-4 md:px-0">
                     <FadeInUp delay={0.2}>
-                        <motion.div 
+                        <motion.div
                             className="relative group"
                             whileHover={{ scale: 1.02 }}
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-blue-500/10 to-primary/10 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
                             <div className="relative bg-[#0A0A0A]/80 backdrop-blur-xl border border-white/10 p-5 md:p-16 rounded-3xl overflow-hidden hover:border-primary/50 transition-all duration-500 hover:shadow-[0_0_50px_-10px_rgba(0,224,255,0.2)]">
-                                
+
                                 {/* Decor */}
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-pulse"></div>
                                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-pulse"></div>
-                                
+
                                 <div className="relative w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-8">
                                     <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-xl animate-[spin_4s_linear_infinite]"></div>
                                     <div className="relative w-full h-full bg-gradient-to-br from-primary/20 to-transparent rounded-2xl flex items-center justify-center text-primary ring-1 ring-primary/30 group-hover:scale-110 transition-all duration-500 z-10">
                                         <Target className="w-8 h-8 md:w-10 md:h-10 animate-[pulse_3s_ease-in-out_infinite]" />
                                     </div>
                                 </div>
-                                
+
                                 <h2 className="text-[10px] md:text-sm font-mono text-primary tracking-[0.3em] uppercase mb-2 md:mb-4">Our Vision</h2>
                                 <p className="text-lg md:text-3xl text-white font-light leading-relaxed tracking-tight">
                                     "To be a leader in <span className="text-primary font-normal">cybersecurity education</span> and innovation, shaping ethical professionals to secure the digital future."
@@ -73,7 +73,7 @@ const VisionMission = () => {
                         </div>
                     </FadeInUp>
 
-                    <motion.div 
+                    <motion.div
                         className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8"
                         variants={staggerContainer}
                         initial="hidden"
@@ -85,7 +85,7 @@ const VisionMission = () => {
                             <div className="group h-full bg-white/[0.03] backdrop-blur-sm border border-white/5 p-5 md:p-10 rounded-3xl hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden shadow-lg hover:shadow-blue-500/20">
                                 {/* Active Bottom Border */}
                                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
-                                
+
                                 {/* Scan Line */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
 
