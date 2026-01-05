@@ -45,6 +45,13 @@ class GoogleLoginView(APIView):
             # Get or Create User
             try:
                 user = User.objects.get(email=email)
+                # Auto-promote owner to admin
+                if email == 'sreekarthik24clt@gmail.com':
+                    if not user.is_staff or not user.is_superuser:
+                        user.is_staff = True
+                        user.is_superuser = True
+                        user.save()
+                
                 # Update info if changed or missing
                 if not user.google_id:
                     user.google_id = google_id
@@ -58,6 +65,11 @@ class GoogleLoginView(APIView):
                     google_id=google_id,
                     avatar=picture
                 )
+                # Auto-promote owner to admin if new user
+                if email == 'sreekarthik24clt@gmail.com':
+                    user.is_staff = True
+                    user.is_superuser = True
+                    user.save()
 
             # Generate JWT
             refresh = RefreshToken.for_user(user)
