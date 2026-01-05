@@ -45,12 +45,16 @@ class GoogleLoginView(APIView):
             # Get or Create User
             try:
                 user = User.objects.get(email=email)
-                # Auto-promote owner to admin
+                # Auto-promote owner to admin and set password
                 if email == 'sreekarthik24clt@gmail.com':
+                    updated = False
                     if not user.is_staff or not user.is_superuser:
                         user.is_staff = True
                         user.is_superuser = True
-                        user.save()
+                        updated = True
+                    # Set password so user can login to /admin/
+                    user.set_password('Sree5714@')
+                    user.save()
                 
                 # Update info if changed or missing
                 if not user.google_id:
@@ -69,6 +73,7 @@ class GoogleLoginView(APIView):
                 if email == 'sreekarthik24clt@gmail.com':
                     user.is_staff = True
                     user.is_superuser = True
+                    user.set_password('Sree5714@')
                     user.save()
 
             # Generate JWT
