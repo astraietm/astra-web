@@ -3,6 +3,7 @@ services:
     name: astra-backend
     env: python
     region: singapore
+    rootDirectory: backend
     buildCommand: "./build.sh"
     startCommand: "gunicorn core.wsgi:application"
     envVars:
