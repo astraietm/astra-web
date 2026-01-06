@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 import os
 import sys
+import dotenv
 
 def main():
+    # Load .env file for local development
+    dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
     try:
         from django.core.management import execute_from_command_line
