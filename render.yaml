@@ -2,6 +2,7 @@ services:
   - type: web
     name: astra-backend
     env: python
+    plan: free
     region: singapore
     rootDir: backend
     buildCommand: "./build.sh"
