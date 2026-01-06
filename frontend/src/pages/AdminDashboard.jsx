@@ -165,6 +165,13 @@ const AdminDashboard = () => {
                             <span className="font-medium uppercase tracking-wider text-sm">Launch Scanner</span>
                         </button>
                         <button 
+                            onClick={() => navigate('/admin/events')}
+                            className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-primary/50 transition-all duration-300 group"
+                        >
+                            <Calendar className="text-primary group-hover:scale-110 transition-transform" />
+                            <span className="font-medium uppercase tracking-wider text-sm">Manage Events</span>
+                        </button>
+                        <button 
                             onClick={exportToCSV}
                             className="flex items-center gap-2 px-6 py-3 bg-primary text-black rounded-xl hover:bg-primary-hover transition-all duration-300 font-bold shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] group"
                         >

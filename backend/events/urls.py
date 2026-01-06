@@ -1,11 +1,16 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .views import (
     EventListView, 
     RegistrationCreateView, 
     MyRegistrationsView, 
     VerifyTokenView,
-    AdminRegistrationsView
+    AdminRegistrationsView,
+    AdminEventViewSet
 )
+
+router = DefaultRouter()
+router.register(r'admin/events', AdminEventViewSet, basename='admin-events')
 
 urlpatterns = [
     path('events/', EventListView.as_view(), name='event-list'),
@@ -13,4 +18,4 @@ urlpatterns = [
     path('my-registrations/', MyRegistrationsView.as_view(), name='my-registrations'),
     path('verify/<str:token>/', VerifyTokenView.as_view(), name='verify'),
     path('admin-registrations/', AdminRegistrationsView.as_view(), name='admin-registrations'),
-]
+] + router.urls

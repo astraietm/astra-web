@@ -13,6 +13,7 @@ import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import AdminScanner from './pages/AdminScanner';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminEvents from './pages/AdminEvents';
 import ScrollToTop from './components/common/ScrollToTop';
 import SmoothScroll from './components/common/SmoothScroll';
 import InitialBootLoader from './components/common/InitialBootLoader';
@@ -45,6 +46,7 @@ function App() {
                 <Route path="register/:id" element={<Register />} />
                 <Route path="my-registrations" element={<Dashboard />} />
                 <Route path="admin" element={<AdminDashboard />} />
+                <Route path="admin/events" element={<AdminEvents />} />
                 <Route path="gallery" element={<Gallery />} />
                 <Route path="about" element={<About />} />
                 <Route path="blog" element={<Blog />} />

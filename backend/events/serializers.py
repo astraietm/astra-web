@@ -7,6 +7,17 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = '__all__'
 
+    def validate(self, data):
+        """
+        Check that registration_end is after registration_start.
+        """
+        if 'registration_start' in data and 'registration_end' in data:
+            if data['registration_end'] <= data['registration_start']:
+                raise serializers.ValidationError({
+                    "registration_end": "Registration end date must be after start date."
+                })
+        return data
+
 class RegistrationSerializer(serializers.ModelSerializer):
     qr_code = serializers.SerializerMethodField()
     event_details = EventSerializer(source='event', read_only=True)

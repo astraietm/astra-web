@@ -1,15 +1,23 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 import secrets
 
 class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    date = models.CharField(max_length=100) # Keep as string for now to match frontend/JSON
+    event_date = models.DateTimeField(default=timezone.now)
     venue = models.CharField(max_length=255)
     image = models.URLField(blank=True)
     category = models.CharField(max_length=50)
     
+    # Registration Logic
+    registration_start = models.DateTimeField(default=timezone.now)
+    registration_end = models.DateTimeField(default=timezone.now)
+    registration_limit = models.PositiveIntegerField(default=100)
+    is_registration_open = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return self.title
 

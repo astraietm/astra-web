@@ -1,7 +1,8 @@
-from rest_framework import status, generics, permissions
+from rest_framework import status, generics, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from .models import Registration, Event
 from .serializers import RegistrationSerializer, EventSerializer
 
@@ -21,8 +22,28 @@ class RegistrationCreateView(generics.CreateAPIView):
         # TODO: Add email notification here
 
     def create(self, request, *args, **kwargs):
-        # Check if already registered
         event_id = request.data.get('event')
+        if not event_id:
+            return Response({"error": "Event ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        event = get_object_or_404(Event, id=event_id)
+
+        # VALIDATION RULES
+        if not event.is_registration_open:
+             return Response({"error": "Registration is currently closed."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        now = timezone.now()
+        if now < event.registration_start:
+             return Response({"error": f"Registration starts on {event.registration_start}."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if now > event.registration_end:
+             return Response({"error": "Registration deadline has passed."}, status=status.HTTP_400_BAD_REQUEST)
+
+        current_count = event.registrations.count()
+        if current_count >= event.registration_limit:
+             return Response({"error": "Event is fully booked."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if already registered
         if Registration.objects.filter(user=request.user, event_id=event_id).exists():
              return Response(
                  {"error": "You are already registered for this event."},
@@ -70,3 +91,8 @@ class AdminRegistrationsView(generics.ListAPIView):
     queryset = Registration.objects.all().order_by('-timestamp')
     serializer_class = RegistrationSerializer
     permission_classes = [permissions.IsAdminUser] # Restrict to staff/admins
+
+class AdminEventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all().order_by('-created_at')
+    serializer_class = EventSerializer
+    permission_classes = [permissions.IsAdminUser]

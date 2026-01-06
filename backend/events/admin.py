@@ -4,8 +4,9 @@ import csv
 from .models import Registration, Event
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'date', 'venue', 'category')
+    list_display = ('title', 'event_date', 'venue', 'category', 'is_registration_open')
     search_fields = ('title', 'venue')
+    list_filter = ('is_registration_open', 'category')
 
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'is_used', 'timestamp')
