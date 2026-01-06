@@ -35,8 +35,8 @@ def test_email(request):
 
         socket.getaddrinfo = getaddrinfo_ipv4
         try:
-            # Use explicit connection with 5-second timeout
-            connection = get_connection(timeout=5)
+            # Use explicit connection with 25-second timeout (Gunicorn kills at 30s)
+            connection = get_connection(timeout=25)
             
             email = EmailMessage(
                 subject='Astra SMTP Configuration Test',
