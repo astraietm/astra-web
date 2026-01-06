@@ -38,8 +38,8 @@ const Dashboard = () => {
 
         fetchRegistrations();
         
-        // Poll every 5 seconds to update status (Active -> Admitted) in real-time
-        const interval = setInterval(fetchRegistrations, 5000);
+        // Poll every 1 second to update status (Active -> Admitted) in near real-time
+        const interval = setInterval(fetchRegistrations, 1000);
         return () => clearInterval(interval);
     }, [user, token, navigate, logout]);
 
