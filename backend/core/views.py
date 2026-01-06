@@ -35,6 +35,7 @@ def test_email(request):
             }
         })
     except Exception as e:
+        print(f"EMAIL TEST ERROR: {e}") # Log to backend console
         return JsonResponse({
             "status": "error", 
             "error_type": type(e).__name__,
@@ -45,4 +46,4 @@ def test_email(request):
                 "EMAIL_HOST_USER": settings.EMAIL_HOST_USER,
                 "DEFAULT_FROM_EMAIL": settings.DEFAULT_FROM_EMAIL
             }
-        }, status=500)
+        }, status=200) # Force 200 to ensure JSON is shown in browser
