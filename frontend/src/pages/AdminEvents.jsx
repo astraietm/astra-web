@@ -162,7 +162,7 @@ const AdminEvents = () => {
                     <motion.div 
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl"
+                        className="bg-[#050505] border border-white/10 rounded-3xl p-8 mb-20 relative z-10 shadow-2xl"
                     >
                         <div className="flex justify-between items-center mb-8 pb-4 border-b border-white/10">
                             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
