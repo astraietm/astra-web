@@ -213,7 +213,7 @@ const AdminEvents = () => {
                                         type="datetime-local" 
                                         value={formData.event_date}
                                         onChange={e => setFormData({...formData, event_date: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar [color-scheme:dark]"
                                         required
                                     />
                                 </div>
@@ -228,7 +228,7 @@ const AdminEvents = () => {
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="flex flex-col gap-6 h-full">
                                 <div className="border border-white/10 rounded-xl p-4 bg-white/[0.02]">
                                     <h3 className="text-primary font-mono text-sm uppercase mb-4 opacity-80">Registration Protocols</h3>
                                     <div className="space-y-4">
@@ -238,7 +238,7 @@ const AdminEvents = () => {
                                                 type="datetime-local" 
                                                 value={formData.registration_start}
                                                 onChange={e => setFormData({...formData, registration_start: e.target.value})}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar"
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar [color-scheme:dark]"
                                                 required
                                             />
                                         </div>
@@ -248,7 +248,7 @@ const AdminEvents = () => {
                                                 type="datetime-local" 
                                                 value={formData.registration_end}
                                                 onChange={e => setFormData({...formData, registration_end: e.target.value})}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar"
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar [color-scheme:dark]"
                                                 required
                                             />
                                         </div>
@@ -281,12 +281,12 @@ const AdminEvents = () => {
                                     </div>
                                 </div>
                                 
-                                <div className="h-full">
+                                <div className="flex-1 flex flex-col min-h-[200px]">
                                     <label className="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Briefing / Description</label>
                                     <textarea 
                                         value={formData.description}
                                         onChange={e => setFormData({...formData, description: e.target.value})}
-                                        className="w-full h-[calc(100%-2rem)] bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm resize-none"
+                                        className="w-full flex-1 bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm resize-none"
                                         required
                                     />
                                 </div>
