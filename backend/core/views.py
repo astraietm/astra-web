@@ -27,18 +27,28 @@ def test_email(request):
         
         from django.core.mail import get_connection, EmailMessage
 
-        
-        # Use explicit connection with 5-second timeout to prevent Gunicorn kill
-        connection = get_connection(timeout=5)
-        
-        email = EmailMessage(
-            subject='Astra SMTP Configuration Test',
-            body=f'If you received this, your email configuration is correct.\n\nSettings used:\nHost: {settings.EMAIL_HOST}\nPort: {settings.EMAIL_PORT}\nUser: {settings.EMAIL_HOST_USER}\nFrom: {settings.DEFAULT_FROM_EMAIL}',
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[recipient],
-            connection=connection
-        )
-        email.send(fail_silently=False)
+        # FORCE IPv4 HACK: Render sometimes has broken IPv6 but resolves AAA records
+        # leading to "Network is unreachable". We monkey-patch getaddrinfo to block IPv6.
+        orig_getaddrinfo = socket.getaddrinfo
+        def getaddrinfo_ipv4(host, port, family=0, type=0, proto=0, flags=0):
+            return orig_getaddrinfo(host, port, socket.AF_INET, type, proto, flags)
+
+        socket.getaddrinfo = getaddrinfo_ipv4
+        try:
+            # Use explicit connection with 5-second timeout
+            connection = get_connection(timeout=5)
+            
+            email = EmailMessage(
+                subject='Astra SMTP Configuration Test',
+                body=f'If you received this, your email configuration is correct.\n\nSettings used:\nHost: {settings.EMAIL_HOST}\nPort: {settings.EMAIL_PORT}\nUser: {settings.EMAIL_HOST_USER}\nFrom: {settings.DEFAULT_FROM_EMAIL}',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[recipient],
+                connection=connection
+            )
+            email.send(fail_silently=False)
+        finally:
+            # RESTORE Original getaddrinfo
+            socket.getaddrinfo = orig_getaddrinfo
         return JsonResponse({
             "status": "success", 
             "message": "Email sent successfully!", 
