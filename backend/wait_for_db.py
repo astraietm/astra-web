@@ -18,7 +18,7 @@ def wait_for_db():
     
     print(f"Waiting for database at {hostname}:{port}...")
 
-    max_retries = 30
+    max_retries = 60
     for i in range(max_retries):
         try:
             conn = psycopg2.connect(
@@ -32,9 +32,9 @@ def wait_for_db():
             print("Database available!")
             return
         except psycopg2.OperationalError as e:
-            print(f"Database unavailable, waiting 2 second... ({i+1}/{max_retries})")
+            print(f"Database unavailable, waiting 5 seconds... ({i+1}/{max_retries})")
             print(f"Error: {e}")
-            time.sleep(2)
+            time.sleep(5)
     
     print("Could not connect to database!")
     exit(1)
