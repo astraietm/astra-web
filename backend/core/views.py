@@ -14,10 +14,19 @@ def test_email(request):
     """
     try:
         # Send to the configured host user (self-test)
-        # Send to the configured host user (self-test)
+
         recipient = settings.EMAIL_HOST_USER or "astraietm25@gmail.com"
         
+        # DEBUG DNS
+        import socket
+        try:
+            addr_info = socket.getaddrinfo(settings.EMAIL_HOST, settings.EMAIL_PORT)
+            dns_debug = [x[4] for x in addr_info]
+        except Exception as dns_e:
+            dns_debug = str(dns_e)
+        
         from django.core.mail import get_connection, EmailMessage
+
         
         # Use explicit connection with 5-second timeout to prevent Gunicorn kill
         connection = get_connection(timeout=5)
@@ -35,6 +44,7 @@ def test_email(request):
             "message": "Email sent successfully!", 
             "recipient": recipient,
             "debug_info": {
+                "DNS_DEBUG": dns_debug,
                 "EMAIL_HOST": settings.EMAIL_HOST,
                 "EMAIL_PORT": settings.EMAIL_PORT,
                 "EMAIL_HOST_USER": settings.EMAIL_HOST_USER,
@@ -48,6 +58,7 @@ def test_email(request):
             "error_type": type(e).__name__,
             "message": str(e),
             "debug_info": {
+                "DNS_DEBUG": dns_debug,
                 "EMAIL_HOST": settings.EMAIL_HOST,
                 "EMAIL_PORT": settings.EMAIL_PORT,
                 "EMAIL_HOST_USER": settings.EMAIL_HOST_USER,
