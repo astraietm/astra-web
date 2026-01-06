@@ -125,7 +125,10 @@ const AdminEvents = () => {
             fetchEvents();
         } catch (error) {
             console.error('Error saving event:', error);
-            alert(error.response?.data?.error || 'Failed to save event');
+            const errorMsg = error.response?.data 
+                ? (typeof error.response.data === 'object' ? JSON.stringify(error.response.data) : error.response.data)
+                : 'Failed to save event';
+            alert(errorMsg);
         }
     };
 
