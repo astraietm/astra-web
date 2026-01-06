@@ -2,14 +2,51 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle, Loader2, ShieldCheck, Terminal, AlertCircle, Download, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import eventsData from '../data/events';
+// import eventsData from '../data/events'; // REMOVED DUMMY DATA
 import ScrollReveal from '../components/common/ScrollReveal';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
     const { id } = useParams();
-    const event = eventsData.find(e => e.id === parseInt(id));
-    const { token, user, setIsLoginModalOpen } = useAuth(); // Get auth token and user info
+    // const event = eventsData.find(e => e.id === parseInt(id));
+    
+    // REAL DATA FETCHING
+    const [event, setEvent] = useState(null);
+    const [loadingEvent, setLoadingEvent] = useState(true);
+    const { token, user, setIsLoginModalOpen } = useAuth();
+
+    useEffect(() => {
+        const fetchEvent = async () => {
+            try {
+                // Try fetching from public events endpoint
+                // Note: Adjust endpoint if your backend uses a different path like /api/events/
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/events/${id}/`);
+                if (response.ok) {
+                    const data = await response.json();
+                    // Normalize data structure if needed
+                    const normalizedEvent = {
+                        ...data,
+                        date: data.event_date ? new Date(data.event_date).toLocaleDateString(undefined, {
+                            year: 'numeric', month: 'long', day: 'numeric',
+                            hour: '2-digit', minute: '2-digit'
+                        }) : 'Date TBA',
+                        // Ensure description and venue exist
+                        description: data.description || 'No description available.',
+                        venue: data.venue || 'TBA'
+                    };
+                    setEvent(normalizedEvent);
+                } else {
+                    setEvent(null);
+                }
+            } catch (error) {
+                console.error("Failed to fetch event details", error);
+                setEvent(null);
+            } finally {
+                setLoadingEvent(false);
+            }
+        };
+        if (id) fetchEvent();
+    }, [id]);
 
     // Trigger login modal if not authenticated
     useEffect(() => {
@@ -46,6 +83,14 @@ const Register = () => {
     const [submissionStep, setSubmissionStep] = useState(0);
     const steps = ["Encrypting Data...", "Handshaking with Server...", "Verifying Credentials...", "Access Granted"];
 
+    if (loadingEvent) {
+         return (
+            <div className="min-h-screen flex items-center justify-center bg-background text-white">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+         );
+    }
+
     if (!event) {
         return (
             <div className="min-h-screen pt-32 pb-12 flex items-center justify-center text-center bg-background">
@@ -54,6 +99,7 @@ const Register = () => {
                         <Terminal className="w-8 h-8 text-red-500" />
                     </div>
                     <h1 className="text-3xl font-display font-bold text-white mb-2">Event Not Found</h1>
+                    <p className="text-gray-400">The requested event ID #{id} was not found in the database.</p>
                     <Link to="/events" className="text-primary hover:text-cyan-300 transition-colors font-mono text-sm underline underline-offset-4">Return to Events</Link>
                 </div>
             </div>

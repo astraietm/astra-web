@@ -57,6 +57,20 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('jwt_refresh_token');
     };
 
+    // Global Axios Interceptor for 401s
+    useEffect(() => {
+        const interceptor = axios.interceptors.response.use(
+            (response) => response,
+            (error) => {
+                if (error.response && error.response.status === 401) {
+                    logout();
+                }
+                return Promise.reject(error);
+            }
+        );
+        return () => axios.interceptors.response.eject(interceptor);
+    }, []);
+
     const requireLogin = (action) => {
         if (user) {
             action.run();
