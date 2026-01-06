@@ -51,7 +51,7 @@ const AdminEvents = () => {
 
     const fetchEvents = async () => {
         try {
-            const response = await axios.get(`${API_URL}/admin/events/`, {
+            const response = await axios.get(`${API_URL}/operations/events/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setEvents(response.data);
@@ -65,7 +65,7 @@ const AdminEvents = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this operation?')) return;
         try {
-            await axios.delete(`${API_URL}/admin/events/${id}/`, {
+            await axios.delete(`${API_URL}/operations/events/${id}/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchEvents();
@@ -113,11 +113,11 @@ const AdminEvents = () => {
         e.preventDefault();
         try {
             if (currentEvent) {
-                await axios.put(`${API_URL}/admin/events/${currentEvent.id}/`, formData, {
+                await axios.put(`${API_URL}/operations/events/${currentEvent.id}/`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } else {
-                await axios.post(`${API_URL}/admin/events/`, formData, {
+                await axios.post(`${API_URL}/operations/events/`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }

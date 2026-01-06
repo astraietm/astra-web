@@ -10,7 +10,7 @@ from .views import (
 )
 
 router = DefaultRouter()
-router.register(r'admin/events', AdminEventViewSet, basename='admin-events')
+router.register(r'operations/events', AdminEventViewSet, basename='admin-events')
 
 urlpatterns = [
     path('events/', EventListView.as_view(), name='event-list'),
