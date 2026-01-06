@@ -12,7 +12,16 @@ class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'is_used', 'timestamp')
     list_filter = ('event__title', 'is_used', 'timestamp')
     search_fields = ('user__email', 'user__full_name', 'token', 'event__title')
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'resend_confirmation_email']
+
+    def resend_confirmation_email(self, request, queryset):
+        from .emails import send_registration_email
+        count = 0
+        for registration in queryset:
+            if send_registration_email(registration):
+                count += 1
+        self.message_user(request, f"Sent {count} emails successfully.")
+    resend_confirmation_email.short_description = "Resend QR Email"
 
     def get_user_email(self, obj):
         return obj.user.email

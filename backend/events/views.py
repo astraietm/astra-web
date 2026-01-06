@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from .models import Registration, Event
 from .serializers import RegistrationSerializer, EventSerializer
+from .emails import send_registration_email
 
 class EventListView(generics.ListAPIView):
     queryset = Event.objects.all()
@@ -24,8 +25,9 @@ class RegistrationCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         # Automatically set user from JWT
-        serializer.save(user=self.request.user)
-        # TODO: Add email notification here
+        instance = serializer.save(user=self.request.user)
+        # Send Confirmation Email
+        send_registration_email(instance)
 
     def create(self, request, *args, **kwargs):
         event_id = request.data.get('event')
