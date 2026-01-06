@@ -28,3 +28,4 @@ databases:
     databaseName: astra
     user: astra_user
     plan: free
+    region: singapore
