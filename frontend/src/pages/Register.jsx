@@ -63,6 +63,17 @@ const Register = () => {
         phone_number: ''
     });
 
+    // CRITICAL FIX: Reset state when user changes (e.g. Logout -> Login as different user)
+    // ensuring User B doesn't see User A's QR code if the component didn't unmount.
+    useEffect(() => {
+        setStatus('idle');
+        setTicketData(null);
+        setSubmissionStep(0);
+        setErrorMsg('');
+        setFocusedField(null);
+    }, [user?.email]); 
+
+
     // Pre-fill form with user data if available
     useEffect(() => {
         if (user) {
