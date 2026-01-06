@@ -37,6 +37,13 @@ def wait_for_db():
     port = result.port or 5432
     
     print(f"Checking database at {hostname}:{port}...")
+    
+    # Debug DNS
+    try:
+        ip = socket.gethostbyname(hostname)
+        print(f"DNS Resolved {hostname} -> {ip}")
+    except Exception as e:
+        print(f"DNS Resolution Failed for {hostname}: {e}")
 
     # Start dummy server in background
     server_thread = threading.Thread(target=start_dummy_server)
