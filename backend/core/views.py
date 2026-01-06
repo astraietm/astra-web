@@ -57,6 +57,8 @@ def test_email(request):
                 "DNS_DEBUG": dns_debug,
                 "EMAIL_HOST": settings.EMAIL_HOST,
                 "EMAIL_PORT": settings.EMAIL_PORT,
+                "EMAIL_USE_SSL": getattr(settings, 'EMAIL_USE_SSL', 'Unknown'),
+                "EMAIL_USE_TLS": getattr(settings, 'EMAIL_USE_TLS', 'Unknown'),
                 "EMAIL_HOST_USER": settings.EMAIL_HOST_USER,
                 "DEFAULT_FROM_EMAIL": settings.DEFAULT_FROM_EMAIL
             }
@@ -71,6 +73,8 @@ def test_email(request):
                 "DNS_DEBUG": dns_debug,
                 "EMAIL_HOST": settings.EMAIL_HOST,
                 "EMAIL_PORT": settings.EMAIL_PORT,
+                "EMAIL_USE_SSL": getattr(settings, 'EMAIL_USE_SSL', 'Unknown'),
+                "EMAIL_USE_TLS": getattr(settings, 'EMAIL_USE_TLS', 'Unknown'),
                 "EMAIL_HOST_USER": settings.EMAIL_HOST_USER,
                 "DEFAULT_FROM_EMAIL": settings.DEFAULT_FROM_EMAIL
             }
