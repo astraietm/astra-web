@@ -14,15 +14,22 @@ def test_email(request):
     """
     try:
         # Send to the configured host user (self-test)
+        # Send to the configured host user (self-test)
         recipient = settings.EMAIL_HOST_USER or "astraietm25@gmail.com"
         
-        send_mail(
+        from django.core.mail import get_connection, EmailMessage
+        
+        # Use explicit connection with 5-second timeout to prevent Gunicorn kill
+        connection = get_connection(timeout=5)
+        
+        email = EmailMessage(
             subject='Astra SMTP Configuration Test',
-            message=f'If you received this, your email configuration is correct.\n\nSettings used:\nHost: {settings.EMAIL_HOST}\nPort: {settings.EMAIL_PORT}\nUser: {settings.EMAIL_HOST_USER}\nFrom: {settings.DEFAULT_FROM_EMAIL}',
+            body=f'If you received this, your email configuration is correct.\n\nSettings used:\nHost: {settings.EMAIL_HOST}\nPort: {settings.EMAIL_PORT}\nUser: {settings.EMAIL_HOST_USER}\nFrom: {settings.DEFAULT_FROM_EMAIL}',
             from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[recipient],
-            fail_silently=False,
+            to=[recipient],
+            connection=connection
         )
+        email.send(fail_silently=False)
         return JsonResponse({
             "status": "success", 
             "message": "Email sent successfully!", 
