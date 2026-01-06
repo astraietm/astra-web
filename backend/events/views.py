@@ -11,6 +11,12 @@ class EventListView(generics.ListAPIView):
     serializer_class = EventSerializer
     permission_classes = [permissions.AllowAny] # Public
 
+class EventDetailView(generics.RetrieveAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [permissions.AllowAny] # Public details
+
+
 class RegistrationCreateView(generics.CreateAPIView):
     queryset = Registration.objects.all()
     serializer_class = RegistrationSerializer
