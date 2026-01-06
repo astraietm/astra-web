@@ -20,6 +20,8 @@ services:
         value: "False"
       - key: ALLOWED_HOSTS
         value: "*"
+      - key: FORCE_SYNC
+        value: "true"
 
 databases:
   - name: astra-db
