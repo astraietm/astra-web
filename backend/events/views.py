@@ -26,8 +26,8 @@ class RegistrationCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         # Automatically set user from JWT
         instance = serializer.save(user=self.request.user)
-        # Send Confirmation Email
-        send_registration_email(instance)
+        # Send Confirmation Email (Disabled by user request)
+        # send_registration_email(instance)
 
     def create(self, request, *args, **kwargs):
         event_id = request.data.get('event')
