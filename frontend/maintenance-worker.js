@@ -1,100 +1,64 @@
 
+/* Cloudflare Worker for Maintenance Page - Premium Cyberpunk Theme */
 const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Maintenance | Astra IETM</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Rajdhani:wght@500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #00E0FF;
-            --secondary: #1A1E29;
-            --background: #02040a;
-            --surface: #0A0F1C;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
+            --bg-color: #030409;
+            --neon-blue: #00f3ff;
+            --neon-pink: #bc13fe;
+            --neon-green: #0aff00;
+            --text-muted: #6272a4;
+            --glass-border: rgba(0, 243, 255, 0.2);
+            --glass-bg: rgba(10, 15, 30, 0.7);
         }
 
-        * {
+        body, html {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--background);
-            color: var(--text-main);
-            font-family: 'Outfit', sans-serif;
-            height: 100vh;
-            width: 100vw;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            font-family: 'Rajdhani', sans-serif;
+            color: white;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
         }
 
-        /* Background Effects */
-        .bg-noise {
+        /* Ambient Glow */
+        .glow-spot {
             position: absolute;
-            inset: 0;
-            opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .scanlines {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.1) 50%,
-                rgba(0,0,0,0.1)
-            );
-            background-size: 100% 4px;
-            z-index: 10;
-            pointer-events: none;
-            opacity: 0.3;
-        }
-
-        .aurora-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(0, 224, 255, 0.1) 0%, transparent 60%);
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.05) 0%, transparent 70%);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            filter: blur(80px);
+            pointer-events: none;
             z-index: 0;
-            animation: pulse-glow 5s infinite ease-in-out;
         }
 
-        /* Container */
         .container {
             position: relative;
-            z-index: 5;
-            text-align: center;
+            z-index: 10;
+            width: 90%;
             max-width: 600px;
-            padding: 2rem;
-            border: 1px solid rgba(0, 224, 255, 0.1);
-            background: rgba(10, 15, 28, 0.6);
-            backdrop-filter: blur(12px);
-            border-radius: 1px; /* Sharp corners for tech feel */
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
-            /* Corner accents */
+            padding: 2.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 243, 255, 0.05);
             clip-path: polygon(
                 0 0, 
                 100% 0, 
@@ -104,194 +68,222 @@ const html = `<!DOCTYPE html>
             );
         }
 
-        .container::before {
-            content: '';
+        /* Decorative Corners */
+        .corner {
             position: absolute;
-            top: -1px;
-            left: -1px;
-            width: 20px;
-            height: 20px;
-            border-top: 2px solid var(--primary);
-            border-left: 2px solid var(--primary);
+            width: 10px;
+            height: 10px;
+            border: 2px solid var(--neon-blue);
+            transition: all 0.3s ease;
         }
-
-        .container::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            right: -1px;
-            width: 20px;
-            height: 20px;
-            border-bottom: 2px solid var(--primary);
-            border-right: 2px solid var(--primary);
-            transform: translate(-5px, -5px); /* Adjust for clip-path */
-        }
+        .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
 
         h1 {
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
             font-size: 3rem;
-            color: white;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.1em;
-            text-shadow: 0 0 20px rgba(0, 224, 255, 0.4);
+            margin: 0;
+            letter-spacing: 2px;
             text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-blue);
+            position: relative;
+            display: inline-block;
+        }
+        
+        /* Glitch Effect */
+        h1::before, h1::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+        }
+        h1::before {
+            left: 2px;
+            text-shadow: -1px 0 #ff00c1;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        h1::after {
+            left: -2px;
+            text-shadow: -1px 0 #00fff9;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
         }
 
         .subtitle {
-            font-family: 'Space Mono', monospace;
-            color: var(--primary);
-            font-size: 1rem;
-            margin-bottom: 2rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
+            font-family: 'Space Mono', monospace;
+            color: var(--neon-pink);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
         }
 
-        .status-dot {
+        .blink {
             width: 8px;
             height: 8px;
-            background-color: var(--primary);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary);
-            animation: blink 2s infinite;
+            background-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+            animation: blink 1s infinite steps(2);
         }
 
         p {
             font-size: 1.1rem;
             line-height: 1.6;
-            color: var(--text-muted);
-            margin-bottom: 2.5rem;
+            color: #dce7ff;
+            margin-bottom: 2rem;
         }
 
-        .progress-container {
+        /* Bars */
+        .loading-bar {
             width: 100%;
             height: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.1);
             position: relative;
             overflow: hidden;
+            margin-bottom: 1.5rem;
         }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 30%;
+        .fill {
             position: absolute;
-            box-shadow: 0 0 10px var(--primary);
-            animation: load 2s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+            transform: translateX(-100%);
+            animation: load 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .system-logs {
+        /* Terminal Logs */
+        .terminal {
             font-family: 'Space Mono', monospace;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
-            text-align: left;
-            margin-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255,255,255,0.1);
             padding-top: 1rem;
+            height: 60px;
+            overflow: hidden;
+            text-align: left;
         }
-
-        .log-line {
+        .log-entry {
             display: block;
             margin-bottom: 4px;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+        .log-entry span { color: var(--neon-green); margin-right: 8px; }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(13px, 9999px, 81px, 0); }
+            5% { clip: rect(74px, 9999px, 86px, 0); }
+            10% { clip: rect(25px, 9999px, 20px, 0); }
+            15% { clip: rect(6px, 9999px, 99px, 0); }
+            20% { clip: rect(22px, 9999px, 60px, 0); }
+            100% { clip: rect(69px, 9999px, 1px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 100px, 0); }
+            5% { clip: rect(2px, 9999px, 19px, 0); }
+            10% { clip: rect(61px, 9999px, 34px, 0); }
+            15% { clip: rect(29px, 9999px, 13px, 0); }
+            20% { clip: rect(98px, 9999px, 5px, 0); }
+            100% { clip: rect(10px, 9999px, 30px, 0); }
+        }
+        @keyframes blink { 0% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes load { 0% { transform: translateX(-100%); } 50% { transform: translateX(0%); } 100% { transform: translateX(100%); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .container { padding: 1.5rem; width: 95%; }
         }
 
-        .log-line::before {
-            content: '>';
-            color: var(--primary);
-            margin-right: 8px;
+        .copyright {
+            position: absolute;
+            bottom: 25px;
+            width: 100%;
+            text-align: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+            z-index: 5;
         }
-
-        /* Animations */
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        @keyframes load {
-            0% { left: -30%; }
-            100% { left: 100%; }
-        }
-
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
     </style>
 </head>
 <body>
 
-    <div class="bg-noise"></div>
-    <div class="scanlines"></div>
-    <div class="aurora-glow"></div>
+    <div class="glow-spot"></div>
 
     <div class="container">
-        <h1>System Offline</h1>
+        <!-- Decorative Corners -->
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <h1 data-text="SYSTEM OFFLINE">SYSTEM OFFLINE</h1>
         <div class="subtitle">
-            <span class="status-dot"></span>
-            <span>Maintenance Mode Active</span>
+            <div class="blink"></div>
+            <span>MAINTENANCE PROTOCOLS ACTIVE</span>
         </div>
 
-        <p>
-            The Astra IETM system is currently undergoing scheduled maintenance and upgrades. 
-            We are enhancing the neural core for better performance. Access will be restored shortly.
-        </p>
+        <p>The Astra IETM network is currently undergoing critical infrastructure upgrades. Secure connection will be re-established shortly.</p>
 
-        <div class="progress-container">
-            <div class="progress-bar"></div>
+        <div class="loading-bar">
+            <div class="fill"></div>
         </div>
 
-        <div class="system-logs">
-            <span class="log-line">Initiating maintenance protocols... [OK]</span>
-            <span class="log-line">Optimizing database clusters... [IN PROGRESS]</span>
-            <span class="log-line">Updating security definitions... [PENDING]</span>
-            <span class="log-line" id="dynamic-log">Standby for reconnection...</span>
+        <div class="terminal" id="terminal">
+            <div class="log-entry"><span>></span> Initializing secure shell...</div>
         </div>
     </div>
 
     <script>
-        // Simple script to cycle the last log line
         const logs = [
-            "Standby for reconnection...",
             "Encrypting data streams...",
             "Verifying integrity hashes...",
-            "Syncing neural nodes..."
+            "Optimizing neural core...",
+            "Syncing database clusters...",
+            "Flushing cache buffers...",
+            "Rebooting security nodes..."
         ];
-        let i = 0;
-        const logElement = document.getElementById('dynamic-log');
         
+        const terminal = document.getElementById('terminal');
+        let logIndex = 0;
+
         setInterval(() => {
-            i = (i + 1) % logs.length;
-            logElement.textContent = logs[i];
-            logElement.style.opacity = 0.5;
-            setTimeout(() => {
-                logElement.style.opacity = 1;
-            }, 100);
-        }, 3000);
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = '<span>></span> ' + logs[logIndex];
+            
+            // Keep only last 3 logs
+            if (terminal.children.length > 2) {
+                terminal.removeChild(terminal.firstChild);
+            }
+            
+            terminal.appendChild(entry);
+            logIndex = (logIndex + 1) % logs.length;
+        }, 1500);
     </script>
+    <div class="copyright">
+        &copy; 2026 Astra IETM. All Rights Reserved.
+    </div>
 </body>
 </html>`;
 
 export default {
   async fetch(request) {
     return new Response(html, {
-      headers: {
-        "content-type": "text/html;charset=UTF-8",
-      },
+      headers: { "content-type": "text/html;charset=UTF-8" },
     });
   },
 };
