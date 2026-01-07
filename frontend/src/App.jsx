@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { AnimatePresence } from 'framer-motion';
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
@@ -25,6 +26,7 @@ function App() {
   return (
     <Router>
       <Analytics />
+      <SpeedInsights />
       <AnimatePresence>
         {loading && (
           <InitialBootLoader key="boot-loader" onComplete={() => setLoading(false)} />
