@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Maintenance | Astra IETM</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Rajdhani:wght@500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00E0FF;
+            --secondary: #1A1E29;
+            --background: #02040a;
+            --surface: #0A0F1C;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Background Effects */
+        .bg-noise {
+            position: absolute;
+            inset: 0;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.1)
+            );
+            background-size: 100% 4px;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .aurora-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 224, 255, 0.1) 0%, transparent 60%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: blur(80px);
+            z-index: 0;
+            animation: pulse-glow 5s infinite ease-in-out;
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+            border: 1px solid rgba(0, 224, 255, 0.1);
+            background: rgba(10, 15, 28, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 1px; /* Sharp corners for tech feel */
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            /* Corner accents */
+            clip-path: polygon(
+                0 0, 
+                100% 0, 
+                100% calc(100% - 20px), 
+                calc(100% - 20px) 100%, 
+                0 100%
+            );
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: 20px;
+            height: 20px;
+            border-top: 2px solid var(--primary);
+            border-left: 2px solid var(--primary);
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 20px;
+            height: 20px;
+            border-bottom: 2px solid var(--primary);
+            border-right: 2px solid var(--primary);
+            transform: translate(-5px, -5px); /* Adjust for clip-path */
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 20px rgba(0, 224, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-family: 'Space Mono', monospace;
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+            animation: blink 2s infinite;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 30%;
+            position: absolute;
+            box-shadow: 0 0 10px var(--primary);
+            animation: load 2s infinite cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .system-logs {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            text-align: left;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1rem;
+        }
+
+        .log-line {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .log-line::before {
+            content: '>';
+            color: var(--primary);
+            margin-right: 8px;
+        }
+
+        /* Animations */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes load {
+            0% { left: -30%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-noise"></div>
+    <div class="scanlines"></div>
+    <div class="aurora-glow"></div>
+
+    <div class="container">
+        <h1>System Offline</h1>
+        <div class="subtitle">
+            <span class="status-dot"></span>
+            <span>Maintenance Mode Active</span>
+        </div>
+
+        <p>
+            The Astra IETM system is currently undergoing scheduled maintenance and upgrades. 
+            We are enhancing the neural core for better performance. Access will be restored shortly.
+        </p>
+
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+
+        <div class="system-logs">
+            <span class="log-line">Initiating maintenance protocols... [OK]</span>
+            <span class="log-line">Optimizing database clusters... [IN PROGRESS]</span>
+            <span class="log-line">Updating security definitions... [PENDING]</span>
+            <span class="log-line" id="dynamic-log">Standby for reconnection...</span>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to cycle the last log line
+        const logs = [
+            "Standby for reconnection...",
+            "Encrypting data streams...",
+            "Verifying integrity hashes...",
+            "Syncing neural nodes..."
+        ];
+        let i = 0;
+        const logElement = document.getElementById('dynamic-log');
+        
+        setInterval(() => {
+            i = (i + 1) % logs.length;
+            logElement.textContent = logs[i];
+            logElement.style.opacity = 0.5;
+            setTimeout(() => {
+                logElement.style.opacity = 1;
+            }, 100);
+        }, 3000);
+    </script>
+</body>
+</html>
