@@ -25,9 +25,18 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from email.mime.image import MIMEImage
 
+import threading
+
+def send_email_thread(email):
+    try:
+        email.send()
+        print(f"Email sent successfully.")
+    except Exception as e:
+        print(f"Error sending email in background: {e}")
+
 def send_registration_email(registration):
     """
-    Sends a confirmation email with a QR code to the registered user.
+    Sends a confirmation email with a QR code to the registered user via a background thread.
     """
     user = registration.user
     event = registration.event
@@ -91,11 +100,8 @@ def send_registration_email(registration):
     image.add_header('Content-Disposition', 'inline', filename='qrcode.png')
     email.attach(image)
     
-    # 5. Send
-    try:
-        email.send()
-        print(f"Email sent successfully to {user.email}")
-        return True
-    except Exception as e:
-        print(f"Error sending email: {e}")
-        return False
+    # 5. Send in Background Thread
+    EmailThread = threading.Thread(target=send_email_thread, args=(email,))
+    EmailThread.start()
+    
+    return True
