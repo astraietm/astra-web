@@ -26,13 +26,15 @@ from django.conf import settings
 from email.mime.image import MIMEImage
 
 import threading
+import sys
 
 def send_email_thread(email):
     try:
+        print(f"Starting email send to {email.to}...", flush=True)
         email.send()
-        print(f"Email sent successfully.")
+        print(f"Email sent successfully to {email.to}", flush=True)
     except Exception as e:
-        print(f"Error sending email in background: {e}")
+        print(f"CRITICAL ERROR sending email: {str(e)}", file=sys.stderr, flush=True)
 
 def send_registration_email(registration):
     """
