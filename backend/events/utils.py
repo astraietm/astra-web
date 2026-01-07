@@ -33,7 +33,8 @@ def send_registration_email(registration):
     event = registration.event
     
     # 1. Generate QR Code (Raw Bytes for Email Attachment)
-    qr_data = f"registration_id:{registration.registration_id}"
+    # Using 'token' instead of non-existent 'registration_id'
+    qr_data = f"registration_token:{registration.token}"
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -58,9 +59,9 @@ def send_registration_email(registration):
         <p>You have successfully registered for <strong>{event.title}</strong>.</p>
         
         <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p><strong>Date:</strong> {event.date}</p>
+            <p><strong>Date:</strong> {event.event_date}</p>
             <p><strong>Venue:</strong> {event.venue}</p>
-            <p><strong>Registration ID:</strong> {registration.registration_id}</p>
+            <p><strong>Confirmation Token:</strong> {registration.token}</p>
         </div>
 
         <div style="text-align: center; margin: 20px 0;">

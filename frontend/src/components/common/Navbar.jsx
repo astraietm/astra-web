@@ -12,6 +12,9 @@ const Navbar = () => {
     const location = useLocation();
     const { user, logout, setIsLoginModalOpen } = useAuth();
     const profileRef = useRef(null);
+    
+    // NEW: Active Tab State to decouple animation from route/scroll
+    const [activeTab, setActiveTab] = useState(location.pathname);
 
     const navLinks = [
         { name: 'Home', path: '/' },
@@ -24,6 +27,11 @@ const Navbar = () => {
     useEffect(() => {
         setImageError(false);
     }, [user?.avatar]);
+    
+    // NEW: Sync activeTab with location (handles back button/refresh)
+    useEffect(() => {
+        setActiveTab(location.pathname);
+    }, [location.pathname]);
 
     useEffect(() => {
         if (isOpen) {
@@ -87,6 +95,7 @@ const Navbar = () => {
                     {/* 1. Logo (Left) */}
                     <Link
                         to="/"
+                        onClick={() => setActiveTab('/')}
                         className="relative z-10 flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 hover:scale-105 transition-transform shadow-lg shadow-purple-500/20"
                     >
                         <div className="w-[40px] h-[40px] bg-black/90 backdrop-blur-sm rounded-full flex items-center justify-center">
@@ -97,11 +106,13 @@ const Navbar = () => {
                     {/* 2. Navigation Links (Center) */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1">
                         {navLinks.map((link) => {
-                            const isActive = location.pathname === link.path;
+                            // NEW: Use activeTab instead of location.pathname
+                            const isActive = activeTab === link.path;
                             return (
                                 <Link
                                     key={link.name}
                                     to={link.path}
+                                    onClick={() => setActiveTab(link.path)}
                                     className="relative px-5 py-2 group"
                                 >
                                     {isActive && (
