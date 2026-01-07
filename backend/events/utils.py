@@ -18,3 +18,83 @@ def generate_qr_code(data):
     img.save(buffer, format="PNG")
     img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
     return f"data:image/png;base64,{img_str}"
+
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
+from email.mime.image import MIMEImage
+
+def send_registration_email(registration):
+    """
+    Sends a confirmation email with a QR code to the registered user.
+    """
+    user = registration.user
+    event = registration.event
+    
+    # 1. Generate QR Code (Raw Bytes for Email Attachment)
+    qr_data = f"registration_id:{registration.registration_id}"
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    buffer = io.BytesIO()
+    img.save(buffer, format='PNG')
+    qr_image_data = buffer.getvalue()
+    
+    # 2. Prepare Email Content
+    subject = f"Registration Confirmed: {event.title}"
+    
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+        <h2 style="color: #6C63FF; text-align: center;">Registration Confirmed!</h2>
+        <p>Hi <strong>{user.full_name}</strong>,</p>
+        <p>You have successfully registered for <strong>{event.title}</strong>.</p>
+        
+        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <p><strong>Date:</strong> {event.date}</p>
+            <p><strong>Venue:</strong> {event.venue}</p>
+            <p><strong>Registration ID:</strong> {registration.registration_id}</p>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <p>Please show this QR code at the entrance:</p>
+            <img src="cid:qrcode_image" alt="Event QR Code" style="width: 200px; height: 200px; border: 1px solid #ccc; padding: 5px;" />
+        </div>
+        
+        <p style="text-align: center; font-size: 12px; color: #888;">
+            &copy; 2026 Astra IETM. All Rights Reserved.
+        </p>
+    </div>
+    """
+    text_content = strip_tags(html_content)
+    
+    # 3. Create Email Message
+    email = EmailMultiAlternatives(
+        subject,
+        text_content,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.email],
+    )
+    email.attach_alternative(html_content, "text/html")
+    
+    # 4. Attach QR Code
+    image = MIMEImage(qr_image_data)
+    image.add_header('Content-ID', '<qrcode_image>')
+    image.add_header('Content-Disposition', 'inline', filename='qrcode.png')
+    email.attach(image)
+    
+    # 5. Send
+    try:
+        email.send()
+        print(f"Email sent successfully to {user.email}")
+        return True
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        return False
