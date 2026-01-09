@@ -113,24 +113,41 @@ const GalleryGrid = () => {
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Category Filter - Scrollable on mobile */}
-      <div className="sticky top-20 z-30 bg-background/80 backdrop-blur-md py-4 border-b border-white/5 -mx-4 px-4 md:static md:bg-transparent md:border-none md:p-0">
-          <div className="flex overflow-x-auto pb-2 md:pb-0 md:flex-wrap md:justify-center gap-3 no-scrollbar snap-x">
-            {categories.map((cat) => (
-                <button
-                key={cat.id}
-                onClick={() => { setFilter(cat.id); setVisibleCount(9); }}
-                className={`
-                    snap-start flex-shrink-0 px-6 py-3 md:py-2 rounded-full font-mono text-sm tracking-wider uppercase border transition-all duration-300 flex items-center gap-2 whitespace-nowrap
-                    ${filter === cat.id 
-                    ? 'bg-primary/20 border-primary text-primary shadow-[0_0_20px_rgba(0,224,255,0.3)]' 
-                    : 'bg-surface/50 border-white/10 text-gray-400 hover:border-primary/50 hover:text-white'}
-                `}
-                >
-                {cat.icon && <cat.icon className="w-4 h-4" />}
-                {cat.label}
-                </button>
-            ))}
+      {/* Modern Filter Tabs */}
+      <div className="sticky top-20 z-30 bg-black/40 backdrop-blur-xl border-b border-white/5 -mx-4 px-4 md:-mx-0 md:px-0 md:bg-transparent md:border-none mb-8">
+          <div className="max-w-7xl mx-auto flex overflow-x-auto no-scrollbar py-4 md:justify-center gap-2 md:gap-4 mask-image-fade">
+            {categories.map((cat) => {
+                const isActive = filter === cat.id;
+                return (
+                    <button
+                        key={cat.id}
+                        onClick={() => { setFilter(cat.id); setVisibleCount(9); }}
+                        className={`
+                            relative px-4 py-2 flex items-center gap-2 text-sm font-mono tracking-widest uppercase transition-all duration-300 group flex-shrink-0
+                            ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}
+                        `}
+                    >
+                        {/* Icon */}
+                        {cat.icon && (
+                            <cat.icon className={`w-4 h-4 transition-colors ${isActive ? 'text-primary' : 'text-gray-600 group-hover:text-white'}`} />
+                        )}
+                        
+                        {/* Text */}
+                        <span className="relative z-10">{cat.label}</span>
+
+                        {/* Active Indicator (Glowing Underline) */}
+                        {isActive && (
+                            <motion.div 
+                                layoutId="activeTab"
+                                className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary shadow-[0_0_15px_rgba(0,224,255,0.7)]"
+                            />
+                        )}
+                        
+                        {/* Hover Effect (Subtle bg) */}
+                        <div className={`absolute inset-0 bg-white/5 skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity rounded-sm ${isActive ? 'opacity-0' : ''}`}></div>
+                    </button>
+                );
+            })}
           </div>
       </div>
 
