@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Shield, Search, Filter, Download, AlertTriangle, CheckCircle, Info, XCircle } from 'lucide-react';
 
@@ -33,18 +35,29 @@ const LogRow = ({ type, message, user, ip, time }) => (
 );
 
 const AdminLogs = () => {
+    const { token } = useAuth();
+    const API_URL = import.meta.env.VITE_API_URL;
+    
     const [searchTerm, setSearchTerm] = useState('');
+    const [logs, setLogs] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const logs = [
-        { type: 'INFO', message: 'User login successful', user: 'admin@astra.net', ip: '192.168.1.4', time: '10:42:05 AM' },
-        { type: 'SUCCESS', message: 'New Event created: Cyber Workshop', user: 'admin@astra.net', ip: '192.168.1.4', time: '10:38:12 AM' },
-        { type: 'ERROR', message: 'Failed login attempt (Wrong Password)', user: 'unknown', ip: '45.32.11.89', time: '10:15:00 AM' },
-        { type: 'WARN', message: 'High CPU usage detected (85%)', user: 'SYSTEM', ip: 'localhost', time: '09:55:23 AM' },
-        { type: 'INFO', message: 'Daily database backup completed', user: 'SYSTEM', ip: 'localhost', time: '04:00:00 AM' },
-        { type: 'SUCCESS', message: 'Email blast dispatched (1250 sent)', user: 'admin@astra.net', ip: '192.168.1.4', time: 'Yesterday' },
-        { type: 'ERROR', message: 'API connection timeout: /stripe/v1', user: 'system', ip: 'localhost', time: 'Yesterday' },
-        { type: 'INFO', message: 'New user registration: john.doe@mit.edu', user: 'john.doe', ip: '10.0.0.12', time: 'Yesterday' },
-    ];
+    useEffect(() => {
+        fetchLogs();
+    }, [token]);
+
+    const fetchLogs = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/ops/logs/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setLogs(response.data);
+        } catch (error) {
+            console.error("Failed to fetch logs", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto h-[calc(100vh-140px)] flex flex-col">
@@ -94,9 +107,16 @@ const AdminLogs = () => {
                         </thead>
                         <tbody>
                             {logs
-                                .filter(log => log.message.toLowerCase().includes(searchTerm.toLowerCase()) || log.user.toLowerCase().includes(searchTerm.toLowerCase()))
+                                .filter(log => (log.action || '').toLowerCase().includes(searchTerm.toLowerCase()) || (log.user_email || '').toLowerCase().includes(searchTerm.toLowerCase()))
                                 .map((log, i) => (
-                                    <LogRow key={i} {...log} />
+                                    <LogRow 
+                                        key={i} 
+                                        type={log.level}
+                                        message={log.action}
+                                        user={log.user_email}
+                                        ip={log.ip_address}
+                                        time={new Date(log.timestamp).toLocaleString()}
+                                    />
                             ))}
                         </tbody>
                     </table>

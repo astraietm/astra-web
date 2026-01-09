@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { Settings, Save, Lock, Globe, Bell, Server, Database, Moon, Sun } from 'lucide-react';
 
@@ -36,6 +38,9 @@ const SettingItem = ({ label, description, rightElement }) => (
 );
 
 const AdminSettings = () => {
+    const { token } = useAuth();
+    const API_URL = import.meta.env.VITE_API_URL;
+
     const [settings, setSettings] = useState({
         registrationOpen: true,
         maintenanceMode: false,
@@ -44,6 +49,40 @@ const AdminSettings = () => {
         twoFactor: true,
         darkMode: true
     });
+    const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        fetchSettings();
+    }, [token]);
+
+    const fetchSettings = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/ops/settings/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            // Merge remote settings with defaults
+            if (response.data) {
+                setSettings(prev => ({ ...prev, ...response.data }));
+            }
+        } catch (error) {
+            console.error("Failed to fetch settings", error);
+        }
+    };
+
+    const handleSave = async () => {
+        setSaving(true);
+        try {
+            await axios.post(`${API_URL}/ops/settings/`, settings, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            alert('Settings saved successfully!');
+        } catch (error) {
+            console.error("Failed to save settings", error);
+            alert('Failed to save settings.');
+        } finally {
+            setSaving(false);
+        }
+    };
 
     const updateSetting = (key, value) => {
         setSettings(prev => ({ ...prev, [key]: value }));
@@ -59,9 +98,13 @@ const AdminSettings = () => {
                     </h1>
                     <p className="text-sm text-gray-400 mt-1">Configure global application parameters</p>
                 </div>
-                <button className="flex items-center gap-2 px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all">
+                <button 
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="flex items-center gap-2 px-6 py-2 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50"
+                >
                     <Save size={18} />
-                    Save Changes
+                    {saving ? 'Saving...' : 'Save Changes'}
                 </button>
             </div>
 

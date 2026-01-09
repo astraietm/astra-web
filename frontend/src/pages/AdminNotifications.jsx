@@ -29,7 +29,63 @@ const NotificationItem = ({ type, title, message, time, recipients }) => (
 );
 
 const AdminNotifications = () => {
-    const [activeTab, setActiveTab] = useState('compose');
+    const { token } = useAuth();
+    const API_URL = import.meta.env.VITE_API_URL;
+    
+    const [notifications, setNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [sending, setSending] = useState(false);
+    
+    // Form State
+    const [formData, setFormData] = useState({
+        audience: 'All Registered Users',
+        priority: 'NORMAL',
+        subject: '',
+        message: ''
+    });
+
+    useEffect(() => {
+        fetchNotifications();
+    }, [token]);
+
+    const fetchNotifications = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/ops/notifications/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setNotifications(response.data);
+        } catch (error) {
+            console.error("Failed to fetch notifications", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSend = async () => {
+        if (!formData.subject || !formData.message) return;
+        
+        setSending(true);
+        try {
+            await axios.post(`${API_URL}/ops/notifications/`, {
+                subject: formData.subject,
+                message: formData.message,
+                priority: formData.priority,
+                recipients_criteria: formData.audience
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            
+            // Refund form
+            setFormData({ ...formData, subject: '', message: '' });
+            fetchNotifications(); // Refresh list
+            alert('Notification dispatched successfully!');
+        } catch (error) {
+            console.error("Failed to send notification", error);
+            alert('Failed to dispatch notification.');
+        } finally {
+            setSending(false);
+        }
+    };
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
@@ -52,23 +108,29 @@ const AdminNotifications = () => {
                             Compose Blast
                         </h2>
                         
-                        <form className="space-y-4">
+                        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-400 uppercase">Target Audience</label>
-                                    <select className="w-full bg-[#0B0F14] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-primary transition-colors">
+                                    <select 
+                                        value={formData.audience}
+                                        onChange={(e) => setFormData({...formData, audience: e.target.value})}
+                                        className="w-full bg-[#0B0F14] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                                    >
                                         <option>All Registered Users</option>
-                                        <option>Event Attendees Only</option>
                                         <option>Admins Only</option>
-                                        <option>Specific Email List</option>
                                     </select>
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-400 uppercase">Priority Level</label>
-                                    <select className="w-full bg-[#0B0F14] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-primary transition-colors">
-                                        <option>Normal Info</option>
-                                        <option>Urgent Alert</option>
-                                        <option>Success Update</option>
+                                    <select 
+                                        value={formData.priority}
+                                        onChange={(e) => setFormData({...formData, priority: e.target.value})}
+                                        className="w-full bg-[#0B0F14] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                                    >
+                                        <option value="NORMAL">Normal Info</option>
+                                        <option value="URGENT">Urgent Alert</option>
+                                        <option value="SUCCESS">Success Update</option>
                                     </select>
                                 </div>
                             </div>
@@ -77,8 +139,11 @@ const AdminNotifications = () => {
                                 <label className="text-xs font-bold text-gray-400 uppercase">Subject Line</label>
                                 <input 
                                     type="text" 
+                                    value={formData.subject}
+                                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
                                     placeholder="e.g., Update regarding Hackathon Schedule"
                                     className="w-full bg-[#0B0F14] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-primary transition-colors"
+                                    required
                                 />
                             </div>
 
@@ -86,15 +151,22 @@ const AdminNotifications = () => {
                                 <label className="text-xs font-bold text-gray-400 uppercase">Message Content</label>
                                 <textarea 
                                     rows="8"
+                                    value={formData.message}
+                                    onChange={(e) => setFormData({...formData, message: e.target.value})}
                                     placeholder="Type your message here..."
                                     className="w-full bg-[#0B0F14] border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-primary transition-colors resize-none"
+                                    required
                                 ></textarea>
                             </div>
 
                             <div className="pt-4 flex justify-end">
-                                <button type="button" className="px-6 py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2">
+                                <button 
+                                    type="submit" 
+                                    disabled={sending}
+                                    className="px-6 py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2 disabled:opacity-50"
+                                >
                                     <Send size={18} />
-                                    Dispatch Notification
+                                    {sending ? 'Dispatching...' : 'Dispatch Notification'}
                                 </button>
                             </div>
                         </form>
@@ -103,37 +175,21 @@ const AdminNotifications = () => {
 
                 {/* Right Column: History */}
                 <div className="space-y-6">
-                    <div className="bg-vision-card backdrop-blur-2xl border border-white/5 p-6 rounded-[20px] h-full">
+                    <div className="bg-vision-card backdrop-blur-2xl border border-white/5 p-6 rounded-[20px] h-full flex flex-col">
                         <h3 className="text-lg font-bold text-white mb-6">Recent Dispatches</h3>
-                        <div className="space-y-3">
-                            <NotificationItem 
-                                type="normal"
-                                title="Registration Reminder"
-                                message="Don't forget to check in for the Cyber Defense event tomorrow morning."
-                                time="2h ago"
-                                recipients={1250}
-                            />
-                            <NotificationItem 
-                                type="urgent"
-                                title="Server Maintenance"
-                                message="System will be down for 30 mins tonight for critical updates."
-                                time="5h ago"
-                                recipients={3400}
-                            />
-                            <NotificationItem 
-                                type="success"
-                                title="Hackathon Winners"
-                                message="Congratulations to Team NullPointer for winning the 2024 Bash!"
-                                time="1d ago"
-                                recipients={2800}
-                            />
-                            <NotificationItem 
-                                type="normal"
-                                title="Welcome New Members"
-                                message="Weekly welcome digest sent to all new signups."
-                                time="2d ago"
-                                recipients={45}
-                            />
+                        <div className="space-y-3 overflow-y-auto flex-1 h-0 min-h-[400px]">
+                            {loading ? <p className="text-gray-500 text-sm">Loading history...</p> : 
+                             notifications.length === 0 ? <p className="text-gray-500 text-sm">No notifications sent yet.</p> :
+                             notifications.map((notif) => (
+                                <NotificationItem 
+                                    key={notif.id}
+                                    type={notif.priority === 'URGENT' ? 'urgent' : notif.priority === 'SUCCESS' ? 'success' : 'normal'}
+                                    title={notif.subject}
+                                    message={notif.message}
+                                    time={new Date(notif.created_at).toLocaleDateString()}
+                                    recipients={notif.recipients_criteria}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

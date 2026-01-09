@@ -7,5 +7,6 @@ urlpatterns = [
     path('health/', health, name='health_check'), # Health Check
     path('auth/', include('authentication.urls')), # Authentication Endpoints
     path('gallery/', include('gallery.urls')), # Gallery Endpoints
+    path('ops/', include('ops.urls')), # Operations Endpoints
     path('', include('events.urls')), # Events and Registration Endpoints
 ]
