@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
     Bell, 
@@ -7,12 +8,14 @@ import {
     User,
     Circle,
     LogOut,
-    Menu
+    Menu,
+    ArrowLeft
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const searchInputRef = useRef(null);
 
     useEffect(() => {
@@ -88,11 +91,11 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
                         <div className="absolute right-0 top-full pt-2 w-48 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all z-[100]">
                             <div className="bg-surface border border-border rounded-lg shadow-xl p-2">
                                 <button 
-                                    onClick={logout}
+                                    onClick={() => navigate('/')}
                                     className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-md transition-colors"
                                 >
-                                    <LogOut className="w-4 h-4" />
-                                    Logout
+                                    <ArrowLeft className="w-4 h-4" />
+                                    Back
                                 </button>
                             </div>
                         </div>
