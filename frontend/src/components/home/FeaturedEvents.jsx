@@ -1,13 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import FadeInUp from '../common/FadeInUp';
 import EventCard from '../events/EventCard';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import eventsData from '../../data/events';
+import axios from 'axios';
 
 const FeaturedEvents = () => {
-    // Show only the first 3 events on the homepage
-    const featuredEvents = eventsData.slice(0, 3);
+    const [featuredEvents, setFeaturedEvents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const API_URL = import.meta.env.VITE_API_URL;
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/events/`);
+                // Assume API returns valid event objects. 
+                // We'll take the first 3. Ideally backend should have a /featured endpoint or sorting.
+                setFeaturedEvents(response.data.slice(0, 3));
+            } catch (error) {
+                console.error("Failed to fetch events:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEvents();
+    }, [API_URL]);
 
     return (
         <section className="py-20 md:py-32 bg-background relative overflow-hidden">
@@ -33,13 +51,25 @@ const FeaturedEvents = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {featuredEvents.map((event, index) => (
-                        <FadeInUp key={event.id} delay={index * 0.1} className="h-full">
-                            <EventCard event={event} index={index} />
-                        </FadeInUp>
-                    ))}
-                </div>
+                {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                         {[1, 2, 3].map((i) => (
+                            <div key={i} className="h-[400px] bg-white/5 rounded-3xl animate-pulse border border-white/10"></div>
+                         ))}
+                    </div>
+                ) : featuredEvents.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {featuredEvents.map((event, index) => (
+                            <FadeInUp key={event.id} delay={index * 0.1} className="h-full">
+                                <EventCard event={event} index={index} />
+                            </FadeInUp>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10">
+                        <p className="text-gray-400">No upcoming events scheduled at the moment.</p>
+                    </div>
+                )}
             </div>
         </section>
     );
