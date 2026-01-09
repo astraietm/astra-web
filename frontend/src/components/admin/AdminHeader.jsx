@@ -70,7 +70,7 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
                         </button>
                         
                         {/* Dropdown Menu */}
-                        <div className="absolute right-0 top-full mt-2 w-48 bg-surface border border-border rounded-lg shadow-xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all p-2 z-[100]">
+                        <div className="absolute right-0 top-full mt-2 w-48 bg-surface border border-border rounded-lg shadow-xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all p-2 z-[100]">
                             <button 
                                 onClick={logout}
                                 className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-md transition-colors"

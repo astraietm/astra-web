@@ -10,6 +10,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('jwt_access_token'));
+    const [loading, setLoading] = useState(true);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [pendingAction, setPendingAction] = useState(null); 
 
@@ -27,13 +28,14 @@ export const AuthProvider = ({ children }) => {
                         email: decoded.email,
                         name: decoded.full_name,
                         avatar: decoded.avatar,
-                        is_staff: decoded.is_staff || false // Handle the is_staff claim
+                        is_staff: decoded.is_staff || false
                     });
                 }
             } catch (e) {
                 logout();
             }
         }
+        setLoading(false);
     }, [token]);
 
     const handleServerLogin = (serverResponse) => {
@@ -89,7 +91,8 @@ export const AuthProvider = ({ children }) => {
             handleServerLogin, 
             logout,
             requireLogin,
-            pendingAction
+            pendingAction,
+            loading
         }}>
             {children}
         </AuthContext.Provider>
