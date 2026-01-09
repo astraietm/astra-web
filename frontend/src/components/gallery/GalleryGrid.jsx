@@ -30,6 +30,26 @@ const GalleryGrid = () => {
 
 
 
+  // Filter Items Logic (Moved up for navigate dependency)
+  const filteredItems = filter === 'all' 
+    ? items 
+    : items.filter(item => item.category === filter);
+
+  const visibleItems = filteredItems.slice(0, visibleCount);
+
+  // Navigation Logic (Moved up for useEffect dependency)
+  const navigate = useCallback((direction) => {
+    if (!selectedImage) return;
+    const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
+    let nextIndex;
+    if (direction === 'next') {
+        nextIndex = (currentIndex + 1) % filteredItems.length;
+    } else {
+        nextIndex = (currentIndex - 1 + filteredItems.length) % filteredItems.length;
+    }
+    setSelectedImage(filteredItems[nextIndex]);
+  }, [selectedImage, filteredItems]);
+
   // Lock body scroll logic + Wheel Navigation
   useEffect(() => {
     if (selectedImage) {
@@ -81,24 +101,7 @@ const GalleryGrid = () => {
     }
   };
 
-  const filteredItems = filter === 'all' 
-    ? items 
-    : items.filter(item => item.category === filter);
 
-  const visibleItems = filteredItems.slice(0, visibleCount);
-
-  // Navigation Logic
-  const navigate = useCallback((direction) => {
-    if (!selectedImage) return;
-    const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
-    let nextIndex;
-    if (direction === 'next') {
-        nextIndex = (currentIndex + 1) % filteredItems.length;
-    } else {
-        nextIndex = (currentIndex - 1 + filteredItems.length) % filteredItems.length;
-    }
-    setSelectedImage(filteredItems[nextIndex]);
-  }, [selectedImage, filteredItems]);
 
   // Keyboard navigation
   useEffect(() => {
