@@ -79,7 +79,24 @@ const AdminRegistrations = () => {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 pb-12">
+            {/* Header Section */}
+            <div className="flex justify-between items-center mb-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-white tracking-widest uppercase flex items-center gap-3">
+                         <Users className="text-primary w-6 h-6" />
+                         Record_Archives
+                    </h1>
+                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Intelligence Database & Personnel Logistics</p>
+                </div>
+                <button 
+                    onClick={fetchRegistrations}
+                    className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-all group"
+                >
+                    <Download className={`w-4 h-4 ${loading ? 'animate-spin text-primary' : 'group-hover:scale-110'}`} />
+                </button>
+            </div>
+
             {/* Action Bar */}
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="flex items-center gap-4 flex-1 w-full">

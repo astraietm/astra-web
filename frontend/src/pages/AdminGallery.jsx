@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Upload, Trash2, Shield, Image, Loader2, Edit2, X, Check, Database } from 'lucide-react';
+import { ArrowLeft, Upload, Trash2, Shield, Image, Loader2, Edit2, X, Check, Database, AlertTriangle } from 'lucide-react';
 
 const AdminGallery = () => {
     const { user, token } = useAuth();
     const navigate = useNavigate();
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [uploading, setUploading] = useState(false);
-    
+
     // Form State
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('workshops');
@@ -30,12 +31,15 @@ const AdminGallery = () => {
     }, [user, navigate]);
 
     const fetchGalleryItems = async () => {
+        setLoading(true);
+        setError(null);
         try {
             const response = await axios.get(`${API_URL}/gallery/`);
             setItems(response.data);
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching gallery:', error);
+            setError('Neural link severed. Failed to retrieve asset archives.');
+        } finally {
             setLoading(false);
         }
     };
@@ -169,15 +173,6 @@ const AdminGallery = () => {
         setDeleteId(id);
     };
 
-    if (loading) return (
-         <div className="min-h-screen bg-[#030712] flex items-center justify-center">
-             <div className="flex flex-col items-center gap-4">
-                 <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                 <p className="text-white/60 font-mono animate-pulse uppercase tracking-widest text-sm">Loading Neural Archives...</p>
-             </div>
-         </div>
-     );
-
     return (
         <div className="space-y-8 pb-12">
             {/* Context Header */}
@@ -189,7 +184,25 @@ const AdminGallery = () => {
                     </h1>
                     <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Manage Peripheral Intelligence Archives</p>
                 </div>
+                <button 
+                    onClick={fetchGalleryItems}
+                    className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-all group"
+                    title="Resync Registry"
+                >
+                    <Shield className={`w-4 h-4 ${loading ? 'animate-spin text-primary' : 'group-hover:scale-110'}`} />
+                </button>
             </div>
+
+            {error && (
+                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-between group">
+                    <div className="flex items-center gap-3 text-rose-500">
+                        <AlertTriangle className="w-5 h-5" />
+                        <span className="text-xs font-mono font-bold uppercase tracking-widest">{error}</span>
+                    </div>
+                    <button onClick={fetchGalleryItems} className="text-[10px] font-mono text-rose-500 hover:underline uppercase tracking-widest">Retry_Sync</button>
+                </div>
+            )}
+
 
 
                 <div className="grid lg:grid-cols-3 gap-8">
@@ -373,15 +386,20 @@ const AdminGallery = () => {
                             ))}
                         </div>
                         
-                        {items.length === 0 && (
-                            <div className="h-64 flex flex-col items-center justify-center border border-dashed border-white/10 rounded-3xl bg-white/[0.02] backdrop-blur-sm">
-                                <Shield className="w-12 h-12 text-white/10 mb-4" />
-                                <p className="text-white/40 font-mono text-sm">ARCHIVE EMPTY</p>
+                        {loading && items.length === 0 ? (
+                            <div className="space-y-4">
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="h-24 bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse" />
+                                ))}
                             </div>
-                        )}
+                        ) : items.length === 0 ? (
+                            <div className="h-64 flex flex-col items-center justify-center border border-dashed border-white/5 rounded-3xl bg-[#0A0A0B]">
+                                <Shield className="w-12 h-12 text-white/5 mb-4" />
+                                <p className="text-gray-500 font-mono text-[10px] uppercase tracking-[0.3em]">No Intelligence Assets Logged</p>
+                            </div>
+                        ) : null}
                     </div>
                 </div>
-                {/* Custom Delete Confirmation Modal */}
                 {/* Custom Delete Confirmation Modal */}
                 {deleteId && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

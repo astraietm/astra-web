@@ -16,10 +16,12 @@ import {
     Activity
 } from 'lucide-react';
 
-const SidebarItem = ({ to, icon: Icon, label, isCollapsed }) => {
+const SidebarItem = ({ to, icon: Icon, label, isCollapsed, end = false, onClick }) => {
     return (
         <NavLink
             to={to}
+            end={end}
+            onClick={onClick}
             className={({ isActive }) => `
                 flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative
                 ${isActive 
@@ -47,10 +49,10 @@ const SidebarItem = ({ to, icon: Icon, label, isCollapsed }) => {
     );
 };
 
-const AdminSidebar = ({ isCollapsed, setIsCollapsed }) => {
+const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
     const sections = [
         { group: "MAIN", items: [
-            { to: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+            { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
             { to: "/admin/events", icon: Calendar, label: "Events" },
             { to: "/admin/registrations", icon: Users, label: "Registrations" },
         ]},
@@ -67,11 +69,28 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }) => {
     ];
 
     return (
-        <motion.aside
-            initial={false}
-            animate={{ width: isCollapsed ? 80 : 280 }}
-            className="fixed left-0 top-0 h-screen bg-[#0A0A0B] border-r border-white/5 flex flex-col z-[100] transition-all duration-300"
-        >
+        <>
+            {/* Mobile Overlay */}
+            <AnimatePresence>
+                {isMobileOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsMobileOpen(false)}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[95] lg:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
+            <motion.aside
+                initial={false}
+                animate={{ 
+                    width: isCollapsed ? 80 : 280,
+                    x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -280 : 0)
+                }}
+                className={`fixed left-0 top-0 h-screen bg-[#0A0A0B] border-r border-white/5 flex flex-col z-[100] transition-all duration-300 lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+            >
             {/* Logo Section */}
             <div className="p-6 flex items-center gap-3 border-b border-white/5 h-20">
                 <div className="w-10 h-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center flex-shrink-0">
@@ -106,6 +125,8 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }) => {
                                     icon={item.icon} 
                                     label={item.label} 
                                     isCollapsed={isCollapsed} 
+                                    end={item.end}
+                                    onClick={() => setIsMobileOpen(false)}
                                 />
                             ))}
                         </div>
@@ -123,6 +144,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }) => {
                 </button>
             </div>
         </motion.aside>
+        </>
     );
 };
 

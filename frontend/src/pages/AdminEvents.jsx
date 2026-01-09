@@ -15,7 +15,9 @@ import {
     ArrowLeft,
     Save,
     X,
-    Shield
+    Shield,
+    AlertTriangle,
+    RotateCcw
 } from 'lucide-react';
 
 const AdminEvents = () => {
@@ -23,6 +25,7 @@ const AdminEvents = () => {
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
 
@@ -50,14 +53,17 @@ const AdminEvents = () => {
     }, [user, navigate]);
 
     const fetchEvents = async () => {
+        setLoading(true);
+        setError(null);
         try {
             const response = await axios.get(`${API_URL}/operations/events/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setEvents(response.data);
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching events:', error);
+            setError('Failed to sync with intelligence database.');
+        } finally {
             setLoading(false);
         }
     };
@@ -132,8 +138,6 @@ const AdminEvents = () => {
         }
     };
 
-    if (loading) return <div className="text-white text-center mt-20">Initializing...</div>;
-
     return (
         <div className="space-y-8 pb-12">
             {/* Context Header */}
@@ -145,14 +149,34 @@ const AdminEvents = () => {
                     </h1>
                     <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Configure Mission Parameters & Protocols</p>
                 </div>
-                <button 
-                    onClick={handleCreate}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-primary text-black rounded-xl font-black shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all uppercase tracking-widest text-xs"
-                >
-                    <Plus className="w-4 h-4" />
-                    New_Operation
-                </button>
+                <div className="flex gap-4">
+                    <button 
+                        onClick={fetchEvents}
+                        className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-all"
+                        title="Resync Data"
+                    >
+                        <Shield className={`w-4 h-4 ${loading ? 'animate-spin text-primary' : ''}`} />
+                    </button>
+                    <button 
+                        onClick={handleCreate}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-primary text-black rounded-xl font-black shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all uppercase tracking-widest text-xs"
+                    >
+                        <Plus className="w-4 h-4" />
+                        New_Operation
+                    </button>
+                </div>
             </div>
+
+            {error && (
+                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-between group">
+                    <div className="flex items-center gap-3 text-rose-500">
+                        <AlertTriangle className="w-5 h-5" />
+                        <span className="text-xs font-mono font-bold uppercase tracking-widest">{error}</span>
+                    </div>
+                    <button onClick={fetchEvents} className="text-[10px] font-mono text-rose-500 hover:underline uppercase tracking-widest">Retry_Uplink</button>
+                </div>
+            )}
+
 
 
                 {isEditing ? (
@@ -308,15 +332,23 @@ const AdminEvents = () => {
                         </form>
                     </motion.div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {Array.isArray(events) && events.map(event => (
-                            <motion.div 
-                                key={event.id}
-                                layout
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden group hover:border-white/20 transition-all"
-                            >
+                    <div className="space-y-6">
+                        {loading && events.length === 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="bg-white/[0.02] border border-white/5 h-80 rounded-3xl animate-pulse" />
+                                ))}
+                            </div>
+                        ) : events.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {events.map(event => (
+                                    <motion.div 
+                                        key={event.id}
+                                        layout
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="bg-[#0A0A0B] border border-white/5 rounded-3xl overflow-hidden group hover:border-primary/20 transition-all shadow-xl"
+                                    >
                                 <div className="h-48 overflow-hidden relative">
                                     <img 
                                         src={event.image || 'https://via.placeholder.com/400x200'} 
@@ -365,7 +397,17 @@ const AdminEvents = () => {
                                     </div>
                                 </div>
                             </motion.div>
-                        ))}
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-20 bg-[#0A0A0B] rounded-3xl border border-dashed border-white/5">
+                                <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-6 text-gray-400">
+                                    <Shield className="w-8 h-8 opacity-20" />
+                                </div>
+                                <h3 className="text-lg font-bold text-white mb-2 uppercase tracking-widest">No_Active_Signals</h3>
+                                <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em]">Awaiting tactical deployment protocols</p>
+                            </div>
+                        )}
                     </div>
                 )}
         </div>

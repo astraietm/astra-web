@@ -11,22 +11,36 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const AdminHeader = ({ title }) => {
+const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
     const { user, logout } = useAuth();
 
     return (
-        <header className="h-20 bg-[#0A0A0B]/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-[90] flex items-center justify-between px-8">
+        <header className="h-20 bg-[#0A0A0B]/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-[90] flex items-center justify-between px-4 md:px-8">
             {/* Page Context */}
-            <div className="flex items-center gap-4">
-                <h2 className="text-white font-display font-medium text-lg tracking-wide uppercase">
+            <div className="flex items-center gap-3 md:gap-4">
+                <button 
+                    onClick={onMenuClick}
+                    className="p-2 -ml-2 hover:bg-white/5 rounded-lg lg:hidden text-gray-400 hover:text-white transition-colors"
+                >
+                    <Menu className="w-6 h-6" />
+                </button>
+                <h2 className="text-white font-display font-medium text-sm md:text-lg tracking-wide uppercase truncate max-w-[120px] md:max-w-none">
                     {title || "Admin Console"}
                 </h2>
-                <div className="h-4 w-px bg-white/10 hidden md:block"></div>
-                <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                    <span className="text-[10px] font-mono font-bold text-emerald-500 uppercase tracking-widest">System Online</span>
+                <div className="h-4 w-px bg-white/10 hidden sm:block"></div>
+                <div className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-full border whitespace-nowrap transition-colors duration-500 ${
+                    isSystemOnline 
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' 
+                    : 'bg-rose-500/10 border-rose-500/20 text-rose-500'
+                }`}>
+                    <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500 shadow-[0_0_8px_red]'}`}></div>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest">
+                        {isSystemOnline ? 'System Online' : 'System Offline'}
+                    </span>
                 </div>
             </div>
+
+
 
             {/* Actions & Profile */}
             <div className="flex items-center gap-6">

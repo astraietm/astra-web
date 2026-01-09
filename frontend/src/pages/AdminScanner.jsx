@@ -79,35 +79,20 @@ const AdminScanner = () => {
     }
 
     return (
-        <div className="min-h-[100dvh] bg-black text-white flex flex-col overflow-hidden fixed inset-0 z-[200]">
-            
-            {/* Mobile Optimized Header */}
-            <div className="px-4 py-4 border-b border-white/10 flex justify-between items-center bg-[#0A0F1C] safe-top">
-                <div className="flex items-center gap-3">
-                    <button 
-                        onClick={() => navigate('/admin')}
-                        className="p-2 -ml-2 hover:bg-white/5 rounded-full text-white/50 hover:text-white transition-colors"
-                    >
-                        <ArrowLeft className="w-5 h-5" />
-                    </button>
-                    <div>
-                        <h1 className="text-lg font-bold flex items-center gap-2">
-                             Admin Scanner
-                        </h1>
-                        <p className="text-[10px] text-primary font-mono tracking-widest uppercase opacity-70">Astra Protocol v2.4</p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full border border-primary/20">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
-                    LIVE
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <div>
+                     <h1 className="text-2xl font-bold text-white tracking-widest uppercase flex items-center gap-3">
+                         <Scan className="text-primary w-6 h-6" />
+                         Scanner_Terminal
+                    </h1>
+                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Live QR Verification Uplink</p>
                 </div>
             </div>
 
-            {/* Main Content Area */}
-            <div className="flex-1 relative bg-black overflow-hidden">
-                
-                {/* Scanner Viewport */}
-                {isScanning && !scanResult && (
+            <div className="relative aspect-auto md:aspect-video lg:aspect-square max-w-2xl mx-auto rounded-3xl border border-white/10 bg-black overflow-hidden shadow-2xl">
+                 {/* Scanner Viewport */}
+                 {isScanning && !scanResult && (
                     <div className="absolute inset-0">
                         <Scanner 
                             onScan={handleScan}
@@ -125,32 +110,29 @@ const AdminScanner = () => {
                         />
                         {/* Responsive Finder Overlay */}
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                            {/* Darkened mask */}
                             <div className="absolute inset-0 bg-black/40"></div>
-                            
-                            {/* Clear Scanning Area */}
-                            <div className="w-[70vw] h-[70vw] max-w-[300px] max-h-[300px] relative bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
+                            <div className="w-[70%] aspect-square max-w-[300px] relative bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
                                 <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-lg"></div>
                                 <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-lg"></div>
                                 <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-lg"></div>
                                 <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-lg"></div>
                                 
-                                {/* Animated Scan Line */}
                                 <motion.div 
                                     animate={{ top: ['10%', '90%'] }}
                                     transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                                    className="absolute left-0 right-0 h-0.5 bg-primary/80 shadow-[0_0_15px_rgba(0,255,255,0.8)] z-20"
+                                    className="absolute left-1 right-1 h-0.5 bg-primary/80 shadow-[0_0_15px_rgba(0,255,255,0.8)] z-20"
                                 />
                             </div>
                         </div>
                         
-                        <div className="absolute bottom-12 left-0 right-0 flex justify-center z-20 px-6">
-                            <p className="text-xs font-mono bg-black/80 text-white/70 px-6 py-3 rounded-2xl backdrop-blur-xl border border-white/10 text-center">
-                                POSITION QR CODE IN THE CENTER
+                        <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20 px-6">
+                            <p className="text-[10px] font-mono bg-black/80 text-white/50 px-4 py-2 rounded-xl backdrop-blur-xl border border-white/5 uppercase tracking-widest text-center">
+                                Align access key in frame
                             </p>
                         </div>
                     </div>
                 )}
+
 
                 {/* Verification Overlay */}
                 {isLoading && (

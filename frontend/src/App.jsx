@@ -25,7 +25,15 @@ import InitialBootLoader from './components/common/InitialBootLoader';
 import LoginModal from './components/auth/LoginModal';
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => {
+    // Check if we've already booted in this session
+    return !sessionStorage.getItem('astra_booted');
+  });
+
+  const handleBootComplete = () => {
+    sessionStorage.setItem('astra_booted', 'true');
+    setLoading(false);
+  };
 
   return (
     <Router>
@@ -33,7 +41,7 @@ function App() {
       <SpeedInsights />
       <AnimatePresence>
         {loading && (
-          <InitialBootLoader key="boot-loader" onComplete={() => setLoading(false)} />
+          <InitialBootLoader key="boot-loader" onComplete={handleBootComplete} />
         )}
       </AnimatePresence>
 
@@ -43,15 +51,13 @@ function App() {
           <LoginModal /> {/* Global Login Modal */}
           <SmoothScroll>
             <Routes>
-              {/* ADMIN SCANNER ROUTE (Outside Layouts for Fullscreen) */}
-              <Route path="/admin/scanner" element={<AdminScanner />} />
-
               {/* NEW ADMIN CONSOLE LAYOUT */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="registrations" element={<AdminRegistrations />} />
                 <Route path="events" element={<AdminEvents />} />
                 <Route path="gallery" element={<AdminGallery />} />
+                <Route path="scanner" element={<AdminScanner />} />
                 <Route path="blog" element={<AdminPlaceholder title="Blog Manager" />} />
                 <Route path="notifications" element={<AdminPlaceholder title="Notification Dispatcher" />} />
                 <Route path="logs" element={<AdminPlaceholder title="Security Logs" />} />

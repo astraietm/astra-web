@@ -60,6 +60,7 @@ const AdminDashboard = () => {
         attendanceRate: 0
     });
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -68,6 +69,8 @@ const AdminDashboard = () => {
     }, [token]);
 
     const fetchStats = async () => {
+        setLoading(true);
+        setError(null);
         try {
             const [regRes, eventRes] = await Promise.all([
                 axios.get(`${API_URL}/admin-registrations/`, { headers: { Authorization: `Bearer ${token}` } }),
@@ -75,28 +78,55 @@ const AdminDashboard = () => {
             ]);
 
             const regs = regRes.data;
-            const attended = regs.filter(r => r.is_used || r.status === 'ATTENDED').length;
+            const attended = Array.isArray(regs) ? regs.filter(r => r.is_used || r.status === 'ATTENDED').length : 0;
 
             setStats({
-                totalRegistrations: regs.length,
-                activeEvents: eventRes.data.filter(e => e.is_registration_open).length,
-                recentActivity: regs.slice(0, 5),
-                attendanceRate: regs.length > 0 ? Math.round((attended / regs.length) * 100) : 0
+                totalRegistrations: Array.isArray(regs) ? regs.length : 0,
+                activeEvents: Array.isArray(eventRes.data) ? eventRes.data.filter(e => e.is_registration_open).length : 0,
+                recentActivity: Array.isArray(regs) ? regs.slice(0, 5) : [],
+                attendanceRate: Array.isArray(regs) && regs.length > 0 ? Math.round((attended / regs.length) * 100) : 0
             });
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching dashboard stats:', error);
+            setError('Failed to establish connection with core servers.');
+        } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 pb-12">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold text-white tracking-widest uppercase flex items-center gap-3">
+                         <Terminal className="text-primary w-6 h-6" />
+                         Dashboard
+                    </h1>
+                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Real-time System Intelligence & Analytics</p>
+                </div>
+                <button 
+                    onClick={fetchStats}
+                    className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-all group"
+                >
+                    <Activity className={`w-4 h-4 ${loading ? 'animate-spin text-primary' : 'group-hover:scale-110'}`} />
+                </button>
+            </div>
+
+            {error && (
+                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-between">
+                    <div className="flex items-center gap-3 text-rose-500">
+                        <Zap className="w-5 h-5 animate-pulse" />
+                        <span className="text-xs font-mono font-bold uppercase tracking-widest">{error}</span>
+                    </div>
+                    <button onClick={fetchStats} className="text-[10px] font-mono text-rose-500 hover:underline uppercase tracking-widest">Reconnect_Protocol</button>
+                </div>
+            )}
+
             {/* KPI Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${loading && stats.totalRegistrations === 0 ? 'opacity-50 pointer-events-none' : ''}`}>
                 <KPICard 
                     title="TOTAL_REGISTRATIONS" 
-                    value={stats.totalRegistrations} 
+                    value={loading && stats.totalRegistrations === 0 ? '---' : stats.totalRegistrations} 
                     icon={Users} 
                     trend="up" 
                     trendValue="+12%" 
@@ -104,27 +134,27 @@ const AdminDashboard = () => {
                 />
                 <KPICard 
                     title="ACTIVE_OPERATIONS" 
-                    value={stats.activeEvents} 
+                    value={loading && stats.activeEvents === 0 ? '---' : stats.activeEvents} 
                     icon={Calendar} 
                     trend="up" 
                     trendValue="+2" 
-                    color="primary"
+                    color="emerald"
                 />
                 <KPICard 
                     title="ATTENDANCE_RATE" 
-                    value={`${stats.attendanceRate}%`} 
-                    icon={Activity} 
-                    trend="down" 
-                    trendValue="-3%" 
-                    color="primary"
+                    value={loading && stats.attendanceRate === 0 ? '---' : `${stats.attendanceRate}%`} 
+                    icon={ShieldCheck} 
+                    trend="up" 
+                    trendValue="+5%" 
+                    color="indigo"
                 />
                 <KPICard 
-                    title="SYSTEM_LOAD" 
-                    value="14%" 
-                    icon={Cpu} 
+                    title="SIGNAL_INTEGRITY" 
+                    value={error ? "CRITICAL" : (loading ? "SYNCING" : "STABLE")} 
+                    icon={Activity} 
                     trend="up" 
-                    trendValue="Normal" 
-                    color="primary"
+                    trendValue="Optimal" 
+                    color={error ? "rose" : "emerald"}
                 />
             </div>
 

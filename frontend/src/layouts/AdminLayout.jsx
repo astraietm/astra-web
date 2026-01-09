@@ -11,6 +11,8 @@ const AdminLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [isSystemOnline, setIsSystemOnline] = useState(true);
 
     // Get page title from route
     const getPageTitle = () => {
@@ -25,18 +27,56 @@ const AdminLayout = () => {
         }
     }, [user, loading, navigate]);
 
-    if (loading) return null; // Or a minimalist loader
+    // System Integrity Check
+    useEffect(() => {
+        const checkSystem = async () => {
+            try {
+                const API_URL = import.meta.env.VITE_API_URL;
+                await fetch(`${API_URL}/heartbeat/`); // Minimal endpoint or just root
+                setIsSystemOnline(true);
+            } catch (err) {
+                setIsSystemOnline(false);
+            }
+        };
+        const interval = setInterval(checkSystem, 30000); // Check every 30s
+        checkSystem();
+        return () => clearInterval(interval);
+    }, []);
+
+    // Close mobile sidebar on navigation
+    useEffect(() => {
+        setIsMobileOpen(false);
+    }, [location.pathname]);
+
+    if (loading) return (
+        <div className="min-h-screen bg-[#030014] flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                <p className="text-[10px] font-mono text-primary animate-pulse tracking-widest uppercase">Authorizing...</p>
+            </div>
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-[#030014] text-white flex overflow-hidden">
             <NoiseOverlay />
             
             {/* Sidebar Component */}
-            <AdminSidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+            <AdminSidebar 
+                isCollapsed={isCollapsed} 
+                setIsCollapsed={setIsCollapsed} 
+                isMobileOpen={isMobileOpen}
+                setIsMobileOpen={setIsMobileOpen}
+            />
 
             {/* Main Content Area */}
-            <div className={`flex-1 flex flex-col transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-[280px]'}`}>
-                <AdminHeader title={getPageTitle()} />
+            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCollapsed ? 'lg:ml-20' : 'lg:ml-[280px]'} ml-0`}>
+                <AdminHeader 
+                    title={getPageTitle()} 
+                    onMenuClick={() => setIsMobileOpen(true)} 
+                    isSystemOnline={isSystemOnline}
+                />
+
                 
                 <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">
                     {/* Background Decorative Element */}
