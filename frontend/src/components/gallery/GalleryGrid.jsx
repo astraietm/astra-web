@@ -1,7 +1,7 @@
 
 
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { Maximize2, X, Filter, ChevronRight, ChevronLeft, Shield, Zap, Terminal, Globe, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
@@ -18,13 +18,25 @@ const GalleryGrid = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(9); // Initial load count
+  const [visibleCount, setVisibleCount] = useState(9);
+  const [showUi, setShowUi] = useState(true); // Toggle for immersive mode
 
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     fetchGalleryItems();
   }, []);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedImage) {
+      document.body.style.overflow = 'hidden';
+      setShowUi(true);
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [selectedImage]);
 
   const fetchGalleryItems = async () => {
     try {
@@ -49,18 +61,36 @@ const GalleryGrid = () => {
 
   const visibleItems = filteredItems.slice(0, visibleCount);
 
-  const handleNext = (e) => {
-    e.stopPropagation();
+  // Navigation Logic
+  const navigate = useCallback((direction) => {
+    if (!selectedImage) return;
     const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
-    const nextIndex = (currentIndex + 1) % filteredItems.length;
+    let nextIndex;
+    if (direction === 'next') {
+        nextIndex = (currentIndex + 1) % filteredItems.length;
+    } else {
+        nextIndex = (currentIndex - 1 + filteredItems.length) % filteredItems.length;
+    }
     setSelectedImage(filteredItems[nextIndex]);
-  };
+  }, [selectedImage, filteredItems]);
 
-  const handlePrev = (e) => {
-    e.stopPropagation();
-    const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
-    const prevIndex = (currentIndex - 1 + filteredItems.length) % filteredItems.length;
-    setSelectedImage(filteredItems[prevIndex]);
+  // Keyboard navigation
+  useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (!selectedImage) return;
+            if (e.key === 'ArrowRight') navigate('next');
+            if (e.key === 'ArrowLeft') navigate('prev');
+            if (e.key === 'Escape') setSelectedImage(null);
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImage, navigate]);
+
+
+  // Swipe Logic
+  const swipeConfidenceThreshold = 10000;
+  const swipePower = (offset, velocity) => {
+    return Math.abs(offset) * velocity;
   };
 
   if (loading) {
@@ -117,8 +147,9 @@ const GalleryGrid = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
+              whileTap={{ scale: 0.98 }}
               key={item.id}
-              className="break-inside-avoid relative group rounded-2xl overflow-hidden bg-surface border border-white/5 cursor-pointer transform transition-transform md:hover:-translate-y-1 active:scale-95 duration-200"
+              className="break-inside-avoid relative group rounded-2xl overflow-hidden bg-surface border border-white/5 cursor-pointer transform transition-transform duration-200"
               onClick={() => setSelectedImage(item)}
               onContextMenu={(e) => e.preventDefault()}
             >
@@ -144,9 +175,6 @@ const GalleryGrid = () => {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 md:group-hover:opacity-10 transition-opacity duration-500">
                      <span className="text-white/10 font-black text-4xl tracking-widest rotate-[-15deg] uppercase border-4 border-white/10 px-4 py-2">ASTRA</span>
                 </div>
-
-                {/* Border Glow Effect */}
-                <div className="absolute inset-0 border border-primary/0 md:group-hover:border-primary/50 transition-colors duration-300 rounded-2xl pointer-events-none"></div>
             </motion.div>
           ))}
         </AnimatePresence>
@@ -165,86 +193,96 @@ const GalleryGrid = () => {
           </div>
       )}
 
-      {/* Lightbox Modal */}
+      {/* Immersive Lightbox Modal */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl p-0 md:p-10"
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center touch-none"
             onClick={() => setSelectedImage(null)}
           >
-            {/* Close Button */}
-            <button 
-                className="absolute top-4 right-4 md:top-6 md:right-6 p-3 rounded-full bg-white/10 text-white z-50 active:scale-90 transition-transform"
-                onClick={() => setSelectedImage(null)}
-            >
-                <X className="w-6 h-6" />
-            </button>
+             {/* Main Content Area - Full Viewport Height for Mobile */}
+             <div className="w-full h-[100dvh] relative flex flex-col md:flex-row items-center justify-center">
 
-            {/* Navigation Buttons (Desktop) */}
-            <button 
-                className="absolute left-8 p-4 rounded-full bg-white/5 hover:bg-white/20 text-white transition-colors z-40 hidden md:block"
-                onClick={handlePrev}
-            >
-                <ChevronLeft className="w-8 h-8" />
-            </button>
-            <button 
-                className="absolute right-8 p-4 rounded-full bg-white/5 hover:bg-white/20 text-white transition-colors z-40 hidden md:block"
-                onClick={handleNext}
-            >
-                <ChevronRight className="w-8 h-8" />
-            </button>
+                {/* UI: Controls Overlay */}
+                <AnimatePresence>
+                    {showUi && (
+                        <>
+                            {/* Close Button */}
+                            <motion.button 
+                                initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+                                className="absolute top-4 right-4 md:top-6 md:right-6 p-3 rounded-full bg-black/40 text-white z-50 backdrop-blur-md border border-white/10 active:scale-95 touch-manipulation"
+                                onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
+                            >
+                                <X className="w-6 h-6" />
+                            </motion.button>
 
-            {/* Main Image Container */}
-            <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="relative w-full h-full md:max-w-7xl md:h-auto md:max-h-[90vh] bg-black flex flex-col md:block md:bg-surface md:border md:border-white/10 md:rounded-xl overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="flex-1 flex items-center justify-center bg-black relative overflow-hidden">
-                     {/* Mobile Swipe Indicators (Visual only for now) */}
-                     <div className="absolute top-1/2 left-2 text-white/20 md:hidden"><ChevronLeft /></div>
-                     <div className="absolute top-1/2 right-2 text-white/20 md:hidden"><ChevronRight /></div>
+                            {/* Nav Buttons (Desktop) */}
+                            <motion.button 
+                                initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+                                className="absolute left-8 p-4 rounded-full bg-black/40 hover:bg-white/10 text-white transition-colors z-40 hidden md:flex border border-white/10 backdrop-blur-md"
+                                onClick={(e) => { e.stopPropagation(); navigate('prev'); }}
+                            >
+                                <ChevronLeft className="w-8 h-8" />
+                            </motion.button>
+                            <motion.button 
+                                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+                                className="absolute right-8 p-4 rounded-full bg-black/40 hover:bg-white/10 text-white transition-colors z-40 hidden md:flex border border-white/10 backdrop-blur-md"
+                                onClick={(e) => { e.stopPropagation(); navigate('next'); }}
+                            >
+                                <ChevronRight className="w-8 h-8" />
+                            </motion.button>
 
+                            {/* Details Bar */}
+                            <motion.div 
+                                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
+                                className="absolute bottom-0 left-0 right-0 p-6 pb-8 bg-gradient-to-t from-black via-black/80 to-transparent z-40 pointer-events-none"
+                            >
+                                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end md:items-center gap-2 pointer-events-auto">
+                                    <div>
+                                        <span className="text-primary text-xs font-mono uppercase tracking-widest mb-1 block">
+                                            Event Record #{selectedImage.id}
+                                        </span>
+                                        <h2 className="text-white font-display font-bold text-xl md:text-3xl leading-tight">{selectedImage.title}</h2>
+                                    </div>
+                                    <div className="hidden md:flex items-center gap-2 text-gray-400 text-sm font-mono">
+                                        <Globe className="w-4 h-4" />
+                                        <span>ASTRA.SECURE.NET</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+
+                {/* Draggable Image */}
+                <motion.div
+                    key={selectedImage.id} // Re-render on ID change to reset position
+                    className="w-full h-full flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing"
+                    onClick={(e) => { e.stopPropagation(); setShowUi(!showUi); }}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={1}
+                    onDragEnd={(e, { offset, velocity }) => {
+                        const swipe = swipePower(offset.x, velocity.x);
+                        if (swipe < -swipeConfidenceThreshold) {
+                            navigate('next');
+                        } else if (swipe > swipeConfidenceThreshold) {
+                            navigate('prev');
+                        }
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
                     <img
                         src={selectedImage.src}
                         alt={selectedImage.title}
-                        className="w-full h-full object-contain md:max-h-[85vh]"
-                        onContextMenu={(e) => e.preventDefault()} 
+                        draggable="false"
+                        className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-2xl"
                     />
-                </div>
-                
-                {/* Details Bar */}
-                <div className="bg-black/80 backdrop-blur-md border-t border-white/10 p-6 pb-12 md:pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 absolute bottom-0 w-full md:relative">
-                    <div>
-                        <span className="text-primary text-xs font-mono uppercase tracking-widest mb-1 block">
-                            Event Record #{selectedImage.id}
-                        </span>
-                        <h2 className="text-white font-display font-bold text-xl md:text-2xl">{selectedImage.title}</h2>
-                    </div>
-                    
-                    {/* Mobile Navigation Buttons (Bottom) */}
-                    <div className="flex md:hidden gap-4 w-full pt-2">
-                        <button onClick={handlePrev} className="flex-1 py-3 bg-white/10 rounded-lg flex items-center justify-center active:bg-white/20">
-                            <ChevronLeft />
-                        </button>
-                        <button onClick={handleNext} className="flex-1 py-3 bg-white/10 rounded-lg flex items-center justify-center active:bg-white/20">
-                            <ChevronRight />
-                        </button>
-                    </div>
-
-                    <div className="hidden md:flex items-center gap-2 text-gray-400 text-sm font-mono">
-                        <Globe className="w-4 h-4" />
-                        <span>ASTRA.SECURE.NET</span>
-                    </div>
-                </div>
-            </motion.div>
-
+                </motion.div>
+             </div>
           </motion.div>
         )}
       </AnimatePresence>
