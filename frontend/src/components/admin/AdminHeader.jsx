@@ -40,6 +40,13 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
                 >
                     <Menu className="w-5 h-5" />
                 </button>
+                <button 
+                    onClick={() => navigate('/')}
+                    className="hidden sm:flex items-center gap-2 text-gray-400 hover:text-white transition-colors mr-2"
+                    title="Back to Website"
+                >
+                    <ArrowLeft className="w-5 h-5" />
+                </button>
                 <h2 className="text-white font-semibold text-lg">
                     {title || "Dashboard"}
                 </h2>
