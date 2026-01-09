@@ -28,14 +28,14 @@ const KPICard = ({ title, value, icon: Icon, trend, trendValue, color = 'primary
 
     return (
         <motion.div 
-            whileHover={{ y: -5 }}
-            className="bg-[#0A0A0B] border border-white/5 p-6 rounded-2xl relative overflow-hidden group"
+            whileHover={{ y: -2 }}
+            className="bg-surface border border-border p-6 rounded-xl relative overflow-hidden group"
         >
             <div className={`absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity ${currentColors.split(' ')[0]}`}>
-                <Icon size={64} />
+                <Icon size={48} />
             </div>
             <div className="flex flex-col gap-1 relative z-10">
-                <span className="text-[10px] font-mono font-black text-gray-500 uppercase tracking-[0.2em]">{title}</span>
+                <span className="text-xs font-medium text-gray-400">{title}</span>
                 <div className="flex items-end gap-3 mt-1">
                     <span className="text-3xl font-bold text-white tracking-tight">{value}</span>
                     {trend && (
@@ -98,34 +98,34 @@ const AdminDashboard = () => {
         <div className="space-y-8 pb-12">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-white tracking-widest uppercase flex items-center gap-3">
-                         <Terminal className="text-primary w-6 h-6" />
+                    <h1 className="text-2xl font-semibold text-white flex items-center gap-3">
+                         <Activity className="text-primary w-6 h-6" />
                          Dashboard
                     </h1>
-                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Real-time System Intelligence & Analytics</p>
+                    <p className="text-sm text-gray-400 mt-1">Real-time analytics and system overview</p>
                 </div>
                 <button 
                     onClick={fetchStats}
-                    className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-all group"
+                    className="p-2 rounded-lg bg-white/5 border border-border text-gray-400 hover:text-white transition-colors"
                 >
-                    <Activity className={`w-4 h-4 ${loading ? 'animate-spin text-primary' : 'group-hover:scale-110'}`} />
+                    <Activity className={`w-5 h-5 ${loading ? 'animate-spin text-primary' : ''}`} />
                 </button>
             </div>
 
             {error && (
-                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-rose-500">
-                        <Zap className="w-5 h-5 animate-pulse" />
-                        <span className="text-xs font-mono font-bold uppercase tracking-widest">{error}</span>
+                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg flex items-center justify-between">
+                    <div className="flex items-center gap-3 text-rose-400">
+                        <Zap className="w-5 h-5" />
+                        <span className="text-sm font-medium">{error}</span>
                     </div>
-                    <button onClick={fetchStats} className="text-[10px] font-mono text-rose-500 hover:underline uppercase tracking-widest">Reconnect_Protocol</button>
+                    <button onClick={fetchStats} className="text-sm text-rose-400 hover:text-rose-300 transition-colors">Retry</button>
                 </div>
             )}
 
             {/* KPI Grid */}
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${loading && stats.totalRegistrations === 0 ? 'opacity-50 pointer-events-none' : ''}`}>
                 <KPICard 
-                    title="TOTAL_REGISTRATIONS" 
+                    title="Total Registrations" 
                     value={loading && stats.totalRegistrations === 0 ? '---' : stats.totalRegistrations} 
                     icon={Users} 
                     trend="up" 
@@ -133,7 +133,7 @@ const AdminDashboard = () => {
                     color="primary"
                 />
                 <KPICard 
-                    title="ACTIVE_OPERATIONS" 
+                    title="Active Events" 
                     value={loading && stats.activeEvents === 0 ? '---' : stats.activeEvents} 
                     icon={Calendar} 
                     trend="up" 
@@ -141,7 +141,7 @@ const AdminDashboard = () => {
                     color="emerald"
                 />
                 <KPICard 
-                    title="ATTENDANCE_RATE" 
+                    title="Attendance Rate" 
                     value={loading && stats.attendanceRate === 0 ? '---' : `${stats.attendanceRate}%`} 
                     icon={ShieldCheck} 
                     trend="up" 
@@ -149,11 +149,11 @@ const AdminDashboard = () => {
                     color="indigo"
                 />
                 <KPICard 
-                    title="SIGNAL_INTEGRITY" 
-                    value={error ? "CRITICAL" : (loading ? "SYNCING" : "STABLE")} 
+                    title="System Status" 
+                    value={error ? "Error" : (loading ? "Loading" : "Healthy")} 
                     icon={Activity} 
                     trend="up" 
-                    trendValue="Optimal" 
+                    trendValue="Normal" 
                     color={error ? "rose" : "emerald"}
                 />
             </div>

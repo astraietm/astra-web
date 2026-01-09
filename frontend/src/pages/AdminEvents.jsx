@@ -143,37 +143,37 @@ const AdminEvents = () => {
             {/* Context Header */}
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-2xl font-bold text-white tracking-widest uppercase flex items-center gap-3">
+                    <h1 className="text-2xl font-semibold text-white flex items-center gap-3">
                          <Calendar className="text-primary w-6 h-6" />
-                         Operation_Manager
+                         Events
                     </h1>
-                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Configure Mission Parameters & Protocols</p>
+                    <p className="text-sm text-gray-400 mt-1">Manage events and registrations</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                     <button 
                         onClick={fetchEvents}
-                        className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-white transition-all"
-                        title="Resync Data"
+                        className="p-2 rounded-lg bg-white/5 border border-border text-gray-400 hover:text-white transition-colors"
+                        title="Refresh"
                     >
-                        <Shield className={`w-4 h-4 ${loading ? 'animate-spin text-primary' : ''}`} />
+                        <Shield className={`w-5 h-5 ${loading ? 'animate-spin text-primary' : ''}`} />
                     </button>
                     <button 
                         onClick={handleCreate}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-primary text-black rounded-xl font-black shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all uppercase tracking-widest text-xs"
+                        className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors text-sm"
                     >
                         <Plus className="w-4 h-4" />
-                        New_Operation
+                        New Event
                     </button>
                 </div>
             </div>
 
             {error && (
-                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-between group">
-                    <div className="flex items-center gap-3 text-rose-500">
+                <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg flex items-center justify-between">
+                    <div className="flex items-center gap-3 text-rose-400">
                         <AlertTriangle className="w-5 h-5" />
-                        <span className="text-xs font-mono font-bold uppercase tracking-widest">{error}</span>
+                        <span className="text-sm font-medium">{error}</span>
                     </div>
-                    <button onClick={fetchEvents} className="text-[10px] font-mono text-rose-500 hover:underline uppercase tracking-widest">Retry_Uplink</button>
+                    <button onClick={fetchEvents} className="text-sm text-rose-400 hover:text-rose-300 transition-colors">Retry</button>
                 </div>
             )}
 
