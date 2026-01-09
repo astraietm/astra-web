@@ -20,6 +20,7 @@ const GalleryGrid = () => {
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(9);
   const [showUi, setShowUi] = useState(true); // Toggle for immersive mode
+  const lastScrollTime = React.useRef(0); // Navigation throttle ref
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -27,7 +28,7 @@ const GalleryGrid = () => {
     fetchGalleryItems();
   }, []);
 
-  const lastScrollTime = React.useRef(0);
+
 
   // Lock body scroll logic + Wheel Navigation
   useEffect(() => {
