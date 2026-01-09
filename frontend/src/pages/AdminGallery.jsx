@@ -144,21 +144,29 @@ const AdminGallery = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!confirm('Are you sure you want to delete this image?')) return;
+    const [deleteId, setDeleteId] = useState(null);
+
+    const confirmDelete = async () => {
+        if (!deleteId) return;
         try {
-            await axios.delete(`${API_URL}/gallery/${id}/`, {
+            await axios.delete(`${API_URL}/gallery/${deleteId}/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchGalleryItems();
             // If deleting the item currently being edited, cancel edit
-            if (editingItem && editingItem.id === id) {
+            if (editingItem && editingItem.id === deleteId) {
                 handleCancelEdit();
             }
+            setDeleteId(null);
         } catch (error) {
             console.error('Delete failed:', error);
             alert('Failed to delete image.');
+            setDeleteId(null);
         }
+    };
+
+    const handleDelete = (id) => {
+        setDeleteId(id);
     };
 
     if (loading) return (
@@ -393,6 +401,40 @@ const AdminGallery = () => {
                         )}
                     </div>
                 </div>
+                {/* Custom Delete Confirmation Modal */}
+                {deleteId && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setDeleteId(null)}></div>
+                        <div className="relative bg-[#0A0F1C] border border-white/10 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl overflow-hidden">
+                             {/* Glow Effect */}
+                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500/50 via-red-500 to-red-500/50"></div>
+                             
+                             <div className="flex flex-col items-center text-center">
+                                 <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
+                                     <Trash2 className="w-8 h-8 text-red-500" />
+                                 </div>
+                                 <h3 className="text-xl font-bold font-display text-white mb-2">Confirm Deletion</h3>
+                                 <p className="text-white/60 text-sm mb-8 leading-relaxed">
+                                     Are you sure you want to permanently delete this asset from the archives? This action cannot be undone.
+                                 </p>
+                                 <div className="flex w-full gap-4">
+                                     <button 
+                                         onClick={() => setDeleteId(null)}
+                                         className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-medium transition-colors border border-white/5 hover:border-white/10"
+                                     >
+                                         Cancel
+                                     </button>
+                                     <button 
+                                         onClick={confirmDelete}
+                                         className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition-all shadow-lg shadow-red-500/20"
+                                     >
+                                         Yes, Delete
+                                     </button>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
