@@ -72,7 +72,7 @@ const GalleryMarquee = () => {
              // Only fetch, don't setState yet to avoid re-renders if unmounted
             try {
                 const response = await axios.get(`${API_URL}/gallery/`);
-                 // Take top 15 only. Less DOM = Smoother Scroll.
+                 // Take top 15 only
                  const mappedItems = response.data
                     .slice(0, 15) 
                     .map(item => ({
@@ -92,12 +92,16 @@ const GalleryMarquee = () => {
 
     if (loading || images.length === 0) return null;
 
-    const half = Math.ceil(images.length / 2);
-    const row1 = images.slice(0, half);
-    const row2 = images.slice(half);
+    // Ensure we have enough items for a full row loop
+    // If fewer than 10, just duplicate the whole set for both rows to ensure fullness
+    const sourceImages = images.length < 10 ? [...images, ...images] : images;
+    
+    const half = Math.ceil(sourceImages.length / 2);
+    const row1 = sourceImages.slice(0, half);
+    const row2 = sourceImages.slice(half);
 
     return (
-        <section className="py-20 bg-background overflow-hidden relative" style={{ contentVisibility: 'auto' }}>
+        <section className="py-24 bg-background overflow-hidden relative" style={{ contentVisibility: 'auto' }}>
              <style>{`
                 @keyframes marquee-left {
                     0% { transform: translate3d(0, 0, 0); }
@@ -110,15 +114,19 @@ const GalleryMarquee = () => {
              `}</style>
              
              {/* Simple Header */}
-             <div className="container mx-auto px-4 mb-8 text-center relative z-10">
-                <h2 className="text-3xl md:text-4xl font-display font-medium text-white mb-2">
-                    Gallery
+             <div className="container mx-auto px-4 mb-12 text-center relative z-10">
+                <h2 className="text-4xl md:text-5xl font-display font-medium text-white mb-4">
+                    Captured Moments
                 </h2>
+                <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
+                    Highlights from our workshops, hackathons, and community events.
+                </p>
              </div>
 
-            <div className="space-y-4">
-                <MarqueeRow items={row1} direction="left" speed={50} />
-                <MarqueeRow items={row2} direction="right" speed={55} />
+            {/* Marquee Container - Full Width */}
+            <div className="w-full flex flex-col gap-6">
+                <MarqueeRow items={row1} direction="left" speed={60} />
+                <MarqueeRow items={row2} direction="right" speed={70} />
             </div>
         </section>
     );
