@@ -21,8 +21,14 @@ const GalleryGrid = () => {
   const [visibleCount, setVisibleCount] = useState(9);
   const [showUi, setShowUi] = useState(true); // Toggle for immersive mode
   const lastScrollTime = React.useRef(0); // Navigation throttle ref
+  const [imageLoading, setImageLoading] = useState(true); // Track lightbox image load
 
   const API_URL = import.meta.env.VITE_API_URL;
+
+  // Reset loading state when image changes
+  useEffect(() => {
+     if (selectedImage) setImageLoading(true);
+  }, [selectedImage]);
 
   useEffect(() => {
     fetchGalleryItems();
@@ -358,12 +364,28 @@ const GalleryGrid = () => {
                     exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                    <div className="relative group/image">
+                    <div className="relative group/image flex items-center justify-center w-full h-full">
+                        {/* Loading State - Premium Spinner/Skeleton */}
+                        {imageLoading && (
+                            <div className="absolute inset-0 flex items-center justify-center z-20">
+                                <div className="relative">
+                                    <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                                    </div>
+                                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-primary/60 text-[10px] font-mono tracking-widest uppercase whitespace-nowrap animate-pulse">
+                                        Loading Data...
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+
                         <img
                             src={selectedImage.src}
                             alt={selectedImage.title}
                             draggable="false"
-                            className="max-w-full max-h-[85dvh] object-contain pointer-events-none drop-shadow-2xl relative z-10"
+                            onLoad={() => setImageLoading(false)}
+                            className={`max-w-full max-h-[85dvh] object-contain pointer-events-none drop-shadow-2xl relative z-10 transition-opacity duration-500 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
                         />
                     </div>
                 </motion.div>
