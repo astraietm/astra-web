@@ -114,8 +114,8 @@ const GalleryGrid = () => {
   return (
     <div className="space-y-8 pb-12">
       {/* Modern Filter Tabs */}
-      <div className="sticky top-20 z-30 bg-black/40 backdrop-blur-xl border-b border-white/5 -mx-4 px-4 md:-mx-0 md:px-0 md:bg-transparent md:border-none mb-8">
-          <div className="max-w-7xl mx-auto flex overflow-x-auto no-scrollbar py-4 md:justify-center gap-2 md:gap-4 mask-image-fade">
+      <div className="sticky top-20 z-30 backdrop-blur-xl -mx-4 px-4 md:-mx-0 md:px-0 mb-8 border-b border-white/5 bg-[#030014]/50">
+          <div className="max-w-7xl mx-auto flex overflow-x-auto no-scrollbar py-4 md:justify-center gap-2 md:gap-8 mask-image-fade">
             {categories.map((cat) => {
                 const isActive = filter === cat.id;
                 return (
@@ -123,7 +123,7 @@ const GalleryGrid = () => {
                         key={cat.id}
                         onClick={() => { setFilter(cat.id); setVisibleCount(9); }}
                         className={`
-                            relative px-4 py-2 flex items-center gap-2 text-sm font-mono tracking-widest uppercase transition-all duration-300 group flex-shrink-0
+                            relative px-2 py-2 flex items-center gap-3 text-sm font-mono tracking-widest uppercase transition-all duration-300 group flex-shrink-0
                             ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}
                         `}
                     >
@@ -139,12 +139,9 @@ const GalleryGrid = () => {
                         {isActive && (
                             <motion.div 
                                 layoutId="activeTab"
-                                className="absolute bottom-0 left-0 right-0 h-[2px] bg-primary shadow-[0_0_15px_rgba(0,224,255,0.7)]"
+                                className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary shadow-[0_0_15px_rgba(0,224,255,1)]"
                             />
                         )}
-                        
-                        {/* Hover Effect (Subtle bg) */}
-                        <div className={`absolute inset-0 bg-white/5 skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity rounded-sm ${isActive ? 'opacity-0' : ''}`}></div>
                     </button>
                 );
             })}
