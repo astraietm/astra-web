@@ -53,10 +53,7 @@ const GalleryCard = ({ item, onClick }) => {
                     </div>
                 </div>
                 
-                {/* Watermark (Desktop Hover) */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 z-10">
-                     <span className="text-white/10 font-black text-4xl tracking-widest rotate-[-15deg] uppercase border-4 border-white/10 px-4 py-2 backdrop-blur-sm">ASTRA</span>
-                </div>
+
             </div>
         </motion.div>
     );
