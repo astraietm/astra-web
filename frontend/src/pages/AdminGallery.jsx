@@ -402,33 +402,36 @@ const AdminGallery = () => {
                     </div>
                 </div>
                 {/* Custom Delete Confirmation Modal */}
+                {/* Custom Delete Confirmation Modal */}
                 {deleteId && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setDeleteId(null)}></div>
-                        <div className="relative bg-[#0A0F1C] border border-white/10 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl overflow-hidden">
+                        <div className="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-300" onClick={() => setDeleteId(null)}></div>
+                        <div className="relative bg-[#0A0F1C]/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-[0_0_50px_rgba(239,68,68,0.2)] overflow-hidden scale-100 animate-in fade-in zoom-in-95 duration-200">
                              {/* Glow Effect */}
-                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500/50 via-red-500 to-red-500/50"></div>
-                             
-                             <div className="flex flex-col items-center text-center">
-                                 <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
-                                     <Trash2 className="w-8 h-8 text-red-500" />
+                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent"></div>
+                             <div className="absolute -top-20 -left-20 w-40 h-40 bg-red-500/20 blur-3xl rounded-full pointer-events-none"></div>
+                             <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-red-500/10 blur-3xl rounded-full pointer-events-none"></div>
+
+                             <div className="flex flex-col items-center text-center relative z-10">
+                                 <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse">
+                                     <Trash2 className="w-9 h-9 text-red-500" />
                                  </div>
-                                 <h3 className="text-xl font-bold font-display text-white mb-2">Confirm Deletion</h3>
-                                 <p className="text-white/60 text-sm mb-8 leading-relaxed">
-                                     Are you sure you want to permanently delete this asset from the archives? This action cannot be undone.
+                                 <h3 className="text-2xl font-bold font-display text-white mb-2">Confirm Termination</h3>
+                                 <p className="text-white/60 text-sm mb-8 leading-relaxed max-w-xs mx-auto">
+                                     This action will permanently purge this asset from the neural archives. <br/> <span className="text-red-400 font-mono text-xs mt-2 block">&gt;&gt; ACTION CANNOT BE UNDONE</span>
                                  </p>
                                  <div className="flex w-full gap-4">
                                      <button 
                                          onClick={() => setDeleteId(null)}
-                                         className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-medium transition-colors border border-white/5 hover:border-white/10"
+                                         className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-medium transition-colors border border-white/5 hover:border-white/20 backdrop-blur-md"
                                      >
-                                         Cancel
+                                         Abort
                                      </button>
                                      <button 
                                          onClick={confirmDelete}
-                                         className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition-all shadow-lg shadow-red-500/20"
+                                         className="flex-1 px-4 py-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white rounded-xl font-bold transition-all shadow-lg shadow-red-500/30 hover:shadow-red-500/50 hover:scale-[1.02]"
                                      >
-                                         Yes, Delete
+                                         Execute Delete
                                      </button>
                                  </div>
                              </div>
