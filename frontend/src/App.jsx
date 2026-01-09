@@ -19,6 +19,9 @@ import AdminRegistrations from './pages/AdminRegistrations';
 import AdminEvents from './pages/AdminEvents';
 import AdminGallery from './pages/AdminGallery';
 import AdminPlaceholder from './pages/AdminPlaceholder';
+import AdminNotifications from './pages/AdminNotifications';
+import AdminLogs from './pages/AdminLogs';
+import AdminSettings from './pages/AdminSettings';
 import ScrollToTop from './components/common/ScrollToTop';
 import SmoothScroll from './components/common/SmoothScroll';
 import InitialBootLoader from './components/common/InitialBootLoader';
@@ -59,9 +62,9 @@ function App() {
                 <Route path="gallery" element={<AdminGallery />} />
                 <Route path="scanner" element={<AdminScanner />} />
                 <Route path="blog" element={<AdminPlaceholder title="Blog Manager" />} />
-                <Route path="notifications" element={<AdminPlaceholder title="Notification Dispatcher" />} />
-                <Route path="logs" element={<AdminPlaceholder title="Security Logs" />} />
-                <Route path="settings" element={<AdminPlaceholder title="System Settings" />} />
+                <Route path="notifications" element={<AdminNotifications />} />
+                <Route path="logs" element={<AdminLogs />} />
+                <Route path="settings" element={<AdminSettings />} />
               </Route>
 
               <Route path="/" element={<MainLayout />}>
