@@ -18,11 +18,14 @@ const GalleryCard = ({ item, index, onClick }) => {
 
     return (
         <motion.div
-            layoutId={item.id} // Enable Hero shared layout animation
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.5, delay: index * 0.05, ease: [0.23, 1, 0.32, 1] }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ 
+                duration: 0.4, 
+                delay: (index % 9) * 0.04, 
+                ease: [0.23, 1, 0.32, 1] 
+            }}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             whileTap={{ scale: 0.98 }}
             className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
@@ -70,19 +73,25 @@ const GalleryCard = ({ item, index, onClick }) => {
     );
 };
 
+const swipeConfidenceThreshold = 10000;
+const swipePower = (offset, velocity) => {
+  return Math.abs(offset) * velocity;
+};
+
 const GalleryGrid = () => {
   const [filter, setFilter] = useState('all');
   const [selectedImage, setSelectedImage] = useState(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(9);
-  const [showUi, setShowUi] = useState(true); // Toggle for immersive mode
-  const lastScrollTime = React.useRef(0); // Navigation throttle ref
-  const [imageLoading, setImageLoading] = useState(true); // Track lightbox image load
+  const [showUi, setShowUi] = useState(true);
+  const [[page, direction], setPage] = useState([0, 0]);
+  const lastScrollTime = React.useRef(0);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Reset loading state when image changes
+  // Sync loading state
   useEffect(() => {
      if (selectedImage) setImageLoading(true);
   }, [selectedImage]);
@@ -91,71 +100,52 @@ const GalleryGrid = () => {
     fetchGalleryItems();
   }, []);
 
-
-
-  // Filter Items Logic (Moved up for navigate dependency)
   const filteredItems = filter === 'all' 
     ? items 
     : items.filter(item => item.category === filter);
 
   const visibleItems = filteredItems.slice(0, visibleCount);
 
-  // Navigation Logic (Moved up for useEffect dependency)
-  const navigate = useCallback((direction) => {
+  const navigate = useCallback((dir) => {
     if (!selectedImage) return;
     const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
     let nextIndex;
-    if (direction === 'next') {
+    if (dir === 'next') {
         nextIndex = (currentIndex + 1) % filteredItems.length;
+        setPage(p => [p[0] + 1, 1]);
     } else {
         nextIndex = (currentIndex - 1 + filteredItems.length) % filteredItems.length;
+        setPage(p => [p[0] - 1, -1]);
     }
     setSelectedImage(filteredItems[nextIndex]);
   }, [selectedImage, filteredItems]);
 
-  // Lock body scroll logic + Wheel Navigation
-  const scrollYRef = React.useRef(0);
-
+  // Scroll Lock & Wheel Nav
   useEffect(() => {
     if (selectedImage) {
-      // Save current scroll position
-      scrollYRef.current = window.scrollY;
-      
-      // Nuclear Option: Fix body position to prevent ANY scrolling
+      const scrollY = window.scrollY;
       document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.top = `-${scrollY}px`;
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
-      
-      const handleWheel = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        
-        const now = Date.now();
-        if (now - lastScrollTime.current < 300) return; // Throttle 300ms
 
-        if (e.deltaY > 0) {
-            navigate('next');
-            lastScrollTime.current = now;
-        } else if (e.deltaY < 0) {
-            navigate('prev');
+      const handleWheel = (e) => {
+        const now = Date.now();
+        if (now - lastScrollTime.current < 400) return;
+        if (Math.abs(e.deltaY) > 30) {
+            navigate(e.deltaY > 0 ? 'next' : 'prev');
             lastScrollTime.current = now;
         }
       };
 
-      // Add listener to window with capture phase to intercept early
       window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
-
       return () => {
          window.removeEventListener('wheel', handleWheel, { capture: true });
-         
-         // Restore scroll position
          document.body.style.position = '';
          document.body.style.top = '';
          document.body.style.width = '';
          document.body.style.overflow = '';
-         window.scrollTo(0, scrollYRef.current);
+         window.scrollTo(0, scrollY);
       };
     }
   }, [selectedImage, navigate]);
@@ -198,21 +188,8 @@ const GalleryGrid = () => {
     return Math.abs(offset) * velocity;
   };
 
-    // Lock Body Scroll when lightbox is open
-    useEffect(() => {
-        if (selectedImage) {
-            document.body.style.overflow = 'hidden';
-            // Also prevent touch move to block overscroll on mobile
-           const preventDefault = (e) => e.preventDefault();
-           // document.addEventListener('touchmove', preventDefault, { passive: false });
-           // NOTE: Blocking touchmove globally kills swipe. Just overflow hidden is usually enough for Lenis if configured right.
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, [selectedImage]);
+    //Consolidated scroll lock logic is already at 116 area
+    // Removing the redundant one to avoid conflicts
 
   if (loading) {
       return (
@@ -235,8 +212,8 @@ const GalleryGrid = () => {
   return (
     <div className="space-y-8 pb-12">
       {/* Modern Filter Tabs */}
-      <div className="sticky top-20 z-30 backdrop-blur-xl -mx-4 px-4 md:-mx-0 md:px-0 mb-8 border-b border-white/5 bg-[#030014]/50">
-          <div className="max-w-7xl mx-auto flex overflow-x-auto no-scrollbar py-4 md:justify-center gap-2 md:gap-8 mask-image-fade">
+      <div className="sticky top-20 z-30 -mx-4 px-4 md:-mx-0 md:px-0 mb-8">
+          <div className="max-w-7xl mx-auto flex overflow-x-auto no-scrollbar py-4 md:justify-center gap-2 md:gap-8 bg-black/40 backdrop-blur-md rounded-2xl border border-white/5 px-6 shadow-2xl transition-all duration-300">
             {categories.map((cat) => {
                 const isActive = filter === cat.id;
                 return (
@@ -302,11 +279,11 @@ const GalleryGrid = () => {
       <AnimatePresence>
         {selectedImage && (
           <motion.div
-            // layoutId removed from backdrop to let it fade independently
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-3xl saturate-150 flex items-center justify-center touch-none transition-all duration-300"
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-2xl saturate-150 flex items-center justify-center touch-none"
             onClick={() => setSelectedImage(null)}
           >
             {/* Desktop Custom Close Button */}
@@ -372,19 +349,20 @@ const GalleryGrid = () => {
                             >
                                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end md:items-center gap-2 pointer-events-auto">
                                     <div>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="text-primary text-xs font-mono uppercase tracking-widest block animate-pulse">
-                                                Event Record #{selectedImage.id}
-                                            </span>
-                                            <span className="text-gray-500 text-[10px] font-mono uppercase tracking-widest hidden md:block">
-                                                // SYSTEM.DECRYPT(SUCCESS)
-                                            </span>
+                                        <div className="flex items-center gap-3 text-gray-400 text-xs font-mono font-medium mb-2">
+                                            <div className="px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary">
+                                                {filteredItems.findIndex(i => i.id === selectedImage.id) + 1} / {filteredItems.length}
+                                            </div>
+                                            <span className="hidden md:block">ASTRA.SECURE.NET</span>
                                         </div>
-                                        <h2 className="text-white font-display font-bold text-xl md:text-3xl leading-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">{selectedImage.title}</h2>
+                                        <h2 className="text-white font-display font-medium text-xl md:text-3xl leading-tight tracking-wide drop-shadow-xl">
+                                            {selectedImage.title}
+                                        </h2>
                                     </div>
-                                    <div className="hidden md:flex items-center gap-2 text-gray-400 text-sm font-mono">
-                                        <Globe className="w-4 h-4" />
-                                        <span>ASTRA.SECURE.NET</span>
+                                    <div className="hidden md:flex items-center gap-4">
+                                        <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-400">
+                                            <Globe className="w-4 h-4" />
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
@@ -392,67 +370,90 @@ const GalleryGrid = () => {
                     )}
                 </AnimatePresence>
 
-
-
-                {/* Draggable Image */}
-                <motion.div
-                    layoutId={selectedImage.id} // Connects to the grid card
-                    key={selectedImage.id} 
-                    className="w-full h-full flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing relative"
-                    onClick={() => setSelectedImage(null)} 
-                    drag
-                    dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                    dragElastic={0.7}
-                    onDragEnd={(e, { offset, velocity }) => {
-                        const swipe = swipePower(offset.x, velocity.x);
-                        const swipeY = swipePower(offset.y, velocity.y);
-                        
-                        // Swipe Up/Down to Close
-                        if (Math.abs(swipeY) > swipeConfidenceThreshold) {
-                            setSelectedImage(null);
-                        } 
-                        // Swipe Left/Right to Navigate
-                        else if (swipe < -swipeConfidenceThreshold) {
-                            navigate('next');
-                        } else if (swipe > swipeConfidenceThreshold) {
-                            navigate('prev');
-                        }
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                >
-                    <div 
-                        className="relative group/image flex items-center justify-center w-full h-full"
-                        onClick={(e) => {
-                            e.stopPropagation(); // Prevent closing when clicking the image area
-                            setShowUi(!showUi);
+                {/* Carousel Navigation - Wraps the content that slides */}
+                <AnimatePresence initial={false} custom={direction}>
+                    <motion.div
+                        key={selectedImage.id}
+                        custom={direction}
+                        variants={{
+                            enter: (direction) => ({
+                                x: direction > 0 ? '100%' : '-100%',
+                                opacity: 0,
+                                scale: 0.95
+                            }),
+                            center: {
+                                zIndex: 1,
+                                x: 0,
+                                opacity: 1,
+                                scale: 1
+                            },
+                            exit: (direction) => ({
+                                zIndex: 0,
+                                x: direction < 0 ? '100%' : '-100%',
+                                opacity: 0,
+                                scale: 0.95
+                            })
                         }}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={{
+                            x: { type: "spring", stiffness: 400, damping: 40 },
+                            opacity: { duration: 0.3 }
+                        }}
+                        drag="x"
+                        dragConstraints={{ left: 0, right: 0 }}
+                        dragElastic={0.4}
+                        onDragEnd={(e, { offset, velocity }) => {
+                            const swipe = swipePower(offset.x, velocity.x);
+                            if (swipe < -swipeConfidenceThreshold) {
+                                navigate('next');
+                            } else if (swipe > swipeConfidenceThreshold) {
+                                navigate('prev');
+                            }
+                        }}
+                        className="absolute inset-0 flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing transform-gpu"
                     >
-                        {/* Loading State - Premium Spinner/Skeleton */}
-                        {imageLoading && (
-                            <div className="absolute inset-0 flex items-center justify-center z-20">
-                                <div className="relative">
-                                    <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                        <motion.div 
+                            className="relative group/image flex items-center justify-center w-full h-full p-4"
+                            initial={{ scale: 0.92, opacity: 0, filter: "blur(10px)" }}
+                            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                            exit={{ scale: 0.92, opacity: 0, filter: "blur(10px)" }}
+                            transition={{ 
+                                type: "spring", 
+                                stiffness: 280, 
+                                damping: 28,
+                                filter: { duration: 0.2 }
+                            }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowUi(!showUi);
+                            }}
+                        >
+                            {/* Loading State */}
+                            {imageLoading && (
+                                <div className="absolute inset-0 flex items-center justify-center z-20">
+                                    <div className="relative">
+                                        <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                                        </div>
                                     </div>
-                                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-primary/60 text-[10px] font-mono tracking-widest uppercase whitespace-nowrap animate-pulse">
-                                        Loading Data...
-                                    </span>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        <img
-                            src={selectedImage.src}
-                            alt={selectedImage.title}
-                            draggable="false"
-                            loading="eager"
-                            decoding="async"
-                            onLoad={() => setImageLoading(false)}
-                            className={`max-w-full max-h-[85dvh] object-contain pointer-events-none drop-shadow-2xl relative z-10 transition-opacity duration-500 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
-                        />
-                    </div>
-                </motion.div>
+                            <img
+                                src={selectedImage.src}
+                                alt={selectedImage.title}
+                                draggable="false"
+                                loading="eager"
+                                decoding="async"
+                                onLoad={() => setImageLoading(false)}
+                                className={`max-w-full max-h-[85dvh] object-contain pointer-events-none drop-shadow-2xl relative z-10 transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+                            />
+                        </motion.div>
+                    </motion.div>
+                </AnimatePresence>
              </div>
           </motion.div>
         )}
