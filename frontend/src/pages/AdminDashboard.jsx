@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -41,6 +42,7 @@ const KPICard = ({ title, value, icon: Icon, trend, trendValue }) => {
 
 const AdminDashboard = () => {
     const { token } = useAuth();
+    const navigate = useNavigate();
     const [stats, setStats] = useState({
         totalRegistrations: 0,
         activeEvents: 0,
@@ -141,19 +143,31 @@ const AdminDashboard = () => {
                     <h3 className="text-white font-bold text-lg mb-4">Quick Command</h3>
                     
                     <div className="grid grid-cols-2 gap-4 flex-1">
-                        <button className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group">
+                        <button 
+                            onClick={() => navigate('/admin/events')}
+                            className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group"
+                        >
                             <Calendar className="w-6 h-6 text-vision-primary group-hover:scale-110 transition-transform" />
                             <span className="text-xs font-bold text-gray-300">New Event</span>
                         </button>
-                        <button className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group">
+                        <button 
+                            onClick={() => navigate('/admin/notifications')}
+                            className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group"
+                        >
                             <Mail className="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform" />
                             <span className="text-xs font-bold text-gray-300">Send Blast</span>
                         </button>
-                        <button className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group">
+                        <button 
+                            onClick={() => navigate('/admin/logs')}
+                            className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group"
+                        >
                             <ShieldCheck className="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform" />
                             <span className="text-xs font-bold text-gray-300">Audit Logs</span>
                         </button>
-                        <button className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group">
+                        <button 
+                            onClick={() => navigate('/admin/settings')}
+                            className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group"
+                        >
                             <Terminal className="w-6 h-6 text-rose-400 group-hover:scale-110 transition-transform" />
                             <span className="text-xs font-bold text-gray-300">System</span>
                         </button>
