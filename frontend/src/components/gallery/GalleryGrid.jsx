@@ -319,13 +319,7 @@ const GalleryGrid = () => {
                     )}
                 </AnimatePresence>
 
-                {/* Tech HUD Corners */}
-                <div className="absolute inset-0 pointer-events-none z-50">
-                     <motion.div initial={{ opacity: 0, x: -20, y: -20 }} animate={{ opacity: 1, x: 0, y: 0 }} delay={0.2} className="absolute top-0 left-0 w-16 h-16 border-l-2 border-t-2 border-primary rounded-tl-xl"></motion.div>
-                     <motion.div initial={{ opacity: 0, x: 20, y: -20 }} animate={{ opacity: 1, x: 0, y: 0 }} delay={0.2} className="absolute top-0 right-0 w-16 h-16 border-r-2 border-t-2 border-primary rounded-tr-xl"></motion.div>
-                     <motion.div initial={{ opacity: 0, x: -20, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} delay={0.2} className="absolute bottom-0 left-0 w-16 h-16 border-l-2 border-b-2 border-primary rounded-bl-xl"></motion.div>
-                     <motion.div initial={{ opacity: 0, x: 20, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} delay={0.2} className="absolute bottom-0 right-0 w-16 h-16 border-r-2 border-b-2 border-primary rounded-br-xl"></motion.div>
-                </div>
+
 
                 {/* Draggable Image */}
                 <motion.div
