@@ -99,30 +99,29 @@ const GalleryGrid = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Sync loading state & Preload Neighbors
-  useEffect(() => {
-     if (selectedImage) {
-         setImageLoading(true);
-         
-         // Preload Next & Previous for instant navigation
-         const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
-         const nextItem = filteredItems[(currentIndex + 1) % filteredItems.length];
-         const prevItem = filteredItems[(currentIndex - 1 + filteredItems.length) % filteredItems.length];
-         
-         if (nextItem) preloadImage(nextItem.src);
-         if (prevItem) preloadImage(prevItem.src);
-     }
-  }, [selectedImage, filteredItems]);
-
-  useEffect(() => {
-    fetchGalleryItems();
-  }, []);
-
+  // 1. Core Logic & Helpers (Defined first to avoid hoisting issues)
   const filteredItems = filter === 'all' 
     ? items 
     : items.filter(item => item.category === filter);
 
   const visibleItems = filteredItems.slice(0, visibleCount);
+
+  const fetchGalleryItems = useCallback(async () => {
+    try {
+        const response = await axios.get(`${API_URL}/gallery/`);
+        const mappedItems = response.data.map(item => ({
+            id: item.id,
+            src: item.image_url,
+            category: item.category,
+            title: item.title,
+        }));
+        setItems(mappedItems);
+        setLoading(false);
+    } catch (error) {
+        console.error('Error fetching gallery:', error);
+        setLoading(false);
+    }
+  }, [API_URL]);
 
   const navigate = useCallback((dir) => {
     if (!selectedImage) return;
@@ -137,6 +136,24 @@ const GalleryGrid = () => {
     }
     setSelectedImage(filteredItems[nextIndex]);
   }, [selectedImage, filteredItems]);
+
+  // 2. Effects
+  useEffect(() => {
+    fetchGalleryItems();
+  }, [fetchGalleryItems]);
+
+  // Sync loading state & Preload Neighbors
+  useEffect(() => {
+     if (selectedImage) {
+         setImageLoading(true);
+         const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
+         const nextItem = filteredItems[(currentIndex + 1) % filteredItems.length];
+         const prevItem = filteredItems[(currentIndex - 1 + filteredItems.length) % filteredItems.length];
+         if (nextItem) preloadImage(nextItem.src);
+         if (prevItem) preloadImage(prevItem.src);
+     }
+  }, [selectedImage, filteredItems]);
+
 
   // Scroll Lock & Wheel Nav
   useEffect(() => {
@@ -168,22 +185,7 @@ const GalleryGrid = () => {
     }
   }, [selectedImage, navigate]);
 
-  const fetchGalleryItems = async () => {
-    try {
-        const response = await axios.get(`${API_URL}/gallery/`);
-        const mappedItems = response.data.map(item => ({
-            id: item.id,
-            src: item.image_url,
-            category: item.category,
-            title: item.title,
-        }));
-        setItems(mappedItems);
-        setLoading(false);
-    } catch (error) {
-        console.error('Error fetching gallery:', error);
-        setLoading(false);
-    }
-  };
+   // Logic defined above
 
 
 
@@ -200,14 +202,7 @@ const GalleryGrid = () => {
   }, [selectedImage, navigate]);
 
 
-  // Swipe Logic
-  const swipeConfidenceThreshold = 500;
-  const swipePower = (offset, velocity) => {
-    return Math.abs(offset) * velocity;
-  };
-
     //Consolidated scroll lock logic is already at 116 area
-    // Removing the redundant one to avoid conflicts
 
   if (loading) {
       return (
