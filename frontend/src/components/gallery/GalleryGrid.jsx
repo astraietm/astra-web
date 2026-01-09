@@ -200,11 +200,23 @@ const GalleryGrid = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex items-center justify-center touch-none"
+            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl flex items-center justify-center touch-none"
             onClick={() => setSelectedImage(null)}
           >
              {/* Main Content Area - Full Viewport Height for Mobile */}
-             <div className="w-full h-[100dvh] relative flex flex-col md:flex-row items-center justify-center">
+             <div 
+                className="w-full h-[100dvh] relative flex flex-col md:flex-row items-center justify-center"
+                onClick={(e) => {
+                    // Stop bubbling only if clicking UI elements, not background
+                    // Actually, if we click background here, it propagates to parent.
+                    // But the Image Container (motion.div below) needs to handle its own clicks.
+                     e.stopPropagation(); 
+                     // If we click the 'empty' space here (if any), treat as close?
+                     // Or pass to parent? 
+                     // Simplest: this Div covers screen. It handles the click.
+                     if (e.target === e.currentTarget) setSelectedImage(null);
+                }}
+             >
 
                 {/* UI: Controls Overlay */}
                 <AnimatePresence>
@@ -213,7 +225,7 @@ const GalleryGrid = () => {
                             {/* Close Button */}
                             <motion.button 
                                 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-                                className="absolute top-4 right-4 md:top-6 md:right-6 p-3 rounded-full bg-black/40 text-white z-50 backdrop-blur-md border border-white/10 active:scale-95 touch-manipulation"
+                                className="absolute top-12 right-6 md:top-6 md:right-6 p-4 rounded-full bg-black/40 text-white z-50 backdrop-blur-md border border-white/10 active:scale-95 touch-manipulation hover:bg-white/10 transition-colors"
                                 onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
                             >
                                 <X className="w-6 h-6" />
@@ -238,7 +250,7 @@ const GalleryGrid = () => {
                             {/* Details Bar */}
                             <motion.div 
                                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-                                className="absolute bottom-0 left-0 right-0 p-6 pb-8 bg-gradient-to-t from-black via-black/80 to-transparent z-40 pointer-events-none"
+                                className="absolute bottom-0 left-0 right-0 p-6 pb-12 md:pb-8 bg-gradient-to-t from-black via-black/80 to-transparent z-40 pointer-events-none"
                             >
                                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end md:items-center gap-2 pointer-events-auto">
                                     <div>
@@ -261,7 +273,18 @@ const GalleryGrid = () => {
                 <motion.div
                     key={selectedImage.id} // Re-render on ID change to reset position
                     className="w-full h-full flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing"
-                    onClick={(e) => { e.stopPropagation(); setShowUi(!showUi); }}
+                    // If clicking purely on the container (background), it should close.
+                    // If clicking the IMAGE, toggle UI.
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        // If the target is the DIV itself, close.
+                        if (e.target === e.currentTarget) {
+                            setSelectedImage(null);
+                        } else {
+                            // If target is image (child), toggle UI.
+                            setShowUi(!showUi);
+                        }
+                    }}
                     drag="x"
                     dragConstraints={{ left: 0, right: 0 }}
                     dragElastic={1}
@@ -280,6 +303,7 @@ const GalleryGrid = () => {
                         alt={selectedImage.title}
                         draggable="false"
                         className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-2xl"
+                        // No onClick here, handled by parent
                     />
                 </motion.div>
              </div>
