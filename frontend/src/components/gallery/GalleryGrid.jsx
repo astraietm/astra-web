@@ -13,6 +13,12 @@ const categories = [
   { id: 'hackathons', label: 'Hackathons', icon: Zap },
 ];
 
+const preloadImage = (src) => {
+  if (!src) return;
+  const img = new Image();
+  img.src = src;
+};
+
 const GalleryCard = ({ item, index, onClick }) => {
     const [isLoading, setIsLoading] = useState(true);
 
@@ -29,7 +35,9 @@ const GalleryCard = ({ item, index, onClick }) => {
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             whileTap={{ scale: 0.98 }}
             className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
+            style={{ willChange: "transform, opacity" }}
             onClick={onClick}
+            onMouseEnter={() => preloadImage(item.src)}
             onContextMenu={(e) => e.preventDefault()}
         >
             <div className="relative aspect-[4/3] w-full overflow-hidden">
@@ -91,10 +99,20 @@ const GalleryGrid = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Sync loading state
+  // Sync loading state & Preload Neighbors
   useEffect(() => {
-     if (selectedImage) setImageLoading(true);
-  }, [selectedImage]);
+     if (selectedImage) {
+         setImageLoading(true);
+         
+         // Preload Next & Previous for instant navigation
+         const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
+         const nextItem = filteredItems[(currentIndex + 1) % filteredItems.length];
+         const prevItem = filteredItems[(currentIndex - 1 + filteredItems.length) % filteredItems.length];
+         
+         if (nextItem) preloadImage(nextItem.src);
+         if (prevItem) preloadImage(prevItem.src);
+     }
+  }, [selectedImage, filteredItems]);
 
   useEffect(() => {
     fetchGalleryItems();
@@ -413,17 +431,18 @@ const GalleryGrid = () => {
                             }
                         }}
                         className="absolute inset-0 flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing transform-gpu"
+                        style={{ willChange: "transform, opacity" }}
                     >
                         <motion.div 
-                            className="relative group/image flex items-center justify-center w-full h-full p-4"
-                            initial={{ scale: 0.92, opacity: 0, filter: "blur(10px)" }}
-                            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-                            exit={{ scale: 0.92, opacity: 0, filter: "blur(10px)" }}
+                            className="relative group/image flex items-center justify-center w-full h-full p-4 transform-gpu"
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            style={{ willChange: "transform, opacity" }}
                             transition={{ 
                                 type: "spring", 
-                                stiffness: 280, 
-                                damping: 28,
-                                filter: { duration: 0.2 }
+                                stiffness: 350, 
+                                damping: 32
                             }}
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -432,11 +451,11 @@ const GalleryGrid = () => {
                         >
                             {/* Loading State */}
                             {imageLoading && (
-                                <div className="absolute inset-0 flex items-center justify-center z-20">
+                                <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none transform-gpu">
                                     <div className="relative">
-                                        <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+                                        <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin will-change-transform"></div>
                                         <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse will-change-transform"></div>
                                         </div>
                                     </div>
                                 </div>
