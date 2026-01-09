@@ -6,5 +6,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('health/', health, name='health_check'), # Health Check
     path('auth/', include('authentication.urls')), # Authentication Endpoints
+    path('gallery/', include('gallery.urls')), # Gallery Endpoints
     path('', include('events.urls')), # Events and Registration Endpoints
 ]

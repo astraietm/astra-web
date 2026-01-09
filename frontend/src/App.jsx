@@ -15,6 +15,7 @@ import Dashboard from './pages/Dashboard';
 import AdminScanner from './pages/AdminScanner';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminEvents from './pages/AdminEvents';
+import AdminGallery from './pages/AdminGallery';
 import ScrollToTop from './components/common/ScrollToTop';
 import SmoothScroll from './components/common/SmoothScroll';
 import InitialBootLoader from './components/common/InitialBootLoader';
@@ -49,6 +50,7 @@ function App() {
                 <Route path="my-registrations" element={<Dashboard />} />
                 <Route path="admin" element={<AdminDashboard />} />
                 <Route path="admin/events" element={<AdminEvents />} />
+                <Route path="admin/gallery" element={<AdminGallery />} />
                 <Route path="gallery" element={<Gallery />} />
                 <Route path="about" element={<About />} />
                 <Route path="blog" element={<Blog />} />

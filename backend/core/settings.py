@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     # Local
     'authentication',
     'events',
+    'gallery',
 ]
 
 MIDDLEWARE = [
