@@ -27,20 +27,41 @@ const GalleryGrid = () => {
     fetchGalleryItems();
   }, []);
 
-  // Lock body scroll when modal is open
+  const lastScrollTime = React.useRef(0);
+
+  // Lock body scroll logic + Wheel Navigation
   useEffect(() => {
     if (selectedImage) {
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden'; // Lock html
+      document.documentElement.style.overflow = 'hidden'; 
+      
+      const handleWheel = (e) => {
+        e.preventDefault();
+        const now = Date.now();
+        if (now - lastScrollTime.current < 300) return; // Throttle 300ms
+
+        if (e.deltaY > 0) {
+            navigate('next');
+            lastScrollTime.current = now;
+        } else if (e.deltaY < 0) {
+            navigate('prev');
+            lastScrollTime.current = now;
+        }
+      };
+
+      window.addEventListener('wheel', handleWheel, { passive: false });
+
+      return () => {
+         window.removeEventListener('wheel', handleWheel);
+         document.body.style.overflow = '';
+         document.documentElement.style.overflow = '';
+      };
     } else {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    }
-    return () => { 
+        // Cleanup if selectedImage becomes null
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
-    };
-  }, [selectedImage]);
+    }
+  }, [selectedImage, navigate]);
 
   const fetchGalleryItems = async () => {
     try {
