@@ -257,10 +257,15 @@ const GalleryGrid = () => {
                             >
                                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end md:items-center gap-2 pointer-events-auto">
                                     <div>
-                                        <span className="text-primary text-xs font-mono uppercase tracking-widest mb-1 block">
-                                            Event Record #{selectedImage.id}
-                                        </span>
-                                        <h2 className="text-white font-display font-bold text-xl md:text-3xl leading-tight">{selectedImage.title}</h2>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-primary text-xs font-mono uppercase tracking-widest block animate-pulse">
+                                                Event Record #{selectedImage.id}
+                                            </span>
+                                            <span className="text-gray-500 text-[10px] font-mono uppercase tracking-widest hidden md:block">
+                                                // SYSTEM.DECRYPT(SUCCESS)
+                                            </span>
+                                        </div>
+                                        <h2 className="text-white font-display font-bold text-xl md:text-3xl leading-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">{selectedImage.title}</h2>
                                     </div>
                                     <div className="hidden md:flex items-center gap-2 text-gray-400 text-sm font-mono">
                                         <Globe className="w-4 h-4" />
@@ -272,10 +277,18 @@ const GalleryGrid = () => {
                     )}
                 </AnimatePresence>
 
+                {/* Tech HUD Corners */}
+                <div className="absolute inset-0 pointer-events-none z-50">
+                     <motion.div initial={{ opacity: 0, x: -20, y: -20 }} animate={{ opacity: 1, x: 0, y: 0 }} delay={0.2} className="absolute top-0 left-0 w-16 h-16 border-l-2 border-t-2 border-primary rounded-tl-xl"></motion.div>
+                     <motion.div initial={{ opacity: 0, x: 20, y: -20 }} animate={{ opacity: 1, x: 0, y: 0 }} delay={0.2} className="absolute top-0 right-0 w-16 h-16 border-r-2 border-t-2 border-primary rounded-tr-xl"></motion.div>
+                     <motion.div initial={{ opacity: 0, x: -20, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} delay={0.2} className="absolute bottom-0 left-0 w-16 h-16 border-l-2 border-b-2 border-primary rounded-bl-xl"></motion.div>
+                     <motion.div initial={{ opacity: 0, x: 20, y: 20 }} animate={{ opacity: 1, x: 0, y: 0 }} delay={0.2} className="absolute bottom-0 right-0 w-16 h-16 border-r-2 border-b-2 border-primary rounded-br-xl"></motion.div>
+                </div>
+
                 {/* Draggable Image */}
                 <motion.div
                     key={selectedImage.id} // Re-render on ID change to reset position
-                    className="w-full h-full flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing"
+                    className="w-full h-full flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing relative"
                     onClick={(e) => {
                         e.stopPropagation();
                         // If the target is the DIV itself, close.
@@ -304,14 +317,27 @@ const GalleryGrid = () => {
                             navigate('prev');
                         }
                     }}
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                    <img
-                        src={selectedImage.src}
-                        alt={selectedImage.title}
-                        draggable="false"
-                        className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-2xl"
-                    />
+                    <div className="relative group/image">
+                        {/* Scanning Line Animation */}
+                        <motion.div 
+                            initial={{ top: "-10%", opacity: 0 }}
+                            animate={{ top: "110%", opacity: [0, 1, 1, 0] }}
+                            transition={{ duration: 1.5, ease: "linear", repeat: 0 }}
+                            className="absolute left-0 right-0 h-[2px] bg-cyan-400 shadow-[0_0_15px_cyan] z-20 pointer-events-none"
+                        />
+                        
+                        <img
+                            src={selectedImage.src}
+                            alt={selectedImage.title}
+                            draggable="false"
+                            className="max-w-full max-h-[85dvh] object-contain pointer-events-none drop-shadow-2xl relative z-10"
+                        />
+                    </div>
                 </motion.div>
              </div>
           </motion.div>
