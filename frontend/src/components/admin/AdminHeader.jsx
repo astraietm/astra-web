@@ -84,12 +84,6 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
 
                 {/* User Profile */}
                 <div className="flex items-center gap-3 pl-4 border-l border-border">
-                    <div className="hidden md:flex flex-col items-end">
-                        <span className="text-sm font-medium text-white">{user?.user_name || "Admin"}</span>
-                        <span className="text-xs text-gray-500">
-                            {user?.is_superuser ? "Administrator" : "User"}
-                        </span>
-                    </div>
                     <div className="relative group">
                         <button className="w-9 h-9 rounded-lg bg-gradient-primary flex items-center justify-center text-white hover:opacity-90 transition-opacity">
                             <User className="w-5 h-5" />
