@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Shield, ArrowRight, User, LogOut, Ticket, Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
@@ -105,6 +105,7 @@ const Navbar = () => {
 
                     {/* 2. Navigation Links (Center) */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1">
+                        <LayoutGroup id="navbar-links">
                         {navLinks.map((link) => {
                             // NEW: Use activeTab instead of location.pathname
                             const isActive = activeTab === link.path;
@@ -120,6 +121,7 @@ const Navbar = () => {
                                             layoutId="nav-pill"
                                             className="absolute inset-0 bg-white/10 rounded-full"
                                             transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                            style={{ originY: "0px" }} // Anchor Y to prevent vertical jumping
                                         />
                                     )}
                                     <span className={`relative z-10 text-sm font-medium tracking-wide transition-colors duration-200 ${isActive ? 'text-white font-bold' : 'text-gray-300 group-hover:text-white'}`}>
@@ -128,6 +130,7 @@ const Navbar = () => {
                                 </Link>
                             );
                         })}
+                        </LayoutGroup>
                     </div>
 
                     {/* 3. User / Login (Right) */}
