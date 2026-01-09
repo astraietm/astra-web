@@ -18,6 +18,7 @@ const GalleryCard = ({ item, index, onClick }) => {
 
     return (
         <motion.div
+            layoutId={item.id} // Enable Hero shared layout animation
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
@@ -48,7 +49,7 @@ const GalleryCard = ({ item, index, onClick }) => {
                     loading="lazy"
                     decoding="async"
                     onLoad={() => setIsLoading(false)}
-                    className={`w-full h-full object-cover transition-transform duration-700 ease-out transform group-hover:scale-110 will-change-transform ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                    className={`w-full h-full object-cover transition-all duration-700 ease-out transform will-change-transform ${isLoading ? 'opacity-0 blur-xl scale-110' : 'opacity-100 blur-0 scale-100 group-hover:scale-105'}`}
                 />
 
                 {/* Scanline Effect (Hover) */}
@@ -192,10 +193,26 @@ const GalleryGrid = () => {
 
 
   // Swipe Logic
-  const swipeConfidenceThreshold = 10000;
+  const swipeConfidenceThreshold = 500;
   const swipePower = (offset, velocity) => {
     return Math.abs(offset) * velocity;
   };
+
+    // Lock Body Scroll when lightbox is open
+    useEffect(() => {
+        if (selectedImage) {
+            document.body.style.overflow = 'hidden';
+            // Also prevent touch move to block overscroll on mobile
+           const preventDefault = (e) => e.preventDefault();
+           // document.addEventListener('touchmove', preventDefault, { passive: false });
+           // NOTE: Blocking touchmove globally kills swipe. Just overflow hidden is usually enough for Lenis if configured right.
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [selectedImage]);
 
   if (loading) {
       return (
@@ -285,6 +302,7 @@ const GalleryGrid = () => {
       <AnimatePresence>
         {selectedImage && (
           <motion.div
+            // layoutId removed from backdrop to let it fade independently
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -378,9 +396,10 @@ const GalleryGrid = () => {
 
                 {/* Draggable Image */}
                 <motion.div
-                    key={selectedImage.id} // Re-render on ID change to reset position
+                    layoutId={selectedImage.id} // Connects to the grid card
+                    key={selectedImage.id} 
                     className="w-full h-full flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing relative"
-                    onClick={() => setSelectedImage(null)} // Click anywhere equals close...
+                    onClick={() => setSelectedImage(null)} 
                     drag
                     dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                     dragElastic={0.7}
@@ -399,9 +418,6 @@ const GalleryGrid = () => {
                             navigate('prev');
                         }
                     }}
-                    initial={{ scale: 0.9, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
                     <div 
@@ -430,6 +446,8 @@ const GalleryGrid = () => {
                             src={selectedImage.src}
                             alt={selectedImage.title}
                             draggable="false"
+                            loading="eager"
+                            decoding="async"
                             onLoad={() => setImageLoading(false)}
                             className={`max-w-full max-h-[85dvh] object-contain pointer-events-none drop-shadow-2xl relative z-10 transition-opacity duration-500 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
                         />
