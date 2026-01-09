@@ -200,7 +200,7 @@ const GalleryGrid = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-xl flex items-center justify-center touch-none"
+            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-3xl saturate-150 flex items-center justify-center touch-none transition-all duration-300"
             onClick={() => setSelectedImage(null)}
           >
              {/* Main Content Area - Full Viewport Height for Mobile */}
@@ -222,16 +222,7 @@ const GalleryGrid = () => {
                 <AnimatePresence>
                     {showUi && (
                         <>
-                            {/* Close Button */}
-                            <motion.button 
-                                initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-                                className="absolute top-12 right-6 md:top-6 md:right-6 p-4 rounded-full bg-black/40 text-white z-50 backdrop-blur-md border border-white/10 active:scale-95 touch-manipulation hover:bg-white/10 transition-colors"
-                                onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-                            >
-                                <X className="w-6 h-6" />
-                            </motion.button>
-
-                            {/* Nav Buttons (Desktop) */}
+                            {/* Nav Buttons (Desktop Only - Mobile uses gestures) */}
                             <motion.button 
                                 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                                 className="absolute left-8 p-4 rounded-full bg-black/40 hover:bg-white/10 text-white transition-colors z-40 hidden md:flex border border-white/10 backdrop-blur-md"
@@ -273,8 +264,6 @@ const GalleryGrid = () => {
                 <motion.div
                     key={selectedImage.id} // Re-render on ID change to reset position
                     className="w-full h-full flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing"
-                    // If clicking purely on the container (background), it should close.
-                    // If clicking the IMAGE, toggle UI.
                     onClick={(e) => {
                         e.stopPropagation();
                         // If the target is the DIV itself, close.
@@ -285,12 +274,19 @@ const GalleryGrid = () => {
                             setShowUi(!showUi);
                         }
                     }}
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={1}
+                    drag
+                    dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                    dragElastic={0.7}
                     onDragEnd={(e, { offset, velocity }) => {
                         const swipe = swipePower(offset.x, velocity.x);
-                        if (swipe < -swipeConfidenceThreshold) {
+                        const swipeY = swipePower(offset.y, velocity.y);
+                        
+                        // Swipe Up/Down to Close
+                        if (Math.abs(swipeY) > swipeConfidenceThreshold) {
+                            setSelectedImage(null);
+                        } 
+                        // Swipe Left/Right to Navigate
+                        else if (swipe < -swipeConfidenceThreshold) {
                             navigate('next');
                         } else if (swipe > swipeConfidenceThreshold) {
                             navigate('prev');
@@ -303,7 +299,6 @@ const GalleryGrid = () => {
                         alt={selectedImage.title}
                         draggable="false"
                         className="max-w-full max-h-full object-contain pointer-events-none drop-shadow-2xl"
-                        // No onClick here, handled by parent
                     />
                 </motion.div>
              </div>
