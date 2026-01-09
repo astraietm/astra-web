@@ -19,8 +19,16 @@ const preloadImage = (src) => {
   img.src = src;
 };
 
+// Simple in-memory cache to track loaded image IDs to prevent re-fading
+const loadedImageCache = new Set();
+
 const GalleryCard = ({ item, index, onClick }) => {
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(!loadedImageCache.has(item.id));
+
+    const handleLoad = () => {
+        setIsLoading(false);
+        loadedImageCache.add(item.id);
+    };
 
     return (
         <motion.div
@@ -59,7 +67,7 @@ const GalleryCard = ({ item, index, onClick }) => {
                     alt={item.title}
                     loading="lazy"
                     decoding="async"
-                    onLoad={() => setIsLoading(false)}
+                    onLoad={handleLoad}
                     className={`w-full h-full object-cover transition-all duration-700 ease-out transform will-change-transform ${isLoading ? 'opacity-0 blur-xl scale-110' : 'opacity-100 blur-0 scale-100 group-hover:scale-105'}`}
                 />
 
