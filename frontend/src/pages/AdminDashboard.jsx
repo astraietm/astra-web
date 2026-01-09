@@ -1,352 +1,216 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { 
     Users, 
-    CheckCircle, 
-    Clock, 
-    Search, 
-    Filter, 
-    Download, 
-    ArrowLeft,
-    User as UserIcon,
-    Mail,
-    Calendar,
-    Shield,
-    Loader2
+    Calendar, 
+    ShieldCheck, 
+    Activity, 
+    Mail, 
+    Terminal,
+    ArrowUpRight,
+    ArrowDownRight,
+    Zap,
+    Cpu
 } from 'lucide-react';
 
+const KPICard = ({ title, value, icon: Icon, trend, trendValue, color = 'primary' }) => {
+    const colorClasses = {
+        primary: 'text-primary bg-primary shadow-primary/30',
+        emerald: 'text-emerald-500 bg-emerald-500 shadow-emerald-500/30',
+        rose: 'text-rose-500 bg-rose-500 shadow-rose-500/30',
+        amber: 'text-amber-500 bg-amber-500 shadow-amber-500/30',
+        indigo: 'text-indigo-500 bg-indigo-500 shadow-indigo-500/30'
+    };
+
+    const currentColors = colorClasses[color] || colorClasses.primary;
+
+    return (
+        <motion.div 
+            whileHover={{ y: -5 }}
+            className="bg-[#0A0A0B] border border-white/5 p-6 rounded-2xl relative overflow-hidden group"
+        >
+            <div className={`absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity ${currentColors.split(' ')[0]}`}>
+                <Icon size={64} />
+            </div>
+            <div className="flex flex-col gap-1 relative z-10">
+                <span className="text-[10px] font-mono font-black text-gray-500 uppercase tracking-[0.2em]">{title}</span>
+                <div className="flex items-end gap-3 mt-1">
+                    <span className="text-3xl font-bold text-white tracking-tight">{value}</span>
+                    {trend && (
+                        <div className={`flex items-center gap-1 text-[10px] font-bold mb-1.5 ${trend === 'up' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                            {trend === 'up' ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                            {trendValue}
+                        </div>
+                    )}
+                </div>
+                <div className={`h-1 w-12 rounded-full mt-4 opacity-50 shadow-[0_0_10px_currentColor] ${currentColors.split(' ')[1]}`}></div>
+            </div>
+        </motion.div>
+    );
+};
+
 const AdminDashboard = () => {
-    const { user, token } = useAuth();
-    const navigate = useNavigate();
-    const [registrations, setRegistrations] = useState([]);
+    const { token } = useAuth();
+    const [stats, setStats] = useState({
+        totalRegistrations: 0,
+        activeEvents: 0,
+        recentActivity: [],
+        attendanceRate: 0
+    });
     const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterEvent, setFilterEvent] = useState('all');
-    const [filterStatus, setFilterStatus] = useState('all'); // all, pending, accessed
-    const [stats, setStats] = useState({ total: 0, attended: 0, pending: 0 });
 
     const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        if (user && !user.is_staff) {
-            navigate('/');
-        }
-    }, [user, navigate]);
-
-    const [refreshing, setRefreshing] = useState(false);
-
-    useEffect(() => {
-        fetchRegistrations();
-        
-        // Real-time polling every 5 seconds
-        const interval = setInterval(() => {
-            fetchRegistrations(true); // pass true for background refresh
-        }, 5000);
-
-        return () => clearInterval(interval);
+        fetchStats();
     }, [token]);
 
-    const fetchRegistrations = async (isBackground = false) => {
-        if (!isBackground) setLoading(true);
-        else setRefreshing(true);
-
+    const fetchStats = async () => {
         try {
-            const response = await axios.get(`${API_URL}/admin-registrations/`, {
-                headers: { Authorization: `Bearer ${token}` }
+            const [regRes, eventRes] = await Promise.all([
+                axios.get(`${API_URL}/admin-registrations/`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`${API_URL}/operations/events/`, { headers: { Authorization: `Bearer ${token}` } })
+            ]);
+
+            const regs = regRes.data;
+            const attended = regs.filter(r => r.is_used || r.status === 'ATTENDED').length;
+
+            setStats({
+                totalRegistrations: regs.length,
+                activeEvents: eventRes.data.filter(e => e.is_registration_open).length,
+                recentActivity: regs.slice(0, 5),
+                attendanceRate: regs.length > 0 ? Math.round((attended / regs.length) * 100) : 0
             });
-            setRegistrations(response.data);
-            calculateStats(response.data);
             setLoading(false);
-            setRefreshing(false);
         } catch (error) {
-            console.error('Error fetching registrations:', error);
+            console.error('Error fetching dashboard stats:', error);
             setLoading(false);
-            setRefreshing(false);
         }
     };
 
-    const calculateStats = (data) => {
-        const total = data.length;
-        const attended = data.filter(r => r.is_used || r.status === 'ATTENDED').length;
-        setStats({
-            total,
-            attended,
-            pending: total - attended
-        });
-    };
-
-    const filteredData = registrations.filter(reg => {
-        const matchesSearch = 
-            reg.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            reg.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            reg.token?.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        const matchesEvent = filterEvent === 'all' || reg.event_details.title === filterEvent;
-        
-        const isAccessed = reg.is_used || reg.status === 'ATTENDED';
-        const matchesStatus = 
-            filterStatus === 'all' || 
-            (filterStatus === 'accessed' && isAccessed) || 
-            (filterStatus === 'pending' && !isAccessed);
-        
-        return matchesSearch && matchesEvent && matchesStatus;
-    });
-
-    const uniqueEvents = ['all', ...new Set(registrations.map(r => r.event_details.title))];
-
-    const exportToCSV = () => {
-        const headers = ['Name', 'Email', 'Event', 'Registration Date', 'Token', 'Status'];
-        const csvData = filteredData.map(reg => [
-            reg.user_name,
-            reg.user_email,
-            reg.event_details.title,
-            new Date(reg.timestamp).toLocaleString(),
-            reg.token,
-            (reg.is_used || reg.status === 'ATTENDED') ? 'Attended' : 'Pending'
-        ]);
-
-        const csvContent = [headers, ...csvData].map(e => e.join(',')).join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `registrations_${new Date().toLocaleDateString()}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-[#030712] flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-12 h-12 text-primary animate-spin" />
-                    <p className="text-white/60 font-medium font-mono animate-pulse uppercase tracking-widest text-sm">Initializing Secure Access...</p>
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div className="min-h-screen bg-[#030712] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 font-outfit">
-            <div className="max-w-7xl mx-auto">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-                    <div>
-                        <button 
-                            onClick={() => navigate('/')}
-                        className="flex items-center gap-2 text-white/50 hover:text-primary transition-colors mb-4 group"
-                        >
-                            <ArrowLeft className="group-hover:-translate-x-1 transition-transform" />
-                            <span className="text-sm font-medium uppercase tracking-wider">Back to Terminal</span>
-                        </button>
-                        <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-white to-primary/50 bg-clip-text text-transparent flex items-center gap-3">
-                            <Shield className="text-primary" />
-                            Central Intelligence
-                            <div className="ml-2 flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
-                                <span className={`w-2 h-2 rounded-full bg-primary ${refreshing ? 'animate-ping' : 'animate-pulse'}`}></span>
-                                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
-                                    {refreshing ? 'Syncing...' : 'Live'}
-                                </span>
-                            </div>
-                        </h1>
-                        <p className="text-white/50 mt-2 font-mono text-sm">Mission Control: Accessing Registration Database v2.4.0</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button 
-                            onClick={() => navigate('/admin/scanner')}
-                            className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-primary/50 transition-all duration-300 group"
-                        >
-                            <Search className="text-primary group-hover:scale-110 transition-transform" />
-                            <span className="font-medium uppercase tracking-wider text-sm">Launch Scanner</span>
-                        </button>
-                        <button 
-                            onClick={() => navigate('/admin/events')}
-                            className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-primary/50 transition-all duration-300 group"
-                        >
-                            <Calendar className="text-primary group-hover:scale-110 transition-transform" />
-                            <span className="font-medium uppercase tracking-wider text-sm">Manage Events</span>
-                        </button>
-                        <button 
-                            onClick={() => navigate('/admin/gallery')}
-                            className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 hover:border-primary/50 transition-all duration-300 group"
-                        >
-                            <UserIcon className="text-primary group-hover:scale-110 transition-transform" />
-                            <span className="font-medium uppercase tracking-wider text-sm">Manage Gallery</span>
-                        </button>
-                        <button 
-                            onClick={exportToCSV}
-                            className="flex items-center gap-2 px-6 py-3 bg-primary text-black rounded-xl hover:bg-primary-hover transition-all duration-300 font-bold shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] group"
-                        >
-                            <Download className="group-hover:translate-y-0.5 transition-transform" />
-                            <span className="uppercase tracking-wider text-sm">Export Data</span>
-                        </button>
-                    </div>
-                </div>
+        <div className="space-y-8">
+            {/* KPI Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <KPICard 
+                    title="TOTAL_REGISTRATIONS" 
+                    value={stats.totalRegistrations} 
+                    icon={Users} 
+                    trend="up" 
+                    trendValue="+12%" 
+                    color="primary"
+                />
+                <KPICard 
+                    title="ACTIVE_OPERATIONS" 
+                    value={stats.activeEvents} 
+                    icon={Calendar} 
+                    trend="up" 
+                    trendValue="+2" 
+                    color="primary"
+                />
+                <KPICard 
+                    title="ATTENDANCE_RATE" 
+                    value={`${stats.attendanceRate}%`} 
+                    icon={Activity} 
+                    trend="down" 
+                    trendValue="-3%" 
+                    color="primary"
+                />
+                <KPICard 
+                    title="SYSTEM_LOAD" 
+                    value="14%" 
+                    icon={Cpu} 
+                    trend="up" 
+                    trendValue="Normal" 
+                    color="primary"
+                />
+            </div>
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-                    {[
-                        { label: 'Total Enlisted', value: stats.total, icon: Users, color: 'primary' },
-                        { label: 'Confirmed Access', value: stats.attended, icon: CheckCircle, color: 'green-500' },
-                        { label: 'Awaiting Entrance', value: stats.pending, icon: Clock, color: 'yellow-500' }
-                    ].map((stat, i) => (
-                        <motion.div
-                            key={stat.label}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            className="bg-white/5 border border-white/10 p-8 rounded-3xl relative overflow-hidden group hover:border-white/20 transition-all cursor-pointer"
-                            onClick={() => {
-                                if (stat.label.includes('Confirmed')) setFilterStatus('accessed');
-                                else if (stat.label.includes('Awaiting')) setFilterStatus('pending');
-                                else setFilterStatus('all');
-                            }}
-                        >
-                            <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-10 transition-opacity">
-                                <stat.icon size={80} />
-                            </div>
-                            <p className="text-white/50 text-sm font-medium uppercase tracking-widest mb-1">{stat.label}</p>
-                            <h3 className={`text-4xl font-bold text-${stat.color}`}>{stat.value}</h3>
-                        </motion.div>
-                    ))}
-                </div>
-
-                {/* Filters & Search */}
-                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl mb-8 flex flex-col md:flex-row gap-4 items-center">
-                    <div className="relative flex-1 w-full">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30" />
-                        <input 
-                            type="text" 
-                            placeholder="Search by name, email, or token..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-black/40 border border-white/5 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
-                        />
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                        <div className="relative flex items-center gap-2">
-                            <Filter className="text-white/30" />
-                            <select 
-                                value={filterEvent}
-                                onChange={(e) => setFilterEvent(e.target.value)}
-                                className="w-full sm:w-48 bg-black/40 border border-white/5 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all text-sm appearance-none cursor-pointer"
-                            >
-                                {uniqueEvents.map(event => (
-                                    <option key={event} value={event} className="bg-[#030712]">{event === 'all' ? 'All Operations' : event}</option>
-                                ))}
-                            </select>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Recent Activity Feed */}
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-[#0A0A0B] border border-white/5 rounded-2xl overflow-hidden">
+                        <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                            <h3 className="flex items-center gap-2 text-xs font-mono font-black text-gray-500 uppercase tracking-widest">
+                                <Terminal className="w-4 h-4 text-primary" />
+                                RECENT_INTELLIGENCE_FEED
+                            </h3>
+                            <button className="text-[10px] font-mono text-primary hover:underline">VIEW_ALL</button>
                         </div>
-                        <div className="relative">
-                            <select 
-                                value={filterStatus}
-                                onChange={(e) => setFilterStatus(e.target.value)}
-                                className="w-full sm:w-40 bg-black/40 border border-white/5 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all text-sm appearance-none cursor-pointer"
-                            >
-                                <option value="all" className="bg-[#030712]">All Status</option>
-                                <option value="accessed" className="bg-[#030712]">Accessed</option>
-                                <option value="pending" className="bg-[#030712]">Pending</option>
-                            </select>
+                        <div className="p-0">
+                            {stats.recentActivity.map((activity, i) => (
+                                <div key={i} className="px-6 py-4 border-b border-white/5 last:border-0 hover:bg-white/[0.01] transition-colors flex items-center justify-between group">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-gray-500 group-hover:text-primary transition-colors">
+                                            <Zap size={18} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-white">
+                                                New registration for <span className="text-primary">{activity.event_details.title}</span>
+                                            </p>
+                                            <p className="text-[10px] text-gray-500 font-mono mt-0.5">AGENT: {activity.user_email}</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] font-mono text-gray-600 uppercase tracking-widest">{new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Quick Launch Panel */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 group hover:border-primary/40 transition-all cursor-pointer">
+                            <ShieldCheck className="text-primary mb-4 w-8 h-8 group-hover:scale-110 transition-transform" />
+                            <h4 className="font-bold text-white mb-1">Launch Scanner</h4>
+                            <p className="text-xs text-gray-500">Fast QR verification for physical attendance.</p>
+                        </div>
+                        <div className="p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-transparent border border-indigo-500/20 group hover:border-indigo-500/40 transition-all cursor-pointer">
+                            <Mail className="text-indigo-500 mb-4 w-8 h-8 group-hover:scale-110 transition-transform" />
+                            <h4 className="font-bold text-white mb-1">Dispatch Alerts</h4>
+                            <p className="text-xs text-gray-500">Send encrypted notifications to all agents.</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Data Table */}
-                <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl">
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-white/10 bg-white/[0.02]">
-                                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-white/40">Registrant</th>
-                                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-white/40">Operation</th>
-                                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-white/40">Access Key</th>
-                                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-white/40">Timestamp</th>
-                                    <th className="px-6 py-5 text-xs font-bold uppercase tracking-widest text-white/40">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5">
-                                <AnimatePresence mode='popLayout'>
-                                    {filteredData.length > 0 ? (
-                                        filteredData.map((reg, i) => (
-                                            <motion.tr 
-                                                key={reg.id}
-                                                layout
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                exit={{ opacity: 0 }}
-                                                className="hover:bg-white/[0.02] transition-colors group"
-                                            >
-                                                <td className="px-6 py-5">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center border border-white/10 text-primary">
-                                                            <UserIcon className="text-lg" />
-                                                        </div>
-                                                        <div>
-                                                            <p className="font-medium text-white group-hover:text-primary transition-colors">{reg.user_name || 'Incognito Agent'}</p>
-                                                            <p className="text-xs text-white/40 flex items-center gap-1 mt-0.5">
-                                                                <Mail className="scale-75" />
-                                                                {reg.user_email}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-5">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className="w-2 h-2 rounded-full bg-primary/40 animate-pulse"></div>
-                                                        <span className="text-sm font-medium text-white/80">{reg.event_details.title}</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-5">
-                                                    <code className="text-[10px] bg-white/5 px-2 py-1 rounded border border-white/10 text-primary font-mono select-all">
-                                                        {reg.token}
-                                                    </code>
-                                                </td>
-                                                <td className="px-6 py-5">
-                                                    <p className="text-xs text-white/50 flex items-center gap-1.5 font-mono">
-                                                        <Calendar className="text-primary/50" />
-                                                        {new Date(reg.timestamp).toLocaleDateString()}
-                                                        <span className="opacity-30">|</span>
-                                                        {new Date(reg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                    </p>
-                                                </td>
-                                                <td className="px-6 py-5">
-                                                    {reg.is_used || reg.status === 'ATTENDED' ? (
-                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase tracking-widest border border-green-500/20">
-                                                            <CheckCircle />
-                                                            Accessed
-                                                        </span>
-                                                    ) : (
-                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-500 text-[10px] font-bold uppercase tracking-widest border border-yellow-500/20">
-                                                            <Clock />
-                                                            Pending
-                                                        </span>
-                                                    )}
-                                                </td>
-                                            </motion.tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="5" className="px-6 py-20 text-center">
-                                                <Users className="mx-auto text-4xl text-white/10 mb-4" />
-                                                <p className="text-white/30 font-mono uppercase tracking-[0.2em] text-sm italic">No records found matching criteria</p>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </AnimatePresence>
-                            </tbody>
-                        </table>
+                {/* System Status Sidebar */}
+                <div className="space-y-6">
+                    <div className="bg-[#0A0A0B] border border-white/5 p-6 rounded-2xl">
+                        <h3 className="text-xs font-mono font-black text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                             <ShieldCheck className="w-4 h-4 text-primary" />
+                             SECURITY_AUDIT
+                        </h3>
+                        <div className="space-y-4">
+                            {[
+                                { label: 'DATABASE_SYNC', status: 'SYNCHRONIZED', colorClass: 'text-emerald-500 bg-emerald-500' },
+                                { label: 'FIREWALL_STATUS', status: 'ACTIVE', colorClass: 'text-emerald-500 bg-emerald-500' },
+                                { label: 'ENCRYPTION_ENGINE', status: 'OPERATIONAL', colorClass: 'text-emerald-500 bg-emerald-500' },
+                                { label: 'THREAT_DETECTION', status: 'IDLE', colorClass: 'text-gray-500 bg-gray-500' }
+                            ].map((item, i) => (
+                                <div key={i} className="flex flex-col gap-1.5 p-3 rounded-lg bg-white/5 border border-white/5">
+                                    <span className="text-[9px] font-mono text-gray-500 tracking-widest">{item.label}</span>
+                                    <div className="flex items-center justify-between">
+                                        <span className={`text-[10px] font-bold ${item.colorClass.split(' ')[0]}`}>{item.status}</span>
+                                        <div className={`w-2 h-2 rounded-full shadow-[0_0_5px_currentColor] ${item.colorClass.split(' ')[1]}`}></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
 
-                {/* Footer Insight */}
-                <div className="mt-8 flex justify-between items-center text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">
-                    <p>Encryption: AES-256-GCM</p>
-                    <p>Total Records Processed: {registrations.length}</p>
-                    <p>System State: Nominal</p>
+                    <div className="p-6 rounded-2xl bg-[#0A0A0B] border border-white/5">
+                         <h3 className="text-xs font-mono font-black text-gray-500 uppercase tracking-widest mb-4">MEMBER_GROWTH</h3>
+                         <div className="h-32 flex items-end gap-1.5 justify-between">
+                            {[40, 70, 45, 90, 65, 80, 50, 85, 95, 75, 60, 100].map((h, i) => (
+                                <div 
+                                    key={i} 
+                                    className="flex-1 bg-primary/20 rounded-sm hover:bg-primary transition-colors cursor-pointer"
+                                    style={{ height: `${h}%` }}
+                                ></div>
+                            ))}
+                         </div>
+                    </div>
                 </div>
             </div>
         </div>

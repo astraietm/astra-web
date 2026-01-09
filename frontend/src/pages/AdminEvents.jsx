@@ -135,31 +135,25 @@ const AdminEvents = () => {
     if (loading) return <div className="text-white text-center mt-20">Initializing...</div>;
 
     return (
-        <div className="min-h-screen bg-[#030712] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 font-outfit">
-            <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-                    <div>
-                        <button 
-                            onClick={() => navigate('/admin')}
-                            className="flex items-center gap-2 text-white/50 hover:text-primary transition-colors mb-4 group"
-                        >
-                            <ArrowLeft className="group-hover:-translate-x-1 transition-transform" />
-                            <span className="text-sm font-medium uppercase tracking-wider">Back to Dashboard</span>
-                        </button>
-                        <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-white to-primary/50 bg-clip-text text-transparent flex items-center gap-3">
-                            <Shield className="text-primary" />
-                            Operation Control
-                        </h1>
-                        <p className="text-white/50 mt-2 font-mono text-sm">Create and Manage Tactical Operations</p>
-                    </div>
-                    <button 
-                        onClick={handleCreate}
-                        className="flex items-center gap-2 px-6 py-3 bg-primary text-black rounded-xl hover:bg-primary-hover transition-all duration-300 font-bold shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] group"
-                    >
-                        <Plus className="group-hover:rotate-90 transition-transform" />
-                        <span className="uppercase tracking-wider text-sm">New Operation</span>
-                    </button>
+        <div className="space-y-8 pb-12">
+            {/* Context Header */}
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold text-white tracking-widest uppercase flex items-center gap-3">
+                         <Calendar className="text-primary w-6 h-6" />
+                         Operation_Manager
+                    </h1>
+                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Configure Mission Parameters & Protocols</p>
                 </div>
+                <button 
+                    onClick={handleCreate}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-primary text-black rounded-xl font-black shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition-all uppercase tracking-widest text-xs"
+                >
+                    <Plus className="w-4 h-4" />
+                    New_Operation
+                </button>
+            </div>
+
 
                 {isEditing ? (
                     <motion.div 
@@ -374,7 +368,6 @@ const AdminEvents = () => {
                         ))}
                     </div>
                 )}
-            </div>
         </div>
     );
 };

@@ -179,38 +179,18 @@ const AdminGallery = () => {
      );
 
     return (
-        <div className="min-h-screen bg-[#030712] text-white pt-24 pb-12 px-4 font-outfit relative overflow-hidden">
-             {/* Improved Background Effects */}
-             <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/10 via-[#030712]/50 to-[#030712] pointer-events-none"></div>
-             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-
-            <div className="max-w-7xl mx-auto relative z-10">
-                {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-                     <div>
-                        <button 
-                            onClick={() => navigate('/admin')}
-                            className="flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-4 group"
-                        >
-                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                            <span className="text-sm font-mono uppercase tracking-wider">Return to Command</span>
-                        </button>
-                        <h1 className="text-4xl md:text-5xl font-bold font-display tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-primary/50">
-                            Gallery Protocol
-                        </h1>
-                        <p className="text-white/40 mt-2 font-mono text-sm max-w-lg flex items-center gap-2">
-                            <Database className="w-4 h-4 text-primary" />
-                            {editingItem ? 'MODIFYING ARCHIVE RECORD...' : 'SECURE UPLOAD TERMINAL'}
-                        </p>
-                    </div>
-
-                    <div className="flex gap-4">
-                        <div className="px-4 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full flex items-center gap-2 shadow-lg shadow-black/20">
-                             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                             <span className="text-xs font-mono uppercase text-white/60">System Online</span>
-                        </div>
-                    </div>
+        <div className="space-y-8 pb-12">
+            {/* Context Header */}
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold text-white tracking-widest uppercase flex items-center gap-3">
+                         <Image className="text-primary w-6 h-6" />
+                         Asset_Registry
+                    </h1>
+                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Manage Peripheral Intelligence Archives</p>
                 </div>
+            </div>
+
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Left Column: Upload/Edit Form */}
@@ -438,7 +418,6 @@ const AdminGallery = () => {
                         </div>
                     </div>
                 )}
-            </div>
         </div>
     );
 };
