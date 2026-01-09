@@ -29,7 +29,8 @@
 
 @layer components {
   .font-inter h1, .font-inter h2, .font-inter h3, .font-inter h4, .font-inter h5, .font-inter h6 {
-    @apply font-inter tracking-normal;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    letter-spacing: 0;
   }
 }
 
