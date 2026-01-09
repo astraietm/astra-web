@@ -23,7 +23,25 @@ const preloadImage = (src) => {
 const loadedImageCache = new Set();
 
 const GalleryCard = ({ item, index, onClick }) => {
-    const [isLoading, setIsLoading] = useState(!loadedImageCache.has(item.id));
+    const isCached = loadedImageCache.has(item.id);
+    const [isLoading, setIsLoading] = useState(!isCached);
+
+    // If cached, we don't animate in from below, we just appear
+    // This prevents "re-playing" animations if the component remounts
+    const animationVariants = {
+        hidden: { opacity: 0, y: 20, scale: 0.98 },
+        visible: { 
+            opacity: 1, 
+            y: 0, 
+            scale: 1,
+            transition: { 
+                duration: 0.4, 
+                delay: isCached ? 0 : (index % 9) * 0.04, 
+                ease: [0.23, 1, 0.32, 1] 
+            }
+        },
+        exit: { opacity: 0, scale: 0.98 }
+    };
 
     const handleLoad = () => {
         setIsLoading(false);
@@ -32,14 +50,11 @@ const GalleryCard = ({ item, index, onClick }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ 
-                duration: 0.4, 
-                delay: (index % 9) * 0.04, 
-                ease: [0.23, 1, 0.32, 1] 
-            }}
+            layout // Helps with smooth reordering
+            variants={animationVariants}
+            initial={isCached ? "visible" : "hidden"}
+            animate="visible"
+            exit="exit"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             whileTap={{ scale: 0.98 }}
             className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
@@ -65,7 +80,7 @@ const GalleryCard = ({ item, index, onClick }) => {
                 <img
                     src={item.src}
                     alt={item.title}
-                    loading="lazy"
+                    loading="eager"
                     decoding="async"
                     onLoad={handleLoad}
                     className={`w-full h-full object-cover transition-all duration-700 ease-out transform will-change-transform ${isLoading ? 'opacity-0 blur-xl scale-110' : 'opacity-100 blur-0 scale-100 group-hover:scale-105'}`}
