@@ -23,14 +23,14 @@ const GalleryCard = ({ item, onClick }) => {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             whileTap={{ scale: 0.98 }}
-            className="break-inside-avoid relative group rounded-2xl overflow-hidden bg-surface border border-white/5 cursor-pointer transform transition-transform duration-200 mb-6"
+            className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 cursor-pointer transform transition-transform duration-200 h-full w-full"
             onClick={onClick}
             onContextMenu={(e) => e.preventDefault()}
         >
-            <div className={`relative ${isLoading ? 'min-h-[200px]' : ''}`}>
+            <div className="relative aspect-[4/3] w-full overflow-hidden">
                  {/* Skeleton Loader */}
                  {isLoading && (
-                    <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center min-h-[200px]">
+                    <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
                         <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin"></div>
                     </div>
                 )}
@@ -40,7 +40,7 @@ const GalleryCard = ({ item, onClick }) => {
                     alt={item.title}
                     loading="lazy"
                     onLoad={() => setIsLoading(false)}
-                    className={`w-full h-auto object-cover transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                    className={`w-full h-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                 />
 
                 {/* Overlay */}
@@ -244,8 +244,8 @@ const GalleryGrid = () => {
           </div>
       </div>
 
-      {/* Gallery Grid - Removed 'layout' prop to fix stretching */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 px-4 md:px-0">
+      {/* Gallery Grid - CSS Grid (3 Columns) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-0 auto-rows-fr">
         <AnimatePresence mode='popLayout'>
           {visibleItems.map((item) => (
             <GalleryCard 
