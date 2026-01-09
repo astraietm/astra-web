@@ -27,6 +27,12 @@
   }
 }
 
+@layer components {
+  .font-inter h1, .font-inter h2, .font-inter h3, .font-inter h4, .font-inter h5, .font-inter h6 {
+    @apply font-inter tracking-normal;
+  }
+}
+
 @layer utilities {
   /* Modern Glass Card */
   .glass-card {
@@ -141,3 +147,5 @@
     pointer-events: none;
     mix-blend-mode: overlay;
 }
+
+/* Force Rebuild 1 */
