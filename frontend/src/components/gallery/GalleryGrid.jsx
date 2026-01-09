@@ -358,16 +358,7 @@ const GalleryGrid = () => {
                 <motion.div
                     key={selectedImage.id} // Re-render on ID change to reset position
                     className="w-full h-full flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing relative"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        // If the target is the DIV itself, close.
-                        if (e.target === e.currentTarget) {
-                            setSelectedImage(null);
-                        } else {
-                            // If target is image (child), toggle UI.
-                            setShowUi(!showUi);
-                        }
-                    }}
+                    onClick={() => setSelectedImage(null)} // Click anywhere equals close...
                     drag
                     dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                     dragElastic={0.7}
@@ -391,7 +382,13 @@ const GalleryGrid = () => {
                     exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                    <div className="relative group/image flex items-center justify-center w-full h-full">
+                    <div 
+                        className="relative group/image flex items-center justify-center w-full h-full"
+                        onClick={(e) => {
+                            e.stopPropagation(); // Prevent closing when clicking the image area
+                            setShowUi(!showUi);
+                        }}
+                    >
                         {/* Loading State - Premium Spinner/Skeleton */}
                         {imageLoading && (
                             <div className="absolute inset-0 flex items-center justify-center z-20">
