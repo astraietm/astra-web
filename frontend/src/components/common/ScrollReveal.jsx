@@ -6,10 +6,10 @@ const ScrollReveal = ({
     width = "fit-content",
     variant = "up", // up, down, left, right, scale, blur
     delay = 0,
-    duration = 0.8,
+    duration = 0.4, // Faster default duration
     className = "",
     once = true,
-    amount = 0.3
+    amount = 0.1 // Triggers sooner
 }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once, amount });
@@ -20,38 +20,40 @@ const ScrollReveal = ({
             visible: { opacity: 1 }
         };
 
+        // Snappier spring physics
         const transition = { 
             duration, 
             delay, 
             type: "spring", 
-            stiffness: 50, 
-            damping: 20 
+            stiffness: 100, 
+            damping: 20,
+            mass: 0.5 // Lighter mass for faster movement
         };
 
         switch (variant) {
             case "up":
                 return {
-                    hidden: { ...base.hidden, y: 50 },
+                    hidden: { ...base.hidden, y: 30 },
                     visible: { ...base.visible, y: 0, transition }
                 };
             case "down":
                 return {
-                    hidden: { ...base.hidden, y: -50 },
+                    hidden: { ...base.hidden, y: -30 },
                     visible: { ...base.visible, y: 0, transition }
                 };
             case "left":
                 return {
-                    hidden: { ...base.hidden, x: 50 },
+                    hidden: { ...base.hidden, x: 30 },
                     visible: { ...base.visible, x: 0, transition }
                 };
             case "right":
                 return {
-                    hidden: { ...base.hidden, x: -50 },
+                    hidden: { ...base.hidden, x: -30 },
                     visible: { ...base.visible, x: 0, transition }
                 };
             case "scale":
                 return {
-                    hidden: { ...base.hidden, scale: 0.9 },
+                    hidden: { ...base.hidden, scale: 0.95 },
                     visible: { ...base.visible, scale: 1, transition }
                 };
             case "blur":
@@ -61,7 +63,7 @@ const ScrollReveal = ({
                 };
             default: // up
                 return {
-                    hidden: { ...base.hidden, y: 50 },
+                    hidden: { ...base.hidden, y: 30 },
                     visible: { ...base.visible, y: 0, transition }
                 };
         }
