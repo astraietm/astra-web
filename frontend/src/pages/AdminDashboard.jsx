@@ -163,11 +163,11 @@ const AdminDashboard = () => {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-[#0A0A0B] border border-white/5 rounded-2xl overflow-hidden">
                         <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
-                            <h3 className="flex items-center gap-2 text-xs font-mono font-black text-gray-500 uppercase tracking-widest">
+                            <h3 className="flex items-center gap-2 text-xs font-jetbrains font-black text-gray-500 uppercase tracking-widest">
                                 <Terminal className="w-4 h-4 text-primary" />
                                 RECENT_INTELLIGENCE_FEED
                             </h3>
-                            <button className="text-[10px] font-mono text-primary hover:underline">VIEW_ALL</button>
+                            <button className="text-[10px] font-jetbrains text-primary hover:underline">VIEW_ALL</button>
                         </div>
                         <div className="p-0">
                             {stats.recentActivity.map((activity, i) => (
@@ -180,10 +180,10 @@ const AdminDashboard = () => {
                                             <p className="text-sm font-medium text-white">
                                                 New registration for <span className="text-primary">{activity.event_details.title}</span>
                                             </p>
-                                            <p className="text-[10px] text-gray-500 font-mono mt-0.5">AGENT: {activity.user_email}</p>
+                                            <p className="text-[10px] text-gray-500 font-jetbrains mt-0.5">AGENT: {activity.user_email}</p>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono text-gray-600 uppercase tracking-widest">{new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                    <span className="text-[10px] font-jetbrains text-gray-600 uppercase tracking-widest">{new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
                             ))}
                         </div>
@@ -207,7 +207,7 @@ const AdminDashboard = () => {
                 {/* System Status Sidebar */}
                 <div className="space-y-6">
                     <div className="bg-[#0A0A0B] border border-white/5 p-6 rounded-2xl">
-                        <h3 className="text-xs font-mono font-black text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <h3 className="text-xs font-jetbrains font-black text-gray-500 uppercase tracking-widest mb-6 flex items-center gap-2">
                              <ShieldCheck className="w-4 h-4 text-primary" />
                              SECURITY_AUDIT
                         </h3>
@@ -219,7 +219,7 @@ const AdminDashboard = () => {
                                 { label: 'THREAT_DETECTION', status: 'IDLE', colorClass: 'text-gray-500 bg-gray-500' }
                             ].map((item, i) => (
                                 <div key={i} className="flex flex-col gap-1.5 p-3 rounded-lg bg-white/5 border border-white/5">
-                                    <span className="text-[9px] font-mono text-gray-500 tracking-widest">{item.label}</span>
+                                    <span className="text-[9px] font-jetbrains text-gray-500 tracking-widest">{item.label}</span>
                                     <div className="flex items-center justify-between">
                                         <span className={`text-[10px] font-bold ${item.colorClass.split(' ')[0]}`}>{item.status}</span>
                                         <div className={`w-2 h-2 rounded-full shadow-[0_0_5px_currentColor] ${item.colorClass.split(' ')[1]}`}></div>
@@ -230,7 +230,7 @@ const AdminDashboard = () => {
                     </div>
 
                     <div className="p-6 rounded-2xl bg-[#0A0A0B] border border-white/5">
-                         <h3 className="text-xs font-mono font-black text-gray-500 uppercase tracking-widest mb-4">MEMBER_GROWTH</h3>
+                         <h3 className="text-xs font-jetbrains font-black text-gray-500 uppercase tracking-widest mb-4">MEMBER_GROWTH</h3>
                          <div className="h-32 flex items-end gap-1.5 justify-between">
                             {[40, 70, 45, 90, 65, 80, 50, 85, 95, 75, 60, 100].map((h, i) => (
                                 <div 

@@ -87,7 +87,7 @@ const AdminRegistrations = () => {
                          <Users className="text-primary w-6 h-6" />
                          Record_Archives
                     </h1>
-                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Intelligence Database & Personnel Logistics</p>
+                    <p className="text-[10px] font-jetbrains text-gray-500 uppercase tracking-[0.3em] mt-1">Intelligence Database & Personnel Logistics</p>
                 </div>
                 <button 
                     onClick={fetchRegistrations}
@@ -138,12 +138,12 @@ const AdminRegistrations = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-white/[0.02] border-b border-white/5">
-                                <th className="px-6 py-4 text-[10px] font-mono font-black text-gray-500 uppercase tracking-widest">Registrant</th>
-                                <th className="px-6 py-4 text-[10px] font-mono font-black text-gray-500 uppercase tracking-widest">Operation</th>
-                                <th className="px-6 py-4 text-[10px] font-mono font-black text-gray-500 uppercase tracking-widest">Access Key</th>
-                                <th className="px-6 py-4 text-[10px] font-mono font-black text-gray-500 uppercase tracking-widest">Timestamp</th>
-                                <th className="px-6 py-4 text-[10px] font-mono font-black text-gray-500 uppercase tracking-widest">Status</th>
-                                <th className="px-6 py-4 text-[10px] font-mono font-black text-gray-500 uppercase tracking-widest text-right">Actions</th>
+                                <th className="px-6 py-4 text-[10px] font-jetbrains font-black text-gray-500 uppercase tracking-widest">Registrant</th>
+                                <th className="px-6 py-4 text-[10px] font-jetbrains font-black text-gray-500 uppercase tracking-widest">Operation</th>
+                                <th className="px-6 py-4 text-[10px] font-jetbrains font-black text-gray-500 uppercase tracking-widest">Access Key</th>
+                                <th className="px-6 py-4 text-[10px] font-jetbrains font-black text-gray-500 uppercase tracking-widest">Timestamp</th>
+                                <th className="px-6 py-4 text-[10px] font-jetbrains font-black text-gray-500 uppercase tracking-widest">Status</th>
+                                <th className="px-6 py-4 text-[10px] font-jetbrains font-black text-gray-500 uppercase tracking-widest text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -163,7 +163,7 @@ const AdminRegistrations = () => {
                                                 </div>
                                                 <div>
                                                     <p className="font-medium text-sm text-white group-hover:text-primary transition-colors">{reg.user_name || 'Classified'}</p>
-                                                    <p className="text-[10px] text-gray-500 font-mono tracking-tight">{reg.user_email}</p>
+                                                    <p className="text-[10px] text-gray-500 font-jetbrains tracking-tight">{reg.user_email}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -171,12 +171,12 @@ const AdminRegistrations = () => {
                                             <span className="text-xs font-medium text-gray-300">{reg.event_details.title}</span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <code className="text-[10px] bg-primary/5 text-primary px-2 py-1 rounded border border-primary/10 font-mono">
+                                            <code className="text-[10px] bg-primary/5 text-primary px-2 py-1 rounded border border-primary/10 font-jetbrains">
                                                 {reg.token}
                                             </code>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-[10px] text-gray-500 font-mono">
+                                            <div className="text-[10px] text-gray-500 font-jetbrains">
                                                 <p>{new Date(reg.timestamp).toLocaleDateString()}</p>
                                                 <p className="opacity-50">{new Date(reg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                                             </div>
@@ -204,7 +204,7 @@ const AdminRegistrations = () => {
                             ) : (
                                 <tr>
                                     <td colSpan="6" className="px-6 py-12 text-center">
-                                        <p className="text-gray-600 font-mono text-xs uppercase tracking-widest">No Intelligence Records Found</p>
+                                        <p className="text-gray-600 font-jetbrains text-xs uppercase tracking-widest">No Intelligence Records Found</p>
                                     </td>
                                 </tr>
                             )}
@@ -214,7 +214,7 @@ const AdminRegistrations = () => {
 
                 {/* Simplified Pagination */}
                 <div className="px-6 py-4 bg-white/[0.01] border-t border-white/5 flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
+                    <span className="text-[10px] font-jetbrains text-gray-500 uppercase tracking-widest">
                         Showing {filteredData.length} records
                     </span>
                     <div className="flex gap-2">

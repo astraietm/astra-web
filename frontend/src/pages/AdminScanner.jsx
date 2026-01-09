@@ -86,7 +86,7 @@ const AdminScanner = () => {
                          <Scan className="text-primary w-6 h-6" />
                          Scanner_Terminal
                     </h1>
-                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Live QR Verification Uplink</p>
+                    <p className="text-[10px] font-jetbrains text-gray-500 uppercase tracking-[0.3em] mt-1">Live QR Verification Uplink</p>
                 </div>
             </div>
 
@@ -126,7 +126,7 @@ const AdminScanner = () => {
                         </div>
                         
                         <div className="absolute bottom-6 left-0 right-0 flex justify-center z-20 px-6">
-                            <p className="text-[10px] font-mono bg-black/80 text-white/50 px-4 py-2 rounded-xl backdrop-blur-xl border border-white/5 uppercase tracking-widest text-center">
+                            <p className="text-[10px] font-jetbrains bg-black/80 text-white/50 px-4 py-2 rounded-xl backdrop-blur-xl border border-white/5 uppercase tracking-widest text-center">
                                 Align access key in frame
                             </p>
                         </div>
@@ -142,7 +142,7 @@ const AdminScanner = () => {
                             <div className="absolute inset-0 bg-primary/20 blur-2xl animate-pulse"></div>
                         </div>
                         <h2 className="mt-6 text-xl font-bold tracking-widest text-primary animate-pulse">ENCRYPTED VERIFICATION...</h2>
-                        <p className="text-white/40 text-xs mt-2 font-mono">Querying Registration DB</p>
+                        <p className="text-white/40 text-xs mt-2 font-jetbrains">Querying Registration DB</p>
                     </div>
                 )}
 
@@ -173,13 +173,13 @@ const AdminScanner = () => {
                                         </div>
                                         <label className="text-[10px] font-bold text-primary uppercase tracking-[0.3em] mb-1 block">Authorized Attendee</label>
                                         <p className="text-2xl font-bold text-white mb-1">{scanResult.data.registrant.user_name || "Unknown User"}</p>
-                                        <p className="text-sm text-white/50 font-mono italic">{scanResult.data.registrant.user_email}</p>
+                                        <p className="text-sm text-white/50 font-jetbrains italic">{scanResult.data.registrant.user_email}</p>
                                     </div>
 
                                     <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-left">
                                         <label className="text-[10px] font-bold text-primary uppercase tracking-[0.3em] mb-1 block">Mission/Event</label>
                                         <p className="text-lg font-bold text-white">{scanResult.data.registrant.event_details.title}</p>
-                                        <div className="flex items-center gap-2 mt-2 text-xs text-white/40 font-mono">
+                                        <div className="flex items-center gap-2 mt-2 text-xs text-white/40 font-jetbrains">
                                             <Clock className="w-3 h-3" />
                                             Validated: {new Date().toLocaleTimeString()}
                                         </div>
@@ -215,7 +215,7 @@ const AdminScanner = () => {
                                 </div>
                                 
                                 <h2 className="text-3xl font-black text-red-500 mb-2 uppercase tracking-tighter">Access Denied</h2>
-                                <p className="text-red-500/60 text-sm font-mono font-bold uppercase tracking-widest text-center px-4">
+                                <p className="text-red-500/60 text-sm font-jetbrains font-bold uppercase tracking-widest text-center px-4">
                                     {scanResult.data.message || "Invalid or Corrupted Signal"}
                                 </p>
 
@@ -227,8 +227,8 @@ const AdminScanner = () => {
                                                 <span className="text-[10px] font-black uppercase tracking-[0.2em]">Security Alert: Duplicate Entry</span>
                                             </div>
                                             <p className="text-xl font-bold text-white mb-1">{scanResult.data.registrant.user_name || "Unknown User"}</p>
-                                            <p className="text-xs text-white/40 font-mono mb-4 italic">{scanResult.data.registrant.user_email}</p>
-                                            <div className="pt-4 border-t border-white/5 text-[10px] text-white/30 uppercase font-mono">
+                                            <p className="text-xs text-white/40 font-jetbrains mb-4 italic">{scanResult.data.registrant.user_email}</p>
+                                            <div className="pt-4 border-t border-white/5 text-[10px] text-white/30 uppercase font-jetbrains">
                                                 Original Check-in: {new Date(scanResult.data.registrant.updated_at).toLocaleString()}
                                             </div>
                                         </div>

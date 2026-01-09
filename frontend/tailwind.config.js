@@ -15,9 +15,12 @@ export default {
         border: "#1F2937", // Subtle Border
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
+        sans: ['Outfit', 'sans-serif'],
+        display: ['Rajdhani', 'sans-serif'],
+        mono: ['Space Mono', 'monospace'],
+        // Enterprise Admin Fonts
+        inter: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        jetbrains: ['JetBrains Mono', 'Consolas', 'monospace'],
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #6366F1, #8B5CF6)',

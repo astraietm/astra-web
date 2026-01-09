@@ -58,7 +58,7 @@ const AdminLayout = () => {
     );
 
     return (
-        <div className="min-h-screen bg-background text-white flex overflow-hidden">
+        <div className="min-h-screen bg-background text-white flex overflow-hidden font-inter">
             <NoiseOverlay />
             
             {/* Sidebar Component */}

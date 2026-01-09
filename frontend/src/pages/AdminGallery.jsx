@@ -182,7 +182,7 @@ const AdminGallery = () => {
                          <Image className="text-primary w-6 h-6" />
                          Asset_Registry
                     </h1>
-                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em] mt-1">Manage Peripheral Intelligence Archives</p>
+                    <p className="text-[10px] font-jetbrains text-gray-500 uppercase tracking-[0.3em] mt-1">Manage Peripheral Intelligence Archives</p>
                 </div>
                 <button 
                     onClick={fetchGalleryItems}
@@ -197,9 +197,9 @@ const AdminGallery = () => {
                 <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center justify-between group">
                     <div className="flex items-center gap-3 text-rose-500">
                         <AlertTriangle className="w-5 h-5" />
-                        <span className="text-xs font-mono font-bold uppercase tracking-widest">{error}</span>
+                        <span className="text-xs font-jetbrains font-bold uppercase tracking-widest">{error}</span>
                     </div>
-                    <button onClick={fetchGalleryItems} className="text-[10px] font-mono text-rose-500 hover:underline uppercase tracking-widest">Retry_Sync</button>
+                    <button onClick={fetchGalleryItems} className="text-[10px] font-jetbrains text-rose-500 hover:underline uppercase tracking-widest">Retry_Sync</button>
                 </div>
             )}
 
@@ -214,7 +214,7 @@ const AdminGallery = () => {
                              <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-xl font-bold flex items-center gap-2">
                                     {editingItem ? <Edit2 className="w-5 h-5 text-primary" /> : <Upload className="w-5 h-5 text-primary" />}
-                                    <span className="font-display tracking-wide">{editingItem ? 'Edit Metadata' : 'Upload Interface'}</span>
+                                    <span className="font-inter tracking-wide">{editingItem ? 'Edit Metadata' : 'Upload Interface'}</span>
                                 </h2>
                                 {editingItem && (
                                     <button onClick={handleCancelEdit} className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white">
@@ -272,7 +272,7 @@ const AdminGallery = () => {
                                     {/* Inputs */}
                                     <div className="space-y-4">
                                         <div className="group">
-                                            <label className="block text-xs font-mono text-primary uppercase tracking-widest mb-2 group-focus-within:text-white transition-colors">Asset Identity</label>
+                                            <label className="block text-xs font-jetbrains text-primary uppercase tracking-widest mb-2 group-focus-within:text-white transition-colors">Asset Identity</label>
                                             <input 
                                                 type="text" 
                                                 value={title}
@@ -283,7 +283,7 @@ const AdminGallery = () => {
                                             />
                                         </div>
                                         <div className="group">
-                                            <label className="block text-xs font-mono text-primary uppercase tracking-widest mb-2 group-focus-within:text-white transition-colors">Classification</label>
+                                            <label className="block text-xs font-jetbrains text-primary uppercase tracking-widest mb-2 group-focus-within:text-white transition-colors">Classification</label>
                                             <select 
                                                 value={category}
                                                 onChange={(e) => setCategory(e.target.value)}
@@ -319,7 +319,7 @@ const AdminGallery = () => {
                                         <button 
                                             type="button"
                                             onClick={handleCancelEdit}
-                                            className="w-full text-xs font-mono text-white/40 hover:text-white transition-colors uppercase tracking-widest"
+                                            className="w-full text-xs font-jetbrains text-white/40 hover:text-white transition-colors uppercase tracking-widest"
                                         >
                                             Cancel Modification
                                         </button>
@@ -332,8 +332,8 @@ const AdminGallery = () => {
                     {/* Right Column: Gallery Grid */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-bold font-display">Archives Database</h2>
-                            <span className="text-xs font-mono text-white/40 bg-white/5 px-2 py-1 rounded border border-white/5">
+                            <h2 className="text-xl font-bold font-inter">Archives Database</h2>
+                            <span className="text-xs font-jetbrains text-white/40 bg-white/5 px-2 py-1 rounded border border-white/5">
                                 {items.length} RECORDS FOUND
                             </span>
                         </div>
@@ -351,7 +351,7 @@ const AdminGallery = () => {
                                     {/* Gradient Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
                                         <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                            <p className="text-[10px] text-primary font-mono uppercase tracking-widest mb-1">{item.category}</p>
+                                            <p className="text-[10px] text-primary font-jetbrains uppercase tracking-widest mb-1">{item.category}</p>
                                             <h3 className="font-bold text-sm leading-tight text-white mb-2 line-clamp-2">{item.title}</h3>
                                         </div>
                                     </div>
@@ -377,7 +377,7 @@ const AdminGallery = () => {
                                     {/* Active Indicator */}
                                     {editingItem?.id === item.id && (
                                         <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                                            <span className="text-primary font-mono text-xs uppercase tracking-widest border border-primary/50 px-3 py-1 rounded-full animate-pulse">
+                                            <span className="text-primary font-jetbrains text-xs uppercase tracking-widest border border-primary/50 px-3 py-1 rounded-full animate-pulse">
                                                 Editing...
                                             </span>
                                         </div>
@@ -395,7 +395,7 @@ const AdminGallery = () => {
                         ) : items.length === 0 ? (
                             <div className="h-64 flex flex-col items-center justify-center border border-dashed border-white/5 rounded-3xl bg-[#0A0A0B]">
                                 <Shield className="w-12 h-12 text-white/5 mb-4" />
-                                <p className="text-gray-500 font-mono text-[10px] uppercase tracking-[0.3em]">No Intelligence Assets Logged</p>
+                                <p className="text-gray-500 font-jetbrains text-[10px] uppercase tracking-[0.3em]">No Intelligence Assets Logged</p>
                             </div>
                         ) : null}
                     </div>
@@ -414,9 +414,9 @@ const AdminGallery = () => {
                                  <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse">
                                      <Trash2 className="w-9 h-9 text-red-500" />
                                  </div>
-                                 <h3 className="text-2xl font-bold font-display text-white mb-2">Confirm Termination</h3>
+                                 <h3 className="text-2xl font-bold font-inter text-white mb-2">Confirm Termination</h3>
                                  <p className="text-white/60 text-sm mb-8 leading-relaxed max-w-xs mx-auto">
-                                     This action will permanently purge this asset from the neural archives. <br/> <span className="text-red-400 font-mono text-xs mt-2 block">&gt;&gt; ACTION CANNOT BE UNDONE</span>
+                                     This action will permanently purge this asset from the neural archives. <br/> <span className="text-red-400 font-jetbrains text-xs mt-2 block">&gt;&gt; ACTION CANNOT BE UNDONE</span>
                                  </p>
                                  <div className="flex w-full gap-4">
                                      <button 

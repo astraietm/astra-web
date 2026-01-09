@@ -203,7 +203,7 @@ const AdminEvents = () => {
                                         type="text" 
                                         value={formData.title}
                                         onChange={e => setFormData({...formData, title: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm"
                                         required
                                     />
                                 </div>
@@ -213,7 +213,7 @@ const AdminEvents = () => {
                                         type="text" 
                                         value={formData.category}
                                         onChange={e => setFormData({...formData, category: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm"
                                         placeholder="WORKSHOP, SEMINAR, CTF..."
                                         required
                                     />
@@ -224,7 +224,7 @@ const AdminEvents = () => {
                                         type="text" 
                                         value={formData.venue}
                                         onChange={e => setFormData({...formData, venue: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm"
                                         required
                                     />
                                 </div>
@@ -234,7 +234,7 @@ const AdminEvents = () => {
                                         type="datetime-local" 
                                         value={formData.event_date}
                                         onChange={e => setFormData({...formData, event_date: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar [color-scheme:dark]"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm text-white-calendar [color-scheme:dark]"
                                         required
                                     />
                                 </div>
@@ -244,14 +244,14 @@ const AdminEvents = () => {
                                         type="url" 
                                         value={formData.image}
                                         onChange={e => setFormData({...formData, image: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm"
                                     />
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-6 h-full">
                                 <div className="border border-white/10 rounded-xl p-4 bg-white/[0.02]">
-                                    <h3 className="text-primary font-mono text-sm uppercase mb-4 opacity-80">Registration Protocols</h3>
+                                    <h3 className="text-primary font-jetbrains text-sm uppercase mb-4 opacity-80">Registration Protocols</h3>
                                     <div className="space-y-4">
                                         <div>
                                             <label className="block text-xs font-bold uppercase tracking-widest text-white/40 mb-2">Start Time</label>
@@ -259,7 +259,7 @@ const AdminEvents = () => {
                                                 type="datetime-local" 
                                                 value={formData.registration_start}
                                                 onChange={e => setFormData({...formData, registration_start: e.target.value})}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar [color-scheme:dark]"
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm text-white-calendar [color-scheme:dark]"
                                                 required
                                             />
                                         </div>
@@ -269,7 +269,7 @@ const AdminEvents = () => {
                                                 type="datetime-local" 
                                                 value={formData.registration_end}
                                                 onChange={e => setFormData({...formData, registration_end: e.target.value})}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm text-white-calendar [color-scheme:dark]"
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm text-white-calendar [color-scheme:dark]"
                                                 required
                                             />
                                         </div>
@@ -279,7 +279,7 @@ const AdminEvents = () => {
                                                 type="number" 
                                                 value={formData.registration_limit}
                                                 onChange={e => setFormData({...formData, registration_limit: parseInt(e.target.value)})}
-                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm"
+                                                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm"
                                                 min="1"
                                                 required
                                             />
@@ -307,7 +307,7 @@ const AdminEvents = () => {
                                     <textarea 
                                         value={formData.description}
                                         onChange={e => setFormData({...formData, description: e.target.value})}
-                                        className="w-full flex-1 bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-mono text-sm resize-none"
+                                        className="w-full flex-1 bg-black/40 border border-white/10 rounded-xl py-3 px-4 focus:outline-none focus:border-primary/50 transition-all font-jetbrains text-sm resize-none"
                                         required
                                     />
                                 </div>
@@ -369,7 +369,7 @@ const AdminEvents = () => {
                                 </div>
                                 <div className="p-6">
                                     <h3 className="text-xl font-bold text-white mb-2">{event.title}</h3>
-                                    <div className="space-y-2 text-sm text-white/50 mb-6 font-mono">
+                                    <div className="space-y-2 text-sm text-white/50 mb-6 font-jetbrains">
                                         <div className="flex items-center gap-2">
                                             <Calendar size={14} className="text-primary" />
                                             {new Date(event.event_date).toLocaleString()}
@@ -405,7 +405,7 @@ const AdminEvents = () => {
                                     <Shield className="w-8 h-8 opacity-20" />
                                 </div>
                                 <h3 className="text-lg font-bold text-white mb-2 uppercase tracking-widest">No_Active_Signals</h3>
-                                <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.3em]">Awaiting tactical deployment protocols</p>
+                                <p className="text-[10px] font-jetbrains text-gray-500 uppercase tracking-[0.3em]">Awaiting tactical deployment protocols</p>
                             </div>
                         )}
                     </div>
