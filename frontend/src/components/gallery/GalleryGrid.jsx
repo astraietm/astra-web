@@ -13,6 +13,55 @@ const categories = [
   { id: 'hackathons', label: 'Hackathons', icon: Zap },
 ];
 
+const GalleryCard = ({ item, onClick }) => {
+    const [isLoading, setIsLoading] = useState(true);
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            whileTap={{ scale: 0.98 }}
+            className="break-inside-avoid relative group rounded-2xl overflow-hidden bg-surface border border-white/5 cursor-pointer transform transition-transform duration-200 mb-6"
+            onClick={onClick}
+            onContextMenu={(e) => e.preventDefault()}
+        >
+            <div className={`relative ${isLoading ? 'min-h-[200px]' : ''}`}>
+                 {/* Skeleton Loader */}
+                 {isLoading && (
+                    <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center min-h-[200px]">
+                        <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin"></div>
+                    </div>
+                )}
+                
+                <img
+                    src={item.src}
+                    alt={item.title}
+                    loading="lazy"
+                    onLoad={() => setIsLoading(false)}
+                    className={`w-full h-auto object-cover transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                />
+
+                {/* Overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'}`}>
+                    <div className="transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-300">
+                        <span className="text-primary text-[10px] font-mono uppercase tracking-[0.2em] mb-2 block">
+                            ASTRA // {categories.find(c => c.id === item.category)?.label}
+                        </span>
+                        <h3 className="text-white font-display font-bold text-lg leading-tight">{item.title}</h3>
+                    </div>
+                </div>
+                
+                {/* Watermark (Desktop Hover) */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 z-10">
+                     <span className="text-white/10 font-black text-4xl tracking-widest rotate-[-15deg] uppercase border-4 border-white/10 px-4 py-2 backdrop-blur-sm">ASTRA</span>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
 const GalleryGrid = () => {
   const [filter, setFilter] = useState('all');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -202,40 +251,11 @@ const GalleryGrid = () => {
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 px-4 md:px-0">
         <AnimatePresence mode='popLayout'>
           {visibleItems.map((item) => (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              whileTap={{ scale: 0.98 }}
-              key={item.id}
-              className="break-inside-avoid relative group rounded-2xl overflow-hidden bg-surface border border-white/5 cursor-pointer transform transition-transform duration-200"
-              onClick={() => setSelectedImage(item)}
-              onContextMenu={(e) => e.preventDefault()}
-            >
-                {/* Image */}
-                <img
-                    src={item.src}
-                    alt={item.title}
-                    loading="lazy"
-                    className="w-full h-auto object-cover"
-                />
-
-                {/* Mobile: Simple Gradient / Desktop: Hover Info */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-300">
-                        <span className="text-primary text-[10px] font-mono uppercase tracking-[0.2em] mb-2 block">
-                            ASTRA // {categories.find(c => c.id === item.category)?.label}
-                        </span>
-                        <h3 className="text-white font-display font-bold text-lg leading-tight">{item.title}</h3>
-                    </div>
-                </div>
-                
-                {/* Watermark (Desktop Hover) */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 md:group-hover:opacity-10 transition-opacity duration-500">
-                     <span className="text-white/10 font-black text-4xl tracking-widest rotate-[-15deg] uppercase border-4 border-white/10 px-4 py-2">ASTRA</span>
-                </div>
-            </motion.div>
+            <GalleryCard 
+                key={item.id} 
+                item={item} 
+                onClick={() => setSelectedImage(item)} 
+            />
           ))}
         </AnimatePresence>
       </div>
