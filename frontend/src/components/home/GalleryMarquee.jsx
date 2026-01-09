@@ -27,12 +27,13 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
             ref={rowRef}
             className="relative flex overflow-hidden w-full select-none" 
             style={{ 
-                // Hardware acceleration hints
-                maskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)',
                 contain: 'layout paint'
             }}
         >
+            {/* Vignette Overlays matching Spline.design style */}
+            <div className="absolute inset-y-0 left-0 w-[40%] bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute inset-y-0 right-0 w-[40%] bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none"></div>
+
             <div 
                 className={`flex gap-4 min-w-full py-2 will-change-transform`}
                 style={{
