@@ -9,14 +9,15 @@ const SmoothScroll = ({ children }) => {
   useEffect(() => {
     // 1. Initialize Lenis
     const lenis = new Lenis({
-      duration: 1.5,
+      duration: 1.0, // Snappier, less floaty
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       direction: 'vertical',
       gestureDirection: 'vertical',
       smooth: true,
       smoothTouch: false,
-      touchMultiplier: 2,
-      wheelMultiplier: 1,
+      touchMultiplier: 1.5,
+      wheelMultiplier: 1.15,
+      infinite: false,
     });
     
     lenisRef.current = lenis;
