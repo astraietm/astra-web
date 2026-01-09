@@ -1,40 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
-// Add these to your global CSS or styles block, or we can inline style for the keyframes if needed in a pinch, 
-// but Tailwind config is better. For now, we simulate with style injection or standard CSS class if the user has a marquee utility.
-// Since we don't know if 'animate-marquee' exists, we'll define a style tag.
+// Optimized Marquee Row with Intersection Observer
+const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
+    const rowRef = useRef(null);
+    const [isPaused, setIsPaused] = useState(false);
+    
+    // Duplicate just enough for a smooth loop. 
+    // If we have 10 items, 3x is usually enough for 1080p-4k screens if items are 280px wide.
+    // 30 items * 280px = ~8400px width. Plenty.
+    const rowItems = [...items, ...items, ...items].slice(0, 25); 
 
-const MarqueeRow = ({ items, direction = 'left', speed = 40 }) => {
-    // Duplicate items enough times to fill screen + overflow buffer for smooth loop
-    // If items are few, duplicate more. If many, duplicate once.
-    const rowItems = [...items, ...items, ...items, ...items].slice(0, 30); // Cap at 30 items per row to prevent overload
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            // Pause animation when not in viewport to save GPU
+            setIsPaused(!entry.isIntersecting);
+        }, { threshold: 0.1 });
+
+        if (rowRef.current) observer.observe(rowRef.current);
+
+        return () => observer.disconnect();
+    }, []);
 
     return (
-        <div className="relative flex overflow-hidden w-full group select-none" style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}>
+        <div 
+            ref={rowRef}
+            className="relative flex overflow-hidden w-full select-none" 
+            style={{ 
+                // Hardware acceleration hints
+                maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+                contain: 'layout paint'
+            }}
+        >
             <div 
-                className={`flex gap-6 min-w-full py-4 will-change-transform`}
+                className={`flex gap-4 min-w-full py-2 will-change-transform`}
                 style={{
                     animation: `marquee-${direction} ${speed}s linear infinite`,
-                    backfaceVisibility: 'hidden',
-                    transformStyle: 'preserve-3d'
+                    animationPlayState: isPaused ? 'paused' : 'running',
+                    transform: 'translateZ(0)', // Force GPU layer
+                    backfaceVisibility: 'hidden'
                 }}
             >
                 {rowItems.map((item, idx) => (
                     <div 
                         key={`${item.id}-${idx}`} 
-                        className="relative min-w-[280px] h-[180px] rounded-xl overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-opacity hover:opacity-100 opacity-80"
+                        className="relative min-w-[240px] h-[160px] rounded-lg overflow-hidden bg-white/5 border border-white/5 flex-shrink-0"
+                        style={{ contain: 'strict' }} // Don't let browser recalc unrelated layout
                     >
-                         {/* Low Quality Placeholder or Optimized Image */}
                         <img 
                             src={item.src} 
-                            alt={item.title} 
+                            alt="" 
                             loading="lazy"
                             decoding="async"
-                            className="w-full h-full object-cover transform-gpu"
+                            className="w-full h-full object-cover opacity-80"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        <span className="absolute bottom-3 left-3 text-white/90 text-[10px] font-mono uppercase tracking-widest font-semibold">{item.title}</span>
                     </div>
                 ))}
             </div>
@@ -49,15 +69,15 @@ const GalleryMarquee = () => {
 
     useEffect(() => {
         const fetchImages = async () => {
+             // Only fetch, don't setState yet to avoid re-renders if unmounted
             try {
-                // Fetch only needed fields if possible, or just slice later
                 const response = await axios.get(`${API_URL}/gallery/`);
+                 // Take top 15 only. Less DOM = Smoother Scroll.
                  const mappedItems = response.data
-                    .slice(0, 20) // CRITICAL: Limit to latest 20 images only to prevent lag
+                    .slice(0, 15) 
                     .map(item => ({
                         id: item.id,
-                        src: item.image_url, // Ideally use thumbnails if available
-                        title: item.title,
+                        src: item.image_url, 
                     }));
                 setImages(mappedItems);
             } catch (error) {
@@ -77,30 +97,28 @@ const GalleryMarquee = () => {
     const row2 = images.slice(half);
 
     return (
-        <section className="py-24 bg-background overflow-hidden relative">
+        <section className="py-20 bg-background overflow-hidden relative" style={{ contentVisibility: 'auto' }}>
              <style>{`
                 @keyframes marquee-left {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
+                    0% { transform: translate3d(0, 0, 0); }
+                    100% { transform: translate3d(-50%, 0, 0); }
                 }
                 @keyframes marquee-right {
-                    0% { transform: translateX(-50%); }
-                    100% { transform: translateX(0); }
+                    0% { transform: translate3d(-50%, 0, 0); }
+                    100% { transform: translate3d(0, 0, 0); }
                 }
              `}</style>
-
-             <div className="container mx-auto px-4 mb-10 text-center relative z-10">
-                <h2 className="text-4xl md:text-5xl font-display font-medium text-white mb-4">
-                    Captured Moments
+             
+             {/* Simple Header */}
+             <div className="container mx-auto px-4 mb-8 text-center relative z-10">
+                <h2 className="text-3xl md:text-4xl font-display font-medium text-white mb-2">
+                    Gallery
                 </h2>
-                <p className="text-gray-400 text-sm md:text-base max-w-xl mx-auto font-light">
-                    Highlights from our journey.
-                </p>
              </div>
 
-            <div className="space-y-6">
-                <MarqueeRow items={row1} direction="left" speed={60} />
-                <MarqueeRow items={row2} direction="right" speed={70} />
+            <div className="space-y-4">
+                <MarqueeRow items={row1} direction="left" speed={50} />
+                <MarqueeRow items={row2} direction="right" speed={55} />
             </div>
         </section>
     );
