@@ -13,21 +13,28 @@ const categories = [
   { id: 'hackathons', label: 'Hackathons', icon: Zap },
 ];
 
-const GalleryCard = ({ item, onClick }) => {
+const GalleryCard = ({ item, index, onClick }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.5, delay: index * 0.05, ease: [0.23, 1, 0.32, 1] }} // smooth cubic-bezier
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
             whileTap={{ scale: 0.98 }}
-            className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 cursor-pointer transform transition-transform duration-200 h-full w-full"
+            className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-500"
             onClick={onClick}
             onContextMenu={(e) => e.preventDefault()}
         >
             <div className="relative aspect-[4/3] w-full overflow-hidden">
+                {/* Cyberpunk HUD Corners (Visible on Hover) */}
+                <div className="absolute top-2 left-2 w-3 h-3 border-l text-primary border-t border-primary/0 group-hover:border-primary/80 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
+                <div className="absolute top-2 right-2 w-3 h-3 border-r text-primary border-t border-primary/0 group-hover:border-primary/80 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
+                <div className="absolute bottom-2 left-2 w-3 h-3 border-l text-primary border-b border-primary/0 group-hover:border-primary/80 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
+                <div className="absolute bottom-2 right-2 w-3 h-3 border-r text-primary border-b border-primary/0 group-hover:border-primary/80 transition-all duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
+
                  {/* Skeleton Loader */}
                  {isLoading && (
                     <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
@@ -40,20 +47,22 @@ const GalleryCard = ({ item, onClick }) => {
                     alt={item.title}
                     loading="lazy"
                     onLoad={() => setIsLoading(false)}
-                    className={`w-full h-full object-cover transition-opacity duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                    className={`w-full h-full object-cover transition-all duration-700 ease-out transform group-hover:scale-110 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                 />
+
+                {/* Scanline Effect (Hover) */}
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/0 via-primary/5 to-primary/0 translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10"></div>
 
                 {/* Overlay */}
                 <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'}`}>
                     <div className="transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-300">
-                        <span className="text-primary text-[10px] font-mono uppercase tracking-[0.2em] mb-2 block">
+                        <span className="text-primary text-[10px] font-mono uppercase tracking-[0.2em] mb-2 block flex items-center gap-2">
+                             <Terminal className="w-3 h-3" />
                             ASTRA // {categories.find(c => c.id === item.category)?.label}
                         </span>
-                        <h3 className="text-white font-display font-bold text-lg leading-tight">{item.title}</h3>
+                        <h3 className="text-white font-display font-medium text-lg leading-tight tracking-wide">{item.title}</h3>
                     </div>
                 </div>
-                
-
             </div>
         </motion.div>
     );
@@ -247,10 +256,11 @@ const GalleryGrid = () => {
       {/* Gallery Grid - CSS Grid (3 Columns) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-0 auto-rows-fr">
         <AnimatePresence mode='popLayout'>
-          {visibleItems.map((item) => (
+          {visibleItems.map((item, index) => (
             <GalleryCard 
                 key={item.id} 
                 item={item} 
+                index={index}
                 onClick={() => setSelectedImage(item)} 
             />
           ))}
