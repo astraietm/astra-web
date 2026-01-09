@@ -28,6 +28,8 @@ const Home = () => {
           <HODMessage />
         </ScrollReveal>
 
+        <GalleryMarquee />
+
         <ScrollReveal variant="up" width="100%">
           <FeaturedEvents />
         </ScrollReveal>
@@ -35,8 +37,6 @@ const Home = () => {
         <ScrollReveal variant="up" width="100%">
           <WhyJoin />
         </ScrollReveal>
-
-        <GalleryMarquee />
 
         <ScrollReveal variant="scale" width="100%">
           <JoinSection />
