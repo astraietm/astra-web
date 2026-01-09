@@ -116,7 +116,7 @@ const AdminDashboard = () => {
                 />
             </div>
 
-            {/* Row 2: Welcome & Stats */}
+            {/* Row 2: Welcome & Quick Actions */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto lg:h-80">
                 {/* Welcome Card */}
                 <div className="lg:col-span-1 bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 relative overflow-hidden flex flex-col justify-between group">
@@ -127,89 +127,89 @@ const AdminDashboard = () => {
                         <p className="text-gray-400 text-sm font-medium mb-1">Welcome back,</p>
                         <h2 className="text-2xl font-bold text-white mb-2">Admin User</h2>
                         <p className="text-gray-400 text-sm mb-8 max-w-[200px]">
-                            Glad to see you again! <br/>
-                            Ask me anything.
+                            System is fully operational. <br/>
+                            Ready for command.
                         </p>
                         <button className="flex items-center gap-2 text-white text-sm font-bold hover:gap-3 transition-all">
-                            Tap to record <ArrowUpRight size={14} />
+                            View Reports <ArrowUpRight size={14} />
                         </button>
                     </div>
                 </div>
 
-                {/* Satisfaction Rate */}
-                <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 flex flex-col items-center justify-center relative">
-                    <h3 className="text-white font-bold text-lg absolute top-6 left-6">Satisfaction Rate</h3>
-                    <p className="text-gray-400 text-sm absolute top-12 left-6">From all projects</p>
+                {/* Quick Actions */}
+                <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 flex flex-col relative">
+                    <h3 className="text-white font-bold text-lg mb-4">Quick Command</h3>
                     
-                    <div className="relative w-40 h-40 mt-8 flex items-center justify-center">
-                        {/* CSS Circular Progress Mockup */}
-                        <svg className="w-full h-full rotate-[-90deg]" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="40" stroke="#1F2749" strokeWidth="8" fill="none" />
-                            <circle cx="50" cy="50" r="40" stroke="#0075FF" strokeWidth="8" fill="none" strokeDasharray="251" strokeDashoffset="25" strokeLinecap="round" />
-                        </svg>
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <div className="w-10 h-10 bg-vision-primary rounded-full flex items-center justify-center text-white mb-1 shadow-lg shadow-blue-500/50">
-                                <span className="text-lg">☺</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="bg-vision-surface rounded-xl px-8 py-3 mt-4 flex items-center gap-8 shadow-inner">
-                        <div className="text-center">
-                            <p className="text-gray-400 text-xs mb-1">0%</p>
-                        </div>
-                        <div className="text-center">
-                            <h4 className="text-white font-bold text-xl">95%</h4>
-                            <p className="text-gray-400 text-xs">Based on likes</p>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-gray-400 text-xs mb-1">100%</p>
-                        </div>
+                    <div className="grid grid-cols-2 gap-4 flex-1">
+                        <button className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group">
+                            <Calendar className="w-6 h-6 text-vision-primary group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold text-gray-300">New Event</span>
+                        </button>
+                        <button className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group">
+                            <Mail className="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold text-gray-300">Send Blast</span>
+                        </button>
+                        <button className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group">
+                            <ShieldCheck className="w-6 h-6 text-amber-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold text-gray-300">Audit Logs</span>
+                        </button>
+                        <button className="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-4 transition-all group">
+                            <Terminal className="w-6 h-6 text-rose-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold text-gray-300">System</span>
+                        </button>
                     </div>
                 </div>
 
-                {/* Referral Tracking */}
-                <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 flex flex-col justify-between relative">
-                    <div className="flex justify-between items-start">
-                        <h3 className="text-white font-bold text-lg">Referral Tracking</h3>
-                        <div className="w-8 h-8 bg-[#2A304F] rounded-lg flex items-center justify-center text-vision-primary">
-                            <span className="font-bold">...</span>
-                        </div>
-                    </div>
-                    
-                    <div className="flex gap-4 mt-6">
-                        <div className="bg-[#171C36] rounded-xl p-4 flex-1">
-                            <p className="text-gray-400 text-xs mb-1">Invited</p>
-                            <h4 className="text-white font-bold text-lg">145 people</h4>
-                        </div>
-                        <div className="bg-[#171C36] rounded-xl p-4 flex-1">
-                            <p className="text-gray-400 text-xs mb-1">Bonus</p>
-                            <h4 className="text-white font-bold text-lg">1,465</h4>
+                {/* System Health */}
+                <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 flex flex-col relative">
+                     <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-white font-bold text-lg">System Health</h3>
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span className="text-emerald-500 text-xs font-bold">LIVE</span>
                         </div>
                     </div>
 
-                    <div className="mt-6 relative flex-1 flex items-center justify-center">
-                         <svg className="w-32 h-32 rotate-[-90deg]" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="40" stroke="#1F2749" strokeWidth="10" fill="none" />
-                            <circle cx="50" cy="50" r="40" stroke="#05CD99" strokeWidth="10" fill="none" strokeDasharray="251" strokeDashoffset="50" strokeLinecap="round" />
-                        </svg>
-                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-gray-400 text-xs">Safety</span>
-                            <span className="text-white font-bold text-xl">9.3</span>
-                            <span className="text-gray-400 text-xs">Total Score</span>
+                    <div className="flex-1 flex flex-col gap-4 justify-center">
+                        <div>
+                            <div className="flex justify-between text-xs mb-1">
+                                <span className="text-gray-400">Database Load</span>
+                                <span className="text-white font-bold">12%</span>
+                            </div>
+                            <div className="h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                                <div className="h-full bg-emerald-500 w-[12%] rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="flex justify-between text-xs mb-1">
+                                <span className="text-gray-400">API Latency</span>
+                                <span className="text-white font-bold">24ms</span>
+                            </div>
+                            <div className="h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                                <div className="h-full bg-vision-primary w-[40%] rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
+                            </div>
+                        </div>
+                        <div>
+                             <div className="flex justify-between text-xs mb-1">
+                                <span className="text-gray-400">Storage</span>
+                                <span className="text-white font-bold">45%</span>
+                            </div>
+                            <div className="h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                                <div className="h-full bg-vision-secondary w-[45%] rounded-full shadow-[0_0_10px_rgba(139,92,246,0.5)]"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Row 3: Graphs */}
+            {/* Row 3: Event Performance & Registrations */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                {/* Sales/Registrations Overview */}
+                {/* Registrations Graph */}
                 <div className="lg:col-span-3 bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6">
-                    <p className="text-white font-bold text-lg mb-1">Registration Overview</p>
+                    <p className="text-white font-bold text-lg mb-1">Registration Traffic</p>
                     <div className="flex items-center gap-2 mb-6">
-                        <span className="text-emerald-400 font-bold text-sm">(+5) more</span>
-                        <span className="text-gray-400 text-sm">in 2024</span>
+                        <span className="text-emerald-400 font-bold text-sm">(+12%)</span>
+                        <span className="text-gray-400 text-sm">vs last month</span>
                     </div>
 
                     <div className="h-64 mt-4 relative">
@@ -224,7 +224,7 @@ const AdminDashboard = () => {
                                  </div>
                              ))}
                         </div>
-                        {/* Mock Curve Line */}
+                         {/* Mock Curve Line */}
                         <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" preserveAspectRatio="none">
                             <path 
                                 d="M0,200 C50,150 100,220 150,100 C200,50 250,150 300,80 C350,20 400,100 450,50 L450,300 L0,300 Z" 
@@ -233,54 +233,39 @@ const AdminDashboard = () => {
                             />
                             <path 
                                 d="M0,200 C50,150 100,220 150,100 C200,50 250,150 300,80 C350,20 400,100 450,50" 
-                                stroke="#0075FF" 
+                                stroke="#6366F1" 
                                 strokeWidth="3" 
                                 fill="none"
                                 vectorEffect="non-scaling-stroke"
                             />
                              <defs>
                                 <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stopColor="#0075FF" stopOpacity="0.5"/>
-                                    <stop offset="100%" stopColor="#0075FF" stopOpacity="0"/>
+                                    <stop offset="0%" stopColor="#6366F1" stopOpacity="0.5"/>
+                                    <stop offset="100%" stopColor="#6366F1" stopOpacity="0"/>
                                 </linearGradient>
                             </defs>
                         </svg>
                     </div>
                 </div>
 
-                {/* Active Users/Events */}
+                {/* Event Distribution */}
                 <div className="lg:col-span-2 bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6">
-                    <div className="h-48 mb-6 relative flex items-end gap-3">
-                         {/* Bar Chart */}
-                        {[40, 70, 60, 90, 50, 30, 80, 60].map((h, i) => (
-                            <div key={i} className="flex-1 bg-white flex flex-col justify-end rounded-md overflow-hidden bg-opacity-[0.1]">
-                                <div 
-                                    className="bg-white rounded-md w-1.5 mx-auto"
-                                    style={{ height: `${h}%` }}
-                                ></div>
-                            </div>
-                        ))}
-                    </div>
+                    <h3 className="text-white font-bold text-lg mb-6">Upcoming Events</h3>
                     
-                    <h3 className="text-white font-bold text-lg mb-1">Active Users</h3>
-                    <p className="text-gray-400 text-sm mb-6"><span className="text-emerald-400 font-bold">(+23)</span> than last week</p>
-
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="space-y-4">
                         {[
-                            { label: 'Users', icon: Users, val: '32,984' },
-                            { label: 'Clicks', icon: Zap, val: '2.42m' },
-                            { label: 'Sales', icon: ArrowUpRight, val: '2,400$' },
-                            { label: 'Items', icon: Cpu, val: '320' },
-                        ].map((item, i) => (
-                            <div key={i}>
-                                <div className="flex items-center gap-1 mb-1 text-gray-400 text-[10px] font-bold uppercase">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-vision-primary"></div>
-                                    {item.label}
+                            { title: 'Cyber Defense Workshop', date: 'Tomorrow, 10:00 AM', type: 'Workshop', color: 'bg-emerald-500' },
+                            { title: 'Hackathon 2024', date: 'Oct 24, 09:00 AM', type: 'Competition', color: 'bg-vision-primary' },
+                            { title: 'Guest Lecture: AI Security', date: 'Nov 02, 02:00 PM', type: 'Seminar', color: 'bg-vision-secondary' },
+                            { title: 'Networking Night', date: 'Nov 15, 06:00 PM', type: 'Social', color: 'bg-rose-500' },
+                        ].map((event, i) => (
+                            <div key={i} className="flex items-center gap-4 group cursor-pointer">
+                                <div className={`w-2 h-12 rounded-full ${event.color} opacity-80 group-hover:opacity-100 transition-opacity`}></div>
+                                <div className="flex-1">
+                                    <h4 className="text-white font-bold text-sm group-hover:text-vision-primary transition-colors">{event.title}</h4>
+                                    <p className="text-gray-400 text-xs">{event.date}</p>
                                 </div>
-                                <p className="text-white font-bold text-sm">{item.val}</p>
-                                <div className="h-1 bg-gray-800 rounded-full mt-2 overflow-hidden">
-                                     <div className="h-full bg-vision-primary w-[60%] rounded-full"></div>
-                                </div>
+                                <span className="text-[10px] font-bold text-gray-500 border border-border px-2 py-1 rounded bg-white/5 uppercase tracking-wider">{event.type}</span>
                             </div>
                         ))}
                     </div>
