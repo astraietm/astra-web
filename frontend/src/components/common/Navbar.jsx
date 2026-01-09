@@ -119,7 +119,7 @@ const Navbar = () => {
                                         <motion.div
                                             layoutId="nav-pill"
                                             className="absolute inset-0 bg-white/10 rounded-full"
-                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                         />
                                     )}
                                     <span className={`relative z-10 text-sm font-medium tracking-wide transition-colors duration-200 ${isActive ? 'text-white font-bold' : 'text-gray-300 group-hover:text-white'}`}>
@@ -161,10 +161,11 @@ const Navbar = () => {
                                 <AnimatePresence>
                                     {isProfileOpen && (
                                         <motion.div
-                                            initial={{ opacity: 0, scale: 0.9, y: 10, filter: "blur(10px)" }}
+                                            initial={{ opacity: 0, scale: 0.9, y: 10, filter: "blur(8px)" }}
                                             animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
-                                            exit={{ opacity: 0, scale: 0.95, y: 10, filter: "blur(10px)" }}
-                                            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                            exit={{ opacity: 0, scale: 0.95, y: 10, filter: "blur(8px)" }}
+                                            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                                            style={{ willChange: "transform, opacity, filter" }}
                                             className="absolute top-16 right-0 w-60 bg-[#0A0F1C]/80 backdrop-blur-3xl border border-white/10 ring-1 ring-white/5 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden p-2 z-50 origin-top-right"
                                         >
                                             <div className="space-y-1">
@@ -252,10 +253,11 @@ const Navbar = () => {
                     <AnimatePresence>
                         {isOpen && (
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.95, y: -20, filter: "blur(10px)" }}
+                                initial={{ opacity: 0, scale: 0.95, y: -20, filter: "blur(8px)" }}
                                 animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
-                                exit={{ opacity: 0, scale: 0.95, y: -20, filter: "blur(10px)" }}
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                exit={{ opacity: 0, scale: 0.95, y: -20, filter: "blur(8px)" }}
+                                transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                                style={{ willChange: "transform, opacity, filter" }}
                                 className="absolute top-[64px] left-0 right-0 bg-[#0A0F1C]/80 backdrop-blur-3xl backdrop-saturate-150 border border-white/10 rounded-3xl p-2 shadow-2xl overflow-hidden z-40 flex flex-col gap-1"
                             >
                                 {navLinks.map((link, i) => (
