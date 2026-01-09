@@ -4,7 +4,7 @@ import ScrollReveal from '../components/common/ScrollReveal';
 
 import FeaturedEvents from '../components/home/FeaturedEvents';
 import WhyJoin from '../components/home/WhyJoin';
-import GalleryPreview from '../components/home/GalleryPreview';
+import GalleryMarquee from '../components/home/GalleryMarquee';
 import JoinSection from '../components/home/JoinSection';
 import VisionMission from '../components/home/VisionMission';
 import HODMessage from '../components/home/HODMessage';
@@ -36,9 +36,7 @@ const Home = () => {
           <WhyJoin />
         </ScrollReveal>
 
-        <ScrollReveal variant="up" width="100%">
-          <GalleryPreview />
-        </ScrollReveal>
+        <GalleryMarquee />
 
         <ScrollReveal variant="scale" width="100%">
           <JoinSection />
