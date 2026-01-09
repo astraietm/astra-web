@@ -124,10 +124,12 @@ const GalleryMarquee = () => {
                 </p>
              </div>
 
-            {/* Marquee Container - Full Width */}
-            <div className="w-full flex flex-col gap-6">
-                <MarqueeRow items={row1} direction="left" speed={60} />
-                <MarqueeRow items={row2} direction="right" speed={70} />
+            {/* Marquee Container - Constrained Width */}
+            <div className="max-w-[100rem] mx-auto px-4 md:px-8">
+                <div className="flex flex-col gap-6 relative mask-linear-fade">
+                    <MarqueeRow items={row1} direction="left" speed={60} />
+                    <MarqueeRow items={row2} direction="right" speed={70} />
+                </div>
             </div>
         </section>
     );
