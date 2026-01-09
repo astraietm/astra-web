@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { 
     Bell, 
@@ -13,6 +13,19 @@ import { motion } from 'framer-motion';
 
 const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
     const { user, logout } = useAuth();
+    const searchInputRef = useRef(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                searchInputRef.current?.focus();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     return (
         <header className="h-16 bg-surface/80 backdrop-blur-xl border-b border-border sticky top-0 z-[90] flex items-center justify-between px-6">
@@ -44,6 +57,7 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
                 <div className="relative hidden lg:block">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <input 
+                        ref={searchInputRef}
                         type="text" 
                         placeholder="Search or press Ctrl+K"
                         className="bg-white/5 border border-border rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-primary/50 w-64 transition-colors placeholder:text-gray-500"
