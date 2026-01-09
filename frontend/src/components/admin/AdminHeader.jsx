@@ -73,15 +73,6 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full"></span>
                 </button>
 
-                 {/* Back to Website */}
-                 <button 
-                    onClick={() => navigate('/')}
-                    className="w-9 h-9 rounded-lg bg-white/5 border border-border flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
-                    title="Back to Website"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                </button>
-
                 {/* User Profile */}
                 <div className="flex items-center gap-3 pl-4 border-l border-border">
                     <div className="relative group">
