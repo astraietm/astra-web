@@ -135,11 +135,13 @@ const GalleryGrid = () => {
                         {/* Text */}
                         <span className="relative z-10">{cat.label}</span>
 
-                        {/* Active Indicator (Glowing Underline) */}
+                        {/* Active Indicator (Glowing Underline) - No stretching */}
                         {isActive && (
                             <motion.div 
-                                layoutId="activeTab"
-                                className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary shadow-[0_0_15px_rgba(0,224,255,1)]"
+                                initial={{ opacity: 0, width: 0 }}
+                                animate={{ opacity: 1, width: '100%' }}
+                                transition={{ duration: 0.3 }}
+                                className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary shadow-[0_0_15px_rgba(0,224,255,1)] mx-auto"
                             />
                         )}
                     </button>
@@ -148,19 +150,15 @@ const GalleryGrid = () => {
           </div>
       </div>
 
-      {/* Gallery Grid */}
-      <motion.div 
-        layout 
-        className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 px-4 md:px-0"
-      >
+      {/* Gallery Grid - Removed 'layout' prop to fix stretching */}
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 px-4 md:px-0">
         <AnimatePresence mode='popLayout'>
           {visibleItems.map((item) => (
             <motion.div
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
               whileTap={{ scale: 0.98 }}
               key={item.id}
               className="break-inside-avoid relative group rounded-2xl overflow-hidden bg-surface border border-white/5 cursor-pointer transform transition-transform duration-200"
@@ -192,7 +190,7 @@ const GalleryGrid = () => {
             </motion.div>
           ))}
         </AnimatePresence>
-      </motion.div>
+      </div>
 
       {/* Load More Button */}
       {visibleItems.length < filteredItems.length && (
