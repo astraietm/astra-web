@@ -7,18 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#00E0FF", // Neon Cyan/Blue
-        secondary: "#1A1E29", // Dark Blue-Gray
-        background: "#02040a", // Deep Blue Black
-        surface: "#0A0F1C", // Slightly lighter for cards
+        primary: "#6366F1", // Subtle Indigo
+        secondary: "#8B5CF6", // Soft Violet
+        accent: "#3B82F6", // Professional Blue
+        background: "#0B0F14", // Neutral Dark Graphite
+        surface: "#151921", // Card Surface
+        border: "#1F2937", // Subtle Border
       },
       fontFamily: {
-        sans: ['Outfit', 'sans-serif'],
-        display: ['Rajdhani', 'sans-serif'],
-        mono: ['Space Mono', 'monospace'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Consolas', 'monospace'],
       },
       backgroundImage: {
-        'cyber-gradient': 'linear-gradient(to right, #00E0FF, #0066FF)',
+        'gradient-primary': 'linear-gradient(135deg, #6366F1, #8B5CF6)',
       },
       keyframes: {
         scan: {

@@ -15,75 +15,68 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
     const { user, logout } = useAuth();
 
     return (
-        <header className="h-20 bg-[#0A0A0B]/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-[90] flex items-center justify-between px-4 md:px-8">
+        <header className="h-16 bg-surface/80 backdrop-blur-xl border-b border-border sticky top-0 z-[90] flex items-center justify-between px-6">
             {/* Page Context */}
-            <div className="flex items-center gap-3 md:gap-4">
+            <div className="flex items-center gap-4">
                 <button 
                     onClick={onMenuClick}
                     className="p-2 -ml-2 hover:bg-white/5 rounded-lg lg:hidden text-gray-400 hover:text-white transition-colors"
                 >
-                    <Menu className="w-6 h-6" />
+                    <Menu className="w-5 h-5" />
                 </button>
-                <h2 className="text-white font-display font-medium text-sm md:text-lg tracking-wide uppercase truncate max-w-[120px] md:max-w-none">
-                    {title || "Admin Console"}
+                <h2 className="text-white font-semibold text-lg">
+                    {title || "Dashboard"}
                 </h2>
-                <div className="h-4 w-px bg-white/10 hidden sm:block"></div>
-                <div className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-full border whitespace-nowrap transition-colors duration-500 ${
+                <div className="h-4 w-px bg-border hidden sm:block"></div>
+                <div className={`hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
                     isSystemOnline 
-                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' 
-                    : 'bg-rose-500/10 border-rose-500/20 text-rose-500'
+                    ? 'text-emerald-400' 
+                    : 'text-rose-400'
                 }`}>
-                    <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500 shadow-[0_0_8px_red]'}`}></div>
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-widest">
-                        {isSystemOnline ? 'System Online' : 'System Offline'}
-                    </span>
+                    <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
+                    <span>{isSystemOnline ? 'Online' : 'Offline'}</span>
                 </div>
             </div>
 
-
-
             {/* Actions & Profile */}
-            <div className="flex items-center gap-6">
-                {/* Global Search Placeholder */}
+            <div className="flex items-center gap-4">
+                {/* Global Search */}
                 <div className="relative hidden lg:block">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                     <input 
                         type="text" 
-                        placeholder="Search system..."
-                        className="bg-white/5 border border-white/5 rounded-lg py-2 pl-10 pr-4 text-xs font-mono focus:outline-none focus:border-primary/30 w-64 transition-all"
+                        placeholder="Search or press Ctrl+K"
+                        className="bg-white/5 border border-border rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-primary/50 w-64 transition-colors placeholder:text-gray-500"
                     />
                 </div>
 
                 {/* Notifications */}
-                <button className="relative w-10 h-10 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all group">
-                    <Bell className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-[#0A0A0B]"></span>
+                <button className="relative w-9 h-9 rounded-lg bg-white/5 border border-border flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                    <Bell className="w-4 h-4" />
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full"></span>
                 </button>
 
                 {/* User Profile */}
-                <div className="flex items-center gap-4 pl-4 border-l border-white/5">
-                    <div className="flex flex-col items-end">
-                        <span className="text-sm font-medium text-white tracking-wide">{user?.user_name || "Admin"}</span>
-                        <div className="flex items-center gap-1.5">
-                            <ShieldCheck className="w-3 h-3 text-primary" />
-                            <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-                                {user?.is_superuser ? "Super Admin" : "Operator"}
-                            </span>
-                        </div>
+                <div className="flex items-center gap-3 pl-4 border-l border-border">
+                    <div className="hidden md:flex flex-col items-end">
+                        <span className="text-sm font-medium text-white">{user?.user_name || "Admin"}</span>
+                        <span className="text-xs text-gray-500">
+                            {user?.is_superuser ? "Administrator" : "User"}
+                        </span>
                     </div>
                     <div className="relative group">
-                        <button className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary group-hover:border-primary/50 transition-all">
-                            <User className="w-6 h-6" />
+                        <button className="w-9 h-9 rounded-lg bg-gradient-primary flex items-center justify-center text-white hover:opacity-90 transition-opacity">
+                            <User className="w-5 h-5" />
                         </button>
                         
-                        {/* Dropdown Menu (Simplified) */}
-                        <div className="absolute right-0 top-full mt-2 w-48 bg-[#0F0F11] border border-white/5 rounded-xl shadow-2xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all p-2 z-[100]">
+                        {/* Dropdown Menu */}
+                        <div className="absolute right-0 top-full mt-2 w-48 bg-surface border border-border rounded-lg shadow-xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 transition-all p-2 z-[100]">
                             <button 
                                 onClick={logout}
-                                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors font-medium"
+                                className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-md transition-colors"
                             >
                                 <LogOut className="w-4 h-4" />
-                                Logout Session
+                                Logout
                             </button>
                         </div>
                     </div>

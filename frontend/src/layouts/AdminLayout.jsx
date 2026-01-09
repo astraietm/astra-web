@@ -58,7 +58,7 @@ const AdminLayout = () => {
     );
 
     return (
-        <div className="min-h-screen bg-[#030014] text-white flex overflow-hidden">
+        <div className="min-h-screen bg-background text-white flex overflow-hidden">
             <NoiseOverlay />
             
             {/* Sidebar Component */}
@@ -70,7 +70,7 @@ const AdminLayout = () => {
             />
 
             {/* Main Content Area */}
-            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCollapsed ? 'lg:ml-20' : 'lg:ml-[280px]'} ml-0`}>
+            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCollapsed ? 'lg:ml-20' : 'lg:ml-[260px]'} ml-0`}>
                 <AdminHeader 
                     title={getPageTitle()} 
                     onMenuClick={() => setIsMobileOpen(true)} 
@@ -78,17 +78,17 @@ const AdminLayout = () => {
                 />
 
                 
-                <main className="flex-1 overflow-y-auto p-4 md:p-8 relative">
-                    {/* Background Decorative Element */}
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none -mr-48 -mt-48 z-0"></div>
+                <main className="flex-1 overflow-y-auto p-6 md:p-8 relative">
+                    {/* Subtle Background Accent */}
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-3xl rounded-full pointer-events-none -mr-48 -mt-48 z-0"></div>
                     
                     {/* Page Content with Transitions */}
                     <motion.div
                         key={location.pathname}
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
                         className="relative z-10"
                     >
                         <Outlet />
@@ -96,13 +96,13 @@ const AdminLayout = () => {
                 </main>
                 
                 {/* Fixed Status Footer */}
-                <footer className="h-10 bg-[#0A0A0B] border-t border-white/5 flex items-center justify-between px-8 text-[10px] font-mono text-gray-600 tracking-widest uppercase">
+                <footer className="h-10 bg-surface/50 border-t border-border flex items-center justify-between px-6 text-xs text-gray-500">
                     <div className="flex gap-6">
-                        <span>SECURITY_STATUS: NOMINAL</span>
-                        <span>ACCESS_PROTOCOL: ENCRYPTED</span>
+                        <span>© 2024 Admin Panel</span>
+                        <span>v1.0.0</span>
                     </div>
                     <div>
-                        ASTRA_SECURE_ADMIN_V2.0
+                        System Status: {isSystemOnline ? 'Online' : 'Offline'}
                     </div>
                 </footer>
             </div>
