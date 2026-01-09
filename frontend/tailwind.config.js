@@ -13,6 +13,11 @@ export default {
         background: "#0B0F14", // Neutral Dark Graphite
         surface: "#151921", // Card Surface
         border: "#1F2937", // Subtle Border
+        // Vision UI Theme
+        'vision-bg': '#0F1535',
+        'vision-surface': '#1F2749',
+        'vision-primary': '#0075FF',
+        'vision-secondary': '#2CD9FF',
       },
       fontFamily: {
         sans: ['Outfit', 'sans-serif'],
@@ -24,6 +29,8 @@ export default {
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+        'vision-card': 'linear-gradient(127.09deg, rgba(6, 11, 40, 0.94) 19.41%, rgba(10, 14, 35, 0.49) 76.65%)',
+        'vision-gradient': 'linear-gradient(135deg, #0075FF 0%, #2CD9FF 100%)',
       },
       keyframes: {
         scan: {

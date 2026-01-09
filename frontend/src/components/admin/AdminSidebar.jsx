@@ -23,25 +23,19 @@ const SidebarItem = ({ to, icon: Icon, label, isCollapsed, end = false, onClick 
             end={end}
             onClick={onClick}
             className={({ isActive }) => `
-                flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative
+                flex items-center gap-3 px-4 py-3 rounded-[15px] transition-all duration-200 group relative mb-1.5
                 ${isActive 
-                    ? 'bg-primary/10 text-primary' 
-                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'}
+                    ? 'bg-vision-primary text-white shadow-lg shadow-blue-500/50' 
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'}
             `}
         >
             {({ isActive }) => (
                 <>
-                    <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? '' : 'group-hover:scale-105'} transition-transform duration-200`} />
+                    <div className={`p-1.5 rounded-lg ${isActive ? 'bg-white/10' : 'bg-[#1A1F37] group-hover:bg-[#2D3352]'} transition-colors`}>
+                        <Icon size={18} className={`${isActive ? 'text-white' : 'text-vision-primary'}`} />
+                    </div>
                     {!isCollapsed && (
-                        <span className="font-medium text-sm">{label}</span>
-                    )}
-                    
-                    {/* Active Indicator Bar */}
-                    {isActive && (
-                        <motion.div 
-                            layoutId="active-sidebar-bar"
-                            className="absolute left-0 w-0.5 h-full bg-primary rounded-r"
-                        />
+                        <span className="font-medium text-sm font-inter">{label}</span>
                     )}
                 </>
             )}
@@ -89,7 +83,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                     width: isCollapsed ? 80 : 260,
                     x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -260 : 0)
                 }}
-                className={`fixed left-0 top-0 h-screen bg-surface border-r border-border flex flex-col z-[100] transition-all duration-300 lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+                className={`fixed left-0 top-0 h-screen bg-vision-bg border-r border-white/5 flex flex-col z-[100] transition-all duration-300 lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
             >
             {/* Logo Section */}
             <div className="p-6 flex items-center gap-3 border-b border-border h-16">
