@@ -23,74 +23,47 @@ const preloadImage = (src) => {
 const loadedImageCache = new Set();
 
 const GalleryCard = ({ item, index, onClick }) => {
-    const isCached = loadedImageCache.has(item.id);
-    const [isLoading, setIsLoading] = useState(!isCached);
-
-    // If cached, we don't animate in from below, we just appear
-    // This prevents "re-playing" animations if the component remounts
-    const animationVariants = {
-        hidden: { opacity: 0, y: 20, scale: 0.98 },
-        visible: { 
-            opacity: 1, 
-            y: 0, 
-            scale: 1,
-            transition: { 
-                duration: 0.4, 
-                delay: isCached ? 0 : (index % 9) * 0.04, 
-                ease: [0.23, 1, 0.32, 1] 
-            }
-        },
-        exit: { opacity: 0, scale: 0.98 }
-    };
-
-    const handleLoad = () => {
-        setIsLoading(false);
-        loadedImageCache.add(item.id);
-    };
-
+    // We trust the browser cache. If the image is loaded, it shows.
+    // We only animate the CONTAINER entrance, not the image blur.
+    
     return (
         <motion.div
-            layout // Helps with smooth reordering
-            variants={animationVariants}
-            initial={isCached ? "visible" : "hidden"}
-            animate="visible"
-            exit="exit"
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ 
+                duration: 0.4, 
+                delay: (index % 9) * 0.05, 
+                ease: "easeOut" 
+            }}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             whileTap={{ scale: 0.98 }}
             className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
-            style={{ willChange: "transform, opacity" }}
+            style={{ willChange: "transform" }}
             onClick={onClick}
             onMouseEnter={() => preloadImage(item.src)}
             onContextMenu={(e) => e.preventDefault()}
         >
-            <div className="relative aspect-[4/3] w-full overflow-hidden">
-                {/* Cyberpunk HUD Corners (Visible on Hover) */}
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-white/5">
                 <div className="absolute top-2 left-2 w-3 h-3 border-l text-primary border-t border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
                 <div className="absolute top-2 right-2 w-3 h-3 border-r text-primary border-t border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
                 <div className="absolute bottom-2 left-2 w-3 h-3 border-l text-primary border-b border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
                 <div className="absolute bottom-2 right-2 w-3 h-3 border-r text-primary border-b border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
 
-                 {/* Skeleton Loader */}
-                 {isLoading && (
-                    <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
-                        <div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin"></div>
-                    </div>
-                )}
-                
                 <img
                     src={item.src}
                     alt={item.title}
                     loading="eager"
-                    decoding="async"
-                    onLoad={handleLoad}
-                    className={`w-full h-full object-cover transition-all duration-700 ease-out transform will-change-transform ${isLoading ? 'opacity-0 blur-xl scale-110' : 'opacity-100 blur-0 scale-100 group-hover:scale-105'}`}
+                    decoding="sync" // Force sync decoding to prevent flash
+                    className="w-full h-full object-cover transform-gpu transition-transform duration-700 group-hover:scale-105"
                 />
 
                 {/* Scanline Effect (Hover) */}
                 <div className="absolute inset-0 bg-gradient-to-b from-primary/0 via-primary/5 to-primary/0 translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000 ease-in-out pointer-events-none z-10 will-change-transform"></div>
 
                 {/* Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5 transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100 md:opacity-0 md:group-hover:opacity-100'}`}>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100">
                     <div className="transform translate-y-0 md:translate-y-4 md:group-hover:translate-y-0 transition-transform duration-300 will-change-transform">
                         <span className="text-primary text-[10px] font-mono uppercase tracking-[0.2em] mb-2 block flex items-center gap-2">
                              <Terminal className="w-3 h-3" />
