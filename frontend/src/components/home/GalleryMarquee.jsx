@@ -28,8 +28,8 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
             className="relative flex overflow-hidden w-full select-none" 
             style={{ 
                 // Hardware acceleration hints
-                maskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent, black 5%, black 95%, transparent)',
+                maskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent, black 20%, black 80%, transparent)',
                 contain: 'layout paint'
             }}
         >
