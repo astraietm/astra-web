@@ -31,11 +31,15 @@ const GalleryGrid = () => {
   useEffect(() => {
     if (selectedImage) {
       document.body.style.overflow = 'hidden';
-      setShowUi(true);
+      document.documentElement.style.overflow = 'hidden'; // Lock html
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
-    return () => { document.body.style.overflow = 'unset'; };
+    return () => { 
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+    };
   }, [selectedImage]);
 
   const fetchGalleryItems = async () => {
@@ -323,14 +327,6 @@ const GalleryGrid = () => {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
                     <div className="relative group/image">
-                        {/* Scanning Line Animation */}
-                        <motion.div 
-                            initial={{ top: "-10%", opacity: 0 }}
-                            animate={{ top: "110%", opacity: [0, 1, 1, 0] }}
-                            transition={{ duration: 1.5, ease: "linear", repeat: 0 }}
-                            className="absolute left-0 right-0 h-[2px] bg-cyan-400 shadow-[0_0_15px_cyan] z-20 pointer-events-none"
-                        />
-                        
                         <img
                             src={selectedImage.src}
                             alt={selectedImage.title}
