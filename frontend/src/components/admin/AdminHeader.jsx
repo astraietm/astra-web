@@ -40,13 +40,6 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
                 >
                     <Menu className="w-5 h-5" />
                 </button>
-                <button 
-                    onClick={() => navigate('/')}
-                    className="hidden sm:flex items-center gap-2 text-gray-400 hover:text-white transition-colors mr-2"
-                    title="Back to Website"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </button>
                 <h2 className="text-white font-semibold text-lg">
                     {title || "Dashboard"}
                 </h2>
@@ -78,6 +71,15 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
                 <button className="relative w-9 h-9 rounded-lg bg-white/5 border border-border flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                     <Bell className="w-4 h-4" />
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full"></span>
+                </button>
+
+                 {/* Back to Website */}
+                 <button 
+                    onClick={() => navigate('/')}
+                    className="w-9 h-9 rounded-lg bg-white/5 border border-border flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                    title="Back to Website"
+                >
+                    <ArrowLeft className="w-4 h-4" />
                 </button>
 
                 {/* User Profile */}
