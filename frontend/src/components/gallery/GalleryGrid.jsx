@@ -51,13 +51,24 @@ const GalleryGrid = () => {
   }, [selectedImage, filteredItems]);
 
   // Lock body scroll logic + Wheel Navigation
+  const scrollYRef = React.useRef(0);
+
   useEffect(() => {
     if (selectedImage) {
+      // Save current scroll position
+      scrollYRef.current = window.scrollY;
+      
+      // Nuclear Option: Fix body position to prevent ANY scrolling
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden'; 
       
       const handleWheel = (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
         const now = Date.now();
         if (now - lastScrollTime.current < 300) return; // Throttle 300ms
 
@@ -70,17 +81,19 @@ const GalleryGrid = () => {
         }
       };
 
-      window.addEventListener('wheel', handleWheel, { passive: false });
+      // Add listener to window with capture phase to intercept early
+      window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
 
       return () => {
-         window.removeEventListener('wheel', handleWheel);
+         window.removeEventListener('wheel', handleWheel, { capture: true });
+         
+         // Restore scroll position
+         document.body.style.position = '';
+         document.body.style.top = '';
+         document.body.style.width = '';
          document.body.style.overflow = '';
-         document.documentElement.style.overflow = '';
+         window.scrollTo(0, scrollYRef.current);
       };
-    } else {
-        // Cleanup if selectedImage becomes null
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
     }
   }, [selectedImage, navigate]);
 
