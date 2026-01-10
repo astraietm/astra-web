@@ -4,6 +4,7 @@ import FadeInUp from '../components/common/FadeInUp';
 import HackerText from '../components/common/HackerText';
 import { motion } from 'framer-motion';
 import { facultyMembers, coreMembers } from '../data/team';
+import CyberBackground from '../components/common/CyberBackground';
 
 // ----------------------------------------------------------------------
 // NOTE: To update the team members, edit the file: src/data/team.js
@@ -35,22 +36,7 @@ const fadeInUp = {
 const About = () => {
     return (
         <div className="bg-background min-h-screen pt-32 pb-20 relative overflow-hidden">
-             {/* Ultra-Dynamic Background */}
-             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/40 via-background to-background pointer-events-none"></div>
-             
-             <div className="absolute inset-0 pointer-events-none">
-                 {/* Moving Grid */}
-                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:60px_60px] opacity-40 animate-[pulse_8s_ease-in-out_infinite]"></div>
-                 
-                 {/* Rotating Nebula Orbs */}
-                 <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] md:w-[1000px] md:h-[1000px] bg-primary/10 rounded-full blur-[120px] animate-[spin_60s_linear_infinite] opacity-40"></div>
-                 <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] md:w-[800px] md:h-[800px] bg-blue-600/10 rounded-full blur-[120px] animate-[spin_40s_linear_infinite_reverse] opacity-30"></div>
-                 
-                 {/* Floating Particles */}
-                 <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-20"></div>
-                 <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-blue-500 rounded-full animate-pulse opacity-20"></div>
-                 <div className="absolute bottom-10 left-1/2 w-1 h-1 bg-white rounded-full animate-bounce opacity-40"></div>
-             </div>
+             <CyberBackground />
              
              <div className="container mx-auto px-4 relative z-10">
                 

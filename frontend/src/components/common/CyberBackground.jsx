@@ -1,0 +1,68 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+
+const CyberBackground = () => {
+    return (
+        <>
+            {/* 1. Base Gradient */}
+            <div className="fixed inset-0 bg-black/90 pointer-events-none z-[-1]"></div>
+            
+            {/* 2. Cyber Noise Only (No Grid) */}
+            <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-soft-light pointer-events-none z-0"></div> 
+
+            {/* 3. Moving Scanlines */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20"></div>
+                <motion.div 
+                    initial={{ translateY: "-100%" }}
+                    animate={{ translateY: "100%" }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent opacity-30"
+                />
+            </div>
+
+            {/* 4. Glowing Cyber Orbs (Darker & sharper) */}
+            <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] opacity-20 animate-pulse pointer-events-none z-0"></div>
+            <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] opacity-20 pointer-events-none z-0"></div>
+
+            {/* 5. Active Cyber Terminal Commands */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden font-mono text-[10px] md:text-xs">
+                <motion.div 
+                    initial={{ opacity: 0, x: -20 }} animate={{ opacity: 0.4, x: 0 }} transition={{ delay: 0.5, duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                    className="absolute top-[15%] left-[5%] text-cyan-500/30"
+                >
+                    {">"} sudo astra_init --force <br/>
+                    [ ok ] Loading Modules... <br/> 
+                    [ ok ] Bypassing Firewall...
+                </motion.div>
+
+                <motion.div 
+                    initial={{ opacity: 0, x: 20 }} animate={{ opacity: 0.4, x: 0 }} transition={{ delay: 1.2, duration: 3, repeat: Infinity, repeatType: "reverse" }}
+                    className="absolute top-[25%] right-[8%] text-blue-500/30 text-right"
+                >
+                    {">"} netstat -an | grep LISTEN <br/>
+                    TCP 0.0.0.0:80 LISTENING <br/>
+                    TCP 0.0.0.0:443 LISTENING
+                </motion.div>
+
+                <motion.div 
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 0.3, y: 0 }} transition={{ delay: 2, duration: 4, repeat: Infinity, repeatType: "reverse" }}
+                    className="absolute bottom-[20%] left-[10%] text-green-500/20"
+                >
+                    Analyzing Network Packets... <br/>
+                    |||||||||||||||| 45%
+                </motion.div>
+
+                <motion.div 
+                    initial={{ opacity: 0 }} animate={{ opacity: 0.3 }} transition={{ delay: 0.8, duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
+                    className="absolute bottom-[30%] right-[15%] text-purple-500/30 text-right"
+                >
+                    ENCRYPTING_PAYLOAD... <br/>
+                    KEY_EXCHANGE_SUCCESS
+                </motion.div>
+            </div>
+        </>
+    );
+};
+
+export default CyberBackground;

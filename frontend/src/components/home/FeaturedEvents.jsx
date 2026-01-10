@@ -5,6 +5,8 @@ import { ArrowRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+import CyberSectionHeader from '../common/CyberSectionHeader';
+
 const FeaturedEvents = () => {
     const [featuredEvents, setFeaturedEvents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,9 +35,10 @@ const FeaturedEvents = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-6">
                     <div className="max-w-xl">
                         <FadeInUp>
-                            <h2 className="text-3xl md:text-5xl font-display font-medium text-white mb-6">
-                                Upcoming Events
-                            </h2>
+                            <CyberSectionHeader 
+                                title="ACTIVE_OPERATIONS" 
+                                subtitle="init_events_sequence" 
+                            />
                         </FadeInUp>
                         <FadeInUp delay={0.1}>
                             <p className="text-gray-400 font-light text-base md:text-lg">

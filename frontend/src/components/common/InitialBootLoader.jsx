@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Lock, Unlock, ShieldAlert } from 'lucide-react';
-import GlitchText from './GlitchText';
+
 
 const codeSnippets = [
     "INITIALIZING_PROTOCOL...",

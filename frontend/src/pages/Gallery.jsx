@@ -1,14 +1,12 @@
 import React from 'react';
 import GalleryGrid from '../components/gallery/GalleryGrid';
 
-import NoiseOverlay from '../components/common/NoiseOverlay';
-import BackgroundOrbs from '../components/common/BackgroundOrbs';
+import CyberBackground from '../components/common/CyberBackground';
 
 const Gallery = () => {
   return (
     <div className="min-h-screen pt-24 pb-12 bg-background relative overflow-hidden">
-      <NoiseOverlay />
-      <BackgroundOrbs />
+      <CyberBackground />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="mb-16 text-center">

@@ -11,7 +11,7 @@ const HODMessage = () => {
                         <div className="flex flex-col lg:grid lg:grid-cols-[400px_1fr] gap-8 md:gap-20 items-center">
                             
                             {/* Left: Image & Badge */}
-                            <div className="relative flex flex-col items-center">
+                            <div className="relative flex flex-col items-center lg:self-start lg:sticky lg:top-32">
                                 <div className="relative w-40 h-40 md:w-80 md:h-80 rounded-full border border-primary/20 p-2">
                                      {/* Spinning Ring */}
                                      <div className="absolute inset-0 rounded-full border border-dashed border-primary/20 animate-[spin_20s_linear_infinite]"></div>

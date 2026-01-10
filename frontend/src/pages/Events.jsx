@@ -4,6 +4,8 @@ import { Loader2, CalendarX } from 'lucide-react';
 import EventCard from '../components/events/EventCard';
 // import eventsData from '../data/events'; // REMOVED
 
+import CyberBackground from '../components/common/CyberBackground';
+
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,8 +35,9 @@ const Events = () => {
   }, []);
 
   return (
-    <div className="min-h-screen pt-24 pb-12 bg-background">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen pt-24 pb-12 bg-background relative overflow-hidden">
+      <CyberBackground />
+      <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="mb-12 text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">

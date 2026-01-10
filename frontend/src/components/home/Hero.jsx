@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
 import { ArrowRight, ShieldCheck, Globe, Activity, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import ScrollIndicator from './ScrollIndicator';
 
 import TextReveal from '../common/TextReveal';
 import ScrollReveal from '../common/ScrollReveal';
-import GlitchText from '../common/GlitchText';
+
+import { BorderBeam } from '../common/BorderBeam';
 
 const Hero = () => {
     const containerRef = useRef(null);
@@ -16,28 +17,10 @@ const Hero = () => {
             ref={containerRef}
             className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-32 pb-20 md:py-0"
         >
-            {/* Ultra-Dynamic Background */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/40 via-background to-background pointer-events-none"></div>
-
-            <div className="absolute inset-0 pointer-events-none">
-                {/* Moving Grid - MOVED TO GLOBAL HOME */}
-
-                {/* Rotating Nebula Orbs */}
-                <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] md:w-[1000px] md:h-[1000px] bg-primary/10 rounded-full blur-[120px] animate-[spin_60s_linear_infinite] opacity-40"></div>
-                <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] md:w-[800px] md:h-[800px] bg-blue-600/10 rounded-full blur-[120px] animate-[spin_40s_linear_infinite_reverse] opacity-30"></div>
-
-                {/* Floating Particles */}
-                <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-20"></div>
-                <div className="absolute top-3/4 right-1/4 w-3 h-3 bg-blue-500 rounded-full animate-pulse opacity-20"></div>
-                <div className="absolute bottom-10 left-1/2 w-1 h-1 bg-white rounded-full animate-bounce opacity-40"></div>
-            </div>      {/* Main Content */}
+            {/* Main Content */}
             <div
-                className="relative z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center"
+                className="relative z-30 text-center px-4 max-w-5xl mx-auto flex flex-col items-center"
             >
-
-                {/* Badge */}
-
-
                 {/* Heading */}
                 <h1 className="text-4xl sm:text-7xl md:text-8xl font-display font-medium text-white mb-6 leading-[0.9] tracking-tighter flex flex-col items-center">
                     <TextReveal text="ASTRA" delay={0.3} />
@@ -60,34 +43,57 @@ const Hero = () => {
 
                 {/* Buttons */}
                 <ScrollReveal variant="up" delay={0.5}>
-                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                    <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
                         <Link
                             to="/events"
-                            className="group px-6 py-3 md:px-8 md:py-4 bg-primary text-black text-sm md:text-base font-bold rounded-full transition-all duration-300 hover:scale-105 hover:bg-cyan-300 flex items-center justify-center gap-2"
+                            className="group px-8 py-4 bg-primary text-black text-base font-bold rounded-full transition-all duration-300 hover:bg-cyan-300 hover:scale-[1.02] flex items-center justify-center gap-2"
                         >
-                            Explore Events
-                            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            Register Now
+                            <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
                         </Link>
 
                         <Link
                             to="/about"
-                            className="group px-6 py-3 md:px-8 md:py-4 bg-white/5 text-white text-sm md:text-base border border-white/10 rounded-full transition-all duration-300 hover:scale-105 hover:bg-white/10 hover:border-white/20 flex items-center justify-center gap-2"
+                            className="group px-8 py-4 bg-white/5 text-white text-base font-medium border border-white/10 rounded-full transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] flex items-center justify-center gap-2 backdrop-blur-sm"
                         >
-                            <ShieldCheck className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                            About ASTRA
+                            <ShieldCheck className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors duration-300" />
+                            <span>About ASTRA</span>
                         </Link>
                     </div>
                 </ScrollReveal>
 
-                {/* Bottom Stats Grid */}
                 <ScrollReveal variant="up" delay={0.8} width="100%">
-                    <div className="mt-16 md:mt-24 flex items-center justify-center border-t border-white/5 pt-8 w-full max-w-4xl mx-auto opacity-60 hover:opacity-100 transition-opacity duration-500">
-                        <div className="flex items-center justify-center gap-3">
-                            <Calendar className="w-5 h-5 text-gray-500" />
-                            <div className="text-left">
-                                <div className="text-sm font-bold text-white">Established 2023</div>
+                    <div className="mt-16 md:mt-24 flex flex-col md:flex-row items-center justify-center gap-6 border-t border-white/5 pt-8 w-full max-w-4xl mx-auto opacity-80 hover:opacity-100 transition-opacity duration-500">
+                         {/* Avatar Stack */}
+                         <div className="flex -space-x-4">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-zinc-800 flex items-center justify-center overflow-hidden">
+                                     <img 
+                                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 20}`} 
+                                        alt="Member" 
+                                        className="w-full h-full"
+                                     />
+                                </div>
+                            ))}
+                            <div className="w-10 h-10 rounded-full border-2 border-background bg-zinc-800 flex items-center justify-center text-xs font-bold text-white">
+                                +500
                             </div>
-                        </div>
+                         </div>
+
+                         <div className="h-8 w-[1px] bg-white/10 hidden md:block" />
+
+                         <div className="text-center md:text-left">
+                             <div className="flex items-center justify-center md:justify-start gap-1 mb-1">
+                                 {[1,2,3,4,5].map(star => (
+                                     <svg key={star} className="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20">
+                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                     </svg>
+                                 ))}
+                             </div>
+                             <p className="text-gray-400 text-sm font-medium">
+                                 Rated <span className="text-white font-bold">Top Community</span> by students
+                             </p>
+                         </div>
                     </div>
                 </ScrollReveal>
 
@@ -102,4 +108,3 @@ const Hero = () => {
 };
 
 export default Hero;
-

@@ -150,6 +150,50 @@
 }
 
 
+/* ... existing css ... */
+
+/* Animation Utilities for New Components */
+
+/* Border Beam */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.animate-border-beam {
+  animation: border-beam calc(var(--duration)*1s) infinite linear;
+}
+
+/* Spotlight */
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%,-40%) scale(1);
+  }
+}
+
+.animate-spotlight {
+  animation: spotlight 2s ease .75s 1 forwards;
+}
+
+/* Infinite Marquee */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+.group:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
 /* Force Rebuild 1 */
 .motion {
   will-change: transform, opacity;
