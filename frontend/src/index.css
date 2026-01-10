@@ -149,4 +149,8 @@
     mix-blend-mode: overlay;
 }
 
+
 /* Force Rebuild 1 */
+.motion {
+  will-change: transform, opacity;
+}

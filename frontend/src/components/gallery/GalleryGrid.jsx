@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-mo
 import { Maximize2, X, Filter, ChevronRight, ChevronLeft, Shield, Zap, Terminal, Globe, Loader2 } from 'lucide-react';
 import axios from 'axios';
 import { getOptimizedImageUrl } from '../../utils/helpers';
+import { useLenis } from '../common/SmoothScroll';
 
 const categories = [
   { id: 'all', label: 'All Events' },
@@ -94,6 +95,17 @@ const GalleryGrid = () => {
   const [[page, direction], setPage] = useState([0, 0]);
   const lastScrollTime = React.useRef(0);
   const [imageLoading, setImageLoading] = useState(true);
+  
+  const { lenis } = useLenis();
+
+  // Lenis Integration: Stop scrolling when modal is open
+  useEffect(() => {
+    if (selectedImage) {
+      lenis?.stop();
+    } else {
+      lenis?.start();
+    }
+  }, [selectedImage, lenis]);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
