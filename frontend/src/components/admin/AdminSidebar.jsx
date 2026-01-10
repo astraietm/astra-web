@@ -1,6 +1,8 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+
+// ... (imports)
+
 import { 
     LayoutDashboard, 
     Calendar, 
@@ -13,7 +15,8 @@ import {
     Shield,
     ChevronLeft,
     ChevronRight,
-    Activity
+    Activity,
+    ArrowLeft
 } from 'lucide-react';
 
 const SidebarItem = ({ to, icon: Icon, label, isCollapsed, end = false, onClick }) => {
@@ -59,6 +62,7 @@ const SidebarItem = ({ to, icon: Icon, label, isCollapsed, end = false, onClick 
 };
 
 const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
+    const navigate = useNavigate();
     const sections = [
         { group: "Main", items: [
             { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
@@ -100,11 +104,15 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                 }}
                 className={`fixed left-0 top-0 h-screen bg-vision-bg border-r border-white/5 flex flex-col z-[100] transition-all duration-300 lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
             >
-            {/* Logo Section */}
+            {/* Logo Section / Back Button */}
             <div className="p-6 flex items-center gap-3 border-b border-border h-16">
-                <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center flex-shrink-0">
-                    <LayoutDashboard className="w-5 h-5 text-white" />
-                </div>
+                <button 
+                    onClick={() => navigate('/')}
+                    className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-gray-400 flex items-center justify-center flex-shrink-0 transition-colors"
+                    title="Back to Home"
+                >
+                    <ArrowLeft className="w-5 h-5" />
+                </button>
                 {!isCollapsed && (
                     <motion.div
                         initial={{ opacity: 0 }}
