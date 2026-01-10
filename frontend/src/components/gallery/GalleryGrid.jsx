@@ -481,7 +481,13 @@ const GalleryGrid = () => {
                             transition={{ type: "spring", stiffness: 400, damping: 30 }}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                setShowUi(!showUi);
+                                // If clicking the container/padding (background), close modal
+                                if (e.target === e.currentTarget) {
+                                    setSelectedImage(null);
+                                } else {
+                                    // If clicking the image, toggle UI
+                                    setShowUi(!showUi);
+                                }
                             }}
                         >
                             {/* Loading State */}
