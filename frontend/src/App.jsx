@@ -28,13 +28,9 @@ import InitialBootLoader from './components/common/InitialBootLoader';
 import LoginModal from './components/auth/LoginModal';
 
 function App() {
-  const [loading, setLoading] = useState(() => {
-    // Check if we've already booted in this session
-    return !sessionStorage.getItem('astra_booted');
-  });
+  const [loading, setLoading] = useState(true); // Always show loader on refresh
 
   const handleBootComplete = () => {
-    sessionStorage.setItem('astra_booted', 'true');
     setLoading(false);
   };
 
