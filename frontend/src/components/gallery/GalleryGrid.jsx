@@ -41,7 +41,7 @@ const GalleryCard = ({ item, index, onClick }) => {
                 ease: "easeOut" 
             }}
             whileTap={{ scale: 0.98 }}
-            className="group relative rounded-2xl overflow-hidden bg-black border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
+            className="group relative rounded-2xl overflow-hidden bg-black border border-white/5 hover:border-cyan-400/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
             style={{ willChange: "transform" }}
             onClick={onClick}
             // Preload the HIGH QUALITY version on hover
@@ -61,10 +61,10 @@ const GalleryCard = ({ item, index, onClick }) => {
                 <div className="absolute top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100 animate-[scan_1.2s_linear_infinite] pointer-events-none z-20" />
 
 
-                <div className="absolute top-2 left-2 w-3 h-3 border-l text-primary border-t border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
-                <div className="absolute top-2 right-2 w-3 h-3 border-r text-primary border-t border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
-                <div className="absolute bottom-2 left-2 w-3 h-3 border-l text-primary border-b border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
-                <div className="absolute bottom-2 right-2 w-3 h-3 border-r text-primary border-b border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
+                <div className="absolute top-2 left-2 w-3 h-3 border-l text-cyan-400 border-t border-cyan-400/0 group-hover:border-cyan-400/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
+                <div className="absolute top-2 right-2 w-3 h-3 border-r text-cyan-400 border-t border-cyan-400/0 group-hover:border-cyan-400/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
+                <div className="absolute bottom-2 left-2 w-3 h-3 border-l text-cyan-400 border-b border-cyan-400/0 group-hover:border-cyan-400/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
+                <div className="absolute bottom-2 right-2 w-3 h-3 border-r text-cyan-400 border-b border-cyan-400/0 group-hover:border-cyan-400/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
 
                 <motion.img
                     src={getOptimizedImageUrl(item.src, 'grid')}
