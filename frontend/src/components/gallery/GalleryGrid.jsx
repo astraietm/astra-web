@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { Maximize2, X, Filter, ChevronRight, ChevronLeft, Shield, Zap, Terminal, Globe, Loader2 } from 'lucide-react';
 import axios from 'axios';
+import { getOptimizedImageUrl } from '../../utils/helpers';
 
 const categories = [
   { id: 'all', label: 'All Events' },
@@ -19,8 +20,7 @@ const preloadImage = (src) => {
   img.src = src;
 };
 
-// Simple in-memory cache to track loaded image IDs to prevent re-fading
-const loadedImageCache = new Set();
+
 
 const GalleryCard = ({ item, index, onClick }) => {
     // We trust the browser cache. If the image is loaded, it shows.
@@ -42,7 +42,8 @@ const GalleryCard = ({ item, index, onClick }) => {
             className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
             style={{ willChange: "transform" }}
             onClick={onClick}
-            onMouseEnter={() => preloadImage(item.src)}
+            // Preload the HIGH QUALITY version on hover
+            onMouseEnter={() => preloadImage(getOptimizedImageUrl(item.src, 'modal'))}
             onContextMenu={(e) => e.preventDefault()}
         >
             <div className="relative aspect-[4/3] w-full overflow-hidden bg-white/5">
@@ -52,10 +53,10 @@ const GalleryCard = ({ item, index, onClick }) => {
                 <div className="absolute bottom-2 right-2 w-3 h-3 border-r text-primary border-b border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
 
                 <img
-                    src={item.src}
+                    src={getOptimizedImageUrl(item.src, 'grid')}
                     alt={item.title}
-                    loading="eager"
-                    decoding="sync" // Force sync decoding to prevent flash
+                    loading="lazy"
+                    decoding="async" 
                     className="w-full h-full object-cover transform-gpu transition-transform duration-700 group-hover:scale-105"
                 />
 
@@ -96,11 +97,15 @@ const GalleryGrid = () => {
   const API_URL = import.meta.env.VITE_API_URL;
 
   // 1. Core Logic & Helpers (Defined first to avoid hoisting issues)
-  const filteredItems = filter === 'all' 
-    ? items 
-    : items.filter(item => item.category === filter);
+  const filteredItems = React.useMemo(() => {
+      return filter === 'all' 
+        ? items 
+        : items.filter(item => item.category === filter);
+  }, [items, filter]);
 
-  const visibleItems = filteredItems.slice(0, visibleCount);
+  const visibleItems = React.useMemo(() => {
+      return filteredItems.slice(0, visibleCount);
+  }, [filteredItems, visibleCount]);
 
   const fetchGalleryItems = useCallback(async () => {
     try {
@@ -145,8 +150,10 @@ const GalleryGrid = () => {
          const currentIndex = filteredItems.findIndex(item => item.id === selectedImage.id);
          const nextItem = filteredItems[(currentIndex + 1) % filteredItems.length];
          const prevItem = filteredItems[(currentIndex - 1 + filteredItems.length) % filteredItems.length];
-         if (nextItem) preloadImage(nextItem.src);
-         if (prevItem) preloadImage(prevItem.src);
+         
+         // Preload using the MODAL optimized size
+         if (nextItem) preloadImage(getOptimizedImageUrl(nextItem.src, 'modal'));
+         if (prevItem) preloadImage(getOptimizedImageUrl(prevItem.src, 'modal'));
      }
   }, [selectedImage, filteredItems]);
 
@@ -453,7 +460,7 @@ const GalleryGrid = () => {
                             )}
 
                             <img
-                                src={selectedImage.src}
+                                src={getOptimizedImageUrl(selectedImage.src, 'modal')}
                                 alt={selectedImage.title}
                                 draggable="false"
                                 loading="eager"

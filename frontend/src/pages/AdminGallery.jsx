@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+
 import { ArrowLeft, Upload, Trash2, Shield, Image, Loader2, Edit2, X, Check, Database, AlertTriangle } from 'lucide-react';
+import { getOptimizedImageUrl } from '../utils/helpers';
 
 const AdminGallery = () => {
     const { user, token } = useAuth();
@@ -346,7 +348,7 @@ const AdminGallery = () => {
                                         ${editingItem?.id === item.id ? 'ring-2 ring-primary border-transparent scale-[0.98] opacity-50 grayscale' : 'border-white/5 hover:border-primary/50 hover:shadow-primary/10 hover:-translate-y-1'}
                                     `}
                                 >
-                                    <img src={item.image_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                                    <img src={getOptimizedImageUrl(item.image_url, 'grid')} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                                     
                                     {/* Gradient Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
