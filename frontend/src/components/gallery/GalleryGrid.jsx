@@ -41,24 +41,24 @@ const GalleryCard = ({ item, index, onClick }) => {
                 ease: "easeOut" 
             }}
             whileTap={{ scale: 0.98 }}
-            className="group relative rounded-2xl overflow-hidden bg-surface border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
+            className="group relative rounded-2xl overflow-hidden bg-black border border-white/5 hover:border-primary/50 cursor-pointer h-full w-full transition-colors duration-300 transform-gpu"
             style={{ willChange: "transform" }}
             onClick={onClick}
             // Preload the HIGH QUALITY version on hover
             onMouseEnter={() => preloadImage(getOptimizedImageUrl(item.src, 'modal'))}
             onContextMenu={(e) => e.preventDefault()}
         >
-             {/* 3. Neon Cyber Border Scan */}
+             {/* 4. Cyber neon border (signature hacker look) */}
             <div className="absolute inset-0 pointer-events-none z-30">
-                <span className="absolute inset-0 border border-cyan-400/0 group-hover:border-primary/60 rounded-2xl transition-all duration-500 shadow-[0_0_25px_rgba(34,211,238,0.15)]" />
+                <span className="absolute inset-0 border border-cyan-400/0 group-hover:border-cyan-400/70 rounded-2xl transition-all duration-500 shadow-[0_0_25px_rgba(0,255,255,0.25)]" />
             </div>
 
             <div className="relative aspect-[4/3] w-full overflow-hidden bg-white/5">
-                {/* 4. Hacker Scanline Overlay */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:100%_3px] mix-blend-overlay pointer-events-none z-20" />
+                {/* 5. Matrix-style micro noise (Optional but recommended) */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 bg-[radial-gradient(circle,rgba(0,255,255,0.3)_1px,transparent_1px)] bg-[size:4px_4px] pointer-events-none z-20" />
                 
-                {/* 6. Animated Glitch Line */}
-                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 animate-[scan_1.5s_linear_infinite] z-20" />
+                {/* 5. Glitch scan line (THIS makes it hacker) */}
+                <div className="absolute top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-0 group-hover:opacity-100 animate-[scan_1.2s_linear_infinite] pointer-events-none z-20" />
 
 
                 <div className="absolute top-2 left-2 w-3 h-3 border-l text-primary border-t border-primary/0 group-hover:border-primary/80 transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-20"></div>
@@ -73,15 +73,18 @@ const GalleryCard = ({ item, index, onClick }) => {
                     decoding="async" 
                     variants={{
                         rest: { scale: 1, filter: "brightness(0.95)" },
-                        hover: { scale: 1.06, filter: "brightness(1.1) contrast(1.1)" }
+                        hover: { scale: 1.08, filter: "brightness(1.15) contrast(1.15)" }
                     }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
                     className="w-full h-full object-cover transform-gpu"
                 />
 
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-5 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20">
-                    {/* 5. Glitch-Style Title Reveal */}
+                {/* 3. Dark terminal overlay */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/35 transition-colors duration-300 pointer-events-none z-10" />
+
+                {/* Overlay with Text */}
+                <div className="absolute inset-0 flex flex-col justify-end p-5 z-20 pointer-events-none">
+                    {/* 6. Hacker terminal text reveal */}
                     <motion.div
                         variants={{
                             rest: { opacity: 0, y: 12 },
@@ -89,7 +92,7 @@ const GalleryCard = ({ item, index, onClick }) => {
                         }}
                         transition={{ duration: 0.3 }}
                     >
-                        <p className="text-primary text-[10px] font-mono tracking-widest uppercase mb-1">
+                        <p className="text-cyan-400 text-xs font-mono tracking-widest uppercase mb-1">
                             ACCESS_GRANTED
                         </p>
                         <h3 className="text-white font-display font-medium text-lg leading-tight tracking-wide">{item.title}</h3>
