@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import { getOptimizedImageUrl } from '../../utils/helpers';
 
 // Optimized Marquee Row with Intersection Observer
 const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
@@ -47,7 +48,7 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
                         style={{ contain: 'strict' }} 
                     >
                         <img 
-                            src={item.src} 
+                            src={getOptimizedImageUrl(item.src, 'grid')} 
                             alt="" 
                             loading="lazy"
                             decoding="async"

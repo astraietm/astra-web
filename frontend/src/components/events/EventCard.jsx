@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Calendar, MapPin, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { getOptimizedImageUrl } from '../../utils/helpers';
 
 const EventCard = ({ event, index }) => {
   const { requireLogin } = useAuth(); // Auth context for conditional login
@@ -73,8 +74,10 @@ const EventCard = ({ event, index }) => {
       <div className="relative h-56 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent z-10"></div>
         <img
-          src={event.image}
+          src={getOptimizedImageUrl(event.image, 'grid')}
           alt={event.title}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur-md border border-white/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
