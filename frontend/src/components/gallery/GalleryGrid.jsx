@@ -265,7 +265,7 @@ const GalleryGrid = () => {
     <div className="space-y-8 pb-12">
       {/* Modern Filter Tabs */}
       <div className="sticky top-20 z-30 -mx-4 px-4 md:-mx-0 md:px-0 mb-8">
-          <div className="max-w-7xl mx-auto flex overflow-x-auto no-scrollbar py-4 md:justify-center gap-2 md:gap-8 bg-black/40 backdrop-blur-md rounded-2xl border border-white/5 px-6 shadow-2xl transition-all duration-300">
+          <div className="max-w-7xl mx-auto flex overflow-x-auto no-scrollbar py-4 md:justify-center gap-2 md:gap-8 bg-black/60 backdrop-blur-xl rounded-2xl border border-white/5 px-6 shadow-2xl transition-all duration-300">
             {categories.map((cat) => {
                 const isActive = filter === cat.id;
                 return (
@@ -273,25 +273,28 @@ const GalleryGrid = () => {
                         key={cat.id}
                         onClick={() => { setFilter(cat.id); setVisibleCount(9); }}
                         className={`
-                            relative px-2 py-2 flex items-center gap-3 text-sm font-mono tracking-widest uppercase transition-all duration-300 group flex-shrink-0
-                            ${isActive ? 'text-primary' : 'text-gray-500 hover:text-white'}
+                            relative px-4 py-2 flex items-center gap-3 text-sm font-mono tracking-widest uppercase transition-all duration-300 group flex-shrink-0 rounded-lg overflow-hidden
+                            ${isActive ? 'text-cyan-400 bg-cyan-400/10' : 'text-gray-500 hover:text-cyan-300 hover:bg-white/5'}
                         `}
                     >
+                         {/* Hover Scan (Subtle) */}
+                        {!isActive && (
+                             <div className="absolute inset-0 bg-cyan-400/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out pointer-events-none" />
+                        )}
+
                         {/* Icon */}
                         {cat.icon && (
-                            <cat.icon className={`w-4 h-4 transition-colors ${isActive ? 'text-primary' : 'text-gray-600 group-hover:text-white'}`} />
+                            <cat.icon className={`w-4 h-4 transition-colors ${isActive ? 'text-cyan-400' : 'text-gray-600 group-hover:text-cyan-300'}`} />
                         )}
                         
                         {/* Text */}
                         <span className="relative z-10">{cat.label}</span>
 
-                        {/* Active Indicator (Glowing Underline) - No stretching */}
+                        {/* Active Indicator (Glowing Underline) */}
                         {isActive && (
                             <motion.div 
-                                initial={{ opacity: 0, width: 0 }}
-                                animate={{ opacity: 1, width: '100%' }}
-                                transition={{ duration: 0.3 }}
-                                className="absolute bottom-0 left-0 right-0 h-[1px] bg-primary shadow-[0_0_15px_rgba(0,224,255,1)] mx-auto"
+                                layoutId="activeTab"
+                                className="absolute bottom-0 left-0 right-0 h-[2px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]"
                             />
                         )}
                     </button>
@@ -317,13 +320,21 @@ const GalleryGrid = () => {
       {/* Load More Button */}
       {visibleItems.length < filteredItems.length && (
           <div className="flex justify-center mt-12">
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setVisibleCount(prev => prev + 9)}
-                className="px-8 py-4 bg-surface border border-white/10 hover:border-primary/50 text-white rounded-xl font-mono uppercase tracking-widest text-sm transition-all hover:bg-white/5 flex items-center gap-3 group"
+                className="relative px-8 py-4 bg-black border border-white/10 hover:border-cyan-400/50 text-white hover:text-cyan-400 rounded-xl font-mono uppercase tracking-widest text-sm transition-all duration-300 flex items-center gap-3 group overflow-hidden"
               >
-                  <span>Load More Data</span>
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+                  {/* Scan Line */}
+                  <div className="absolute top-0 left-0 w-[2px] h-full bg-cyan-400/50 blur-[2px] translate-x-[-100%] group-hover:animate-[scan-line_1.5s_linear_infinite]" />
+                  
+                  {/* Background Glow */}
+                  <div className="absolute inset-0 bg-cyan-400/0 group-hover:bg-cyan-400/5 transition-colors duration-300" />
+
+                  <span className="relative z-10">Load More Data</span>
+                  <ChevronRight className="relative z-10 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </motion.button>
           </div>
       )}
 
