@@ -301,7 +301,7 @@ const GalleryGrid = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-2xl flex items-center justify-center touch-none overscroll-none"
+            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-3xl backdrop-saturate-150 flex items-center justify-center touch-none overscroll-none"
             onClick={() => setSelectedImage(null)}
           >
             {/* Desktop Custom Close Button */}
