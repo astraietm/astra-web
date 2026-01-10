@@ -1,17 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const CyberBackground = () => {
+const CyberBackground = ({ fixed = true }) => {
+    const positionClass = fixed ? "fixed" : "absolute";
+    
     return (
         <>
             {/* 1. Base Gradient */}
-            <div className="fixed inset-0 bg-black/90 pointer-events-none z-[-1]"></div>
+            <div className={`${positionClass} inset-0 bg-black/90 pointer-events-none z-[-1]`}></div>
             
             {/* 2. Cyber Noise Only (No Grid) */}
-            <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-soft-light pointer-events-none z-0"></div> 
+            <div className={`${positionClass} inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-soft-light pointer-events-none z-0`}></div> 
 
             {/* 3. Moving Scanlines */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+            <div className={`${positionClass} inset-0 pointer-events-none overflow-hidden z-0`}>
                 <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20"></div>
                 <motion.div 
                     initial={{ translateY: "-100%" }}
@@ -22,14 +24,14 @@ const CyberBackground = () => {
             </div>
 
             {/* 4. Glowing Cyber Orbs (Darker & sharper) */}
-            <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] opacity-20 animate-pulse pointer-events-none z-0"></div>
-            <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] opacity-20 pointer-events-none z-0"></div>
+            <div className={`${positionClass} top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] opacity-20 animate-pulse pointer-events-none z-0`}></div>
+            <div className={`${positionClass} bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] opacity-20 pointer-events-none z-0`}></div>
 
             {/* 5. Active Cyber Terminal Commands */}
-            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden font-mono text-[10px] md:text-xs">
+            <div className={`${positionClass} inset-0 pointer-events-none z-0 overflow-hidden font-mono text-[10px] md:text-xs`}>
                 <motion.div 
                     initial={{ opacity: 0, x: -20 }} animate={{ opacity: 0.4, x: 0 }} transition={{ delay: 0.5, duration: 2, repeat: Infinity, repeatType: "reverse" }}
-                    className="absolute top-[15%] left-[5%] text-cyan-500/30"
+                    className="absolute top-[100px] left-[5%] text-cyan-500/30"
                 >
                     {">"} sudo astra_init --force <br/>
                     [ ok ] Loading Modules... <br/> 
@@ -38,7 +40,7 @@ const CyberBackground = () => {
 
                 <motion.div 
                     initial={{ opacity: 0, x: 20 }} animate={{ opacity: 0.4, x: 0 }} transition={{ delay: 1.2, duration: 3, repeat: Infinity, repeatType: "reverse" }}
-                    className="absolute top-[25%] right-[8%] text-blue-500/30 text-right"
+                    className="absolute top-[200px] right-[8%] text-blue-500/30 text-right"
                 >
                     {">"} netstat -an | grep LISTEN <br/>
                     TCP 0.0.0.0:80 LISTENING <br/>

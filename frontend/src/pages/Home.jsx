@@ -12,7 +12,7 @@ import CyberBackground from '../components/common/CyberBackground';
 const Home = () => {
   return (
     <div className="bg-background relative min-h-screen">
-      <CyberBackground />
+      <CyberBackground fixed={false} />
 
 
 
