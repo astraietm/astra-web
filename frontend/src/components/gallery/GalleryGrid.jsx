@@ -1,6 +1,7 @@
 
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { Maximize2, X, Filter, ChevronRight, ChevronLeft, Shield, Zap, Terminal, Globe, Loader2 } from 'lucide-react';
 import axios from 'axios';
@@ -292,20 +293,21 @@ const GalleryGrid = () => {
       )}
 
       {/* Immersive Lightbox Modal */}
-      <AnimatePresence>
-        {selectedImage && (
+      {selectedImage && createPortal(
+        <AnimatePresence mode="wait">
           <motion.div
+            key="modal-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-2xl saturate-150 flex items-center justify-center touch-none"
+            className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-2xl flex items-center justify-center touch-none overscroll-none"
             onClick={() => setSelectedImage(null)}
           >
             {/* Desktop Custom Close Button */}
             <button
                 onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-                className="absolute top-8 right-8 z-[60] hidden md:block group cursor-pointer outline-none hover:rotate-90 duration-300"
+                className="absolute top-8 right-8 z-[100] hidden md:block group cursor-pointer outline-none hover:rotate-90 duration-300"
                 title="Close View"
             >
                 <svg
@@ -323,17 +325,12 @@ const GalleryGrid = () => {
                     <path d="M12 16V8" strokeWidth="1.5"></path>
                 </svg>
             </button>
+
              {/* Main Content Area - Full Viewport Height for Mobile */}
              <div 
-                className="w-full h-[100dvh] relative flex flex-col md:flex-row items-center justify-center"
+                className="w-full h-[100dvh] relative flex items-center justify-center"
                 onClick={(e) => {
-                    // Stop bubbling only if clicking UI elements, not background
-                    // Actually, if we click background here, it propagates to parent.
-                    // But the Image Container (motion.div below) needs to handle its own clicks.
                      e.stopPropagation(); 
-                     // If we click the 'empty' space here (if any), treat as close?
-                     // Or pass to parent? 
-                     // Simplest: this Div covers screen. It handles the click.
                      if (e.target === e.currentTarget) setSelectedImage(null);
                 }}
              >
@@ -345,14 +342,14 @@ const GalleryGrid = () => {
                             {/* Nav Buttons (Desktop Only - Mobile uses gestures) */}
                             <motion.button 
                                 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-                                className="absolute left-8 p-4 rounded-full bg-black/40 hover:bg-white/10 text-white transition-colors z-40 hidden md:flex border border-white/10 backdrop-blur-md"
+                                className="absolute left-8 p-4 rounded-full bg-black/40 hover:bg-white/10 text-white transition-colors z-[100] hidden md:flex border border-white/10 backdrop-blur-md"
                                 onClick={(e) => { e.stopPropagation(); navigate('prev'); }}
                             >
                                 <ChevronLeft className="w-8 h-8" />
                             </motion.button>
                             <motion.button 
                                 initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
-                                className="absolute right-8 p-4 rounded-full bg-black/40 hover:bg-white/10 text-white transition-colors z-40 hidden md:flex border border-white/10 backdrop-blur-md"
+                                className="absolute right-8 p-4 rounded-full bg-black/40 hover:bg-white/10 text-white transition-colors z-[100] hidden md:flex border border-white/10 backdrop-blur-md"
                                 onClick={(e) => { e.stopPropagation(); navigate('next'); }}
                             >
                                 <ChevronRight className="w-8 h-8" />
@@ -361,7 +358,7 @@ const GalleryGrid = () => {
                             {/* Details Bar */}
                             <motion.div 
                                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-                                className="absolute bottom-0 left-0 right-0 p-6 pb-12 md:pb-8 bg-gradient-to-t from-black via-black/80 to-transparent z-40 pointer-events-none"
+                                className="absolute bottom-0 left-0 right-0 p-6 pb-12 md:pb-8 bg-gradient-to-t from-black via-black/90 to-transparent z-[100] pointer-events-none"
                             >
                                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end md:items-center gap-2 pointer-events-auto">
                                     <div>
@@ -387,13 +384,13 @@ const GalleryGrid = () => {
                 </AnimatePresence>
 
                 {/* Carousel Navigation - Wraps the content that slides */}
-                <AnimatePresence initial={false} custom={direction}>
+                <AnimatePresence initial={false} custom={direction} mode="wait">
                     <motion.div
                         key={selectedImage.id}
                         custom={direction}
                         variants={{
                             enter: (direction) => ({
-                                x: direction > 0 ? '100%' : '-100%',
+                                x: direction > 0 ? 1000 : -1000,
                                 opacity: 0,
                                 scale: 0.95
                             }),
@@ -405,7 +402,7 @@ const GalleryGrid = () => {
                             },
                             exit: (direction) => ({
                                 zIndex: 0,
-                                x: direction < 0 ? '100%' : '-100%',
+                                x: direction < 0 ? 1000 : -1000,
                                 opacity: 0,
                                 scale: 0.95
                             })
@@ -414,12 +411,12 @@ const GalleryGrid = () => {
                         animate="center"
                         exit="exit"
                         transition={{
-                            x: { type: "spring", stiffness: 400, damping: 40 },
-                            opacity: { duration: 0.3 }
+                            x: { type: "spring", stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 }
                         }}
                         drag="x"
                         dragConstraints={{ left: 0, right: 0 }}
-                        dragElastic={0.4}
+                        dragElastic={1}
                         onDragEnd={(e, { offset, velocity }) => {
                             const swipe = swipePower(offset.x, velocity.x);
                             if (swipe < -swipeConfidenceThreshold) {
@@ -428,20 +425,13 @@ const GalleryGrid = () => {
                                 navigate('prev');
                             }
                         }}
-                        className="absolute inset-0 flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing transform-gpu"
-                        style={{ willChange: "transform, opacity" }}
+                        className="absolute inset-0 flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing transform-gpu w-full h-full"
                     >
                         <motion.div 
-                            className="relative group/image flex items-center justify-center w-full h-full p-4 transform-gpu"
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.95, opacity: 0 }}
-                            style={{ willChange: "transform, opacity" }}
-                            transition={{ 
-                                type: "spring", 
-                                stiffness: 350, 
-                                damping: 32
-                            }}
+                            className="relative group/image flex items-center justify-center w-full h-full p-4 md:p-12"
+                            initial={{ scale: 0.95 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setShowUi(!showUi);
@@ -449,12 +439,9 @@ const GalleryGrid = () => {
                         >
                             {/* Loading State */}
                             {imageLoading && (
-                                <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none transform-gpu">
+                                <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
                                     <div className="relative">
-                                        <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin will-change-transform"></div>
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse will-change-transform"></div>
-                                        </div>
+                                        <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
                                     </div>
                                 </div>
                             )}
@@ -466,15 +453,16 @@ const GalleryGrid = () => {
                                 loading="eager"
                                 decoding="async"
                                 onLoad={() => setImageLoading(false)}
-                                className={`max-w-full max-h-[85dvh] object-contain pointer-events-none drop-shadow-2xl relative z-10 transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+                                className={`max-w-full max-h-[85vh] object-contain shadow-2xl relative z-10 select-none ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
                             />
                         </motion.div>
                     </motion.div>
                 </AnimatePresence>
              </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   );
 };
