@@ -105,26 +105,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                 }}
                 className={`fixed left-0 top-0 h-screen bg-vision-bg border-r border-white/5 flex flex-col z-[100] transition-all duration-300 lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
             >
-            {/* Logo Section / Back Button */}
-            <div className="p-6 flex items-center gap-3 border-b border-border h-16">
-                <button 
-                    onClick={() => navigate('/')}
-                    className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 hover:text-white text-gray-400 flex items-center justify-center flex-shrink-0 transition-colors"
-                    title="Back to Home"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </button>
-                {!isCollapsed && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex flex-col"
-                    >
-                        <span className="font-semibold text-white text-base">Admin Panel</span>
-                        <span className="text-xs text-gray-500">Management Console</span>
-                    </motion.div>
-                )}
-            </div>
+
 
             {/* Navigation Sections */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-6 no-scrollbar">
