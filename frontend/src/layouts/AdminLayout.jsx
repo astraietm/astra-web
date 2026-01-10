@@ -5,6 +5,7 @@ import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminHeader from '../components/admin/AdminHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import NoiseOverlay from '../components/common/NoiseOverlay';
+import CommandPalette from '../components/admin/CommandPalette';
 
 const AdminLayout = () => {
     const { user, loading } = useAuth();
@@ -13,6 +14,7 @@ const AdminLayout = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [isSystemOnline, setIsSystemOnline] = useState(true);
+    const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
     // Get page title from route
     const getPageTitle = () => {
@@ -48,6 +50,18 @@ const AdminLayout = () => {
         setIsMobileOpen(false);
     }, [location.pathname]);
 
+    // Global Command Palette Shortcut
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                setIsCommandPaletteOpen(prev => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
     if (loading) return (
         <div className="min-h-screen bg-[#030014] flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
@@ -75,6 +89,7 @@ const AdminLayout = () => {
                     title={getPageTitle()} 
                     onMenuClick={() => setIsMobileOpen(true)} 
                     isSystemOnline={isSystemOnline}
+                    onSearchClick={() => setIsCommandPaletteOpen(true)}
                 />
 
                 
@@ -106,6 +121,8 @@ const AdminLayout = () => {
                     </div>
                 </footer>
             </div>
+
+            <CommandPalette isOpen={isCommandPaletteOpen} setIsOpen={setIsCommandPaletteOpen} />
         </div>
     );
 };

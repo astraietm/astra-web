@@ -13,22 +13,11 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
+const AdminHeader = ({ title, onMenuClick, isSystemOnline, onSearchClick }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const searchInputRef = useRef(null);
-
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.ctrlKey && e.key === 'k') {
-                e.preventDefault();
-                searchInputRef.current?.focus();
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    
+    // Ctrl+K handled by AdminLayout now
 
     return (
         <header className="h-16 bg-surface/80 backdrop-blur-xl border-b border-border sticky top-0 z-[90] flex items-center justify-between px-6">
@@ -40,30 +29,31 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline }) => {
                 >
                     <Menu className="w-5 h-5" />
                 </button>
-                <h2 className="text-white font-semibold text-lg">
+                <h2 className="text-white font-semibold text-lg uppercase tracking-tight">
                     {title || "Dashboard"}
                 </h2>
                 <div className="h-4 w-px bg-border hidden sm:block"></div>
                 <div className={`hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
                     isSystemOnline 
-                    ? 'text-emerald-400' 
-                    : 'text-rose-400'
+                    ? 'text-emerald-400 bg-emerald-400/5 border border-emerald-400/20' 
+                    : 'text-rose-400 bg-rose-400/5 border border-rose-400/20'
                 }`}>
-                    <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-400' : 'bg-rose-400'}`}></div>
-                    <span>{isSystemOnline ? 'Online' : 'Offline'}</span>
+                    <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-400' : 'bg-rose-400'} animate-pulse`}></div>
+                    <span>{isSystemOnline ? 'SYSTEM ONLINE' : 'SYSTEM OFFLINE'}</span>
                 </div>
             </div>
 
             {/* Actions & Profile */}
             <div className="flex items-center gap-4">
                 {/* Global Search */}
-                <div className="relative hidden lg:block">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <div className="relative hidden lg:block group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-hover:text-vision-primary transition-colors" />
                     <input 
-                        ref={searchInputRef}
                         type="text" 
-                        placeholder="Search or press Ctrl+K"
-                        className="bg-white/5 border border-border rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-primary/50 w-64 transition-colors placeholder:text-gray-500"
+                        placeholder="Search... (Ctrl+K)"
+                        onClick={onSearchClick}
+                        readOnly
+                        className="bg-white/5 border border-border rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-vision-primary/50 w-64 transition-all placeholder:text-gray-500 hover:bg-white/10 cursor-text"
                     />
                 </div>
 

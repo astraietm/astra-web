@@ -23,19 +23,34 @@ const SidebarItem = ({ to, icon: Icon, label, isCollapsed, end = false, onClick 
             end={end}
             onClick={onClick}
             className={({ isActive }) => `
-                flex items-center gap-3 px-4 py-3 rounded-[15px] transition-all duration-200 group relative mb-1.5
+                flex items-center gap-4 px-4 py-3 my-1 rounded-lg transition-all duration-300 group relative overflow-hidden
                 ${isActive 
-                    ? 'bg-vision-primary text-white shadow-lg shadow-blue-500/50' 
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'}
+                    ? 'bg-vision-primary/10 text-white' 
+                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'}
             `}
         >
             {({ isActive }) => (
                 <>
-                    <div className={`p-1.5 rounded-lg ${isActive ? 'bg-white/10' : 'bg-[#1A1F37] group-hover:bg-[#2D3352]'} transition-colors`}>
-                        <Icon size={18} className={`${isActive ? 'text-white' : 'text-vision-primary'}`} />
+                    {/* Active Indicator Bar */}
+                    {isActive && (
+                        <motion.div 
+                            layoutId="activeSidebarBar"
+                            className="absolute left-0 top-1 bottom-1 w-[3px] bg-vision-primary shadow-[0_0_10px_#6366f1] rounded-r-full"
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        />
+                    )}
+
+                    <div className={`
+                        relative z-10 transition-transform duration-300 
+                        ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]' : 'group-hover:scale-105'}
+                    `}>
+                        <Icon size={20} className={isActive ? 'text-vision-primary' : 'text-gray-400 group-hover:text-gray-200'} />
                     </div>
+
                     {!isCollapsed && (
-                        <span className="font-medium text-sm font-inter">{label}</span>
+                        <span className={`font-medium text-sm font-inter relative z-10 ${isActive ? 'text-white tracking-wide' : ''}`}>
+                            {label}
+                        </span>
                     )}
                 </>
             )}
