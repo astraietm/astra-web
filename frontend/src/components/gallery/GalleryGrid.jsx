@@ -472,6 +472,7 @@ const GalleryGrid = () => {
                             }
                         }}
                         className="absolute inset-0 flex items-center justify-center p-0 md:p-10 cursor-grab active:cursor-grabbing transform-gpu w-full h-full"
+                        onClick={() => setSelectedImage(null)}
                     >
                         <motion.div 
                             className="relative group/image flex items-center justify-center w-full h-full p-4 md:p-12"
