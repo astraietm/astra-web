@@ -47,7 +47,7 @@ const Hero = () => {
                         transition={{ duration: 1, delay: 0.8 }}
                         className="text-sm sm:text-base md:text-2xl font-sans font-light tracking-wide text-gray-300 mt-4 max-w-3xl"
                     >
-                        Official Cybersecurity Association of the Cybersecurity Department, <span className="text-primary">KMCT IETM</span>
+                        Official Cybersecurity Association of the Cybersecurity Department, <span className="text-primary">KMCT Institute of Emerging Technology and Management.</span>
                     </motion.span>
                 </h1>
 
