@@ -238,8 +238,8 @@ const Navbar = () => {
             {/* =======================
                 MOBILE NAVBAR
             ======================== */}
-            <nav className="md:hidden fixed top-4 inset-x-0 z-[100] px-4 pointer-events-none flex justify-center items-start">
-                <div className="w-full max-w-[90%] sm:max-w-[380px] relative pointer-events-auto mx-auto">
+            <nav className="md:hidden fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[92%] max-w-[400px] pointer-events-none">
+                <div className="w-full relative pointer-events-auto">
                     <div className="bg-[#0A0F1C]/80 backdrop-blur-xl backdrop-saturate-150 border border-white/20 shadow-2xl rounded-full p-2 flex items-center justify-between h-[64px] relative z-50">
                         <Link to="/" className="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center group" onClick={() => setIsOpen(false)}>
                             <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 animate-[spin_4s_linear_infinite]" />
