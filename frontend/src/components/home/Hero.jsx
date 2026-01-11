@@ -17,6 +17,28 @@ const Hero = () => {
             ref={containerRef}
             className="relative min-h-[100dvh] flex items-center justify-center pt-16 pb-8 sm:pt-20 sm:pb-12 md:py-0 overflow-hidden"
         >
+            {/* --- Cyber Visuals (Mobile Enhanced) --- */}
+            
+            {/* 1. Central Ambient Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-primary/20 blur-[80px] sm:blur-[100px] rounded-full mix-blend-screen opacity-60 pointer-events-none z-10 animate-pulse duration-[4000ms]" />
+
+            {/* 2. Holographic Floor Grid */}
+            <div className="absolute bottom-0 left-0 right-0 h-[45vh] pointer-events-none z-10 overflow-hidden opacity-40 sm:opacity-30">
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent z-10" />
+                <div 
+                    className="absolute inset-[-50%] bg-[linear-gradient(90deg,rgba(99,102,241,0.3)_1px,transparent_1px),linear-gradient(0deg,rgba(99,102,241,0.3)_1px,transparent_1px)] bg-[size:40px_40px] origin-bottom"
+                    style={{ transform: 'perspective(500px) rotateX(60deg) translateY(0)' }}
+                />
+            </div>
+            
+            {/* 3. Floating Dust Particles (CSS) */}
+            <div className="absolute inset-0 pointer-events-none z-10 opacity-30">
+                 <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-ping duration-[3000ms]" />
+                 <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-primary rounded-full animate-ping duration-[4000ms] delay-1000" />
+                 <div className="absolute top-1/2 left-3/4 w-0.5 h-0.5 bg-cyan-400 rounded-full animate-pulse" />
+            </div>
+
+            {/* --------------------------------------- */}
             {/* Main Content */}
             <div
                 className="relative z-30 text-center px-3 sm:px-4 md:px-6 max-w-[95%] sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto flex flex-col items-center w-full"
