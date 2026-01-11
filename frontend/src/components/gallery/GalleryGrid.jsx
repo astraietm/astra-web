@@ -350,26 +350,13 @@ const GalleryGrid = () => {
             className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-3xl backdrop-saturate-150 flex items-center justify-center touch-none overscroll-none"
             onClick={() => setSelectedImage(null)}
           >
-            {/* Desktop Custom Close Button */}
+            {/* Close Button (Desktop & Mobile) */}
             <button
                 onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-                className="absolute top-8 right-8 z-[100] hidden md:block group cursor-pointer outline-none hover:rotate-90 duration-300"
+                className="absolute top-6 right-6 z-[100] group cursor-pointer outline-none p-2 rounded-full bg-black/40 border border-white/10 text-white backdrop-blur-md hover:bg-white/10 transition-all duration-300"
                 title="Close View"
             >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="50px"
-                    height="50px"
-                    viewBox="0 0 24 24"
-                    className="stroke-zinc-400 fill-none group-hover:fill-zinc-800 group-active:stroke-zinc-200 group-active:fill-zinc-600 group-active:duration-0 duration-300 rotate-45"
-                >
-                    <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        strokeWidth="1.5"
-                    ></path>
-                    <path d="M8 12H16" strokeWidth="1.5"></path>
-                    <path d="M12 16V8" strokeWidth="1.5"></path>
-                </svg>
+                <X className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
             </button>
 
              {/* Main Content Area - Full Viewport Height for Mobile */}

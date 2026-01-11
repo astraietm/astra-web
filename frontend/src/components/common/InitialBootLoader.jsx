@@ -54,9 +54,8 @@ const InitialBootLoader = ({ onComplete }) => {
     }, [progress, onComplete]);
 
     return (
-        <motion.div
-            className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden font-mono"
-            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+        <div
+            className="fixed inset-0 z-[99999] bg-black flex items-center justify-center font-mono w-screen h-[100dvh]"
         >
             {/* CRT Scanline Effect */}
             <div className="absolute inset-0 pointer-events-none">
@@ -69,7 +68,8 @@ const InitialBootLoader = ({ onComplete }) => {
             </div>
 
             {/* Vignette */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
+            {/* Vignette - Simplified */}
+            <div className="absolute inset-0 bg-black/40 pointer-events-none" />
 
             {/* Main Terminal */}
             <div className="relative z-10 w-full max-w-3xl px-4 sm:px-6 md:px-8">
@@ -87,14 +87,13 @@ const InitialBootLoader = ({ onComplete }) => {
 
                     {/* Terminal Content */}
                     <div className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
-                        {/* ASTRA ASCII Logo */}
+                        {/* ASTRA Logo - Responsive Switch */}
                         <motion.div
-                            initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ duration: 0.3 }}
-                            className="text-green-500 text-[10px] sm:text-xs md:text-sm leading-tight mb-3 sm:mb-4"
+                            className="text-green-500 mb-4 text-center"
                         >
-                            <pre className="text-center font-mono">
+                            {/* Desktop/Tablet ASCII Art (Hidden on Mobile) */}
+                            <pre className="font-mono text-[10px] sm:text-xs md:text-sm leading-tight hidden sm:block">
 {`
  █████╗ ███████╗████████╗██████╗  █████╗ 
 ██╔══██╗██╔════╝╚══██╔══╝██╔══██╗██╔══██╗
@@ -104,46 +103,48 @@ const InitialBootLoader = ({ onComplete }) => {
 ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝
 `}
                             </pre>
-                            <p className="text-green-500/60 text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase text-center mt-2">
+
+                            {/* Mobile Text Logo (Visible only on Mobile) */}
+                            <h1 className="font-mono text-3xl sm:text-4xl font-bold tracking-widest sm:hidden my-4 text-green-500">
+                                ASTRA
+                            </h1>
+
+                            <p className="text-green-500/60 text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase mt-2">
                                 [ CYBERSECURITY OPERATIONS ]
                             </p>
                         </motion.div>
 
                         {/* Terminal Logs */}
-                        <div className="space-y-1 h-24 sm:h-28 md:h-32 overflow-hidden">
-                            <AnimatePresence>
-                                {logs.map((log, index) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ duration: 0.2 }}
-                                        className={`text-sm ${
-                                            log.startsWith('$') ? 'text-green-400' : 
-                                            log.includes('GRANTED') ? 'text-green-400 font-bold' :
-                                            'text-green-500/70'
-                                        }`}
-                                    >
-                                        {log}
-                                        {index === logs.length - 1 && !log.includes('GRANTED') && (
-                                            <motion.span
-                                                animate={{ opacity: [1, 0] }}
-                                                transition={{ duration: 0.5, repeat: Infinity }}
-                                                className="inline-block ml-1"
-                                            >
-                                                █
-                                            </motion.span>
-                                        )}
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
+                        <div className="space-y-1 h-32 sm:h-28 md:h-32 overflow-y-auto">
+                             {logs.map((log, index) => (
+                                <div
+                                    key={index}
+                                    className={`text-sm ${
+                                        log.startsWith('$') ? 'text-green-400' : 
+                                        log.includes('GRANTED') ? 'text-green-400 font-bold' :
+                                        'text-green-500/70'
+                                    }`}
+                                >
+                                    {log}
+                                </div>
+                            ))}
                         </div>
 
-                        {/* Progress Bar */}
+                        {/* Progress Bar - Responsive */}
                         <div className="space-y-2">
                             <div className="flex items-center gap-2 text-xs text-green-500/70">
                                 <span>[</span>
-                                <div className="flex-1 flex">
+                                {/* Mobile Progress (Simple Bar) */}
+                                <div className="flex-1 h-2 bg-green-900/30 sm:hidden relative overflow-hidden">
+                                     <motion.div 
+                                        className="absolute top-0 left-0 bottom-0 bg-green-500"
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${progress}%` }}
+                                        transition={{ duration: 0.1 }}
+                                     />
+                                </div>
+                                {/* Desktop Progress (Blocks) */}
+                                <div className="flex-1 hidden sm:flex">
                                     {Array.from({ length: 40 }).map((_, i) => (
                                         <span key={i} className={i < (progress / 2.5) ? 'text-green-500' : 'text-green-500/20'}>
                                             {i < (progress / 2.5) ? '█' : '░'}
@@ -202,7 +203,7 @@ const InitialBootLoader = ({ onComplete }) => {
             <div className="absolute top-4 right-4 w-12 h-12 border-t-2 border-r-2 border-green-500/30" />
             <div className="absolute bottom-4 left-4 w-12 h-12 border-b-2 border-l-2 border-green-500/30" />
             <div className="absolute bottom-4 right-4 w-12 h-12 border-b-2 border-r-2 border-green-500/30" />
-        </motion.div>
+        </div>
     );
 };
 

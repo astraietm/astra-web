@@ -15,7 +15,7 @@ const Hero = () => {
     return (
         <section
             ref={containerRef}
-            className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden pt-32 pb-20 md:py-0"
+            className="relative min-h-[100dvh] flex items-center justify-center pt-32 pb-20 md:py-0"
         >
             {/* Main Content */}
             <div
