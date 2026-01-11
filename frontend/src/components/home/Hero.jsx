@@ -46,10 +46,10 @@ const Hero = () => {
 
                 {/* Buttons */}
                 <ScrollReveal variant="up" delay={0.5} width="100%">
-                    <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 md:gap-4 lg:gap-6 w-full sm:w-auto max-w-full px-1 sm:px-0">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 md:gap-4 lg:gap-6 w-full sm:w-auto max-w-full px-1 sm:px-0">
                         <Link
                             to="/events"
-                            className="group px-5 xs:px-6 sm:px-7 md:px-8 py-2.5 xs:py-3 sm:py-3.5 md:py-4 bg-primary text-black text-xs xs:text-sm sm:text-base font-bold rounded-full transition-all duration-300 hover:bg-cyan-300 hover:scale-[1.02] flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
+                            className="group px-5 xs:px-6 sm:px-7 md:px-8 py-2.5 xs:py-3 sm:py-3.5 md:py-4 bg-primary text-black text-xs xs:text-sm sm:text-base font-bold leading-none border border-transparent rounded-full transition-all duration-300 hover:bg-cyan-300 hover:scale-[1.02] flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
                         >
                             Register Now
                             <ArrowRight className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:translate-x-1 flex-shrink-0" />
@@ -57,7 +57,7 @@ const Hero = () => {
 
                         <Link
                             to="/about"
-                            className="group px-5 xs:px-6 sm:px-7 md:px-8 py-2.5 xs:py-3 sm:py-3.5 md:py-4 bg-white/5 text-white text-xs xs:text-sm sm:text-base font-medium border border-white/10 rounded-full transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] flex items-center justify-center gap-2 backdrop-blur-sm w-full sm:w-auto whitespace-nowrap"
+                            className="group px-5 xs:px-6 sm:px-7 md:px-8 py-2.5 xs:py-3 sm:py-3.5 md:py-4 bg-white/5 text-white text-xs xs:text-sm sm:text-base font-medium leading-none border border-white/10 rounded-full transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:scale-[1.02] flex items-center justify-center gap-2 backdrop-blur-sm w-full sm:w-auto whitespace-nowrap"
                         >
                             <ShieldCheck className="w-3.5 h-3.5 xs:w-4 xs:h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-white transition-colors duration-300 flex-shrink-0" />
                             <span>About ASTRA</span>
