@@ -9,8 +9,11 @@ import ScrollReveal from '../common/ScrollReveal';
 
 import { BorderBeam } from '../common/BorderBeam';
 
+import useIsMobile from '../../hooks/useIsMobile';
+
 const Hero = () => {
     const containerRef = useRef(null);
+    const isMobile = useIsMobile();
 
     return (
         <section
@@ -19,8 +22,8 @@ const Hero = () => {
         >
             {/* --- Cyber Visuals (Mobile Enhanced) --- */}
             
-            {/* 1. Central Ambient Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-primary/20 blur-[80px] sm:blur-[100px] rounded-full mix-blend-screen opacity-60 pointer-events-none z-10 animate-pulse duration-[4000ms]" />
+            {/* 1. Central Ambient Glow - Static on mobile, Pulse on Desktop */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-primary/20 blur-[80px] sm:blur-[100px] rounded-full mix-blend-screen opacity-60 pointer-events-none z-10 animate-none md:animate-pulse duration-[4000ms]" />
 
             {/* 2. Holographic Floor Grid */}
             <div className="absolute bottom-0 left-0 right-0 h-[45vh] pointer-events-none z-10 overflow-hidden opacity-40 sm:opacity-30">
@@ -31,8 +34,8 @@ const Hero = () => {
                 />
             </div>
             
-            {/* 3. Floating Dust Particles (CSS) */}
-            <div className="absolute inset-0 pointer-events-none z-10 opacity-30">
+            {/* 3. Floating Dust Particles (CSS) - Hidden on Mobile */}
+            <div className="absolute inset-0 pointer-events-none z-10 opacity-30 hidden md:block">
                  <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full animate-ping duration-[3000ms]" />
                  <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-primary rounded-full animate-ping duration-[4000ms] delay-1000" />
                  <div className="absolute top-1/2 left-3/4 w-0.5 h-0.5 bg-cyan-400 rounded-full animate-pulse" />
@@ -47,8 +50,8 @@ const Hero = () => {
                 <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-medium text-white mb-3 sm:mb-4 md:mb-6 leading-tight tracking-tight flex flex-col items-center w-full">
                     <TextReveal text="ASTRA" delay={0.3} />
                     <motion.span
-                        initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        initial={isMobile ? { opacity: 0, y: 10 } : { opacity: 0, y: 20, filter: "blur(10px)" }}
+                        animate={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
                         transition={{ duration: 1, delay: 0.8 }}
                         className="text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl font-sans font-light tracking-normal text-gray-300 mt-3 sm:mt-4 md:mt-6 max-w-full leading-relaxed px-1 sm:px-2"
                     >

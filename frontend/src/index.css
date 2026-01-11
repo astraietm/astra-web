@@ -211,3 +211,31 @@
     0% { left: -100%; }
     100% { left: 100%; }
 }
+
+/* --- Performance Optimizations --- */
+
+/* 1. Global Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 2. Mobile Performance Override */
+@media (max-width: 768px) {
+  .animate-pulse, .animate-float, .animate-pulse-glow, .crt-flicker {
+    animation: none !important;
+  }
+  
+  * {
+    backdrop-filter: none !important; /* Disable all glassmorphism blurs on mobile */
+  }
+
+  .glass-card {
+    background: rgba(10, 15, 28, 0.95) !important; /* Fallback opaque background */
+    backdrop-filter: none !important;
+  }
+}
