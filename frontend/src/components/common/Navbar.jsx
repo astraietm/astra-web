@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Shield, ArrowRight, User, LogOut, Ticket, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import HackerText from './HackerText';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +11,7 @@ const Navbar = () => {
     const [imageError, setImageError] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false); // Logout animation state
     const location = useLocation();
+    const navigate = useNavigate();
     const { user, logout, setIsLoginModalOpen } = useAuth();
     const profileRef = useRef(null);
     
@@ -125,7 +127,7 @@ const Navbar = () => {
                                         />
                                     )}
                                     <span className={`relative z-10 text-sm font-medium tracking-wide transition-colors duration-200 ${isActive ? 'text-white font-bold' : 'text-gray-300 group-hover:text-white'}`}>
-                                        {link.name}
+                                        <HackerText text={link.name} speed={50} className={isActive ? "" : "opacity-80 group-hover:opacity-100"} />
                                     </span>
                                 </Link>
                             );

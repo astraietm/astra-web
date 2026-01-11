@@ -33,6 +33,8 @@ const fadeInUp = {
     }
 };
 
+//...
+
 const About = () => {
     return (
         <div className="bg-background min-h-screen pt-32 pb-20 relative overflow-hidden">

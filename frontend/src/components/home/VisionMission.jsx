@@ -25,9 +25,15 @@ const fadeInUp = {
     }
 };
 
+import HackerText from '../common/HackerText';
+import StatusLED from '../common/StatusLED';
+
 const VisionMission = () => {
     return (
         <section className="py-24 relative overflow-hidden">
+            {/* Cyber Grid Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)] pointer-events-none"></div>
+
             <div className="container mx-auto px-4 relative z-10">
 
                 {/* Vision Section */}
@@ -44,6 +50,14 @@ const VisionMission = () => {
                                 {/* Decor */}
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-pulse"></div>
                                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-pulse"></div>
+                                
+                                {/* Corner Glitch Accents */}
+                                <div className="absolute top-4 left-4 w-2 h-2 border-l border-t border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div className="absolute top-4 right-4 w-2 h-2 border-r border-t border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div className="absolute bottom-4 left-4 w-2 h-2 border-l border-b border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div className="absolute bottom-4 right-4 w-2 h-2 border-r border-b border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                
+                                <StatusLED color="blue" label="SYSTEM_ACTIVE" className="absolute top-6 right-6 z-20" />
 
                                 <div className="relative w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-8">
                                     <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-xl animate-[spin_4s_linear_infinite]"></div>
@@ -52,7 +66,9 @@ const VisionMission = () => {
                                     </div>
                                 </div>
 
-                                <h2 className="text-[10px] md:text-sm font-mono text-primary tracking-[0.3em] uppercase mb-2 md:mb-4">Our Vision</h2>
+                                <h2 className="text-[10px] md:text-sm font-mono text-primary tracking-[0.3em] uppercase mb-2 md:mb-4">
+                                     <HackerText text="TARGET_ACQUIRED: VISION" speed={50} />
+                                </h2>
                                 <p className="text-lg md:text-3xl text-white font-light leading-relaxed tracking-tight">
                                     "To be a leader in <span className="text-primary font-normal">cybersecurity education</span> and innovation, shaping ethical professionals to secure the digital future."
                                 </p>
@@ -67,7 +83,9 @@ const VisionMission = () => {
                         <div className="flex items-center gap-3 md:gap-6 mb-8 md:mb-12">
                             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10"></div>
                             <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-primary/50"></span>
-                            <h2 className="text-xl md:text-3xl font-display font-medium text-white">Our Mission</h2>
+                            <h2 className="text-xl md:text-3xl font-display font-medium text-white">
+                                <HackerText text="Mission_Protocols" />
+                            </h2>
                             <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-primary/50"></span>
                             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10"></div>
                         </div>
@@ -89,6 +107,8 @@ const VisionMission = () => {
                                 {/* Scan Line */}
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
 
+                                <StatusLED color="blue" label="EDU_NODE" className="absolute top-6 left-6 z-20" />
+
                                 <div className="absolute top-0 right-0 p-4 md:p-8 opacity-0 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-700">
                                     <BookOpen className="w-16 h-16 md:w-40 md:h-40 text-blue-500" />
                                 </div>
@@ -108,6 +128,8 @@ const VisionMission = () => {
                                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
 
+                                <StatusLED color="purple" label="R&D_LAB" className="absolute top-6 left-6 z-20" />
+
                                 <div className="absolute top-0 right-0 p-4 md:p-8 opacity-0 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-700">
                                     <Cpu className="w-16 h-16 md:w-40 md:h-40 text-purple-500" />
                                 </div>
@@ -126,6 +148,8 @@ const VisionMission = () => {
                             <div className="group h-full bg-white/[0.03] backdrop-blur-sm border border-white/5 p-5 md:p-10 rounded-3xl hover:border-green-500/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden shadow-lg hover:shadow-green-500/20">
                                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-green-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-500/5 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
+
+                                <StatusLED color="green" label="NET_SEC" className="absolute top-6 left-6 z-20" />
 
                                 <div className="absolute top-0 right-0 p-4 md:p-8 opacity-0 group-hover:opacity-10 transition-opacity transform group-hover:scale-110 duration-700">
                                     <Globe className="w-16 h-16 md:w-40 md:h-40 text-green-500" />

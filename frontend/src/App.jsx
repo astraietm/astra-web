@@ -23,6 +23,7 @@ import AdminNotifications from './pages/AdminNotifications';
 import AdminLogs from './pages/AdminLogs';
 import AdminSettings from './pages/AdminSettings';
 import ScrollToTop from './components/common/ScrollToTop';
+import CustomCursor from './components/common/CustomCursor';
 import SmoothScroll from './components/common/SmoothScroll';
 import InitialBootLoader from './components/common/InitialBootLoader';
 import LoginModal from './components/auth/LoginModal';
@@ -46,6 +47,7 @@ function App() {
 
       {!loading && (
         <>
+          <CustomCursor />
           <ScrollToTop />
           <LoginModal /> {/* Global Login Modal */}
           <SmoothScroll>

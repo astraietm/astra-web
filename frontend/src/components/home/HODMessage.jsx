@@ -1,6 +1,7 @@
 import React from 'react';
 import { Quote } from 'lucide-react';
 import FadeInUp from '../common/FadeInUp';
+import HackerText from '../common/HackerText';
 
 const HODMessage = () => {
     return (
@@ -32,9 +33,13 @@ const HODMessage = () => {
                                 </div>
                                 
                                 <div className="mt-4 md:mt-8 text-center">
-                                    <h4 className="text-white font-display font-bold text-lg md:text-2xl tracking-wide uppercase">Asst Prof. Thara Krishnan R</h4>
+                                    <h4 className="text-white font-display font-bold text-lg md:text-2xl tracking-wide uppercase">
+                                        <HackerText text="Asst Prof. Thara Krishnan R" speed={40} />
+                                    </h4>
                                     <div className="h-1 w-8 md:w-12 bg-primary mx-auto my-2 md:my-3 rounded-full"></div>
-                                    <p className="text-gray-400 font-mono text-[10px] md:text-xs uppercase tracking-[0.2em]">Head of Department</p>
+                                    <p className="text-gray-400 font-mono text-[10px] md:text-xs uppercase tracking-[0.2em]">
+                                        <HackerText text="Head of Department" speed={60} />
+                                    </p>
                                 </div>
                             </div>
 
