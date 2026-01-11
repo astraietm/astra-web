@@ -29,7 +29,7 @@ import InitialBootLoader from './components/common/InitialBootLoader';
 import LoginModal from './components/auth/LoginModal';
 
 function App() {
-  const [loading, setLoading] = useState(true); // Always show loader on refresh
+  const [loading, setLoading] = useState(false); // Loader disabled
 
   const handleBootComplete = () => {
     setLoading(false);
@@ -50,7 +50,7 @@ function App() {
           <CustomCursor />
           <ScrollToTop />
           <LoginModal /> {/* Global Login Modal */}
-          <SmoothScroll>
+          {/* <SmoothScroll> */}
             <Routes>
               {/* NEW ADMIN CONSOLE LAYOUT */}
               <Route path="/admin" element={<AdminLayout />}>
@@ -76,7 +76,7 @@ function App() {
                 <Route path="contact" element={<Contact />} />
               </Route>
             </Routes>
-          </SmoothScroll>
+          {/* </SmoothScroll> */}
         </>
       )}
     </Router>

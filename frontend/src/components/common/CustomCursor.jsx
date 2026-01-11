@@ -11,7 +11,7 @@ const CustomCursor = () => {
         }
     }, []);
 
-    if (isMobile) return null;
+
 
     // Raw Mouse position (Instant)
     const cursorX = useMotionValue(-100);
@@ -42,6 +42,8 @@ const CustomCursor = () => {
             }
         };
 
+        if (isMobile) return;
+
         window.addEventListener('mousemove', moveCursor);
         window.addEventListener('mouseover', handleMouseOver);
 
@@ -52,7 +54,9 @@ const CustomCursor = () => {
             window.removeEventListener('mouseover', handleMouseOver);
             document.body.style.cursor = 'auto';
         };
-    }, []);
+    }, [isMobile]);
+
+    if (isMobile) return null;
 
     return (
         <>

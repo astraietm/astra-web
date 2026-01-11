@@ -55,10 +55,11 @@ export const SystemProvider = ({ children }) => {
     const isAdmin = user?.is_staff;
     const isBypassing = isAdmin || window.location.pathname.startsWith('/admin');
 
-    // If completely loading (both auth and system), show nothing or spinner
-    if (loading || authLoading) {
-        return null; // Or a global spinner
-    }
+    // If loading, we still render children to avoid white/black screen flash.
+    // The defaults (registrationOpen: true, maintenanceMode: false) will be used until fetch completes.
+    // if (loading || authLoading) {
+    //    return null; 
+    // }
 
     // Strict Maintenance Enforcement
     if (isMaintenanceActive && !isBypassing) {

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const ScrollReveal = ({ 
     children, 
@@ -12,7 +12,6 @@ const ScrollReveal = ({
     amount = 0.1 // Triggers sooner
 }) => {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once, amount });
 
     const getVariants = () => {
         const base = {
@@ -77,7 +76,8 @@ const ScrollReveal = ({
             <motion.div
                 variants={variants}
                 initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
+                whileInView="visible"
+                viewport={{ once, amount }}
                 style={{ willChange: "transform, opacity, filter" }}
             >
                 {children}

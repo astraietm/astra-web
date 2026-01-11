@@ -15,7 +15,7 @@ const Hero = () => {
     return (
         <section
             ref={containerRef}
-            className="relative min-h-[100dvh] flex items-center justify-center pt-32 pb-20 md:py-0"
+            className="relative min-h-[100dvh] flex items-center justify-center pt-24 pb-12 md:py-0"
         >
             {/* Main Content */}
             <div
@@ -42,8 +42,8 @@ const Hero = () => {
                 </ScrollReveal>
 
                 {/* Buttons */}
-                <ScrollReveal variant="up" delay={0.5}>
-                    <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
+                <ScrollReveal variant="up" delay={0.5} width="100%">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full sm:w-auto">
                         <Link
                             to="/events"
                             className="group px-8 py-4 bg-primary text-black text-base font-bold rounded-full transition-all duration-300 hover:bg-cyan-300 hover:scale-[1.02] flex items-center justify-center gap-2"
