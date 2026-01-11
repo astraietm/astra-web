@@ -72,27 +72,27 @@ const InitialBootLoader = ({ onComplete }) => {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
 
             {/* Main Terminal */}
-            <div className="relative z-10 w-full max-w-3xl px-8">
+            <div className="relative z-10 w-full max-w-3xl px-4 sm:px-6 md:px-8">
                 {/* Terminal Header */}
                 <div className="border-2 border-green-500/30 bg-black/80 backdrop-blur-sm">
                     {/* Title Bar */}
-                    <div className="bg-green-500/10 border-b border-green-500/30 px-4 py-2 flex items-center gap-2">
+                    <div className="bg-green-500/10 border-b border-green-500/30 px-2 sm:px-4 py-1.5 sm:py-2 flex items-center gap-2">
                         <div className="flex gap-1.5">
                             <div className="w-3 h-3 rounded-full bg-red-500/50" />
                             <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
                             <div className="w-3 h-3 rounded-full bg-green-500/50" />
                         </div>
-                        <span className="text-green-500 text-sm ml-2">root@astra:~#</span>
+                        <span className="text-green-500 text-xs sm:text-sm ml-2">root@astra:~#</span>
                     </div>
 
                     {/* Terminal Content */}
-                    <div className="p-6 space-y-4">
+                    <div className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
                         {/* ASTRA ASCII Logo */}
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.3 }}
-                            className="text-green-500 text-sm leading-tight mb-4"
+                            className="text-green-500 text-[10px] sm:text-xs md:text-sm leading-tight mb-3 sm:mb-4"
                         >
                             <pre className="text-center font-mono">
 {`
@@ -104,13 +104,13 @@ const InitialBootLoader = ({ onComplete }) => {
 ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝
 `}
                             </pre>
-                            <p className="text-green-500/60 text-xs tracking-[0.3em] uppercase text-center mt-2">
+                            <p className="text-green-500/60 text-[10px] sm:text-xs tracking-[0.2em] sm:tracking-[0.3em] uppercase text-center mt-2">
                                 [ CYBERSECURITY OPERATIONS ]
                             </p>
                         </motion.div>
 
                         {/* Terminal Logs */}
-                        <div className="space-y-1 h-32 overflow-hidden">
+                        <div className="space-y-1 h-24 sm:h-28 md:h-32 overflow-hidden">
                             <AnimatePresence>
                                 {logs.map((log, index) => (
                                     <motion.div
