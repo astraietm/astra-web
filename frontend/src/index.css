@@ -16,10 +16,13 @@
 @layer base {
   html {
     overflow-y: scroll;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   
   body {
     @apply bg-background text-gray-200 font-sans overflow-x-hidden selection:bg-primary/30 selection:text-white leading-relaxed antialiased;
+    max-width: 100vw;
   }
 
   h1, h2, h3, h4, h5, h6 {

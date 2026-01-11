@@ -26,7 +26,7 @@ const MainLayout = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-white font-sans selection:bg-primary selection:text-background relative">
+    <div className="flex flex-col min-h-screen bg-background text-white font-sans selection:bg-primary selection:text-background relative overflow-x-hidden max-w-full">
       <NoiseOverlay />
       {/* <MatrixBackground /> Removed per request */}
       <BackgroundOrbs />
