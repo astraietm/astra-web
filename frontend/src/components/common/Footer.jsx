@@ -60,8 +60,8 @@ const Footer = () => {
                     {/* Socials - Right aligned on mobile header line */}
                     <div className="flex gap-4 md:hidden">
                         {[Github, Twitter, Linkedin].map((Icon, i) => (
-                            <a key={i} href="#" className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
-                                <Icon className="w-4 h-4"/>
+                            <a key={i} href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-colors">
+                                <Icon className="w-5 h-5"/>
                             </a>
                         ))}
                     </div>
@@ -88,7 +88,7 @@ const Footer = () => {
                     <ul className="space-y-4 text-sm text-gray-500 text-center md:text-left">
                         <li><Link to="/events" className="hover:text-primary transition-colors block py-1">Events</Link></li>
                         <li><Link to="/gallery" className="hover:text-primary transition-colors block py-1">Gallery</Link></li>
-                        <li><Link to="/blog" className="hover:text-primary transition-colors block py-1">Blog</Link></li>
+
                         <li><a href="#" className="hover:text-primary transition-colors block py-1">CTF Portal</a></li>
                     </ul>
                 </FooterSection>
@@ -113,10 +113,10 @@ const Footer = () => {
                     <input 
                         type="email" 
                         placeholder="Email for updates" 
-                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-xs md:text-sm text-white focus:outline-none focus:border-primary/50 w-full"
+                        className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-primary/50 w-full"
                     />
-                    <button className="bg-primary text-black font-bold rounded-lg px-3 py-2 hover:bg-primary/90 transition-colors">
-                        <ArrowRight className="w-4 h-4" />
+                    <button className="bg-primary text-black font-bold rounded-lg px-4 py-3 hover:bg-primary/90 transition-colors">
+                        <ArrowRight className="w-5 h-5" />
                     </button>
                  </form>
             </div>

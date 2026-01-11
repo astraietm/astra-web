@@ -10,7 +10,7 @@ import Events from './pages/Events';
 import Register from './pages/Register';
 import Gallery from './pages/Gallery';
 import About from './pages/About';
-import Blog from './pages/Blog';
+
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import AdminScanner from './pages/AdminScanner';
@@ -57,7 +57,7 @@ function App() {
                 <Route path="events" element={<AdminEvents />} />
                 <Route path="gallery" element={<AdminGallery />} />
                 <Route path="scanner" element={<AdminScanner />} />
-                <Route path="blog" element={<AdminPlaceholder title="Blog Manager" />} />
+
                 <Route path="notifications" element={<AdminNotifications />} />
                 <Route path="logs" element={<AdminLogs />} />
                 <Route path="settings" element={<AdminSettings />} />
@@ -70,7 +70,7 @@ function App() {
                 <Route path="my-registrations" element={<Dashboard />} />
                 <Route path="gallery" element={<Gallery />} />
                 <Route path="about" element={<About />} />
-                <Route path="blog" element={<Blog />} />
+
                 <Route path="contact" element={<Contact />} />
               </Route>
             </Routes>

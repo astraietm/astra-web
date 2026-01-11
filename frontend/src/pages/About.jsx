@@ -107,9 +107,9 @@ const About = () => {
                                                 <h4 className="text-lg md:text-xl font-display font-bold text-white mb-1 group-hover:text-primary transition-colors">
                                                     <HackerText text={member.name} speed={30} className="font-display font-bold" />
                                                 </h4>
-                                                <p className="text-[10px] md:text-xs font-mono text-gray-500 uppercase tracking-widest mb-2 md:mb-3">{member.role}</p>
+                                                <p className="text-xs font-mono text-gray-500 uppercase tracking-widest mb-2 md:mb-3">{member.role}</p>
                                                 <div className="h-[1px] w-full bg-white/10 mb-2 md:mb-3"></div>
-                                                <div className="flex justify-between text-[10px] font-mono text-gray-600 group-hover:text-primary/70">
+                                                <div className="flex justify-between text-xs font-mono text-gray-600 group-hover:text-primary/70">
                                                     <span>ID: {member.id}</span>
                                                     <span>CLEARANCE: L5</span>
                                                 </div>
@@ -164,10 +164,10 @@ const About = () => {
                                             <div className="mb-1">
                                                  <HackerText text={member.name} speed={30} className="text-lg font-display font-bold text-white tracking-wide group-hover:text-primary transition-colors block" />
                                             </div>
-                                            <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.2em] mb-6">{member.role}</p>
+                                            <p className="text-xs font-mono text-gray-500 uppercase tracking-[0.2em] mb-6">{member.role}</p>
                                             
                                             {/* Footer Specs */}
-                                            <div className="w-full mt-auto pt-4 border-t border-white/10 flex justify-between text-[10px] font-mono text-gray-600 group-hover:text-primary max-w-[80%] mx-auto">
+                                            <div className="w-full mt-auto pt-4 border-t border-white/10 flex justify-between text-xs font-mono text-gray-600 group-hover:text-primary max-w-[80%] mx-auto">
                                                 <span>ID: {member.id}</span>
                                                 <span>LVL: {member.level}</span>
                                             </div>
