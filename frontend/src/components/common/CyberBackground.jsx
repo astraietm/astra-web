@@ -9,23 +9,20 @@ const CyberBackground = ({ fixed = true }) => {
             {/* 1. Base Gradient */}
             <div className={`${positionClass} inset-0 bg-black/90 pointer-events-none z-[-1]`}></div>
             
-            {/* 2. Cyber Noise Only (No Grid) */}
-            <div className={`${positionClass} inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-soft-light pointer-events-none z-0`}></div> 
+            {/* 2. Cyber Noise REMOVED (Provided by MainLayout NoiseOverlay) */}
 
             {/* 3. Moving Scanlines */}
-            <div className={`${positionClass} inset-0 pointer-events-none overflow-hidden z-0`}>
+            <div className={`${positionClass} inset-0 pointer-events-none overflow-hidden z-0 opacity-50`}>
                 <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20"></div>
                 <motion.div 
                     initial={{ translateY: "-100%" }}
                     animate={{ translateY: "100%" }}
-                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent opacity-30"
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 w-full h-full bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent opacity-20"
                 />
             </div>
 
-            {/* 4. Glowing Cyber Orbs (Darker & sharper) */}
-            <div className={`${positionClass} top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] opacity-20 animate-pulse pointer-events-none z-0`}></div>
-            <div className={`${positionClass} bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] opacity-20 pointer-events-none z-0`}></div>
+            {/* 4. Glowing Cyber Orbs REMOVED (Provided by MainLayout BackgroundOrbs) */}
 
             {/* 5. Active Cyber Terminal Commands */}
             <div className={`${positionClass} inset-0 pointer-events-none z-0 overflow-hidden font-mono text-[10px] md:text-xs`}>
