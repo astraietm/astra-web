@@ -7,6 +7,7 @@ import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/Home';
 import Events from './pages/Events';
+import EventDetail from './pages/EventDetail';
 import Register from './pages/Register';
 import Gallery from './pages/Gallery';
 import About from './pages/About';
@@ -27,6 +28,8 @@ import CustomCursor from './components/common/CustomCursor';
 import SmoothScroll from './components/common/SmoothScroll';
 import InitialBootLoader from './components/common/InitialBootLoader';
 import LoginModal from './components/auth/LoginModal';
+import { ToastProvider } from './context/ToastContext';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 function App() {
   const [loading, setLoading] = useState(false); // Loader disabled
@@ -36,50 +39,55 @@ function App() {
   };
 
   return (
-    <Router>
-      <Analytics />
-      <SpeedInsights />
-      <AnimatePresence>
-        {loading && (
-          <InitialBootLoader key="boot-loader" onComplete={handleBootComplete} />
-        )}
-      </AnimatePresence>
+    <ErrorBoundary>
+      <ToastProvider>
+        <Router>
+          <Analytics />
+          <SpeedInsights />
+          <AnimatePresence>
+            {loading && (
+              <InitialBootLoader key="boot-loader" onComplete={handleBootComplete} />
+            )}
+          </AnimatePresence>
 
-      {!loading && (
-        <>
-          <CustomCursor />
-          <ScrollToTop />
-          <LoginModal /> {/* Global Login Modal */}
-          {/* <SmoothScroll> */}
-            <Routes>
-              {/* NEW ADMIN CONSOLE LAYOUT */}
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="registrations" element={<AdminRegistrations />} />
-                <Route path="events" element={<AdminEvents />} />
-                <Route path="gallery" element={<AdminGallery />} />
-                <Route path="scanner" element={<AdminScanner />} />
+          {!loading && (
+            <>
+              <CustomCursor />
+              <ScrollToTop />
+              <LoginModal /> {/* Global Login Modal */}
+              {/* <SmoothScroll> */}
+                <Routes>
+                  {/* NEW ADMIN CONSOLE LAYOUT */}
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<AdminDashboard />} />
+                    <Route path="registrations" element={<AdminRegistrations />} />
+                    <Route path="events" element={<AdminEvents />} />
+                    <Route path="gallery" element={<AdminGallery />} />
+                    <Route path="scanner" element={<AdminScanner />} />
 
-                <Route path="notifications" element={<AdminNotifications />} />
-                <Route path="logs" element={<AdminLogs />} />
-                <Route path="settings" element={<AdminSettings />} />
-              </Route>
+                    <Route path="notifications" element={<AdminNotifications />} />
+                    <Route path="logs" element={<AdminLogs />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                  </Route>
 
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<Home />} />
-                <Route path="events" element={<Events />} />
-                <Route path="register/:id" element={<Register />} />
-                <Route path="my-registrations" element={<Dashboard />} />
-                <Route path="gallery" element={<Gallery />} />
-                <Route path="about" element={<About />} />
+                  <Route path="/" element={<MainLayout />}>
+                    <Route index element={<Home />} />
+                    <Route path="events" element={<Events />} />
+                    <Route path="events/:id" element={<EventDetail />} />
+                    <Route path="register/:id" element={<Register />} />
+                    <Route path="my-registrations" element={<Dashboard />} />
+                    <Route path="gallery" element={<Gallery />} />
+                    <Route path="about" element={<About />} />
 
-                <Route path="contact" element={<Contact />} />
-              </Route>
-            </Routes>
-          {/* </SmoothScroll> */}
-        </>
-      )}
-    </Router>
+                    <Route path="contact" element={<Contact />} />
+                  </Route>
+                </Routes>
+              {/* </SmoothScroll> */}
+            </>
+          )}
+        </Router>
+      </ToastProvider>
+    </ErrorBoundary>
   );
 }
 
