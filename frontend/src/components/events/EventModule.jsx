@@ -1,142 +1,73 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, MapPin, Users, ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
+import { Calendar, MapPin, ArrowUpRight } from 'lucide-react';
 
 const EventModule = ({ event, index }) => {
     const navigate = useNavigate();
     const isCompleted = new Date(event.date) < new Date();
-    const isLocked = !event.is_registration_open;
     
-    // Calculate registration progress
-    const registrationProgress = event.registration_limit 
-        ? ((event.registered_count || 0) / event.registration_limit) * 100 
-        : 0;
+    // Status Logic for Badge
+    const getStatus = () => {
+        if (isCompleted) return { label: 'Past', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' };
+        if (!event.is_registration_open) return { label: 'Closed', color: 'bg-orange-500/10 text-orange-400 border-orange-500/20' };
+        return { label: 'Open', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' };
+    };
+    
+    const status = getStatus();
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
-            transition={{ delay: index * 0.05, duration: 0.4 }}
+            transition={{ delay: index * 0.05, duration: 0.5, ease: "easeOut" }}
             onClick={() => navigate(`/events/${event.id}`)}
-            className="group relative cursor-pointer"
+            className="group relative cursor-pointer w-full"
         >
-            <div className="relative overflow-hidden bg-gradient-to-br from-[#0D1117] to-[#0A0F1C] border border-white/10 hover:border-primary/30 rounded-2xl transition-all duration-300 hover:shadow-[0_8px_30px_rgb(99,102,241,0.12)]">
+            {/* --- GLASS CARD --- */}
+            <div className="relative h-full bg-[#0A0C10]/80 backdrop-blur-xl border border-white/5 rounded-2xl p-6 transition-all duration-300 hover:border-white/10 hover:bg-[#0F1218] hover:shadow-2xl hover:shadow-black/50 hover:-translate-y-1">
                 
-                {/* Hover Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                {/* Card Header: Category & Status */}
+                <div className="flex items-center justify-between mb-6">
+                    <span className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                        {event.category || 'Event'}
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${status.color} uppercase tracking-wider`}>
+                        {status.label}
+                    </span>
+                </div>
 
-                <div className="relative p-6 md:p-8">
+                {/* Title */}
+                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight leading-snug group-hover:text-blue-400 transition-colors duration-300">
+                    {event.title}
+                </h3>
+
+                {/* Subtitle / Description */}
+                <p className="text-sm text-gray-400 leading-relaxed mb-6 line-clamp-2">
+                    {event.description || event.short_description || "Join us for this exclusive event."}
+                </p>
+
+                {/* Footer Info */}
+                <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/5">
                     
-                    {/* Header Row */}
-                    <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                            {/* Status Badge */}
-                            {isCompleted ? (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-gray-500/10 text-gray-400 border border-gray-500/20">
-                                    <CheckCircle2 className="w-3.5 h-3.5" />
-                                    Completed
-                                </span>
-                            ) : isLocked ? (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
-                                    <XCircle className="w-3.5 h-3.5" />
-                                    Closed
-                                </span>
-                            ) : (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                                    Open
-                                </span>
-                            )}
-
-                            {/* Category Badge */}
-                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-                                {event.category || 'Workshop'}
-                            </span>
+                    {/* Left: Meta Data */}
+                    <div className="flex items-center gap-4 text-xs font-medium text-gray-400">
+                        <div className="flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5" />
+                            <span className="truncate max-w-[100px]">{event.venue || 'TBA'}</span>
                         </div>
                     </div>
 
-                    {/* Title */}
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-primary transition-colors">
-                        {event.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-6 line-clamp-2">
-                        {event.description || event.short_description || "Join us for an exciting cybersecurity event."}
-                    </p>
-
-                    {/* Metadata Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-                                <Calendar className="w-4 h-4 text-primary" />
-                            </div>
-                            <div>
-                                <div className="text-xs text-gray-500">Date</div>
-                                <div className="text-sm text-white font-medium">
-                                    {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-                                <Clock className="w-4 h-4 text-primary" />
-                            </div>
-                            <div>
-                                <div className="text-xs text-gray-500">Duration</div>
-                                <div className="text-sm text-white font-medium">{event.duration || '2-3h'}</div>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-                                <MapPin className="w-4 h-4 text-primary" />
-                            </div>
-                            <div>
-                                <div className="text-xs text-gray-500">Venue</div>
-                                <div className="text-sm text-white font-medium truncate">{event.venue || 'TBA'}</div>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10">
-                                <Users className="w-4 h-4 text-primary" />
-                            </div>
-                            <div>
-                                <div className="text-xs text-gray-500">Capacity</div>
-                                <div className="text-sm text-white font-medium">
-                                    {event.registered_count || 0}/{event.registration_limit || '∞'}
-                                </div>
-                            </div>
-                        </div>
+                    {/* Right: Icon */}
+                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                        <ArrowUpRight className="w-4 h-4" />
                     </div>
 
-                    {/* Registration Progress Bar */}
-                    {event.registration_limit && (
-                        <div className="mb-6">
-                            <div className="flex justify-between items-center mb-2">
-                                <span className="text-xs text-gray-500">Registration</span>
-                                <span className="text-xs text-primary font-medium">{Math.round(registrationProgress)}% filled</span>
-                            </div>
-                            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                <motion.div 
-                                    className="h-full bg-gradient-to-r from-primary to-cyan-400 rounded-full"
-                                    initial={{ width: 0 }}
-                                    whileInView={{ width: `${registrationProgress}%` }}
-                                    transition={{ duration: 1, ease: "easeOut" }}
-                                />
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Action Button */}
-                    <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                        <span className="text-sm text-gray-500">Click to view details</span>
-                        <div className="flex items-center gap-2 text-primary group-hover:gap-3 transition-all">
-                            <span className="text-sm font-medium">View Event</span>
-                            <ArrowRight className="w-4 h-4" />
-                        </div>
-                    </div>
                 </div>
             </div>
         </motion.div>

@@ -35,44 +35,38 @@ const Events = () => {
   }, []);
 
   return (
-    <div className="bg-[#0A0F1C] min-h-screen text-gray-200 font-sans selection:bg-primary/30 relative overflow-hidden">
+    <div className="bg-[#020408] min-h-screen text-gray-200 font-sans selection:bg-blue-500/30">
       
-      {/* Global Effects - Minimal */}
-      {/* Subtle Grid */}
-      <div className="fixed inset-0 z-0 opacity-[0.02]" 
-           style={{
-               backgroundImage: `linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px), 
-                               linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px)`,
-               backgroundSize: '80px 80px',
-           }} 
-      />
+      {/* Subtle Background Glow */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vh] bg-blue-900/10 rounded-full blur-[150px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vh] bg-indigo-900/10 rounded-full blur-[150px]" />
+      </div>
 
-      {/* Radial Gradient */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none z-0" />
-      
       {/* Hero */}
       <EventHero />
 
       {/* Events Feed */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-16 min-h-[50vh]">
-        {/* Section Header */}
-        <div className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            All Events
-          </h2>
-          <p className="text-gray-400">
-            Showing {events.length} event{events.length !== 1 ? 's' : ''}
-          </p>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 min-h-[50vh]">
+        
+        {/* Simple Section Header */}
+        <div className="flex items-baseline justify-between mb-12">
+            <h2 className="text-2xl font-semibold text-white tracking-tight">
+                Upcoming Sessions
+            </h2>
+            <p className="text-sm text-gray-500 font-medium">
+                {events.length} Events
+            </p>
         </div>
 
         {loading ? (
-             <div className="flex flex-col gap-8">
-                {[1, 2, 3].map((i) => (
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
                   <SkeletonLoader key={i} variant="card" />
                 ))}
              </div>
         ) : (
-            <div className="flex flex-col gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <AnimatePresence mode='wait'>
                     {events.length > 0 ? (
                         events.map((event, index) => (
