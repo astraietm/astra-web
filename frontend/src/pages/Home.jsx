@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import HeroVideo from '../components/home/HeroVideo';
+import Hero from '../components/home/Hero';
 import ScrollReveal from '../components/common/ScrollReveal';
 import GalleryMarquee from '../components/home/GalleryMarquee';
 import VisionMission from '../components/home/VisionMission';
@@ -16,7 +16,7 @@ const Home = () => {
 
 
       <div className="relative z-10">
-        <HeroVideo />
+        <Hero />
         
         <ToolsMarquee />
 
