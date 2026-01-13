@@ -11,8 +11,8 @@ def create_superuser():
     User = get_user_model()
     print(f"Using User Model: {User._meta.label}")
     
-    email = 'astraietm25@gmail.com'
-    password = 'astra@2026'
+    email = 'sreekarthik24clt@gmail.com'
+    password = 'Sree5714@'
     
     try:
         # Check if user exists
