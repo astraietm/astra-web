@@ -26,6 +26,7 @@ void main() {
 
 	#include <uv_vertex>
 	#include <color_vertex>
+	#include <morphinstance_vertex>
 	#include <morphcolor_vertex>
 	#include <batching_vertex>
 
@@ -157,9 +158,9 @@ varying vec3 vViewPosition;
 
 void main() {
 
+	vec4 diffuseColor = vec4( diffuse, opacity );
 	#include <clipping_planes_fragment>
 
-	vec4 diffuseColor = vec4( diffuse, opacity );
 	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
 	vec3 totalEmissiveRadiance = emissive;
 

@@ -1,7 +1,6 @@
 import {
   Color,
   DoubleSide,
-  FrontSide,
   Matrix4,
   Mesh,
   MeshBasicMaterial,
@@ -488,22 +487,6 @@ class Text extends Mesh {
     if (material.isTroikaTextMaterial) {
       this._prepareForRender(material)
     }
-
-    // We need to force the material to FrontSide to avoid the double-draw-call performance hit
-    // introduced in Three.js r130: https://github.com/mrdoob/three.js/pull/21967 - The sidedness
-    // is instead applied via drawRange in the GlyphsGeometry.
-    material._hadOwnSide = material.hasOwnProperty('side')
-    this.geometry.setSide(material._actualSide = material.side)
-    material.side = FrontSide
-  }
-
-  onAfterRender(renderer, scene, camera, geometry, material, group) {
-    // Restore original material side
-    if (material._hadOwnSide) {
-      material.side = material._actualSide
-    } else {
-      delete material.side // back to inheriting from base material
-    }
   }
 
   /**
@@ -528,13 +511,21 @@ class Text extends Mesh {
     return this._textRenderInfo || null
   }
 
+  /**
+   * Create the text derived material from the base material. Can be overridden to use a custom
+   * derived material.
+   */
+  createDerivedMaterial(baseMaterial) {
+    return createTextDerivedMaterial(baseMaterial)
+  }
+
   // Handler for automatically wrapping the base material with our upgrades. We do the wrapping
   // lazily on _read_ rather than write to avoid unnecessary wrapping on transient values.
   get material() {
     let derivedMaterial = this._derivedMaterial
     const baseMaterial = this._baseMaterial || this._defaultMaterial || (this._defaultMaterial = defaultMaterial.clone())
-    if (!derivedMaterial || derivedMaterial.baseMaterial !== baseMaterial) {
-      derivedMaterial = this._derivedMaterial = createTextDerivedMaterial(baseMaterial)
+    if (!derivedMaterial || !derivedMaterial.isDerivedFrom(baseMaterial)) {
+      derivedMaterial = this._derivedMaterial = this.createDerivedMaterial(baseMaterial)
       // dispose the derived material when its base material is disposed:
       baseMaterial.addEventListener('dispose', function onDispose() {
         baseMaterial.removeEventListener('dispose', onDispose)
@@ -545,7 +536,7 @@ class Text extends Mesh {
     // feature (see GlyphsGeometry which sets up `groups` for this purpose) Doing it with multi
     // materials ensures the layers are always rendered consecutively in a consistent order.
     // Each layer will trigger onBeforeRender with the appropriate material.
-    if (this.outlineWidth || this.outlineBlur || this.outlineOffsetX || this.outlineOffsetY) {
+    if (this.hasOutline()) {
       let outlineMaterial = derivedMaterial._outlineMtl
       if (!outlineMaterial) {
         outlineMaterial = derivedMaterial._outlineMtl = Object.create(derivedMaterial, {
@@ -576,6 +567,10 @@ class Text extends Mesh {
     }
   }
 
+  hasOutline() {
+    return !!(this.outlineWidth || this.outlineBlur || this.outlineOffsetX || this.outlineOffsetY)
+  }
+
   get glyphGeometryDetail() {
     return this.geometry.detail
   }
@@ -594,8 +589,14 @@ class Text extends Mesh {
   get customDepthMaterial() {
     return first(this.material).getDepthMaterial()
   }
+  set customDepthMaterial(m) {
+    // future: let the user override with their own?
+  }
   get customDistanceMaterial() {
     return first(this.material).getDistanceMaterial()
+  }
+  set customDistanceMaterial(m) {
+    // future: let the user override with their own?
   }
 
   _prepareForRender(material) {
@@ -638,7 +639,7 @@ class Text extends Mesh {
         fillOpacity = this.fillOpacity
       }
 
-      uniforms.uTroikaDistanceOffset.value = distanceOffset
+      uniforms.uTroikaEdgeOffset.value = distanceOffset
       uniforms.uTroikaPositionOffset.value.set(offsetX, offsetY)
       uniforms.uTroikaBlurRadius.value = blurRadius
       uniforms.uTroikaStrokeWidth.value = strokeWidth

@@ -1,7 +1,6 @@
 import {
 	Loader,
 	TextureLoader,
-	DataTexture,
 	Data3DTexture,
 	RGBAFormat,
 	UnsignedByteType,
@@ -12,9 +11,10 @@ import {
 export class LUTImageLoader extends Loader {
 
 	constructor( flipVertical = false ) {
-		//The NeutralLUT.png has green at the bottom for Unreal ang green at the top for Unity URP Color Lookup 
+
+		//The NeutralLUT.png has green at the bottom for Unreal ang green at the top for Unity URP Color Lookup
 		//post-processing. If you're using lut image strips from a Unity pipeline then pass true to the constructor
-		
+
 		super();
 
 		this.flip = flipVertical;
@@ -123,18 +123,6 @@ export class LUTImageLoader extends Loader {
 	parse( dataArray, size ) {
 
 		const data = new Uint8Array( dataArray );
-		const texture = new DataTexture();
-		texture.image.data = data;
-		texture.image.width = size;
-		texture.image.height = size * size;
-		texture.format = RGBAFormat;
-		texture.type = UnsignedByteType;
-		texture.magFilter = LinearFilter;
-		texture.minFilter = LinearFilter;
-		texture.wrapS = ClampToEdgeWrapping;
-		texture.wrapT = ClampToEdgeWrapping;
-		texture.generateMipmaps = false;
-		texture.needsUpdate = true;
 
 		const texture3D = new Data3DTexture();
 		texture3D.image.data = data;
@@ -153,7 +141,6 @@ export class LUTImageLoader extends Loader {
 
 		return {
 			size,
-			texture,
 			texture3D,
 		};
 

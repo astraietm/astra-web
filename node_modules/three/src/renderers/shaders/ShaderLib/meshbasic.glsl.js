@@ -14,6 +14,7 @@ void main() {
 
 	#include <uv_vertex>
 	#include <color_vertex>
+	#include <morphinstance_vertex>
 	#include <morphcolor_vertex>
 	#include <batching_vertex>
 
@@ -70,9 +71,8 @@ uniform float opacity;
 
 void main() {
 
-	#include <clipping_planes_fragment>
-
 	vec4 diffuseColor = vec4( diffuse, opacity );
+	#include <clipping_planes_fragment>
 
 	#include <logdepthbuf_fragment>
 	#include <map_fragment>

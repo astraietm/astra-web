@@ -3,6 +3,7 @@ import { Vector2 } from '../math/Vector2.js';
 import { denormalize, normalize } from '../math/MathUtils.js';
 import { StaticDrawUsage, FloatType } from '../constants.js';
 import { fromHalfFloat, toHalfFloat } from '../extras/DataUtils.js';
+import { warnOnce } from '../utils.js';
 
 const _vector = /*@__PURE__*/ new Vector3();
 const _vector2 = /*@__PURE__*/ new Vector2();
@@ -45,7 +46,7 @@ class BufferAttribute {
 
 	get updateRange() {
 
-		console.warn( 'THREE.BufferAttribute: updateRange() is deprecated and will be removed in r169. Use addUpdateRange() instead.' ); // @deprecated, r159
+		warnOnce( 'THREE.BufferAttribute: updateRange() is deprecated and will be removed in r169. Use addUpdateRange() instead.' ); // @deprecated, r159
 		return this._updateRange;
 
 	}
@@ -622,20 +623,9 @@ class Float32BufferAttribute extends BufferAttribute {
 
 }
 
-class Float64BufferAttribute extends BufferAttribute {
-
-	constructor( array, itemSize, normalized ) {
-
-		super( new Float64Array( array ), itemSize, normalized );
-
-	}
-
-}
-
 //
 
 export {
-	Float64BufferAttribute,
 	Float32BufferAttribute,
 	Float16BufferAttribute,
 	Uint32BufferAttribute,
