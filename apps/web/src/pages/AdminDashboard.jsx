@@ -82,6 +82,8 @@ const KPICard = ({ title, value, icon: Icon, trend, trendValue, isPrimary = fals
     );
 };
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
 // Helper to generate smooth SVG path (Catmull-Rom spline or simple Bezier)
 const generateSmoothPath = (points, width, height) => {
     if (points.length < 2) return "";
@@ -196,6 +198,10 @@ const AdminDashboard = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchStats();
+    }, []);
 
     // Calculate dynamic path
     // Width can be percentage based, but SVG paths need units. We assume a coordinate system of 1000x300 for the SVG viewbox.
