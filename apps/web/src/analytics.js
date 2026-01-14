@@ -19,3 +19,9 @@ export const trackPageView = (path) => {
     ReactGA.send({ hitType: "pageview", page: path });
   }
 };
+
+export const trackEvent = ({ action, category, label, value }) => {
+  if (import.meta.env.MODE === "production" && import.meta.env.VITE_GA_MEASUREMENT_ID) {
+    ReactGA.event({ action, category, label, value });
+  }
+};
