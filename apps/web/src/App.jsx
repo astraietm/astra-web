@@ -76,7 +76,7 @@ function App() {
                   </Route>
 
                   <Route path="/" element={
-                    <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-black text-neon-green">Accessing Mainframe...</div>}>
+                    <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-black text-neon-green font-mono tracking-widest animate-pulse">LOADING...</div>}>
                       <MainLayout />
                     </React.Suspense>
                   }>
