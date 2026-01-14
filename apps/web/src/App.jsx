@@ -32,6 +32,23 @@ const AdminNotifications = React.lazy(() => import('./pages/AdminNotifications')
 const AdminLogs = React.lazy(() => import('./pages/AdminLogs'));
 const AdminSettings = React.lazy(() => import('./pages/AdminSettings'));
 
+import { useLocation } from 'react-router-dom';
+import { initGA, trackPageView } from './analytics';
+
+function AnalyticsTracker() {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    initGA();
+  }, []);
+
+  React.useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location]);
+
+  return null;
+}
+
 function App() {
   const [loading, setLoading] = useState(false); // Loader disabled
 
@@ -43,6 +60,7 @@ function App() {
     <ErrorBoundary>
       <ToastProvider>
         <Router>
+          <AnalyticsTracker />
           <Analytics />
           <SpeedInsights />
           <AnimatePresence>
