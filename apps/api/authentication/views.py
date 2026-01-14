@@ -50,13 +50,37 @@ class GoogleLoginView(APIView):
                     user.google_id = google_id
                 if picture and user.avatar != picture:
                     user.avatar = picture
+                
+                # Check for role update (if added to allowed list after creation)
+                from .models import AllowedEmail
+                try:
+                    allowed = AllowedEmail.objects.get(email=email)
+                    user.role = allowed.role
+                    user.is_staff = True  # Grant access to admin panel
+                except AllowedEmail.DoesNotExist:
+                    pass # Keep existing role
+
                 user.save()
             except User.DoesNotExist:
+                # Check whitelist for new users
+                from .models import AllowedEmail
+                role = 'USER'
+                is_staff = False
+                
+                try:
+                    allowed = AllowedEmail.objects.get(email=email)
+                    role = allowed.role
+                    is_staff = True
+                except AllowedEmail.DoesNotExist:
+                    pass
+
                 user = User.objects.create_user(
                     email=email,
                     full_name=name,
                     google_id=google_id,
-                    avatar=picture
+                    avatar=picture,
+                    role=role,
+                    is_staff=is_staff
                 )
 
             # Generate JWT
@@ -65,6 +89,7 @@ class GoogleLoginView(APIView):
             refresh['email'] = user.email
             refresh['full_name'] = user.full_name
             refresh['avatar'] = user.avatar
+            refresh['role'] = user.role
             refresh['is_staff'] = user.is_staff # CRITICAL FOR ADMIN SCANNER
 
             return Response({
@@ -74,6 +99,7 @@ class GoogleLoginView(APIView):
                     'email': user.email,
                     'name': user.full_name,
                     'avatar': user.avatar,
+                    'role': user.role,
                     'is_staff': user.is_staff # Return to frontend
                 }
             })

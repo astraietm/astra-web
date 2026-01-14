@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ... (imports)
@@ -63,8 +64,10 @@ const SidebarItem = ({ to, icon: Icon, label, isCollapsed, end = false, onClick 
 };
 
 const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
+    const { user } = useAuth();
     const navigate = useNavigate();
-    const sections = [
+
+    let sections = [
         { group: "Main", items: [
             { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
             { to: "/admin/events", icon: Calendar, label: "Events" },
@@ -79,6 +82,16 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
             { to: "/admin/settings", icon: Settings, label: "Settings" },
         ]}
     ];
+
+    // Role-based Filtering
+    if (user?.role === 'VOLUNTEER') {
+        sections = [
+            { group: "Volunteer Access", items: [
+                { to: "/admin/scanner", icon: QrCode, label: "Scanner" },
+                { to: "/admin/registrations", icon: Users, label: "Registrations" },
+            ]}
+        ];
+    }
 
     return (
         <>

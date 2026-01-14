@@ -13,10 +13,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-development-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Allowed Hosts
-    ALLOWED_HOSTS = [
-        "api.astraietm.in",
-        "astraietm.in",
-    ]
+ALLOWED_HOSTS = [
+    "api.astraietm.in",
+    "astraietm.in",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
