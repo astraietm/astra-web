@@ -57,7 +57,7 @@ class AllowedEmailListCreateView(generics.ListCreateAPIView):
 
     queryset = AllowedEmail.objects.all().order_by('-added_at')
     serializer_class = AllowedEmailSerializer
-    permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     def perform_create(self, serializer):
         instance = serializer.save()
@@ -71,7 +71,7 @@ class AllowedEmailListCreateView(generics.ListCreateAPIView):
 
 class AllowedEmailDeleteView(generics.DestroyAPIView):
     queryset = AllowedEmail.objects.all()
-    permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     def perform_destroy(self, instance):
         email = instance.email
