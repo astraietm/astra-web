@@ -30,9 +30,9 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline, onSearchClick }) => {
                     <Menu className="w-5 h-5" />
                 </button>
                 <button 
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate('/')}
                     className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors lg:-ml-2"
-                    title="Go Back"
+                    title="Return to Home"
                 >
                     <ArrowLeft className="w-5 h-5" />
                 </button>
