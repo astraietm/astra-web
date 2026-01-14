@@ -29,13 +29,6 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline, onSearchClick }) => {
                 >
                     <Menu className="w-5 h-5" />
                 </button>
-                <button 
-                    onClick={() => navigate('/')}
-                    className="p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors lg:-ml-2"
-                    title="Return to Home"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </button>
                 <h2 className="text-white font-semibold text-lg uppercase tracking-tight">
                     {title || "Dashboard"}
                 </h2>

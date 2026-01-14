@@ -72,11 +72,9 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
         ]},
         { group: "Content", items: [
             { to: "/admin/gallery", icon: ImageIcon, label: "Gallery" },
-            { to: "/admin/blog", icon: FileText, label: "Blog" },
         ]},
         { group: "System", items: [
             { to: "/admin/scanner", icon: QrCode, label: "Scanner" },
-            { to: "/admin/notifications", icon: Mail, label: "Notifications" },
             { to: "/admin/logs", icon: Activity, label: "Logs" },
             { to: "/admin/settings", icon: Settings, label: "Settings" },
         ]}
@@ -106,6 +104,24 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                 className={`fixed left-0 top-0 h-screen bg-vision-bg border-r border-white/5 flex flex-col z-[100] transition-all duration-300 lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
             >
 
+
+            {/* Top Brand/Back Area */}
+            <div className="p-4 border-b border-white/5">
+                <button
+                    onClick={() => navigate('/')}
+                    className={`flex items-center gap-3 w-full p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-all group ${isCollapsed ? 'justify-center' : ''}`}
+                >
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-vision-primary to-purple-600 flex items-center justify-center text-white shadow-lg group-hover:shadow-vision-primary/50 transition-all">
+                        <ArrowLeft size={18} />
+                    </div>
+                    {!isCollapsed && (
+                        <div className="flex flex-col items-start">
+                            <span className="text-sm font-bold text-white tracking-wide">ASTRA ADMIN</span>
+                            <span className="text-[10px] text-gray-500">Voltar para Home</span>
+                        </div>
+                    )}
+                </button>
+            </div>
 
             {/* Navigation Sections */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-6 no-scrollbar">

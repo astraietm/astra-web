@@ -42,21 +42,62 @@ const AdminLogs = () => {
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const MOCK_LOGS = [
+        {
+            level: 'ERROR',
+            action: 'Failed Login Attempt',
+            user_email: 'unknown@external.net',
+            ip_address: '192.168.1.105',
+            timestamp: new Date().toISOString()
+        },
+        {
+            level: 'INFO',
+            action: 'System Boot Sequence Initiated',
+            user_email: 'system@astra.ai',
+            ip_address: 'LOCALHOST',
+            timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString()
+        },
+        {
+            level: 'SUCCESS',
+            action: 'Database Backup Completed',
+            user_email: 'system@astra.ai',
+            ip_address: '10.0.0.5',
+            timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString()
+        },
+        {
+            level: 'WARN',
+            action: 'High Memory Usage Detected',
+            user_email: 'monitor@astra.ai',
+            ip_address: '10.0.0.12',
+            timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString()
+        },
+        {
+            level: 'INFO',
+            action: 'New User Registration',
+            user_email: 'candidate_001@uni.edu',
+            ip_address: '172.16.254.1',
+            timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString()
+        },
+        {
+            level: 'SUCCESS',
+            action: 'Event "Cyber Defense" Created',
+            user_email: 'admin@astra.ai',
+            ip_address: '192.168.1.50',
+            timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString()
+        }
+    ];
+
     useEffect(() => {
-        fetchLogs();
-    }, [token]);
+        // Simulate fetch delay then load mock data
+        const timer = setTimeout(() => {
+            setLogs(MOCK_LOGS);
+            setLoading(false);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, []);
 
     const fetchLogs = async () => {
-        try {
-            const response = await axios.get(`${API_URL}/ops/logs/`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setLogs(response.data);
-        } catch (error) {
-            console.error("Failed to fetch logs", error);
-        } finally {
-            setLoading(false);
-        }
+        // Kept for structure, but unused in this version
     };
 
     return (
