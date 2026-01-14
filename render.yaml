@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     region: singapore
-    rootDir: backend
+    rootDir: apps/api
     buildCommand: "./build.sh"
     startCommand: "python wait_for_db.py && python manage.py migrate && gunicorn core.wsgi:application"
     envVars:

@@ -1,8 +1,20 @@
 {
-  "dependencies": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "@react-three/fiber": "8.15.12",
-    "@react-three/drei": "9.88.0"
+  "name": "astra-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w apps/web",
+    "build:web": "npm run build -w apps/web",
+    "lint:web": "npm run lint -w apps/web",
+    "preview:web": "npm run preview -w apps/web",
+    "dev:api": "cd apps/api && python manage.py runserver",
+    "migrate": "cd apps/api && python manage.py migrate",
+    "install:all": "npm install && cd apps/api && pip install -r requirements.txt"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
   }
 }
