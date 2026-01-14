@@ -6,16 +6,17 @@ export const initGA = () => {
   if (!gaId) return;
 
   // Initialize strictly in production or if explicitly testing
-  if (import.meta.env.MODE === "production") {
+  // FORCED ENABLE for debugging
+  // if (import.meta.env.MODE === "production") {
     ReactGA.initialize(gaId);
-    console.log("Analytics initialized");
-  } else {
-    console.log("Analytics skipped (non-production mode)");
-  }
+    console.log("Analytics initialized in ALL MODES:", gaId);
+  // } else {
+  //   console.log("Analytics skipped (non-production mode)");
+  // }
 };
 
 export const trackPageView = (path) => {
-  if (import.meta.env.MODE === "production" && import.meta.env.VITE_GA_MEASUREMENT_ID) {
+  if (import.meta.env.VITE_GA_MEASUREMENT_ID) {
     ReactGA.send({ hitType: "pageview", page: path });
   }
 };
