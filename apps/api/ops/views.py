@@ -39,6 +39,54 @@ class SystemSettingListCreateView(APIView):
         )
         return Response({"status": "success", "message": "Settings updated"})
 
+class IsSuperAdmin(permissions.BasePermission):
+    """
+    Allocates permissions only to 'ADMIN' role users, filtering out 'VOLUNTEER'.
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.is_staff and request.user.role == 'ADMIN'
+
+class AllowedEmailListCreateView(generics.ListCreateAPIView):
+    from authentication.models import AllowedEmail
+    from authentication.serializers import AllowedEmailSerializer # Assumption: Serializer needed
+    
+    # Inline serializer definition to avoid file jumping
+    from rest_framework import serializers
+    class AllowedEmailSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = AllowedEmail
+            fields = ['id', 'email', 'role', 'added_at']
+
+    queryset = AllowedEmail.objects.all().order_by('-added_at')
+    serializer_class = AllowedEmailSerializer
+    permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        AuditLog.objects.create(
+            user=self.request.user,
+            action=f"Added Team Member",
+            details=f"Email: {instance.email}, Role: {instance.role}",
+            level="SUCCESS",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+
+class AllowedEmailDeleteView(generics.DestroyAPIView):
+    from authentication.models import AllowedEmail
+    queryset = AllowedEmail.objects.all()
+    permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
+
+    def perform_destroy(self, instance):
+        email = instance.email
+        super().perform_destroy(instance)
+        AuditLog.objects.create(
+            user=self.request.user,
+            action=f"Removed Team Member",
+            details=f"Email: {email}",
+            level="WARN",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
+
 class NotificationListCreateView(generics.ListCreateAPIView):
     queryset = Notification.objects.all().order_by('-created_at')
     serializer_class = NotificationSerializer
