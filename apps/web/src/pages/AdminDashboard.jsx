@@ -137,6 +137,9 @@ const AdminDashboard = () => {
         }
     });
 
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     // ... (fetchStats logic update)
     const fetchStats = async () => {
         setLoading(true);
