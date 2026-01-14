@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import AuditLog, SystemSetting, Notification
 from .serializers import AuditLogSerializer, SystemSettingSerializer, NotificationSerializer
-from authentication.models import User
+from authentication.models import User, AllowedEmail
 
 class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -47,9 +47,7 @@ class IsSuperAdmin(permissions.BasePermission):
         return request.user and request.user.is_staff and request.user.role == 'ADMIN'
 
 class AllowedEmailListCreateView(generics.ListCreateAPIView):
-    from authentication.models import AllowedEmail
 
-    
     # Inline serializer definition to avoid file jumping
     from rest_framework import serializers
     class AllowedEmailSerializer(serializers.ModelSerializer):
@@ -72,7 +70,6 @@ class AllowedEmailListCreateView(generics.ListCreateAPIView):
         )
 
 class AllowedEmailDeleteView(generics.DestroyAPIView):
-    from authentication.models import AllowedEmail
     queryset = AllowedEmail.objects.all()
     permission_classes = [permissions.IsAuthenticated, IsSuperAdmin]
 
