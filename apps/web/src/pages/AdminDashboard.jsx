@@ -16,6 +16,7 @@ import {
     Cpu
 } from 'lucide-react';
 
+
 const useCountUp = (value) => {
     const motionValue = useMotionValue(0);
     const rounded = useTransform(motionValue, (latest) => Math.round(latest));
@@ -81,13 +82,51 @@ const KPICard = ({ title, value, icon: Icon, trend, trendValue, isPrimary = fals
     );
 };
 
+// Helper to generate smooth SVG path (Catmull-Rom spline or simple Bezier)
+const generateSmoothPath = (points, width, height) => {
+    if (points.length < 2) return "";
+    
+    // Normalize points to fit width/height
+    const maxVal = Math.max(...points, 1);
+    const stepX = width / (points.length - 1);
+    
+    // Invert Y because SVG 0 is top
+    const coordinates = points.map((p, i) => [
+        i * stepX,
+        height - (p / maxVal) * height * 0.8 // Utilize 80% height to leave headroom
+    ]);
+
+    let d = `M ${coordinates[0][0]},${coordinates[0][1]}`;
+
+    for (let i = 0; i < coordinates.length - 1; i++) {
+        const [x0, y0] = coordinates[Math.max(i - 1, 0)];
+        const [x1, y1] = coordinates[i];
+        const [x2, y2] = coordinates[i + 1];
+        const [x3, y3] = coordinates[Math.min(i + 2, coordinates.length - 1)];
+
+        const cp1x = x1 + (x2 - x0) / 6;
+        const cp1y = y1 + (y2 - y0) / 6;
+
+        const cp2x = x2 - (x3 - x1) / 6;
+        const cp2y = y2 - (y3 - y1) / 6;
+
+        d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${x2},${y2}`;
+    }
+
+    return d;
+};
+
 const AdminDashboard = () => {
     const { token } = useAuth();
     const navigate = useNavigate();
+
     const [stats, setStats] = useState({
         totalRegistrations: 0,
         activeEvents: 0,
         recentActivity: [],
+        upcomingEvents: [],
+        trafficData: [], // [5, 12, 8, ...] counts for graph
+        trafficLabels: [], // ['Jan', 'Feb'...]
         attendanceRate: 0,
         systemHealth: {
             dbLoad: 12,
@@ -95,52 +134,8 @@ const AdminDashboard = () => {
             storage: 45
         }
     });
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
-    // Real System Health Monitoring
-    useEffect(() => {
-        const checkSystemHealth = async () => {
-            const start = Date.now();
-            try {
-                // Ping the server to measure real latency
-                // Even if /health/ doesn't exist, the 404/response time is valid network latency
-                await axios.get(`${API_URL}/health/`).catch(() => {});
-                const end = Date.now();
-                const latency = end - start;
-
-                setStats(prev => ({
-                    ...prev,
-                    systemHealth: {
-                        latency: latency,
-                        dbLoad: Math.floor(Math.random() * (20 - 8 + 1) + 8), // Simulate realistic fluctuation 8-20%
-                        storage: 45 // Storage is stable
-                    }
-                }));
-            } catch (err) {
-                // Fallback simulation if completely offline
-                setStats(prev => ({
-                    ...prev,
-                    systemHealth: {
-                        latency: Math.floor(Math.random() * (50 - 20 + 1) + 20),
-                        dbLoad: Math.floor(Math.random() * (15 - 10 + 1) + 10),
-                        storage: 45
-                    }
-                }));
-            }
-        };
-
-        checkSystemHealth();
-        const interval = setInterval(checkSystemHealth, 3000); // Update every 3 seconds
-        return () => clearInterval(interval);
-    }, []);
-
-    useEffect(() => {
-        fetchStats();
-    }, [token]);
-
+    // ... (fetchStats logic update)
     const fetchStats = async () => {
         setLoading(true);
         setError(null);
@@ -151,13 +146,47 @@ const AdminDashboard = () => {
             ]);
 
             const regs = regRes.data;
+            const events = eventRes.data;
             const attended = Array.isArray(regs) ? regs.filter(r => r.is_used || r.status === 'ATTENDED').length : 0;
+
+            // Process Traffic Data (Last 6 Months)
+            const months = 6;
+            const trafficCounts = new Array(months).fill(0);
+            const trafficLabels = [];
+            const now = new Date();
+            
+            // Initialize labels
+            for(let i=0; i<months; i++) {
+                const d = new Date();
+                d.setMonth(now.getMonth() - (months - 1 - i));
+                trafficLabels.push(d.toLocaleString('default', { month: 'short' }));
+            }
+
+            // Bucket registrations
+            if (Array.isArray(regs)) {
+                regs.forEach(r => {
+                    const regDate = new Date(r.registration_date);
+                    // simple diff in months from now
+                    const monthDiff = (now.getFullYear() - regDate.getFullYear()) * 12 + (now.getMonth() - regDate.getMonth());
+                    if (monthDiff < months && monthDiff >= 0) {
+                        trafficCounts[months - 1 - monthDiff]++;
+                    }
+                });
+            }
+
+            // Sort events by date
+            const sortedEvents = Array.isArray(events) 
+                ? [...events].sort((a,b) => new Date(a.date) - new Date(b.date)).filter(e => new Date(e.date) >= new Date())
+                : [];
 
             setStats(prev => ({
                 ...prev,
                 totalRegistrations: Array.isArray(regs) ? regs.length : 0,
-                activeEvents: Array.isArray(eventRes.data) ? eventRes.data.filter(e => e.is_registration_open).length : 0,
+                activeEvents: Array.isArray(events) ? events.filter(e => e.is_registration_open).length : 0,
+                upcomingEvents: sortedEvents.slice(0, 4),
                 recentActivity: Array.isArray(regs) ? regs.slice(0, 5) : [],
+                trafficData: trafficCounts,
+                trafficLabels: trafficLabels,
                 attendanceRate: Array.isArray(regs) && regs.length > 0 ? Math.round((attended / regs.length) * 100) : 0
             }));
         } catch (error) {
@@ -167,6 +196,13 @@ const AdminDashboard = () => {
             setLoading(false);
         }
     };
+
+    // Calculate dynamic path
+    // Width can be percentage based, but SVG paths need units. We assume a coordinate system of 1000x300 for the SVG viewbox.
+    const pathData = generateSmoothPath(stats.trafficData.length > 0 ? stats.trafficData : [0,0,0,0,0,0], 1000, 300);
+    // Determine fill path (close the loop)
+    const fillPath = pathData ? `${pathData} L 1000,400 L 0,400 Z` : "";
+
 
     return (
         <div className="space-y-6 pb-6">
@@ -260,7 +296,6 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* System Health */}
-                {/* System Health */}
                 <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 flex flex-col relative">
                      <div className="flex justify-between items-start mb-4">
                         <h3 className="text-white font-bold text-lg">System Health</h3>
@@ -328,31 +363,43 @@ const AdminDashboard = () => {
                 <div className="lg:col-span-3 bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6">
                     <p className="text-white font-bold text-lg mb-1">Registration Traffic</p>
                     <div className="flex items-center gap-2 mb-6">
-                        <span className="text-emerald-400 font-bold text-sm">(+12%)</span>
+                        <span className="text-emerald-400 font-bold text-sm">
+                            {(stats.trafficData[stats.trafficData.length-1] > stats.trafficData[stats.trafficData.length-2]) ? '(Rising)' : '(Stable)'}
+                        </span>
                         <span className="text-gray-400 text-sm">vs last month</span>
                     </div>
 
                     <div className="h-64 mt-4 relative">
-                        {/* Simplified Wave Chart */}
-                        <div className="absolute inset-0 flex items-end justify-between px-2 gap-2">
-                             {[30, 45, 35, 60, 50, 75, 55, 65, 80, 70, 90, 85].map((h, i) => (
-                                 <div key={i} className="w-full bg-gradient-to-t from-vision-primary/10 to-transparent rounded-t-lg relative group">
-                                     <div 
-                                        className="absolute bottom-0 left-0 right-0 bg-vision-primary/50 group-hover:bg-vision-primary transition-colors rounded-t-sm"
-                                        style={{ height: `${h}%` }}
-                                     ></div>
+                        {/* Dynamic Wave Chart */}
+                        <div className="absolute inset-0 flex items-end justify-between px-2 gap-2 z-10">
+                             {stats.trafficData.map((val, i) => (
+                                 <div key={i} className="w-full relative group flex flex-col justify-end items-center">
+                                      {/* Tooltip */}
+                                      <div className="opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 bg-[#0B0F14] border border-white/10 px-2 py-1 rounded text-[10px] text-white whitespace-nowrap transition-opacity pointer-events-none">
+                                          {val} Regs ({stats.trafficLabels[i]})
+                                      </div>
+
+                                     <div className="w-full bg-gradient-to-t from-vision-primary/10 to-transparent rounded-t-lg relative overflow-hidden h-full"> 
+                                        <div 
+                                            className="absolute bottom-0 left-0 right-0 bg-vision-primary/30 group-hover:bg-vision-primary transition-colors rounded-t-sm"
+                                            style={{ height: `${(val / (Math.max(...stats.trafficData, 1))) * 80}%` }}
+                                        ></div>
+                                     </div>
+                                      <span className="text-[10px] text-gray-500 mt-2">{stats.trafficLabels[i]}</span>
                                  </div>
                              ))}
                         </div>
-                         {/* Mock Curve Line */}
-                        <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" preserveAspectRatio="none">
+                         {/* SVG Curve Line */}
+                        <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible z-20" viewBox="0 0 1000 350" preserveAspectRatio="none"> 
+                            {/* Fill Gradient */}
                             <path 
-                                d="M0,200 C50,150 100,220 150,100 C200,50 250,150 300,80 C350,20 400,100 450,50 L450,300 L0,300 Z" 
+                                d={fillPath} 
                                 fill="url(#gradient)" 
                                 opacity="0.2"
                             />
+                            {/* Stroke Line */}
                             <path 
-                                d="M0,200 C50,150 100,220 150,100 C200,50 250,150 300,80 C350,20 400,100 450,50" 
+                                d={pathData} 
                                 stroke="#6366F1" 
                                 strokeWidth="3" 
                                 fill="none"
@@ -373,24 +420,24 @@ const AdminDashboard = () => {
                     <h3 className="text-white font-bold text-lg mb-6">Upcoming Events</h3>
                     
                     <div className="space-y-4">
-                        {[
-                            { title: 'Cyber Defense Workshop', date: 'Tomorrow, 10:00 AM', type: 'Workshop', color: 'bg-emerald-500' },
-                            { title: 'Hackathon 2024', date: 'Oct 24, 09:00 AM', type: 'Competition', color: 'bg-vision-primary' },
-                            { title: 'Guest Lecture: AI Security', date: 'Nov 02, 02:00 PM', type: 'Seminar', color: 'bg-vision-secondary' },
-                            { title: 'Networking Night', date: 'Nov 15, 06:00 PM', type: 'Social', color: 'bg-rose-500' },
-                        ].map((event, i) => (
-                            <div key={i} className="flex items-center gap-4 group cursor-pointer">
-                                <div className={`w-2 h-12 rounded-full ${event.color} opacity-80 group-hover:opacity-100 transition-opacity`}></div>
-                                <div className="flex-1">
-                                    <h4 className="text-white font-bold text-sm group-hover:text-vision-primary transition-colors">{event.title}</h4>
-                                    <p className="text-gray-400 text-xs">{event.date}</p>
+                        {stats.upcomingEvents.length === 0 ? (
+                             <div className="text-gray-500 text-sm italic py-4 text-center">No upcoming events scheduled.</div>
+                        ) : (
+                            stats.upcomingEvents.map((event, i) => (
+                                <div key={i} className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate(`/admin/events/${event.id}`)}>
+                                    <div className={`w-2 h-12 rounded-full ${i % 2 === 0 ? 'bg-vision-primary' : 'bg-emerald-500'} opacity-80 group-hover:opacity-100 transition-opacity`}></div>
+                                    <div className="flex-1">
+                                        <h4 className="text-white font-bold text-sm group-hover:text-vision-primary transition-colors line-clamp-1">{event.title}</h4>
+                                        <p className="text-gray-400 text-xs">{new Date(event.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-gray-500 border border-border px-2 py-1 rounded bg-white/5 uppercase tracking-wider">EVENT</span>
                                 </div>
-                                <span className="text-[10px] font-bold text-gray-500 border border-border px-2 py-1 rounded bg-white/5 uppercase tracking-wider">{event.type}</span>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
             </div>
+
 
             {/* Row 4: Projects (Recent Registrations) */}
             <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6">
@@ -399,10 +446,10 @@ const AdminDashboard = () => {
                         <h3 className="text-white font-bold text-lg">Recent Registrations</h3>
                         <div className="flex items-center gap-2 mt-1">
                             <ShieldCheck size={14} className="text-emerald-400" />
-                            <p className="text-gray-400 text-sm"><span className="font-bold text-gray-300">30 done</span> this month</p>
+                            <p className="text-gray-400 text-sm"><span className="font-bold text-gray-300">{stats.recentActivity.length} recent</span> records</p>
                         </div>
                     </div>
-                    <button className="p-2 text-vision-primary hover:bg-white/5 rounded-lg transition-colors">
+                    <button className="p-2 text-vision-primary hover:bg-white/5 rounded-lg transition-colors" onClick={() => navigate('/admin/registrations')}>
                         <Terminal size={20} />
                     </button>
                 </div>
@@ -411,45 +458,45 @@ const AdminDashboard = () => {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr>
-                                <th className="text-[10px] text-gray-400 uppercase font-bold py-3 border-b border-gray-800">Companies</th>
-                                <th className="text-[10px] text-gray-400 uppercase font-bold py-3 border-b border-gray-800">Members</th>
-                                <th className="text-[10px] text-gray-400 uppercase font-bold py-3 border-b border-gray-800 text-center">Budget</th>
-                                <th className="text-[10px] text-gray-400 uppercase font-bold py-3 border-b border-gray-800">Completion</th>
+                                <th className="text-[10px] text-gray-400 uppercase font-bold py-3 border-b border-gray-800">Event</th>
+                                <th className="text-[10px] text-gray-400 uppercase font-bold py-3 border-b border-gray-800">User</th>
+                                <th className="text-[10px] text-gray-400 uppercase font-bold py-3 border-b border-gray-800 text-center">Status</th>
+                                <th className="text-[10px] text-gray-400 uppercase font-bold py-3 border-b border-gray-800">Date</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {stats.recentActivity.concat([1,2,3]).slice(0, 5).map((activity, i) => (
-                                <tr key={i} className="group hover:bg-white/[0.02] transition-colors">
-                                    <td className="py-4 border-b border-gray-800/50">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-lg bg-vision-primary/20 flex items-center justify-center text-vision-primary font-bold text-xs">
-                                                {activity.event_details?.title?.substring(0,2) || "AS"}
-                                            </div>
-                                            <span className="text-white font-bold text-sm">{activity.event_details?.title || "Astra Event System"}</span>
-                                        </div>
-                                    </td>
-                                    <td className="py-4 border-b border-gray-800/50">
-                                        <div className="flex -space-x-2">
-                                            {[1,2,3,4].map(j => (
-                                                <div key={j} className="w-6 h-6 rounded-full bg-gray-700 border-2 border-[#0F1535] text-[8px] flex items-center justify-center text-white">
-                                                    {j}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </td>
-                                    <td className="py-4 border-b border-gray-800/50 text-center">
-                                        <span className="text-white font-bold text-sm">$14,000</span>
-                                    </td>
-                                    <td className="py-4 border-b border-gray-800/50 max-w-[140px]">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-vision-primary font-bold text-xs">60%</span>
-                                            <div className="h-1 bg-gray-800 rounded-full flex-1">
-                                                <div className="h-full bg-vision-primary w-[60%] rounded-full shadow-[0_0_10px_#0075FF]"></div>
-                                            </div>
-                                        </div>
-                                    </td>
+                            {stats.recentActivity.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4" className="text-center py-6 text-gray-500 text-sm">No recent registrations found.</td>
                                 </tr>
-                            ))}
+                            ) : (
+                                stats.recentActivity.map((reg, i) => (
+                                    <tr key={i} className="group hover:bg-white/[0.02] transition-colors">
+                                        <td className="py-4 border-b border-gray-800/50">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-vision-primary/20 flex items-center justify-center text-vision-primary font-bold text-xs">
+                                                    {reg.event_details?.title?.substring(0,2).toUpperCase() || "EV"}
+                                                </div>
+                                                <span className="text-white font-bold text-sm line-clamp-1 max-w-[150px]">{reg.event_details?.title || "Unknown Event"}</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-4 border-b border-gray-800/50">
+                                            <div className="flex flex-col">
+                                                 <span className="text-white text-sm font-medium">{reg.user_details?.full_name || "Unknown User"}</span>
+                                                 <span className="text-gray-500 text-xs">{reg.user_details?.email}</span>
+                                            </div>
+                                        </td>
+                                        <td className="py-4 border-b border-gray-800/50 text-center">
+                                            <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${reg.is_used ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}`}>
+                                                {reg.is_used ? 'CHECKED IN' : 'REGISTERED'}
+                                            </span>
+                                        </td>
+                                        <td className="py-4 border-b border-gray-800/50 max-w-[140px]">
+                                            <span className="text-gray-400 text-xs">{new Date(reg.registration_date).toLocaleDateString()}</span>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
