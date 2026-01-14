@@ -48,7 +48,7 @@ class IsSuperAdmin(permissions.BasePermission):
 
 class AllowedEmailListCreateView(generics.ListCreateAPIView):
     from authentication.models import AllowedEmail
-    from authentication.serializers import AllowedEmailSerializer # Assumption: Serializer needed
+
     
     # Inline serializer definition to avoid file jumping
     from rest_framework import serializers
