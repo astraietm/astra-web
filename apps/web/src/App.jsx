@@ -29,6 +29,7 @@ const AdminScanner = React.lazy(() => import('./pages/AdminScanner'));
 const AdminNotifications = React.lazy(() => import('./pages/AdminNotifications'));
 const AdminLogs = React.lazy(() => import('./pages/AdminLogs'));
 const AdminSettings = React.lazy(() => import('./pages/AdminSettings'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
 
 import { useLocation } from 'react-router-dom';
 import { initGA, trackPageView } from './analytics';
@@ -56,7 +57,7 @@ function App() {
           <Analytics />
           <SpeedInsights />
           
-          <CustomCursor />
+          {/* <CustomCursor /> */}
           <ScrollToTop />
           <LoginModal /> {/* Global Login Modal */}
           {/* <SmoothScroll> */}
@@ -84,6 +85,9 @@ function App() {
                 <Route path="about" element={<About />} />
 
                 <Route path="contact" element={<Contact />} />
+                
+                {/* 404 Catch-all */}
+                <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
           {/* </SmoothScroll> */}
