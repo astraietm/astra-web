@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import { AnimatePresence } from 'framer-motion';
 import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
-import InitialBootLoader from './components/common/InitialBootLoader';
 import LoginModal from './components/auth/LoginModal';
 import { ToastProvider } from './context/ToastContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
@@ -50,12 +48,6 @@ function AnalyticsTracker() {
 }
 
 function App() {
-  const [loading, setLoading] = useState(false); // Loader disabled
-
-  const handleBootComplete = () => {
-    setLoading(false);
-  };
-
   return (
     <ErrorBoundary>
       <ToastProvider>
@@ -63,55 +55,38 @@ function App() {
           <AnalyticsTracker />
           <Analytics />
           <SpeedInsights />
-          <AnimatePresence>
-            {loading && (
-              <InitialBootLoader key="boot-loader" onComplete={handleBootComplete} />
-            )}
-          </AnimatePresence>
+          
+          <CustomCursor />
+          <ScrollToTop />
+          <LoginModal /> {/* Global Login Modal */}
+          {/* <SmoothScroll> */}
+            <Routes>
+              {/* NEW ADMIN CONSOLE LAYOUT */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="registrations" element={<AdminRegistrations />} />
+                <Route path="events" element={<AdminEvents />} />
+                <Route path="gallery" element={<AdminGallery />} />
+                <Route path="scanner" element={<AdminScanner />} />
 
-          {!loading && (
-            <>
-              <CustomCursor />
-              <ScrollToTop />
-              <LoginModal /> {/* Global Login Modal */}
-              {/* <SmoothScroll> */}
-                <Routes>
-                  {/* NEW ADMIN CONSOLE LAYOUT */}
-                  <Route path="/admin" element={
-                    <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-black text-neon-green">Initializing Core...</div>}>
-                      <AdminLayout />
-                    </React.Suspense>
-                  }>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="registrations" element={<AdminRegistrations />} />
-                    <Route path="events" element={<AdminEvents />} />
-                    <Route path="gallery" element={<AdminGallery />} />
-                    <Route path="scanner" element={<AdminScanner />} />
+                <Route path="notifications" element={<AdminNotifications />} />
+                <Route path="logs" element={<AdminLogs />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
 
-                    <Route path="notifications" element={<AdminNotifications />} />
-                    <Route path="logs" element={<AdminLogs />} />
-                    <Route path="settings" element={<AdminSettings />} />
-                  </Route>
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<Home />} />
+                <Route path="events" element={<Events />} />
+                <Route path="events/:id" element={<EventDetail />} />
+                <Route path="register/:id" element={<Register />} />
+                <Route path="my-registrations" element={<Dashboard />} />
+                <Route path="gallery" element={<Gallery />} />
+                <Route path="about" element={<About />} />
 
-                  <Route path="/" element={
-                    <React.Suspense fallback={<div className="h-screen w-full flex items-center justify-center bg-black text-neon-green font-mono tracking-widest animate-pulse">LOADING...</div>}>
-                      <MainLayout />
-                    </React.Suspense>
-                  }>
-                    <Route index element={<Home />} />
-                    <Route path="events" element={<Events />} />
-                    <Route path="events/:id" element={<EventDetail />} />
-                    <Route path="register/:id" element={<Register />} />
-                    <Route path="my-registrations" element={<Dashboard />} />
-                    <Route path="gallery" element={<Gallery />} />
-                    <Route path="about" element={<About />} />
-
-                    <Route path="contact" element={<Contact />} />
-                  </Route>
-                </Routes>
-              {/* </SmoothScroll> */}
-            </>
-          )}
+                <Route path="contact" element={<Contact />} />
+              </Route>
+            </Routes>
+          {/* </SmoothScroll> */}
         </Router>
       </ToastProvider>
     </ErrorBoundary>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AdminSidebar from '../components/admin/AdminSidebar';
@@ -6,6 +6,7 @@ import AdminHeader from '../components/admin/AdminHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import NoiseOverlay from '../components/common/NoiseOverlay';
 import CommandPalette from '../components/admin/CommandPalette';
+import PageLoader from '../components/common/PageLoader';
 
 const AdminLayout = () => {
     const { user, loading } = useAuth();
@@ -62,14 +63,13 @@ const AdminLayout = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    if (loading) return (
-        <div className="min-h-screen bg-[#030014] flex items-center justify-center">
-            <div className="flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                <p className="text-[10px] font-mono text-primary animate-pulse tracking-widest uppercase">Authorizing...</p>
-            </div>
-        </div>
-    );
+    // Don't render anything until auth is verified
+    if (loading) return null;
+    
+    // Redirect non-admin users immediately
+    if (!user || !user.is_staff) {
+        return null;
+    }
 
     return (
         <div className="min-h-screen bg-vision-bg text-white flex overflow-hidden font-inter">
@@ -98,16 +98,18 @@ const AdminLayout = () => {
                     <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-3xl rounded-full pointer-events-none -mr-48 -mt-48 z-0"></div>
                     
                     {/* Page Content with Transitions */}
-                    <motion.div
-                        key={location.pathname}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
-                        className="relative z-10"
-                    >
-                        <Outlet />
-                    </motion.div>
+                    <Suspense fallback={<PageLoader />}>
+                        <motion.div
+                            key={location.pathname}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            className="relative z-10"
+                        >
+                            <Outlet />
+                        </motion.div>
+                    </Suspense>
                 </main>
                 
                 {/* Fixed Status Footer */}

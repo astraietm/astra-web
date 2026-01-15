@@ -55,19 +55,37 @@ const Events = () => {
                 Upcoming Sessions
             </h2>
             <p className="text-sm text-gray-500 font-medium">
-                {events.length} Events
+                {loading ? (
+                    <span className="animate-pulse">Syncing...</span>
+                ) : (
+                    <span>{events.length} Events</span>
+                )}
             </p>
         </div>
 
-        {loading ? (
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <SkeletonLoader key={i} variant="card" />
-                ))}
-             </div>
-        ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <AnimatePresence mode='wait'>
+        <div className="min-h-[400px]">
+            <AnimatePresence mode='wait'>
+            {loading ? (
+                <motion.div 
+                    key="loader"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex flex-col items-center justify-center p-20"
+                >
+                    <div className="w-12 h-12 border-2 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+                    <p className="text-sm text-primary/50 font-mono tracking-widest uppercase animate-pulse">
+                        Retrieving Data
+                    </p>
+                </motion.div>
+            ) : (
+                <motion.div 
+                    key="content"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
                     {events.length > 0 ? (
                         events.map((event, index) => (
                             <EventModule key={event.id} event={event} index={index} />
@@ -77,15 +95,16 @@ const Events = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="py-20 text-center border border-white/10 rounded-2xl bg-white/[0.02]"
+                            className="col-span-full py-20 text-center border border-white/10 rounded-2xl bg-white/[0.02]"
                         >
                             <p className="text-gray-500 text-lg mb-2">No events available</p>
                             <p className="text-gray-600 text-sm">Check back soon for upcoming events</p>
                         </motion.div>
                     )}
-                </AnimatePresence>
-            </div>
-        )}
+                </motion.div>
+            )}
+            </AnimatePresence>
+        </div>
       </div>
 
     </div>
