@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Loader2, Terminal, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import EventHero from '../components/events/EventHero';
@@ -42,6 +41,7 @@ const Events = () => {
           <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vh] bg-blue-900/10 rounded-full blur-[150px]" />
           <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vh] bg-indigo-900/10 rounded-full blur-[150px]" />
       </div>
+
 
       {/* Hero */}
       <EventHero />
