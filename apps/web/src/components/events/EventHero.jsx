@@ -46,11 +46,11 @@ const EventHero = () => {
                     className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight leading-[1.1]"
                 >
                     <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/70">
-                        Experience
+                        Zero
                     </span>
                     <br />
                     <span className="bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-600">
-                         The Future.
+                         day
                     </span>
                 </motion.h1>
 
