@@ -69,7 +69,7 @@ const VisionMission = () => {
                                 <div className="absolute bottom-4 left-4 w-2 h-2 border-l border-b border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 <div className="absolute bottom-4 right-4 w-2 h-2 border-r border-b border-primary/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 
-                                <StatusLED color="blue" label="SYSTEM_ACTIVE" className="absolute top-6 right-6 z-20" />
+
 
                                 <div className="relative w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-8">
                                     <div className="absolute inset-0 bg-primary/20 rounded-2xl blur-xl animate-[spin_4s_linear_infinite]"></div>
@@ -109,7 +109,7 @@ const VisionMission = () => {
                     >
                         {/* Mission 1: Education */}
                         <motion.div variants={fadeInUp} whileHover={{ y: -10, transition: { type: "spring", stiffness: 300 } }}>
-                            <div className="group h-full bg-white/[0.03] backdrop-blur-sm border border-white/5 p-5 md:p-10 rounded-3xl hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden shadow-lg hover:shadow-blue-500/20">
+                            <div className="group h-full bg-[#0A0A0A]/80 backdrop-blur-xl border border-white/10 p-5 md:p-10 rounded-3xl hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden shadow-lg hover:shadow-blue-500/20">
                                 {/* Active Bottom Border */}
                                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
 
@@ -133,7 +133,7 @@ const VisionMission = () => {
 
                         {/* Mission 2: Innovation */}
                         <motion.div variants={fadeInUp} whileHover={{ y: -10, transition: { type: "spring", stiffness: 300 } }}>
-                            <div className="group h-full bg-white/[0.03] backdrop-blur-sm border border-white/5 p-5 md:p-10 rounded-3xl hover:border-purple-500/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden shadow-lg hover:shadow-purple-500/20">
+                            <div className="group h-full bg-[#0A0A0A]/80 backdrop-blur-xl border border-white/10 p-5 md:p-10 rounded-3xl hover:border-purple-500/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden shadow-lg hover:shadow-purple-500/20">
                                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
 
@@ -154,7 +154,7 @@ const VisionMission = () => {
 
                         {/* Mission 3: Research */}
                         <motion.div variants={fadeInUp} whileHover={{ y: -10, transition: { type: "spring", stiffness: 300 } }}>
-                            <div className="group h-full bg-white/[0.03] backdrop-blur-sm border border-white/5 p-5 md:p-10 rounded-3xl hover:border-green-500/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden shadow-lg hover:shadow-green-500/20">
+                            <div className="group h-full bg-[#0A0A0A]/80 backdrop-blur-xl border border-white/10 p-5 md:p-10 rounded-3xl hover:border-green-500/50 transition-all duration-500 hover:-translate-y-2 relative overflow-hidden shadow-lg hover:shadow-green-500/20">
                                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-green-500 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-500/5 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
 

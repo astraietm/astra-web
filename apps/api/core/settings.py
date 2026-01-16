@@ -13,10 +13,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-development-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Allowed Hosts
-ALLOWED_HOSTS = [
-    "api.astraietm.in",
-    "astraietm.in",
-]
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'api.astraietm.in,astraietm.in,astra-backend-9dbv.onrender.com,localhost,127.0.0.1').split(',')
+# Ensure .onrender.com is always allowed in production
+ALLOWED_HOSTS.append('.onrender.com')
+ALLOWED_HOSTS = list(set(ALLOWED_HOSTS)) # Remove duplicates
 
 INSTALLED_APPS = [
     'django.contrib.admin',

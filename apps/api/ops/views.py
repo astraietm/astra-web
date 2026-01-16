@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.core.mail import send_mail
 from django.conf import settings
+import threading
 from .models import AuditLog, SystemSetting, Notification
 from .serializers import AuditLogSerializer, SystemSettingSerializer, NotificationSerializer
 from authentication.models import User, AllowedEmail
@@ -128,3 +129,79 @@ class PublicConfigView(APIView):
         # Return all settings - in production, filter to only safe keys like 'maintenanceMode'
         data = {s.key: s.value for s in settings_qs}
         return Response(data)
+
+
+class PublicContactView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = [] 
+
+    def post(self, request):
+        try:
+            data = request.data
+            name = data.get('name', 'Anonymous')
+            email = data.get('email', 'N/A')
+            message = data.get('message', 'N/A')
+            remote_addr = request.META.get('REMOTE_ADDR')
+
+            def process_background():
+                log_entry = None
+                try:
+                    # 1. Create Initial Audit Log
+                    log_entry = AuditLog.objects.create(
+                        action="Contact Form Submission",
+                        details=f"From: {email} ({name})\nMessage: {message}\nStatus: BUFFERED",
+                        level="INFO",
+                        ip_address=remote_addr
+                    )
+                    
+                    # 2. Prepare Email
+                    subject = f"Astra Secure Uplink: Message from {name}"
+                    body = f"Astra Contact Form Submission\n\nUser: {name}\nEmail: {email}\n\nMessage:\n{message}"
+                    
+                    host_user = getattr(settings, 'EMAIL_HOST_USER', None)
+                    recipients = ['contact@astraietm.in']
+                    if host_user:
+                        recipients.append(host_user)
+                    
+                    # Log attempt to console for Render logs visibility
+                    print(f"DEBUG: Attempting to send email via {settings.EMAIL_HOST}:{settings.EMAIL_PORT} (User: {host_user})")
+                    
+                    send_mail(
+                        subject,
+                        body,
+                        settings.DEFAULT_FROM_EMAIL,
+                        recipients,
+                        fail_silently=False
+                    )
+                    
+                    # 3. Update Log on Success
+                    log_entry.details += "\nStatus: EMAIL_SENT"
+                    log_entry.level = "SUCCESS"
+                    log_entry.save()
+                    print(f"DEBUG: Email sent successfully to {recipients}")
+                    
+                except Exception as b_err:
+                    error_msg = f"Transmission Error: {str(b_err)}"
+                    print(f"DEBUG: {error_msg}")
+                    if log_entry:
+                        log_entry.details += f"\nStatus: FAILED\nError: {str(b_err)}"
+                        log_entry.level = "ERROR"
+                        log_entry.save()
+
+            # Start background thread
+            t = threading.Thread(target=process_background)
+            t.daemon = True
+            t.start()
+
+            return Response({
+                "status": "success", 
+                "message": "Transmission received. Secure link established."
+            })
+        except Exception as e:
+            return Response({
+                "status": "success", 
+                "message": "Transmission received (buffered)."
+            })
+
+
+
