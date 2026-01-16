@@ -10,6 +10,12 @@ import { SystemProvider } from './context/SystemContext';
 // NOTE: In production, move this Client ID to .env
 const GOOGLE_CLIENT_ID = "341883886940-vtbo7chmmlqpmc86bqgqbipfa4f495dn.apps.googleusercontent.com"; 
 
+// Handle Vite dynamic import errors (Common during new deployments)
+window.addEventListener('vite:preloadError', (event) => {
+  console.log('Detected chunk loading error. Reloading site...');
+  window.location.reload();
+});
+
 const root = createRoot(document.getElementById('root'));
 
 

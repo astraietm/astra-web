@@ -13,6 +13,17 @@ class ErrorBoundary extends Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
+    
+    // Check for chunk loading errors
+    const errorString = error?.toString() || '';
+    if (errorString.includes('Failed to fetch dynamically imported module') || 
+        errorString.toLowerCase().includes('loading chunk')) {
+      console.log('Dynamic import failure detected. Auto-reloading...');
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    }
+
     this.setState({ error, errorInfo });
   }
 
