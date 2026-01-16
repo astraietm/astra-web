@@ -48,9 +48,8 @@ const EventHero = () => {
                     <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/70">
                         Zero
                     </span>
-                    <br />
-                    <span className="bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-600">
-                         day
+                    <span className="bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-600 ml-4">
+                        day
                     </span>
                 </motion.h1>
 
