@@ -6,6 +6,7 @@ import GalleryMarquee from '../components/home/GalleryMarquee';
 import VisionMission from '../components/home/VisionMission';
 import HODMessage from '../components/home/HODMessage';
 import ToolsMarquee from '../components/home/ToolsMarquee';
+import RecentCollaborations from '../components/home/RecentCollaborations';
 import CyberBackground from '../components/common/CyberBackground';
 
 const Home = () => {
@@ -19,6 +20,8 @@ const Home = () => {
         <Hero />
         
         <ToolsMarquee />
+        
+        <RecentCollaborations />
 
         <ScrollReveal variant="up" width="100%">
           <VisionMission />

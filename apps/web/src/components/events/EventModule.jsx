@@ -29,7 +29,6 @@ const EventModule = ({ event, index }) => {
     let maskImage = useMotionTemplate`radial-gradient(250px at ${mouseX}px ${mouseY}px, white, transparent)`;
     let style = { maskImage, WebkitMaskImage: maskImage };
     
-    // Status Logic for Badge
     const getStatus = () => {
         if (isCompleted) return { label: 'Past', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' };
         if (!event.is_registration_open) return { label: 'Closed', color: 'bg-orange-500/10 text-orange-400 border-orange-500/20' };
@@ -46,74 +45,71 @@ const EventModule = ({ event, index }) => {
             transition={{ delay: index * 0.05, duration: 0.5, ease: "easeOut" }}
             onClick={() => navigate(`/events/${event.id}`)}
             onMouseMove={onMouseMove}
-            className="group relative cursor-pointer w-full"
+            className="group relative cursor-pointer border border-white/[0.1] bg-white/[0.02] flex flex-col items-start p-4 h-[32rem]"
         >
-            {/* --- GLASS CARD --- */}
-            <div className="relative h-full bg-[#0A0C10]/80 backdrop-blur-xl border border-white/5 rounded-2xl p-6 transition-all duration-300 hover:border-white/10 hover:bg-[#0F1218] hover:shadow-2xl hover:shadow-black/50 hover:-translate-y-1 overflow-hidden">
-                
-                {/* --- EVERVAULT PATTERN OVERLAY --- */}
-                <div className="absolute inset-0 pointer-events-none">
+            {/* Corner Icons (The + signs) */}
+            <Icon className="absolute h-6 w-6 -top-3 -left-3 text-white/40 group-hover:text-primary transition-colors duration-500" />
+            <Icon className="absolute h-6 w-6 -bottom-3 -left-3 text-white/40 group-hover:text-primary transition-colors duration-500" />
+            <Icon className="absolute h-6 w-6 -top-3 -right-3 text-white/40 group-hover:text-primary transition-colors duration-500" />
+            <Icon className="absolute h-6 w-6 -bottom-3 -right-3 text-white/40 group-hover:text-primary transition-colors duration-500" />
+
+            {/* Pattern Area (The visual core) */}
+            <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-black/40 border border-white/5 mb-6">
+                 {/* Evervault Pattern */}
+                 <div className="absolute inset-0">
                     <motion.div
-                        className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/20 to-blue-700/20 opacity-0 group-hover:opacity-100 transition duration-500"
+                        className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/30 to-primary/30 opacity-0 group-hover:opacity-100 transition duration-500"
                         style={style}
                     />
                     <motion.div
                         className="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay group-hover:opacity-100"
                         style={style}
                     >
-                        <p className="absolute inset-x-0 text-[10px] h-full break-words whitespace-pre-wrap text-white/40 font-mono font-bold transition duration-500">
+                        <p className="absolute inset-x-0 text-[8px] h-full break-words whitespace-pre-wrap text-white font-mono font-bold transition duration-500">
                             {randomString}
                         </p>
                     </motion.div>
                 </div>
 
-                {/* Card Content */}
-                <div className="relative z-10 h-full flex flex-col">
-                    {/* Card Header: Category & Status */}
-                    <div className="flex items-center justify-between mb-6">
-                        <span className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                            {event.category || 'Event'}
-                        </span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${status.color} uppercase tracking-wider`}>
-                            {status.label}
+                {/* Status Overlay */}
+                <div className="absolute top-4 right-4 z-20">
+                     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${status.color} bg-black/80 backdrop-blur-md uppercase tracking-wider`}>
+                        {status.label}
+                    </span>
+                </div>
+
+                {/* Center Badge */}
+                <div className="relative z-10 w-full h-full flex items-center justify-center">
+                    <div className="relative h-28 w-28 rounded-full flex items-center justify-center text-white font-bold text-center p-2">
+                        <div className="absolute w-full h-full bg-black/80 blur-sm rounded-full border border-white/10" />
+                        <span className="text-white text-xs font-mono tracking-tighter uppercase relative z-20 group-hover:scale-110 transition-transform">
+                            {event.category || 'Access'}<br/>Granted
                         </span>
                     </div>
+                </div>
+            </div>
 
-                    {/* Title */}
-                    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight leading-snug group-hover:text-blue-400 transition-colors duration-300">
-                        {event.title}
-                    </h3>
+            {/* Footer Text */}
+            <h3 className="text-white text-lg font-bold tracking-tight mb-2 line-clamp-1 group-hover:text-primary transition-colors">
+                {event.title}
+            </h3>
+            <p className="text-xs text-gray-500 font-light mb-6 line-clamp-2">
+                {event.description || event.short_description || "Neural interface established. Proceed to operation briefing."}
+            </p>
 
-                    {/* Subtitle / Description */}
-                    <p className="text-sm text-gray-400 leading-relaxed mb-6 line-clamp-2">
-                        {event.description || event.short_description || "Join us for this exclusive event."}
-                    </p>
-
-                    {/* Footer Info */}
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-white/5">
-                        
-                        {/* Left: Meta Data */}
-                        <div className="flex items-center gap-4 text-xs font-medium text-gray-400">
-                            <div className="flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5" />
-                                <span>{new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <MapPin className="w-3.5 h-3.5" />
-                                <span className="truncate max-w-[100px]">{event.venue || 'TBA'}</span>
-                            </div>
-                        </div>
-
-                        {/* Right: Icon */}
-                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                            <ArrowUpRight className="w-4 h-4" />
-                        </div>
-
-                    </div>
+            {/* View Button */}
+            <div className="mt-auto w-full flex items-center justify-between">
+                <div className="text-[10px] font-mono text-gray-400 flex items-center gap-3">
+                    <Calendar className="w-3 h-3 text-primary/60" />
+                    <span>{new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                </div>
+                <div className="px-4 py-1.5 rounded-full border border-white/10 text-[10px] font-medium text-white group-hover:bg-primary group-hover:border-primary transition-all duration-300">
+                    Operation Briefing
                 </div>
             </div>
         </motion.div>
     );
 };
+
 
 export default EventModule;
