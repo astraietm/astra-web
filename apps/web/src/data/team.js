@@ -41,7 +41,7 @@ export const facultyMembers = [
 
 export const coreMembers = [
     {
-        name: "Student Name",
+        name: "Midlaj",
         role: "President",
         image: "",               // <--- Add image path here
         id: "AST-01",
