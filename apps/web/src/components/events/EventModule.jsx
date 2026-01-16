@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useMotionTemplate } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, ArrowUpRight } from 'lucide-react';
-import { generateRandomString } from '../ui/evervault-card';
+import { generateRandomString, Icon } from '../ui/evervault-card';
 
 const EventModule = ({ event, index }) => {
     const navigate = useNavigate();
