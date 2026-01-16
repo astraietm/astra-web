@@ -98,10 +98,10 @@ const Navbar = () => {
                     <Link
                         to="/"
                         onClick={() => setActiveTab('/')}
-                        className="relative z-10 flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 hover:scale-105 transition-transform shadow-lg shadow-purple-500/20"
+                        className="relative z-10 flex items-center justify-center w-11 h-11 rounded-full hover:scale-105 transition-transform"
                     >
-                        <div className="w-[40px] h-[40px] bg-black/90 backdrop-blur-sm rounded-full flex items-center justify-center">
-                            <Shield className="w-5 h-5 text-white" fill="currentColor" />
+                        <div className="w-[44px] h-[44px] bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-full flex items-center justify-center overflow-hidden">
+                            <img src="/vite.svg" alt="Astra Logo" className="w-[85%] h-[85%] object-contain" />
                         </div>
                     </Link>
 
@@ -241,10 +241,9 @@ const Navbar = () => {
             <nav className="md:hidden fixed top-4 inset-x-0 z-[100] px-4 pointer-events-none flex justify-center items-start">
                 <div className="w-full max-w-[340px] mx-auto relative pointer-events-auto">
                     <div className="bg-white/[0.03] backdrop-blur-2xl backdrop-saturate-150 border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] rounded-full p-1.5 pl-3 flex items-center justify-between h-[58px] relative z-50">
-                        <Link to="/" className="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center group" onClick={() => setIsOpen(false)}>
-                            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 animate-[spin_4s_linear_infinite]" />
-                            <div className="absolute inset-[2px] bg-black rounded-full" />
-                            <div className="relative z-10 w-6 h-6 rounded-full bg-gradient-to-tr from-cyan-300 to-purple-600 shadow-lg"></div>
+                        <Link to="/" className="relative w-11 h-11 rounded-full overflow-hidden flex items-center justify-center group" onClick={() => setIsOpen(false)}>
+                            <div className="absolute inset-0 bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-full" />
+                            <img src="/vite.svg" alt="Astra Logo" className="relative z-10 w-[85%] h-[85%] object-contain" />
                         </Link>
 
                         <button
