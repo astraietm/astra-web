@@ -48,7 +48,7 @@ export const coreMembers = [
         level: "05"              // Just a decorative level number (01-99)
     },
     {
-        name: "Student Name",
+        name: "Sanjay vinod",
         role: "Vice President",
         image: "",
         id: "AST-02",
