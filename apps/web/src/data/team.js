@@ -12,8 +12,8 @@
 
 export const facultyMembers = [
     {
-        name: "Thara Krishnan R", 
-        role: "Assistant Professor",    
+        name: "Thara Krishnan R",
+        role: "Head of Department",
         image: "images/hod.jpg", // Upload photo to public/images/thara.jpg and update this path
         id: "FAC-01"
     },
@@ -34,38 +34,94 @@ export const facultyMembers = [
         role: "Assistant Professor",
         image: "images/shalna.jpeg", // Upload photo to public/images/shalna.jpg and update this path
         id: "FAC-04"
+    },
+    {
+        name: "Ashif N",
+        role: "Assistant Professor",
+        image: "images/ashif.jpeg",
+        id: "FAC-05"
+    },
+    {
+        name: "Athul A.R",
+        role: "Assistant Professor",
+        image: "images/athul.jpeg",
+        id: "FAC-06"
+    },
+    {
+        name: "NAHIDHA.V.A",
+        role: "Assistant Professor",
+        image: "images/nahidha.jpeg",
+        id: "FAC-07"
     }
 
-    
+
 ];
 
 export const coreMembers = [
     {
         name: "Midlaj",
         role: "President",
-        image: "",               // <--- Add image path here
+        image: "images/midlaj.jpeg",               // <--- Add image path here
         id: "AST-01",
-        level: "05"              // Just a decorative level number (01-99)
+        level: "S6"              // Just a decorative level number (01-99)
     },
     {
-        name: "Sanjay vinod",
+        name: "Anjal Aman",
         role: "Vice President",
-        image: "",
+        image: "images/anjal.jpeg",
         id: "AST-02",
-        level: "04"
+        level: "S4"
     },
     {
-        name: "Student Name",
+        name: "Shahana Sherin",
         role: "Secretary",
-        image: "",
+        image: "images/shahana.jpeg",
         id: "AST-03",
-        level: "04"
+        level: "S6"
     },
     {
-        name: "Student Name",
-        role: "Tech Lead",
-        image: "",
+        name: "Lehan Zeeshan",
+        role: "Treasurer",
+        image: "images/ichha.jpg",
         id: "AST-04",
-        level: "04"
+        level: "S6"
+    },
+    {
+        name: "Farhan",
+        role: "Treasurer",
+        image: "images/farhan.jpeg",
+        id: "AST-05",
+        level: "S4"
+    },
+    {
+        name: "Adil Mahmood",
+        role: "Organisation Committee",
+        image: "images/adil.jpeg",
+        id: "AST-06",
+        level: "S6"
+    },
+    {
+        name: "Sangeeth K",
+        role: "Tech Lead",
+        image: "images/kannan.jpeg",
+        github: "https://github.com/sangeethhk", // TODO: Update with actual GitHub profile URL
+        id: "AST-07",
+        level: "S6"
+    },
+
+    {
+        name: "Mohammed Rishan",
+        role: "Media Team Head",
+        image: "images/rishan.jpeg",
+        id: "AST-08",
+        level: "S4"
+    },
+
+    {
+        name: "Naja Fathima",
+        role: "Magazine Head",
+        image: "images/naja.jpg",
+        id: "AST-09",
+        level: "S4"
     }
 ];
