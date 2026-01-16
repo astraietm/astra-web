@@ -128,3 +128,52 @@ class PublicConfigView(APIView):
         # Return all settings - in production, filter to only safe keys like 'maintenanceMode'
         data = {s.key: s.value for s in settings_qs}
         return Response(data)
+class PublicContactView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        name = request.data.get('name')
+        email = request.data.get('email')
+        message = request.data.get('message')
+
+        if not name or not email or not message:
+            return Response(
+                {"status": "error", "message": "Missing required fields"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        subject = f"Astra Secure Uplink: Message from {name}"
+        full_message = f"""
+New message from Astra Contact Form:
+
+User: {name}
+Email: {email}
+
+Message:
+{message}
+        """
+        
+        try:
+            # Send to Astra's email
+            send_mail(
+                subject,
+                full_message,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.EMAIL_HOST_USER, 'contact@astraietm.in'],
+                fail_silently=False,
+            )
+            
+            # Optional: Log the contact attempt
+            AuditLog.objects.create(
+                action="Contact Form Submission",
+                details=f"From: {email} ({name})",
+                level="INFO",
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
+            
+            return Response({"status": "success", "message": "Transmission received. Our agents will respond shortly."})
+        except Exception as e:
+            return Response(
+                {"status": "error", "message": f"Transmission failed: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

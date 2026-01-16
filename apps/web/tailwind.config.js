@@ -28,12 +28,9 @@ export default {
         'vision-secondary': '#8B5CF6',
       },
       fontFamily: {
-        sans: ['Outfit', 'sans-serif'],
-        display: ['Rajdhani', 'sans-serif'],
-        mono: ['Space Mono', 'monospace'],
-        // Enterprise Admin Fonts
-        inter: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        jetbrains: ['JetBrains Mono', 'Consolas', 'monospace'],
+        sans: ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
+        display: ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #6366F1, #8B5CF6)',
