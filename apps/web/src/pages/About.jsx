@@ -50,31 +50,26 @@ const About = () => {
                         </div>
                     </FadeInUp>
 
-                    {/* MOBILE LAYOUT (Advanced Tech Stack) */}
-                    <div className="md:hidden flex flex-col gap-4 perspective-[1000px]">
+                    {/* MOBILE LAYOUT (Optimized Performance) */}
+                    <div className="md:hidden flex flex-col gap-3">
                         {coreMembers.map((member, i) => (
-                            <motion.div 
+                            <div 
                                 key={i}
-                                initial={{ opacity: 0, x: -50, rotateY: -15, skewX: 10 }}
-                                whileInView={{ opacity: 1, x: 0, rotateY: 0, skewX: 0 }}
-                                viewport={{ once: true, margin: "-10%" }}
-                                transition={{ 
-                                    type: "spring",
-                                    stiffness: 200,
-                                    damping: 15,
-                                    delay: i % 4 * 0.1 // Stagger in batches
-                                }}
-                                className="group relative bg-[#0A0A0A] border border-white/10 p-4 rounded-xl overflow-hidden"
+                                className="group relative bg-[#0A0A0A] border border-white/10 p-3 rounded-xl overflow-hidden will-change-transform"
+                                /** 
+                                 * Performance Note: Using CSS classes/simple transforms instead of heavy Framer Motion 
+                                 * wherever possible on mobile to prevent lag. 
+                                 * However, for entry, we use a lightweight motion.
+                                 */
                             >
-                                {/* Flash Effect on Entry */}
-                                <motion.div 
-                                    initial={{ x: "-100%", opacity: 0.5 }}
-                                    whileInView={{ x: "200%", opacity: 0 }}
-                                    transition={{ duration: 0.8, delay: (i % 4 * 0.1) + 0.2, ease: "circOut" }}
-                                    className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-primary/20 to-transparent z-10 skew-x-12"
-                                />
-
-                                <div className="flex items-center gap-4 relative z-0">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    transition={{ duration: 0.4, delay: i * 0.05, ease: "easeOut" }}
+                                    className="flex items-center gap-4 relative z-10"
+                                >
+                    
                                     <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 shrink-0 shadow-[0_0_15px_rgba(0,0,0,0.5)] group-hover:border-primary/50 transition-colors">
                                         <img 
                                             src={member.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} 
@@ -97,8 +92,8 @@ const About = () => {
                                             </a>
                                         )}
                                     </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            </div>
                         ))}
                     </div>
 
@@ -203,31 +198,30 @@ const BubbleCard = ({ member, index }) => {
 // --- Faculty Component (Holographic Card) ---
 const FacultyCard = ({ member, index }) => (
     <motion.div
-        initial={{ opacity: 0, x: -50, rotateY: -15, skewX: 10 }}
-        whileInView={{ opacity: 1, x: 0, rotateY: 0, skewX: 0 }}
-        viewport={{ once: true, margin: "-10%" }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
         transition={{ 
-            type: "spring",
-            stiffness: 200,
-            damping: 15,
-            delay: index * 0.1 
+            duration: 0.5,
+            delay: index * 0.1,
+            ease: "easeOut"
         }}
-        whileHover={{ scale: 1.02 }}
-        className="group relative h-full w-full overflow-hidden rounded-xl"
+        whileHover={{ scale: 1.01 }}
+        className="group relative h-full w-full overflow-hidden rounded-xl will-change-transform"
     >
-        {/* Flash Effect - Fixed Gradient */}
+        {/* Simplified Flash Effect - Opacity Only, No heavy Skew/Blend */}
         <motion.div 
-            initial={{ x: "-100%", opacity: 0 }}
-            whileInView={{ x: "200%", opacity: 1 }}
-            transition={{ duration: 0.8, delay: (index * 0.1) + 0.5, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent z-20 -skew-x-12 pointer-events-none mix-blend-overlay"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: (index * 0.1) + 0.3 }}
+            className="absolute inset-0 w-full h-full bg-white/5 z-20 pointer-events-none opacity-0"
         />
 
-        {/* Animated Gradient Border */}
-        <div className="absolute -inset-[1px] bg-gradient-to-r from-primary/30 to-cyan-500/30 rounded-xl opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-500" />
+        {/* Static Border instead of blurred gradient animation for performance */}
+        <div className="absolute inset-0 rounded-xl border border-white/10 group-hover:border-primary/30 transition-colors duration-300" />
         
         {/* Main Card Content */}
-        <div className="relative h-full bg-[#080808] border border-white/5 rounded-xl p-4 md:p-6 flex items-center gap-4 md:gap-6 overflow-hidden transition-colors hover:border-primary/20 z-10">
+        <div className="relative h-full bg-[#080808] rounded-xl p-4 md:p-6 flex items-center gap-4 md:gap-6 overflow-hidden z-10">
             
             {/* 3D Moving Light Glare (Desktop Hover) */}
             <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 group-hover:animate-[shine_1.5s_infinite]" />
