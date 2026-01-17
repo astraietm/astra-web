@@ -127,7 +127,7 @@ const Navbar = () => {
                                         />
                                     )}
                                     <span className={`relative z-10 text-sm font-medium tracking-wide transition-colors duration-200 ${isActive ? 'text-white font-bold' : 'text-gray-300 group-hover:text-white'}`}>
-                                        <HackerText text={link.name} speed={50} className={isActive ? "" : "opacity-80 group-hover:opacity-100"} />
+                                        {link.name}
                                     </span>
                                 </Link>
                             );

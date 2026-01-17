@@ -6,6 +6,7 @@ import { getOptimizedImageUrl } from '../../utils/helpers';
 const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
     const rowRef = useRef(null);
     const [isPaused, setIsPaused] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
     
     // Duplicate just enough for a smooth loop. 
     const rowItems = [...items, ...items, ...items].slice(0, 25); 
@@ -27,16 +28,18 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
             style={{ 
                 contain: 'layout paint'
             }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
              {/* Vignette Overlays - thinner on mobile, wider on desktop */}
             <div className="absolute inset-y-0 left-0 w-[15%] md:w-[40%] bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none"></div>
             <div className="absolute inset-y-0 right-0 w-[15%] md:w-[40%] bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none"></div>
 
             <div 
-                className={`flex gap-3 md:gap-4 min-w-full py-2 will-change-transform`}
+                className={`flex gap-3 md:gap-4 min-w-full py-6 will-change-transform`} 
                 style={{
                     animation: `marquee-${direction} ${speed}s linear infinite`,
-                    animationPlayState: isPaused ? 'paused' : 'running',
+                    animationPlayState: isPaused || isHovered ? 'paused' : 'running',
                     transform: 'translateZ(0)', 
                     backfaceVisibility: 'hidden'
                 }}
@@ -44,15 +47,17 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
                 {rowItems.map((item, idx) => (
                     <div 
                         key={`${item.id}-${idx}`} 
-                        className="relative min-w-[160px] h-[100px] md:min-w-[240px] md:h-[160px] rounded-lg overflow-hidden bg-white/5 border border-white/5 flex-shrink-0"
-                        style={{ contain: 'strict' }} 
+                        className="relative min-w-[160px] h-[100px] md:min-w-[240px] md:h-[160px] rounded-lg overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-all duration-500 ease-out hover:scale-110 hover:z-20 hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:border-primary/50 group bg-black"
                     >
+                         {/* Dimming Layer */}
+                         <div className="absolute inset-0 bg-black/50 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"/>
+                         
                         <img 
                             src={getOptimizedImageUrl(item.src, 'grid')} 
                             alt="" 
                             loading="lazy"
                             decoding="async"
-                            className="w-full h-full object-cover opacity-80"
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0"
                         />
                     </div>
                 ))}
