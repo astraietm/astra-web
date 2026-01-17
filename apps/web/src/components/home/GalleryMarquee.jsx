@@ -31,12 +31,8 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-             {/* Vignette Overlays - thinner on mobile, wider on desktop */}
-            <div className="absolute inset-y-0 left-0 w-[15%] md:w-[40%] bg-gradient-to-r from-background via-background/80 to-transparent z-10 pointer-events-none"></div>
-            <div className="absolute inset-y-0 right-0 w-[15%] md:w-[40%] bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none"></div>
-
             <div 
-                className={`flex gap-3 md:gap-4 min-w-full py-6 will-change-transform group/marquee`} 
+                className={`flex gap-4 md:gap-8 min-w-full py-8 will-change-transform group/marquee`} 
                 style={{
                     animation: `marquee-${direction} ${speed}s linear infinite`,
                     animationPlayState: isPaused || isHovered ? 'paused' : 'running',
@@ -47,7 +43,7 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
                 {rowItems.map((item, idx) => (
                     <div 
                         key={`${item.id}-${idx}`} 
-                        className="relative min-w-[160px] h-[100px] md:min-w-[240px] md:h-[160px] rounded-lg overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-all duration-500 ease-out 
+                        className="relative min-w-[250px] h-[160px] md:min-w-[400px] md:h-[250px] rounded-2xl overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-all duration-500 ease-out 
                         opacity-100 scale-100
                         group-hover/marquee:blur-[4px] group-hover/marquee:opacity-40 group-hover/marquee:scale-100
                         hover:!blur-0 hover:!opacity-100 hover:!scale-105 hover:z-20 hover:shadow-2xl hover:border-primary/50 cursor-pointer bg-black"
