@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 
 const HackerText = ({ text, className = "", speed = 40 }) => {
   const [displayText, setDisplayText] = useState(text);
+  const intervalRef = React.useRef(null);
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*";
 
   const scramble = () => {
     let iteration = 0;
-    const interval = setInterval(() => {
+    
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    intervalRef.current = setInterval(() => {
       setDisplayText(prev => 
         text
           .split("")
@@ -20,19 +24,20 @@ const HackerText = ({ text, className = "", speed = 40 }) => {
       );
 
       if (iteration >= text.length) {
-        clearInterval(interval);
+        clearInterval(intervalRef.current);
+        setDisplayText(text); // Ensure final state is correct
       }
 
       iteration += 1 / 3;
     }, speed);
-    
-    return interval;
   };
 
   useEffect(() => {
-    const interval = scramble();
-    return () => clearInterval(interval);
-  }, [text]); // Run on mount/text change
+    scramble();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [text]);
 
   return (
     <span 
