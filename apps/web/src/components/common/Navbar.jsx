@@ -143,7 +143,7 @@ const Navbar = () => {
                                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                                     className="flex items-center gap-3 pl-4 pr-1.5 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 rounded-full transition-all group"
                                 >
-                                    <span className="text-xs font-mono text-gray-300 font-medium tracking-wider group-hover:text-white transition-colors hidden lg:block">
+                                    <span className="text-xs font-mono text-gray-300 font-medium tracking-wider group-hover:text-white transition-colors max-w-[120px] truncate">
                                         {user.name}
                                     </span>
                                     {user.avatar && !imageError ? (
@@ -264,6 +264,18 @@ const Navbar = () => {
                                 style={{ willChange: "transform, opacity, filter" }}
                                 className="absolute top-[64px] left-0 right-0 bg-[#0A0F1C]/80 backdrop-blur-3xl backdrop-saturate-150 border border-white/10 rounded-3xl p-2 shadow-2xl overflow-hidden z-40 flex flex-col gap-1"
                             >
+                                {user && (
+                                    <div className="flex items-center gap-3 px-4 py-3 bg-white/5 mx-2 mt-2 rounded-2xl border border-white/5">
+                                        <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10 shrink-0">
+                                            <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-white font-medium text-sm truncate">{user.name}</p>
+                                            <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {navLinks.map((link, i) => (
                                     <motion.div
                                         key={link.name}
