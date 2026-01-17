@@ -50,23 +50,20 @@ const About = () => {
                         </div>
                     </FadeInUp>
 
-                    {/* MOBILE LAYOUT (Super Optimized) */}
+                    {/* MOBILE LAYOUT (Native Scroll Performance) */}
                     <div className="md:hidden space-y-3">
                         {coreMembers.map((member, i) => (
-                            <motion.div 
+                            <div 
                                 key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-50px" }}
-                                transition={{ duration: 0.3, delay: 0.05 }} // Minimal delay, fast transition
-                                className="bg-[#0A0A0A] border border-white/10 p-3 rounded-xl flex items-center gap-4"
+                                className="bg-[#0A0A0A] border border-white/10 p-3 rounded-xl flex items-center gap-4 shadow-sm"
                             >
-                                <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 shrink-0">
+                                <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 shrink-0 bg-gray-900">
                                     <img 
                                         src={member.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} 
                                         alt={member.name}
                                         className="w-full h-full object-cover" 
                                         loading="lazy"
+                                        decoding="async"
                                     />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -83,7 +80,7 @@ const About = () => {
                                         </a>
                                     )}
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
 
@@ -188,16 +185,11 @@ const BubbleCard = ({ member, index }) => {
 // --- Faculty Component (Holographic Card) ---
 const FacultyCard = ({ member, index }) => (
     <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ 
-            duration: 0.5,
-            delay: index * 0.1,
-            ease: "easeOut"
-        }}
-        whileHover={{ scale: 1.01 }}
-        className="group relative h-full w-full overflow-hidden rounded-xl will-change-transform"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-10%" }}
+        transition={{ duration: 0.4, delay: index * 0.05 }}
+        className="group relative h-full w-full overflow-hidden rounded-xl"
     >
         {/* Simplified Flash Effect - Opacity Only, No heavy Skew/Blend */}
         <motion.div 
