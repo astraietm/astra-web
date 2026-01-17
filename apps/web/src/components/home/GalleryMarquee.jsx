@@ -36,7 +36,7 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
             <div className="absolute inset-y-0 right-0 w-[15%] md:w-[40%] bg-gradient-to-l from-background via-background/80 to-transparent z-10 pointer-events-none"></div>
 
             <div 
-                className={`flex gap-3 md:gap-4 min-w-full py-6 will-change-transform`} 
+                className={`flex gap-3 md:gap-4 min-w-full py-6 will-change-transform group/marquee`} 
                 style={{
                     animation: `marquee-${direction} ${speed}s linear infinite`,
                     animationPlayState: isPaused || isHovered ? 'paused' : 'running',
@@ -47,17 +47,20 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
                 {rowItems.map((item, idx) => (
                     <div 
                         key={`${item.id}-${idx}`} 
-                        className="relative min-w-[160px] h-[100px] md:min-w-[240px] md:h-[160px] rounded-lg overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-all duration-500 ease-out hover:scale-110 hover:z-20 hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] hover:border-primary/50 group bg-black"
+                        className="relative min-w-[160px] h-[100px] md:min-w-[240px] md:h-[160px] rounded-lg overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-all duration-500 ease-out 
+                        grayscale opacity-80 scale-100
+                        group-hover/marquee:blur-[2px] group-hover/marquee:opacity-40 group-hover/marquee:scale-95 group-hover/marquee:grayscale
+                        hover:!blur-0 hover:!opacity-100 hover:!scale-110 hover:!grayscale-0 hover:z-20 hover:shadow-[0_0_40px_rgba(37,99,235,0.6)] hover:border-primary/50 cursor-pointer bg-black"
                     >
                          {/* Dimming Layer */}
-                         <div className="absolute inset-0 bg-black/50 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"/>
+                         <div className="absolute inset-0 bg-black/20 transition-colors duration-500 z-10 pointer-events-none group-hover/marquee:bg-black/40 hover:!bg-transparent"/>
                          
                         <img 
                             src={getOptimizedImageUrl(item.src, 'grid')} 
                             alt="" 
                             loading="lazy"
                             decoding="async"
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                         />
                     </div>
                 ))}
