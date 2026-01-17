@@ -48,12 +48,12 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
                     <div 
                         key={`${item.id}-${idx}`} 
                         className="relative min-w-[160px] h-[100px] md:min-w-[240px] md:h-[160px] rounded-lg overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-all duration-500 ease-out 
-                        grayscale opacity-80 scale-100
-                        group-hover/marquee:blur-[2px] group-hover/marquee:opacity-40 group-hover/marquee:scale-95 group-hover/marquee:grayscale
-                        hover:!blur-0 hover:!opacity-100 hover:!scale-110 hover:!grayscale-0 hover:z-20 hover:shadow-[0_0_40px_rgba(37,99,235,0.6)] hover:border-primary/50 cursor-pointer bg-black"
+                        opacity-100 scale-100
+                        group-hover/marquee:blur-[4px] group-hover/marquee:opacity-40 group-hover/marquee:scale-100
+                        hover:!blur-0 hover:!opacity-100 hover:!scale-105 hover:z-20 hover:shadow-2xl hover:border-primary/50 cursor-pointer bg-black"
                     >
-                         {/* Dimming Layer */}
-                         <div className="absolute inset-0 bg-black/20 transition-colors duration-500 z-10 pointer-events-none group-hover/marquee:bg-black/40 hover:!bg-transparent"/>
+                         {/* Dimming Layer only on group hover (siblings) */}
+                         <div className="absolute inset-0 bg-transparent transition-colors duration-500 z-10 pointer-events-none group-hover/marquee:bg-black/20 hover:!bg-transparent"/>
                          
                         <img 
                             src={getOptimizedImageUrl(item.src, 'grid')} 
