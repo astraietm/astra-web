@@ -50,50 +50,40 @@ const About = () => {
                         </div>
                     </FadeInUp>
 
-                    {/* MOBILE LAYOUT (Optimized Performance) */}
-                    <div className="md:hidden flex flex-col gap-3">
+                    {/* MOBILE LAYOUT (Super Optimized) */}
+                    <div className="md:hidden space-y-3">
                         {coreMembers.map((member, i) => (
-                            <div 
+                            <motion.div 
                                 key={i}
-                                className="group relative bg-[#0A0A0A] border border-white/10 p-3 rounded-xl overflow-hidden will-change-transform"
-                                /** 
-                                 * Performance Note: Using CSS classes/simple transforms instead of heavy Framer Motion 
-                                 * wherever possible on mobile to prevent lag. 
-                                 * However, for entry, we use a lightweight motion.
-                                 */
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-50px" }}
+                                transition={{ duration: 0.3, delay: 0.05 }} // Minimal delay, fast transition
+                                className="bg-[#0A0A0A] border border-white/10 p-3 rounded-xl flex items-center gap-4"
                             >
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: "-50px" }}
-                                    transition={{ duration: 0.4, delay: i * 0.05, ease: "easeOut" }}
-                                    className="flex items-center gap-4 relative z-10"
-                                >
-                    
-                                    <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 shrink-0 shadow-[0_0_15px_rgba(0,0,0,0.5)] group-hover:border-primary/50 transition-colors">
-                                        <img 
-                                            src={member.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} 
-                                            alt={member.name}
-                                            className="w-full h-full object-cover" 
-                                        />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-white font-display font-bold text-lg leading-none mb-1">{member.name}</h3>
-                                        <p className="text-primary text-xs uppercase font-mono tracking-widest opacity-80">{member.role}</p>
-                                    </div>
-                                    
-                                    {/* Tech Decor / ID */}
-                                    <div className="flex flex-col items-end gap-1 opacity-30">
-                                        <div className="w-16 h-[2px] bg-white"></div>
-                                        <span className="text-[9px] font-mono sm:block hidden">OP-{i.toString().padStart(3, '0')}</span>
-                                        {member.github && (
-                                            <a href={member.github} className="text-white opacity-100 hover:text-primary z-20">
-                                                <Github className="w-4 h-4" />
-                                            </a>
-                                        )}
-                                    </div>
-                                </motion.div>
-                            </div>
+                                <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 shrink-0">
+                                    <img 
+                                        src={member.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`} 
+                                        alt={member.name}
+                                        className="w-full h-full object-cover" 
+                                        loading="lazy"
+                                    />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-white font-display font-bold text-lg leading-none mb-1">{member.name}</h3>
+                                    <p className="text-primary text-xs uppercase font-mono tracking-widest opacity-80">{member.role}</p>
+                                </div>
+                                
+                                {/* Simple Tech Decor */}
+                                <div className="flex flex-col items-end gap-1 opacity-30">
+                                    <div className="w-16 h-[2px] bg-white"></div>
+                                    {member.github && (
+                                        <a href={member.github} className="text-white opacity-100 hover:text-primary z-20">
+                                            <Github className="w-4 h-4" />
+                                        </a>
+                                    )}
+                                </div>
+                            </motion.div>
                         ))}
                     </div>
 
