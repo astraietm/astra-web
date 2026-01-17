@@ -10,6 +10,7 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
     
     // Duplicate just enough for a smooth loop. 
     const rowItems = [...items, ...items, ...items].slice(0, 25); 
+    const mobileSpeed = speed / 2; // Double speed on mobile
 
     useEffect(() => {
         const observer = new IntersectionObserver(([entry]) => {
@@ -31,7 +32,16 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
+            <style>{`
+                @media (max-width: 768px) {
+                    #marquee-${direction} {
+                        animation-duration: ${mobileSpeed}s !important;
+                    }
+                }
+            `}</style>
+
             <div 
+                id={`marquee-${direction}`}
                 className={`flex gap-4 md:gap-8 min-w-full py-8 will-change-transform group/marquee`} 
                 style={{
                     animation: `marquee-${direction} ${speed}s linear infinite`,
