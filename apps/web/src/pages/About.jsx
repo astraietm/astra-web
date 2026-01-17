@@ -9,8 +9,9 @@ const About = () => {
     return (
         <div className="bg-background min-h-screen relative overflow-hidden">
             <CyberBackground />
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-[1px] pointer-events-none"></div>
-
+            {/* Removed global backdrop-blur for mobile scroll performance */}
+            <div className="absolute inset-0 bg-background/90 pointer-events-none"></div>
+            
             <div className="container mx-auto px-6 pt-32 pb-32 relative z-10">
                 {/* --- Hero --- */}
                 <div className="max-w-4xl mb-24 text-center mx-auto">
@@ -205,8 +206,8 @@ const FacultyCard = ({ member, index }) => (
         {/* Main Card Content */}
         <div className="relative h-full bg-[#080808] rounded-xl p-4 md:p-6 flex items-center gap-4 md:gap-6 overflow-hidden z-10">
             
-            {/* 3D Moving Light Glare (Desktop Hover) */}
-            <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 group-hover:animate-[shine_1.5s_infinite]" />
+            {/* 3D Moving Light Glare (Desktop Hover Only) */}
+            <div className="hidden md:block absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 group-hover:animate-[shine_1.5s_infinite]" />
 
             {/* Avatar Scanner Effect */}
             <div className="relative shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border border-white/10 group-hover:border-primary/50 transition-colors duration-300 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
