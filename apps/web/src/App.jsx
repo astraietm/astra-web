@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import MainLayout from './layouts/MainLayout';
 import AdminLayout from './layouts/AdminLayout';
 import LoginModal from './components/auth/LoginModal';
+import CompleteProfileModal from './components/auth/CompleteProfileModal';
 import { ToastProvider } from './context/ToastContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import ScrollToTop from './components/common/ScrollToTop';
@@ -62,6 +63,7 @@ function App() {
           {/* <CustomCursor /> */}
           <ScrollToTop />
           <LoginModal /> {/* Global Login Modal */}
+          <CompleteProfileModal /> {/* Global Complete Profile Modal */}
           {/* <SmoothScroll> */}
             <Routes>
               {/* NEW ADMIN CONSOLE LAYOUT */}

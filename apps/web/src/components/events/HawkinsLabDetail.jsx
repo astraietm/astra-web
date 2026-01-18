@@ -289,12 +289,12 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                     <motion.button 
                         whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(220, 38, 38, 0.3)" }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={onRegister}
-                        disabled={isRegistered}
+                        onClick={isRegistered ? () => navigate('/dashboard') : onRegister}
+                        disabled={false}
                         className="group relative px-10 py-5 bg-white text-black text-lg font-bold rounded-2xl overflow-hidden transition-shadow"
                     >
                         <span className="relative z-10 flex items-center gap-3">
-                            {isRegistered ? 'Protocol Active' : 'Initiate Sequence'}
+                            {isRegistered ? 'Access Granted • View Ticket' : 'Initiate Sequence'}
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </span>
                         <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-white opacity-0 group-hover:opacity-100 transition-opacity" />

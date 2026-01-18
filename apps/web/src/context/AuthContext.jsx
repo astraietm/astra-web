@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('jwt_access_token'));
     const [loading, setLoading] = useState(true);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
     const [pendingAction, setPendingAction] = useState(null); 
 
     // Init: Check for existing token
@@ -47,9 +48,15 @@ export const AuthProvider = ({ children }) => {
         setIsLoginModalOpen(false);
 
         if (pendingAction) {
-            // Execute the pending action with the new token
-            pendingAction.run(access);
-            setPendingAction(null);
+            // Check if profile is complete (Phone & College)
+            if (!user.phone_number || !user.college) {
+                // Open Profile Modal, keep pendingAction to run after profile update
+                setIsProfileModalOpen(true);
+            } else {
+                // Execute directly
+                pendingAction.run(access);
+                setPendingAction(null);
+            }
         }
     };
 
@@ -77,7 +84,13 @@ export const AuthProvider = ({ children }) => {
 
     const requireLogin = (action) => {
         if (user) {
-            action.run();
+            // Check Profile Completeness even if already logged in
+            if (!user.phone_number || !user.college) {
+                setPendingAction(action);
+                setIsProfileModalOpen(true);
+            } else {
+                action.run(token);
+            }
         } else {
             setPendingAction(action);
             setIsLoginModalOpen(true);
@@ -89,7 +102,10 @@ export const AuthProvider = ({ children }) => {
             user, 
             token, 
             isLoginModalOpen, 
-            setIsLoginModalOpen, 
+            setIsLoginModalOpen,
+            isProfileModalOpen,
+            setIsProfileModalOpen,
+            updateUser: (updates) => setUser({ ...user, ...updates }), 
             handleServerLogin, 
             logout,
             requireLogin,
