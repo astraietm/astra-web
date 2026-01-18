@@ -47,6 +47,8 @@ export const AuthProvider = ({ children }) => {
         setIsLoginModalOpen(false);
 
         if (pendingAction) {
+            // Execute the pending action with the new token
+            pendingAction.run(access);
             setPendingAction(null);
         }
     };

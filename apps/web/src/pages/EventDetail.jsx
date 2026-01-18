@@ -82,17 +82,20 @@ const EventDetail = () => {
 
   const handleRegister = () => {
     requireLogin({
-        run: async () => {
+        run: async (freshToken) => {
             if (isRegistered) {
                 toast.info("You are already registered.");
                 return;
             }
             try {
                 setRegistering(true);
+                // Use freshToken if available (from login flow), otherwise current token
+                const activeToken = freshToken || token;
+                
                 const response = await axios.post(
                     `${import.meta.env.VITE_API_URL}/register/`, 
                     { event: id }, 
-                    { headers: { Authorization: `Bearer ${token}` } }
+                    { headers: { Authorization: `Bearer ${activeToken}` } }
                 );
                 setIsRegistered(true);
                 toast.success('Registration Successful! Access Granted.');
