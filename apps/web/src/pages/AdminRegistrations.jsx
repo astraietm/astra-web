@@ -164,24 +164,44 @@ const AdminRegistrations = () => {
                                                 <div>
                                                     {reg.team_name ? (
                                                         <>
-                                                            <div className="flex items-center gap-2">
+                                                            <div className="flex items-center gap-2 mb-1">
                                                                 <p className="font-bold text-sm text-purple-400 group-hover:text-purple-300 transition-colors">{reg.team_name}</p>
                                                                 <span className="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1 py-0.5 rounded uppercase tracking-wider">Team</span>
                                                             </div>
-                                                            <p className="text-[10px] text-gray-400 font-jetbrains tracking-tight">Lead: {reg.user_name}</p>
-                                                            {reg.team_members && (
-                                                                <p className="text-[10px] text-gray-500 mt-0.5" title={reg.team_members}>
-                                                                    + {(function(){
-                                                                        try { return JSON.parse(reg.team_members).length } 
-                                                                        catch { return reg.team_members.split(',').length }
-                                                                    })()} Members
-                                                                </p>
-                                                            )}
+                                                            <div className="space-y-1">
+                                                                <p className="text-xs text-white font-medium">Lead: {reg.user_name}</p>
+                                                                <div className="flex gap-2 text-[10px] text-gray-500 font-mono">
+                                                                    <span>{reg.user_phone || 'N/A'}</span>
+                                                                    <span className="text-gray-700">|</span>
+                                                                    <span>{reg.user_college || 'N/A'}</span>
+                                                                </div>
+                                                                
+                                                                {/* Team Members List */}
+                                                                {reg.team_members && (
+                                                                    <div className="mt-2 pl-2 border-l-2 border-primary/20 space-y-0.5">
+                                                                        {(function(){
+                                                                            try { 
+                                                                                const m = JSON.parse(reg.team_members);
+                                                                                return Array.isArray(m) ? m : [m];
+                                                                            } catch { 
+                                                                                return reg.team_members.split(',').filter(x=>x);
+                                                                            }
+                                                                        })().map((member, idx) => (
+                                                                            <p key={idx} className="text-[11px] text-gray-400">• {member}</p>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                         </>
                                                     ) : (
                                                         <>
                                                             <p className="font-medium text-sm text-white group-hover:text-primary transition-colors">{reg.user_name || 'Classified'}</p>
-                                                            <p className="text-[10px] text-gray-500 font-jetbrains tracking-tight">{reg.user_email}</p>
+                                                            <p className="text-[10px] text-gray-500 font-jetbrains tracking-tight mb-1">{reg.user_email}</p>
+                                                            <div className="flex gap-2 text-[10px] text-gray-500 font-mono">
+                                                                <span>{reg.user_phone || 'Phone N/A'}</span>
+                                                                <span className="text-gray-700">|</span>
+                                                                <span>{reg.user_college || 'College N/A'}</span>
+                                                            </div>
                                                         </>
                                                     )}
                                                 </div>
