@@ -159,11 +159,31 @@ const AdminRegistrations = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-primary">
-                                                    <UserIcon className="w-4 h-4" />
+                                                    {reg.team_name ? <Users className="w-4 h-4 text-purple-400" /> : <UserIcon className="w-4 h-4" />}
                                                 </div>
                                                 <div>
-                                                    <p className="font-medium text-sm text-white group-hover:text-primary transition-colors">{reg.user_name || 'Classified'}</p>
-                                                    <p className="text-[10px] text-gray-500 font-jetbrains tracking-tight">{reg.user_email}</p>
+                                                    {reg.team_name ? (
+                                                        <>
+                                                            <div className="flex items-center gap-2">
+                                                                <p className="font-bold text-sm text-purple-400 group-hover:text-purple-300 transition-colors">{reg.team_name}</p>
+                                                                <span className="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1 py-0.5 rounded uppercase tracking-wider">Team</span>
+                                                            </div>
+                                                            <p className="text-[10px] text-gray-400 font-jetbrains tracking-tight">Lead: {reg.user_name}</p>
+                                                            {reg.team_members && (
+                                                                <p className="text-[10px] text-gray-500 mt-0.5" title={reg.team_members}>
+                                                                    + {(function(){
+                                                                        try { return JSON.parse(reg.team_members).length } 
+                                                                        catch { return reg.team_members.split(',').length }
+                                                                    })()} Members
+                                                                </p>
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <p className="font-medium text-sm text-white group-hover:text-primary transition-colors">{reg.user_name || 'Classified'}</p>
+                                                            <p className="text-[10px] text-gray-500 font-jetbrains tracking-tight">{reg.user_email}</p>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </td>
