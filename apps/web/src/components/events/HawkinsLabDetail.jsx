@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Gamepad2, Keyboard, Brain, Search, Lock, AlertTriangle, Users, Zap, Target, Award, Shield, CheckCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const navigate = useNavigate();
@@ -136,19 +135,9 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
             <div className="lg:col-span-8 space-y-8 sm:space-y-12">
                 
                 {/* Mission Structure */}
-                <motion.div
-                    variants={fadeInUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    className="bg-gradient-to-br from-red-950/30 via-black to-black border border-red-900/30 p-6 sm:p-8 rounded-2xl relative overflow-hidden group backdrop-blur-sm"
-                >
-                    {/* Pulsing Left Border */}
-                    <motion.div
-                      animate={{ opacity: [0.4, 0.8, 0.4] }}
-                      transition={{ duration: 6, repeat: Infinity }}
-                      className="absolute left-0 top-0 bottom-0 w-1 bg-red-500"
-                    />
+                <div className="bg-gradient-to-br from-red-950/30 via-black to-black border border-red-900/30 p-6 sm:p-8 rounded-2xl relative overflow-hidden group backdrop-blur-sm">
+                    {/* Static Left Border */}
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500/60" />
                     
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-red-900/30">
@@ -176,10 +165,10 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             ))}
                         </ul>
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Clearance Levels with Lock States */}
-                <motion.div
+                <div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -201,7 +190,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             { title: "DIGITAL STALKING (TRACING)", icon: Search, desc: "OSINT investigation", status: 'locked' },
                             { title: "BRUTE FORCE APPROACH", icon: Lock, desc: "Authentication bypass", status: 'locked' }
                         ].map((lvl, i) => (
-                            <motion.div
+                            <div
                                 key={i}
                                 initial={{ opacity: 0, x: -30 }}
                                 whileInView={{ opacity: 1, x: 0 }}
@@ -243,7 +232,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                                     
                                     {/* Status indicator */}
                                     {lvl.status === 'active' && (
-                                      <motion.div
+                                      <div
                                         animate={{ opacity: [0.4, 1, 0.4] }}
                                         transition={{ duration: 2, repeat: Infinity }}
                                         className="w-2 h-2 bg-red-500 rounded-full"
@@ -257,13 +246,13 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                                        style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'2\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")' }}
                                   />
                                 )}
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Containment Protocols (Enhanced) */}
-                <motion.div
+                <div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -271,7 +260,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                     className="bg-gradient-to-r from-red-950/40 via-red-900/20 to-transparent border-l-4 border-red-600 p-6 sm:p-8 rounded-r-2xl backdrop-blur-sm relative"
                 >
                     {/* Flicker effect on border (once on load) */}
-                    <motion.div
+                    <div
                       initial={{ opacity: 1 }}
                       animate={{ opacity: [1, 0.3, 1, 0.5, 1] }}
                       transition={{ duration: 0.5, delay: 0.5 }}
@@ -279,12 +268,12 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                     />
                     
                     <div className="flex items-center gap-3 mb-6">
-                        <motion.div
+                        <div
                           animate={{ opacity: [1, 0.5, 1] }}
                           transition={{ duration: 2, repeat: Infinity }}
                         >
                           <AlertTriangle className="w-7 h-7 text-red-500" />
-                        </motion.div>
+                        </div>
                         <h3 className="text-2xl font-black text-white uppercase tracking-[0.15em]">Containment Protocols</h3>
                     </div>
                     
@@ -295,7 +284,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             "ONLY THE PROVIDED SYSTEMS MAY BE USED",
                             "NO TEAM CHANGES ONCE THE EVENT STARTS"
                         ].map((rule, i) => (
-                            <motion.li
+                            <li
                                 key={i}
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -305,16 +294,16 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             >
                                 <span className="w-2 h-2 bg-red-500 transform rotate-45 shrink-0" />
                                 <span className="text-gray-300">{rule}</span>
-                            </motion.li>
+                            </li>
                         ))}
                     </ul>
-                </motion.div>
+                </div>
 
             </div>
 
             {/* Right Column - Cinematic CTA */}
             <div className="lg:col-span-4">
-                <motion.div
+                <div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -325,7 +314,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                         {/* Status Badge with Breathing Glow */}
                         <div className="mb-8 text-center">
                             <p className="text-gray-500 uppercase tracking-[0.2em] text-xs mb-3 font-mono">Registration Status</p>
-                            <motion.div 
+                            <div 
                                 animate={{ 
                                     boxShadow: [
                                       '0 0 20px rgba(34, 197, 94, 0.3)', 
@@ -337,7 +326,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                                 className="inline-block px-5 py-2 bg-green-500/20 text-green-400 border border-green-500/40 rounded-full text-sm font-black uppercase tracking-wider"
                             >
                                 ● OPEN FOR ALL STUDENTS
-                            </motion.div>
+                            </div>
                         </div>
 
                         {/* Event Info */}
@@ -355,7 +344,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                         </ul>
 
                         {/* Cinematic CTA Button */}
-                        <motion.button 
+                        <button 
                             onClick={onRegister}
                             disabled={isRegistered}
                             whileHover={!isRegistered ? { 
@@ -381,13 +370,13 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             <span className="relative z-10">
                               {isRegistered ? '✓ Already Registered' : 'Initiate Protocol'}
                             </span>
-                        </motion.button>
+                        </button>
                         
                         <p className="text-center text-xs text-gray-600 mt-4 font-mono uppercase tracking-widest">
                             Save Hawkins. Save the World.
                         </p>
                     </div>
-                </motion.div>
+                </div>
             </div>
 
         </div>
