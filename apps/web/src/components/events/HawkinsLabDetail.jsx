@@ -9,14 +9,14 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
 
   return (
     <div className="min-h-screen bg-[#030303] text-white selection:bg-red-500/30 font-sans overflow-x-hidden">
-        {/* Premium Ambient Background */}
+        {/* Premium Ambient Background - Optimized for Mobile FPS */}
         <div className="fixed inset-0 z-0 pointer-events-none">
             {/* Subtle Grid */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,black_70%,transparent_100%)]" />
             
-            {/* Cinematic Glows */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-red-900/20 blur-[120px] rounded-full mix-blend-screen opacity-50" />
-            <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] bg-blue-900/10 blur-[100px] rounded-full mix-blend-screen opacity-30" />
+            {/* Cinematic Glows - High Performance Gradients (Zero Blur Cost) */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[radial-gradient(circle,rgba(69,10,10,0.4)_0%,transparent_70%)] mix-blend-screen opacity-60" />
+            <div className="absolute top-[20%] left-[20%] w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(30,58,138,0.2)_0%,transparent_70%)] mix-blend-screen opacity-40" />
             
             {/* Fine Grain */}
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay" />
@@ -136,7 +136,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             Mission Protocol
                         </h2>
                         
-                        <div className="bg-zinc-900/20 border border-white/5 rounded-3xl p-8 backdrop-blur-xl hover:border-white/10 transition-colors duration-500">
+                        <div className="bg-[#0A0A0A]/90 border border-white/5 rounded-3xl p-8 backdrop-blur-md hover:border-white/10 transition-colors duration-500">
                              <ul className="space-y-8">
                                 {[
                                     { title: "Team Assembly", desc: "Form a squad of 2-4 agents. Diverse skills recommended." },
@@ -234,7 +234,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-zinc-900/50 backdrop-blur-2xl"
+                className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#080808]/80 backdrop-blur-md"
             >
                 <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 via-transparent to-blue-600/10 opacity-50" />
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay" />
