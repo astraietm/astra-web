@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import SkeletonLoader from '../components/common/SkeletonLoader';
+import HawkinsLabDetail from '../components/events/HawkinsLabDetail';
 
 const EventDetail = () => {
   const { id } = useParams();
@@ -81,6 +82,11 @@ const EventDetail = () => {
 
   const isCompleted = new Date(event.date) < new Date();
   const isLocked = !event.is_registration_open;
+
+  // Custom Event Loader for Hawkins Lab
+  if (event.title.toLowerCase().includes('hawkins')) {
+      return <HawkinsLabDetail onRegister={handleRegister} isRegistered={false} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#020408] text-gray-200 selection:bg-blue-500/30 font-sans">
