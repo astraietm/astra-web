@@ -12,29 +12,35 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden font-sans selection:bg-red-500/30">
       
-      {/* Layer 1: Static Background */}
+      {/* Aura-inspired Grid Background */}
+      <div className="fixed inset-0 pointer-events-none" 
+           style={{
+             backgroundImage: `
+               linear-gradient(to right, rgba(255, 30, 30, 0.03) 1px, transparent 1px),
+               linear-gradient(to bottom, rgba(255, 30, 30, 0.03) 1px, transparent 1px)
+             `,
+             backgroundSize: '80px 80px'
+           }}
+      />
+
+      {/* Radial gradient overlay */}
       <div 
-        className="fixed inset-0 pointer-events-none bg-black"
+        className="fixed inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(circle at 50% 50%, #120202 0%, #050505 100%)'
+          background: 'radial-gradient(circle at 50% 20%, rgba(139, 0, 0, 0.15) 0%, transparent 50%)'
         }}
       />
 
-      {/* Layer 2: Noise Overlay - Static */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay"
+      {/* Subtle noise texture */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.02] mix-blend-overlay"
            style={{ 
              backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")',
              backgroundSize: '200px 200px'
            }}
       />
 
-      {/* Layer 3: Static Purple Fog */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-purple-600/6 rounded-full blur-[120px]" />
-      </div>
-
-      {/* Static red glow - no animation */}
-      <div className="fixed top-[-20%] left-1/2 -translate-x-1/2 w-[100vw] h-[60vh] bg-red-600/10 rounded-full blur-[150px] pointer-events-none" />
+      {/* Subtle top glow */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80%] h-[300px] bg-red-600/5 rounded-full blur-[100px] pointer-events-none" />
 
 
 
@@ -49,46 +55,43 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
           <span className="font-mono uppercase tracking-wider">Back to Events</span>
         </button>
 
-        {/* Hero Section */}
+        {/* Hero Section - Aura-inspired Clean Design */}
         <div className="text-center max-w-5xl mx-auto mb-16 sm:mb-24">
-            {/* Protocol Badge */}
-            <div className="mb-6 sm:mb-8">
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-red-950/20 border border-red-500/20 backdrop-blur-md">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.4)]" />
-                    <span className="text-xs sm:text-sm font-medium text-red-300 uppercase tracking-[0.15em]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+            {/* Protocol Badge - Refined */}
+            <div className="mb-8">
+                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-red-950/10 border border-red-500/10 backdrop-blur-sm">
+                    <span className="w-1 h-1 rounded-full bg-red-400" />
+                    <span className="text-xs font-medium text-red-300/90 uppercase tracking-[0.2em]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
                       Hawkins Lab Protocol
                     </span>
                 </div>
             </div>
 
-            {/* Main Title */}
-            <div className="mb-6 sm:mb-8 relative">
+            {/* Main Title - Clean & Bold */}
+            <div className="mb-8 relative">
                 <h1 
-                    className="text-6xl sm:text-7xl md:text-9xl font-bold relative inline-block"
+                    className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold relative inline-block leading-none"
                     style={{ 
-                      letterSpacing: '-0.02em',
+                      letterSpacing: '-0.04em',
                       fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-                      fontWeight: 700
+                      fontWeight: 800
                     }}
                 >
-                    <span className="relative z-10 bg-gradient-to-b from-white via-red-50 to-red-200 bg-clip-text text-transparent"
+                    <span className="bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent"
                           style={{ 
-                            textShadow: '0 0 60px rgba(239, 68, 68, 0.15), 0 0 120px rgba(239, 68, 68, 0.1)',
-                            filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5))'
+                            filter: 'drop-shadow(0 0 40px rgba(255, 30, 30, 0.1))'
                           }}>
                         HAWKINS LAB
                     </span>
                 </h1>
             </div>
 
-            {/* Tagline */}
+            {/* Tagline - Minimalist */}
             <p 
-                className="text-lg sm:text-xl md:text-2xl font-medium mb-8 sm:mb-12"
+                className="text-base sm:text-lg md:text-xl font-normal mb-12 text-gray-400"
                 style={{ 
-                  color: '#fca5a5',
-                  letterSpacing: '0.05em',
-                  fontFamily: 'Inter, system-ui, sans-serif',
-                  textShadow: '0 2px 20px rgba(252, 165, 165, 0.2)'
+                  letterSpacing: '0.02em',
+                  fontFamily: 'Inter, system-ui, sans-serif'
                 }}
             >
                 Enter the Upside Down and Stop Vecna
