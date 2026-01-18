@@ -5,103 +5,96 @@ import { ArrowLeft, Gamepad2, Keyboard, Brain, Search, Lock, AlertTriangle, User
 const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const navigate = useNavigate();
 
-  // Upside Down Spores - Static positions to avoid layout thrashing
-  const spores = Array.from({ length: 20 }).map((_, i) => ({
-    left: `${Math.random() * 100}%`,
-    top: `${Math.random() * 100}%`,
-    animationDelay: `${Math.random() * 5}s`,
-    opacity: Math.random() * 0.5 + 0.2
-  }));
+
+
+
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white relative overflow-hidden font-sans selection:bg-red-900/50">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden font-sans selection:bg-red-500/30">
       
-      {/* 1. The Upside Down Atmosphere */}
-      
-      {/* Dynamic Fog (CSS Animation) */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-         <div className="absolute inset-0 bg-gradient-to-t from-red-900/10 via-transparent to-transparent opacity-60" />
-         <div className="absolute w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
-      </div>
+      {/* Aura-inspired Grid Background */}
+      <div className="fixed inset-0 pointer-events-none" 
+           style={{
+             backgroundImage: `
+               linear-gradient(to right, rgba(255, 30, 30, 0.03) 1px, transparent 1px),
+               linear-gradient(to bottom, rgba(255, 30, 30, 0.03) 1px, transparent 1px)
+             `,
+             backgroundSize: '80px 80px'
+           }}
+      />
 
-      {/* Floating Spores */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {spores.map((spore, i) => (
-          <div 
-            key={i}
-            className="absolute w-1 h-1 bg-gray-400 rounded-full animate-float-slow"
-            style={{
-              left: spore.left,
-              top: spore.top,
-              opacity: spore.opacity,
-              animation: `float ${10 + Math.random() * 10}s infinite linear`,
-              animationDelay: spore.animationDelay
-            }}
-          />
-        ))}
-      </div>
+      {/* Radial gradient overlay */}
+      <div 
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at 50% 20%, rgba(139, 0, 0, 0.15) 0%, transparent 50%)'
+        }}
+      />
 
-      <style>{`
-        @keyframes float {
-          0% { transform: translateY(0) translateX(0); opacity: 0; }
-          50% { opacity: 0.8; }
-          100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
-        }
-        .animate-float-slow {
-          will-change: transform, opacity;
-        }
-      `}</style>
+      {/* Subtle noise texture */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.02] mix-blend-overlay"
+           style={{ 
+             backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")',
+             backgroundSize: '200px 200px'
+           }}
+      />
 
-      {/* Hero Section */}
+      {/* Subtle top glow */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80%] h-[300px] bg-red-600/5 rounded-full blur-[100px] pointer-events-none" />
+
+
+
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         
-        {/* Back Button - Retro Terminal Style */}
+        {/* Back Button */}
         <button
           onClick={() => navigate('/events')}
-          className="group flex items-center gap-2 text-sm text-gray-400 hover:text-red-500 transition-colors mb-8 sm:mb-12 font-mono tracking-widest uppercase"
+          className="group flex items-center gap-2 text-sm text-gray-500 hover:text-red-400 transition-colors mb-8 sm:mb-12"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>// Back to Archives</span>
+          <span className="font-mono uppercase tracking-wider">Back to Events</span>
         </button>
 
+        {/* Hero Section - Aura-inspired Clean Design */}
         <div className="text-center max-w-5xl mx-auto mb-16 sm:mb-24">
-            
-            {/* Classified Badge */}
-            <div className="mb-6 flex justify-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 border border-red-500/30 bg-red-950/20 text-red-500 text-xs font-mono tracking-widest uppercase">
-                    <Lock className="w-3 h-3" />
-                    <span>Top Secret // Clearance Lvl 5</span>
+            {/* Protocol Badge - Refined */}
+            <div className="mb-8">
+                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-red-950/10 border border-red-500/10 backdrop-blur-sm">
+                    <span className="w-1 h-1 rounded-full bg-red-400" />
+                    <span className="text-xs font-medium text-red-300/90 uppercase tracking-[0.2em]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+                      Hawkins Lab Protocol
+                    </span>
                 </div>
             </div>
 
-            {/* Main Title - Stranger Things Red Neon */}
+            {/* Main Title - Clean & Bold */}
             <div className="mb-8 relative">
                 <h1 
-                    className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-red-500 to-red-900"
+                    className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold relative inline-block leading-none"
                     style={{ 
-                      fontFamily: 'Inter, system-ui', // Keeping Inter for cleaner look, but styled heavily
-                      letterSpacing: '-0.05em',
-                      filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.5))'
+                      letterSpacing: '-0.04em',
+                      fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+                      fontWeight: 800
                     }}
                 >
-                    HAWKINS LAB
-                </h1>
-                {/* Glitch Overlay Effect */}
-                <h1 className="absolute top-0 left-0 w-full h-full text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-red-600 opacity-20 blur-sm animate-pulse"
-                    style={{ 
-                      fontFamily: 'Inter, system-ui',
-                      letterSpacing: '-0.05em',
-                    }}>
-                    HAWKINS LAB
+                    <span className="bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent"
+                          style={{ 
+                            filter: 'drop-shadow(0 0 40px rgba(255, 30, 30, 0.1))'
+                          }}>
+                        HAWKINS LAB
+                    </span>
                 </h1>
             </div>
 
-            {/* Tagline */}
+            {/* Tagline - Minimalist */}
             <p 
-                className="text-lg sm:text-xl md:text-2xl font-light mb-12 text-gray-300 max-w-2xl mx-auto"
-                style={{ fontFamily: 'monospace' }}
+                className="text-base sm:text-lg md:text-xl font-normal mb-12 text-gray-400"
+                style={{ 
+                  letterSpacing: '0.02em',
+                  fontFamily: 'Inter, system-ui, sans-serif'
+                }}
             >
-                <span className="text-red-500">⚠ WARNING:</span> INTERDIMENSIONAL BREACH DETECTED
+                Enter the Upside Down and Stop Vecna
             </p>
 
             {/* Description */}
@@ -110,181 +103,313 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                     A <span className="text-red-400 font-bold">Stranger Things-themed</span> cyber mystery event where teams solve clues, analyze patterns, and complete computer-based tasks to progress through an immersive storyline.
                 </p>
                 
-                {/* Classified Event Dossier */}
-                <div className="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto px-4 mb-16">
+                {/* Feature Chips */}
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto px-4">
                     {[
-                        { icon: Shield, text: "DATA INTEGRITY", sub: "Verified" },
-                        { icon: Zap, text: "SIGNAL STRENGTH", sub: "Unstable" },
-                        { icon: Target, text: "SOCIAL ENGINEERING", sub: "High Risk" },
-                        { icon: Lock, text: "ACCESS CONTROL", sub: "Restricted" }
+                        { icon: Shield, text: "Data Accuracy" },
+                        { icon: Zap, text: "Signal Analysis" },
+                        { icon: Target, text: "Social Engineering" },
+                        { icon: Lock, text: "Authentication" }
                     ].map((item, i) => (
                         <div
                             key={i}
-                            className="group relative flex items-center gap-4 p-4 border border-red-900/30 bg-black/40 hover:bg-red-950/10 transition-all duration-300 hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(220,38,38,0.15)]"
+                            className="flex items-center gap-3 p-3 border border-[#ff1e1e] rounded-lg backdrop-blur-xl hover:bg-red-500/10 transition-colors cursor-pointer"
+                            style={{ backgroundColor: 'rgba(255, 0, 0, 0.05)' }}
                         >
-                            {/* Corner accents */}
-                            <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-red-500/30 group-hover:border-red-500 transition-colors" />
-                            <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-red-500/30 group-hover:border-red-500 transition-colors" />
-                            
-                            <div className="p-3 bg-red-950/30 rounded-sm border border-red-900/20 group-hover:border-red-500/40 transition-colors">
-                                <item.icon className="w-5 h-5 text-red-500/70 group-hover:text-red-400" />
-                            </div>
-                            
-                            <div>
-                                <div className="text-xs text-red-500/50 font-mono uppercase tracking-widest mb-0.5">{item.sub}</div>
-                                <div className="text-sm font-bold text-gray-300 group-hover:text-white tracking-wider font-mono">{item.text}</div>
-                            </div>
+                            <item.icon className="w-4 h-4 text-red-500" />
+                            <span className="text-sm font-mono text-gray-300">{item.text}</span>
                         </div>
                     ))}
                 </div>
                 
-                {/* Participation Badge */}
-                <div className="flex justify-center mb-16">
-                    <div className="inline-flex items-center gap-3 px-6 py-3 border border-yellow-500/20 bg-yellow-950/10 rounded-sm backdrop-blur-sm">
-                        <Award className="w-5 h-5 text-yellow-500" />
-                        <span className="text-yellow-200/90 text-sm font-mono tracking-wide uppercase">
-                            Clearance: Open to All Students
-                        </span>
-                    </div>
+                <div className="inline-block px-6 py-3 bg-gradient-to-r from-red-900/50 via-red-800/30 to-transparent border-l-4 border-red-500 rounded-r-lg backdrop-blur-sm mx-4">
+                    <p className="text-white font-bold text-sm sm:text-base flex items-center gap-2">
+                        <Award className="w-5 h-5 text-yellow-400" />
+                        No advanced technical knowledge required — all students can participate!
+                    </p>
                 </div>
             </div>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
             
             {/* Left Column - Details */}
             <div className="lg:col-span-8 space-y-8 sm:space-y-12">
                 
-                {/* Mission Structure - Redacted File Style */}
-                <div className="relative border border-gray-800 bg-[#0a0a0a] p-1">
-                    {/* Top Secret Stamp */}
-                    <div className="absolute -top-3 -right-3 rotate-12 border-2 border-red-600 px-3 py-1 text-red-600 font-black text-xs tracking-widest uppercase opacity-70 z-10 pointer-events-none">
-                        Confidential
-                    </div>
-
-                    <div className="border border-gray-800 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-100 p-6 sm:p-8 relative overflow-hidden">
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-4 mb-8 pb-4 border-b border-gray-800">
-                                <div className="p-2 bg-gray-900 border border-gray-800">
-                                    <Users className="w-6 h-6 text-gray-400" />
-                                </div>
-                                <div>
-                                    <h3 className="text-xl font-bold text-white uppercase tracking-widest font-mono">Mission Protocol</h3>
-                                    <p className="text-xs text-red-500 font-mono mt-1">Authorized Personnel Only</p>
-                                </div>
+                {/* Mission Structure */}
+                <div className="bg-gradient-to-br from-red-950/30 via-black to-black border border-red-900/30 p-6 sm:p-8 rounded-2xl relative overflow-hidden group backdrop-blur-sm">
+                    {/* Static Left Border */}
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500/60" />
+                    
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-red-900/30">
+                            <div className="p-2 bg-red-500/10 rounded-lg">
+                                <Users className="w-6 h-6 text-red-500" />
                             </div>
-                            
-                            <ul className="space-y-0 font-mono text-sm border-l border-gray-800 ml-3">
-                                {[
-                                    "TEAM CONFIGURATION: 2–4 AGENTS",
-                                    "SEQUENCE: 5 ENCRYPTED LEVELS",
-                                    "PROGRESSION: LINEAR UNLOCK",
-                                    "THREAT ESCALATION: ADAPTIVE",
-                                    "OBJECTIVE: SPEEDY NEUTRALIZATION"
-                                ].map((text, i) => (
-                                    <li key={i} className="relative pl-8 py-4 border-b border-gray-800/50 last:border-0 group hover:bg-gray-900/30 transition-colors">
-                                        <span className="absolute left-[-5px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-gray-900 border border-gray-600 rounded-full group-hover:bg-red-500 group-hover:border-red-500 transition-colors" />
-                                        <span className="text-gray-400 group-hover:text-white transition-colors tracking-wide">{text}</span>
-                                    </li>
-                                ))}
-                            </ul>
+                            <h3 className="text-2xl font-black text-white uppercase tracking-wider">Mission Structure</h3>
                         </div>
+                        
+                        <ul className="space-y-4 font-mono text-sm">
+                            {[
+                                "TEAM-BASED EVENT (2–4 MEMBERS PER TEAM)",
+                                "5 LEVELS - 5 PCS (TO BE COMPLETED IN ORDER)",
+                                "EACH LEVEL UNLOCKS THE NEXT",
+                                "DIFFICULTY INCREASES GRADUALLY",
+                                "FASTEST TEAM TO COMPLETE ALL LEVELS WINS"
+                            ].map((text, i) => (
+                                <li
+                                    key={i}
+                                    className="flex items-start gap-3 p-3 rounded-lg hover:bg-red-950/20 transition-colors"
+                                >
+                                    <span className="text-red-500 mt-0.5 text-lg">⚠</span>
+                                    <span className="text-gray-300">{text}</span>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
 
-                {/* Clearance Levels */}
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3 mb-6">
-                         <span className="w-1 h-6 bg-red-500" />
-                         <h3 className="text-xl font-bold text-white uppercase tracking-widest font-mono">Clearance Levels</h3>
+                {/* Clearance Levels with Lock States */}
+                <div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="bg-gradient-to-br from-black via-red-950/20 to-black border border-red-900/30 p-6 sm:p-8 rounded-2xl backdrop-blur-sm"
+                >
+                    <div className="flex items-center gap-3 mb-8 pb-4 border-b border-red-900/30">
+                        <div className="p-2 bg-red-500/10 rounded-lg">
+                            <Zap className="w-6 h-6 text-red-500" />
+                        </div>
+                        <h3 className="text-2xl font-black text-white uppercase tracking-wider">Clearance Levels</h3>
                     </div>
                     
-                    {[
-                        { title: "GAMING", icon: Gamepad2, desc: "Reflex Calibration", status: 'active', code: "LVL-01" },
-                        { title: "SPEED TYPING", icon: Keyboard, desc: "Data Input Velocity", status: 'locked', code: "LVL-02" },
-                        { title: "DECODING", icon: Brain, desc: "Pattern Recognition", status: 'locked', code: "LVL-03" },
-                        { title: "OSINT", icon: Search, desc: "Digital Reconnaissance", status: 'locked', code: "LVL-04" },
-                        { title: "BRUTE FORCE", icon: Lock, desc: "System Override", status: 'locked', code: "LVL-05" }
-                    ].map((lvl, i) => (
-                        <div
-                            key={i}
-                            className={`group relative border border-gray-800 bg-gray-950/50 p-4 transition-all duration-300 hover:border-red-500/30 hover:bg-red-950/5 ${lvl.status === 'locked' ? 'opacity-60 grayscale' : ''}`}
-                        >
-                            <div className="flex items-center gap-6">
-                                {/* Level Code */}
-                                <div className="hidden sm:block text-xs font-mono text-gray-600 group-hover:text-red-500/50 transition-colors rotate-180" style={{ writingMode: 'vertical-rl' }}>
-                                    {lvl.code}
-                                </div>
-
-                                <div className="p-3 bg-gray-900 border border-gray-800 group-hover:border-red-500/30 transition-colors relative">
-                                    <lvl.icon className="w-6 h-6 text-gray-400 group-hover:text-red-500 transition-colors" />
+                    <div className="space-y-4">
+                        {[
+                            { title: "GAMING", icon: Gamepad2, desc: "Test your reflexes and coordination", status: 'active' },
+                            { title: "SPEED TYPING", icon: Keyboard, desc: "Data entry under pressure", status: 'locked' },
+                            { title: "ANALYSIS & DECODING", icon: Brain, desc: "Pattern recognition challenge", status: 'locked' },
+                            { title: "DIGITAL STALKING (TRACING)", icon: Search, desc: "OSINT investigation", status: 'locked' },
+                            { title: "BRUTE FORCE APPROACH", icon: Lock, desc: "Authentication bypass", status: 'locked' }
+                        ].map((lvl, i) => (
+                            <div
+                                key={i}
+                                initial={{ opacity: 0, x: -30 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                whileHover={{
+                                  boxShadow: '0 0 30px rgba(255, 30, 30, 0.3)'
+                                }}
+                                className="group relative"
+                                style={{ opacity: lvl.status === 'locked' ? 0.6 : 1 }}
+                            >
+                                <div className={`flex items-center gap-4 p-4 bg-gradient-to-r from-red-950/20 to-transparent border rounded-xl transition-all duration-300 ${
+                                  lvl.status === 'active' 
+                                    ? 'border-red-500/40 bg-red-950/30' 
+                                    : 'border-red-900/20'
+                                }`}>
+                                    {/* Level number */}
+                                    <div className="text-5xl font-black text-red-900/40 group-hover:text-red-500/60 transition-colors tabular-nums">
+                                        0{i + 1}
+                                    </div>
+                                    
+                                    {/* Icon */}
+                                    <div className="p-3 bg-red-500/10 rounded-lg group-hover:bg-red-500/20 transition-colors relative">
+                                        <lvl.icon className="w-6 h-6 text-red-400 group-hover:text-red-300 transition-colors" />
+                                        {lvl.status === 'locked' && (
+                                          <Lock className="w-3 h-3 text-red-500 absolute -top-1 -right-1" />
+                                        )}
+                                    </div>
+                                    
+                                    {/* Text */}
+                                    <div className="flex-1">
+                                        <h4 className="text-lg font-black text-white mb-1 group-hover:text-red-400 transition-colors tracking-wide">
+                                            {lvl.title}
+                                        </h4>
+                                        <p className="text-sm text-gray-500 group-hover:text-gray-400 transition-colors">
+                                            {lvl.desc}
+                                        </p>
+                                    </div>
+                                    
+                                    {/* Status indicator */}
+                                    {lvl.status === 'active' && (
+                                      <div
+                                        animate={{ opacity: [0.4, 1, 0.4] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="w-2 h-2 bg-red-500 rounded-full"
+                                      />
+                                    )}
                                 </div>
                                 
-                                <div className="flex-1">
-                                    <h4 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors font-mono tracking-wide">
-                                        {lvl.title}
-                                    </h4>
-                                    <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">
-                                        {lvl.desc}
-                                    </p>
-                                </div>
-                                
-                                
-                                {lvl.status === 'locked' ? (
-                                    <Lock className="w-4 h-4 text-gray-600" />
-                                ) : (
-                                    <div className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" />
+                                {/* Noise overlay for locked levels */}
+                                {lvl.status === 'locked' && (
+                                  <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay rounded-xl"
+                                       style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'2\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")' }}
+                                  />
                                 )}
                             </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Containment Protocols (Enhanced) */}
+                <div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    className="bg-gradient-to-r from-red-950/40 via-red-900/20 to-transparent border-l-4 border-red-600 p-6 sm:p-8 rounded-r-2xl backdrop-blur-sm relative"
+                >
+                    {/* Flicker effect on border (once on load) */}
+                    <div
+                      initial={{ opacity: 1 }}
+                      animate={{ opacity: [1, 0.3, 1, 0.5, 1] }}
+                      transition={{ duration: 0.5, delay: 0.5 }}
+                      className="absolute left-0 top-0 bottom-0 w-1 bg-red-600"
+                    />
+                    
+                    <div className="flex items-center gap-3 mb-6">
+                        <div
+                          animate={{ opacity: [1, 0.5, 1] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        >
+                          <AlertTriangle className="w-7 h-7 text-red-500" />
                         </div>
-                    ))}
+                        <h3 className="text-2xl font-black text-white uppercase tracking-[0.15em]">Containment Protocols</h3>
+                    </div>
+                    
+                    <ul className="grid gap-4 font-mono text-sm">
+                        {[
+                            "TEAMS MUST FOLLOW THE ASSIGNED PC ORDER",
+                            "SKIPPING LEVELS OR SHARING CLUES IS STRICTLY PROHIBITED",
+                            "ONLY THE PROVIDED SYSTEMS MAY BE USED",
+                            "NO TEAM CHANGES ONCE THE EVENT STARTS"
+                        ].map((rule, i) => (
+                            <li
+                                key={i}
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500/10 transition-colors border border-red-900/20 hover:border-red-500/30"
+                            >
+                                <span className="w-2 h-2 bg-red-500 transform rotate-45 shrink-0" />
+                                <span className="text-gray-300">{rule}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+            </div>
+
+            {/* Right Column - Cinematic CTA */}
+            <div className="lg:col-span-4">
+                <div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="sticky top-8"
+                >
+                    <div className="bg-gradient-to-br from-red-950/40 via-black to-black border border-red-900/40 p-6 sm:p-8 rounded-2xl shadow-2xl shadow-red-900/30 backdrop-blur-sm">
+                        {/* Status Badge with Breathing Glow */}
+                        <div className="mb-8 text-center">
+                            <p className="text-gray-500 uppercase tracking-[0.2em] text-xs mb-3 font-mono">Registration Status</p>
+                            <div 
+                                animate={{ 
+                                    boxShadow: [
+                                      '0 0 20px rgba(34, 197, 94, 0.3)', 
+                                      '0 0 30px rgba(34, 197, 94, 0.5)', 
+                                      '0 0 20px rgba(34, 197, 94, 0.3)'
+                                    ]
+                                }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="inline-block px-5 py-2 bg-green-500/20 text-green-400 border border-green-500/40 rounded-full text-sm font-black uppercase tracking-wider"
+                            >
+                                ● OPEN FOR ALL STUDENTS
+                            </div>
+                        </div>
+
+                        {/* Event Info */}
+                        <ul className="space-y-4 mb-8 pb-8 border-b border-red-900/30">
+                            {[
+                                { label: "Theme", value: "Stranger Things" },
+                                { label: "Difficulty", value: "Beginner Friendly" },
+                                { label: "Prerequisites", value: "None" }
+                            ].map((item, i) => (
+                                <li key={i} className="flex justify-between items-center text-sm p-3 rounded-lg bg-red-950/20 border border-red-900/20">
+                                    <span className="text-gray-500 font-mono uppercase tracking-wider">{item.label}</span>
+                                    <span className="text-white font-bold">{item.value}</span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        {/* Cinematic CTA Button */}
+                        <button 
+                            onClick={onRegister}
+                            disabled={isRegistered}
+                            whileHover={!isRegistered ? { 
+                              scale: 1.02,
+                              boxShadow: '0 0 50px rgba(220, 38, 38, 0.8)'
+                            } : {}}
+                            whileTap={!isRegistered ? { 
+                              scale: 0.98 
+                            } : {}}
+                            animate={{
+                              boxShadow: isRegistered 
+                                ? 'none'
+                                : [
+                                    '0 0 30px rgba(220, 38, 38, 0.5)',
+                                    '0 0 40px rgba(220, 38, 38, 0.7)',
+                                    '0 0 30px rgba(220, 38, 38, 0.5)'
+                                  ]
+                            }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                            className="w-full py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-500 text-white font-black text-lg rounded-xl transition-all disabled:shadow-none uppercase tracking-wider relative overflow-hidden"
+                        >
+                            {/* Screen pulse on click */}
+                            <span className="relative z-10">
+                              {isRegistered ? '✓ Already Registered' : 'Initiate Protocol'}
+                            </span>
+                        </button>
+                        
+                        <p className="text-center text-xs text-gray-600 mt-4 font-mono uppercase tracking-widest">
+                            Save Hawkins. Save the World.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            {/* Right Column - CTA & Info */}
-            <div className="lg:col-span-4 space-y-8">
-                {/* Registration Card */}
-                <div className="sticky top-24">
-                     <div className="border border-gray-800 bg-gray-950/80 backdrop-blur-md p-6 relative overflow-hidden group">
-                        {/* Scanline */}
-                        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
-                        <div className="absolute top-0 left-0 w-full h-1 bg-red-500/50 shadow-[0_0_10px_rgba(220,38,38,0.5)] animate-scan-slow pointer-events-none" />
-                        
-                        <div className="relative z-10">
-                            <h3 className="text-sm font-mono text-gray-400 uppercase tracking-widest mb-2">Registration Status</h3>
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                                <span className="text-xl font-bold text-white tracking-wide">OPEN</span>
-                            </div>
-                            
-                            <button className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold uppercase tracking-widest transition-all duration-300 hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] flex items-center justify-center gap-2 group/btn">
-                                <span>Initiate Protocol</span>
-                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                            </button>
-                            
-                            <p className="text-xs text-center text-gray-500 font-mono mt-4">
-                                SECURE CONNECTION REQUIRED
-                            </p>
-                        </div>
-                     </div>
-                </div>
-            </div>
         </div>
       </div>
 
       {/* Custom CSS */}
-      <style>{`
-        @keyframes scan-slow {
-          0% { transform: translateY(0); }
+      <style jsx>{`
+        @keyframes scan {
+          0% { transform: translateY(-100%); }
           100% { transform: translateY(100vh); }
         }
-        .animate-scan-slow {
-          animation: scan-slow 8s linear infinite;
+        .animate-scan {
+          animation: scan 8s linear infinite;
+        }
+        @keyframes noise {
+          0%, 100% { transform: translate(0, 0); }
+          10% { transform: translate(-5%, -5%); }
+          20% { transform: translate(-10%, 5%); }
+          30% { transform: translate(5%, -10%); }
+          40% { transform: translate(-5%, 15%); }
+          50% { transform: translate(-10%, 5%); }
+          60% { transform: translate(15%, 0); }
+          70% { transform: translate(0, 10%); }
+          80% { transform: translate(-15%, 0); }
+          90% { transform: translate(10%, 5%); }
+        }
+        .animate-noise {
+          animation: noise 8s steps(10) infinite;
         }
       `}</style>
-
-
     </div>
   );
 };
