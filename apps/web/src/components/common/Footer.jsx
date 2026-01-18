@@ -10,16 +10,16 @@ const FooterSection = ({ title, children }) => {
             {/* Mobile Header */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between w-full py-2 md:hidden group"
+                className="flex items-center justify-between w-full py-3 md:hidden group"
             >
-                <h3 className="font-display font-bold text-white group-hover:text-primary transition-colors">{title}</h3>
+                <h3 className="text-sm font-medium text-neutral-400 group-hover:text-white transition-colors uppercase tracking-wider">{title}</h3>
                 <ChevronDown
-                    className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : ''}`}
+                    className={`w-4 h-4 text-neutral-500 transition-transform duration-300 ${isOpen ? 'rotate-180 text-white' : ''}`}
                 />
             </button>
 
             {/* Desktop Header */}
-            <h3 className="font-display font-bold text-white mb-6 hidden md:block">{title}</h3>
+            <h3 className="text-sm font-medium text-neutral-500 mb-4 hidden md:block uppercase tracking-wider">{title}</h3>
 
             {/* Content */}
             <div className="hidden md:block">
@@ -42,56 +42,69 @@ const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="relative bg-[#050505] border-t border-white/5 pt-20 pb-10 overflow-hidden">
-            {/* Ambient Background Glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_50px_rgba(0,224,255,0.3)]"></div>
-            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+        <footer className="relative bg-[#050505] border-t border-white/10 pt-24 pb-12 overflow-hidden">
+            
+            {/* Subtle Grid Background */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.02]" 
+                 style={{
+                   backgroundImage: `
+                     linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                     linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+                   `,
+                   backgroundSize: '80px 80px'
+                 }}
+            />
 
-            <div className="container mx-auto px-6 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-16">
+            <div className="container mx-auto px-6 md:px-12 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-12">
                     
-                    {/* Brand Section */}
-                    <div className="col-span-1 md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left">
-                        <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
-                            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_rgba(0,224,255,0.2)] transition-all duration-500">
-                                <Shield className="w-5 h-5 text-white group-hover:text-primary transition-colors" />
+                    {/* Brand Section - Aura Style */}
+                    <div className="col-span-1 md:col-span-4">
+                        <Link to="/" className="inline-flex items-center gap-2.5 mb-6 group">
+                            <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 group-hover:border-white/20 transition-all duration-300">
+                                <Shield className="w-4 h-4 text-white" />
                             </div>
-                            <span className="text-2xl font-display font-bold tracking-widest text-white group-hover:tracking-[0.2em] transition-all duration-500">ASTRA</span>
+                            <span className="text-xl font-bold tracking-tight text-white">ASTRA</span>
                         </Link>
                         
-                        <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-8 font-light">
+                        <p className="text-sm text-neutral-500 leading-relaxed max-w-xs mb-8">
                             Securing the digital frontier through innovation, education, and elite research. Join the next generation of defenders.
                         </p>
 
-                        <div className="flex gap-4">
+                        {/* Social Links - Aura Style */}
+                        <div className="flex gap-3">
                             {[
-                                { Icon: Github, href: "https://github.com/astraietm" },
-                                { Icon: Instagram, href: "https://instagram.com/astra.ietm" }
-                            ].map(({ Icon, href }, i) => (
+                                { Icon: Github, href: "https://github.com/astraietm", label: "GitHub" },
+                                { Icon: Instagram, href: "https://instagram.com/astra.ietm", label: "Instagram" }
+                            ].map(({ Icon, href, label }, i) => (
                                 <a 
                                     key={i} 
                                     href={href} 
                                     target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    className="w-10 h-10 rounded-full bg-white/5 border border-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white hover:border-white/20 hover:scale-110 transition-all duration-300"
+                                    rel="noopener noreferrer"
+                                    aria-label={label}
+                                    className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-300"
                                 >
-                                    <Icon className="w-5 h-5" />
+                                    <Icon className="w-4 h-4" />
                                 </a>
                             ))}
                         </div>
                     </div>
 
-                    {/* Links Column 1 */}
-                    <div className="col-span-1 md:col-span-3 md:col-start-8">
+                    {/* Spacer */}
+                    <div className="hidden md:block md:col-span-2"></div>
+
+                    {/* Links Column 1 - Platform */}
+                    <div className="col-span-1 md:col-span-2">
                         <FooterSection title="Platform">
-                            <ul className="space-y-2">
+                            <ul className="space-y-3">
                                 <li>
-                                    <Link to="/events" className="text-sm text-gray-500 hover:text-primary hover:translate-x-1 transition-all duration-300 inline-block py-1">
+                                    <Link to="/events" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
                                         Events
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/gallery" className="text-sm text-gray-500 hover:text-primary hover:translate-x-1 transition-all duration-300 inline-block py-1">
+                                    <Link to="/gallery" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
                                         Gallery
                                     </Link>
                                 </li>
@@ -99,17 +112,17 @@ const Footer = () => {
                         </FooterSection>
                     </div>
 
-                    {/* Links Column 2 */}
+                    {/* Links Column 2 - Organization */}
                     <div className="col-span-1 md:col-span-2">
                         <FooterSection title="Organization">
-                            <ul className="space-y-2">
+                            <ul className="space-y-3">
                                 <li>
-                                    <Link to="/about" className="text-sm text-gray-500 hover:text-primary hover:translate-x-1 transition-all duration-300 inline-block py-1">
+                                    <Link to="/about" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
                                         About Us
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/contact" className="text-sm text-gray-500 hover:text-primary hover:translate-x-1 transition-all duration-300 inline-block py-1">
+                                    <Link to="/contact" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
                                         Contact Us
                                     </Link>
                                 </li>
@@ -120,14 +133,14 @@ const Footer = () => {
                     {/* Links Column 3 - Legal */}
                     <div className="col-span-1 md:col-span-2">
                         <FooterSection title="Legal">
-                            <ul className="space-y-2">
+                            <ul className="space-y-3">
                                 <li>
-                                    <Link to="/terms" className="text-sm text-gray-500 hover:text-primary hover:translate-x-1 transition-all duration-300 inline-block py-1">
+                                    <Link to="/terms" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
                                         Terms & Conditions
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/refund-policy" className="text-sm text-gray-500 hover:text-primary hover:translate-x-1 transition-all duration-300 inline-block py-1">
+                                    <Link to="/refund-policy" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
                                         Refund Policy
                                     </Link>
                                 </li>
@@ -136,18 +149,16 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
-                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-gray-600 lg:pl-72">
-                    <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+                {/* Bottom Bar - Aura Style */}
+                <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex flex-wrap justify-center md:justify-start gap-6 text-xs text-neutral-600">
                         <span>© {currentYear} Astra Security</span>
-                        <Link to="/terms" className="hover:text-primary/70 transition-colors">Terms</Link>
-                        <Link to="/refund-policy" className="hover:text-primary/70 transition-colors">Refund Policy</Link>
+                        <Link to="/terms" className="hover:text-neutral-400 transition-colors">Terms</Link>
+                        <Link to="/refund-policy" className="hover:text-neutral-400 transition-colors">Refund Policy</Link>
                     </div>
                     
-
-
-                    <div className="flex items-center gap-1">
-                         Designed by <span className="text-gray-400 font-bold ml-1">Astra</span>
+                    <div className="flex items-center gap-1.5 text-xs text-neutral-600">
+                        Designed by <span className="text-neutral-400 font-medium">Astra</span>
                     </div>
                 </div>
             </div>
