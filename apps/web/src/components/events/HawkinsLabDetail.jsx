@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Gamepad2, Keyboard, Brain, Search, Lock, AlertTriangle, Users, Zap, Target, Award, Shield, CheckCircle } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const navigate = useNavigate();
@@ -9,42 +9,17 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const [glitch, setGlitch] = useState(false);
   const [systemStatus, setSystemStatus] = useState('SCANNING VULNERABILITIES');
   const [dots, setDots] = useState('');
-  
-  // Scroll-based parallax
-  const { scrollY } = useScroll();
-  const backgroundY = useTransform(scrollY, [0, 1000], [0, -200]);
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
-  const heroScale = useTransform(scrollY, [0, 300], [1, 0.95]);
 
-  // Animation variants for performance
-  const fadeInUp = useMemo(() => ({
-    hidden: { opacity: 0, y: 60 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
-    }
-  }), []);
-
-  const staggerContainer = useMemo(() => ({
+  // Simple fade animation - optimized for mobile
+  const fadeIn = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  }), []);
+    visible: { opacity: 1, transition: { duration: 0.4 } }
+  };
 
-  const scaleIn = useMemo(() => ({
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
-    }
-  }), []);
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+  };
 
   // Flickering lights effect (scarcity = fear)
   useEffect(() => {
@@ -95,40 +70,26 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden font-sans selection:bg-red-500/30">
       
-      {/* Layer 1: Base Radial Gradient (Breathing) with Parallax */}
-      <motion.div 
-        className="fixed inset-0 pointer-events-none"
-        style={{ y: backgroundY }}
-        animate={{
-          background: [
-            'radial-gradient(circle at 50% 50%, #120202 0%, #050505 100%)',
-            'radial-gradient(circle at 45% 55%, #120202 0%, #050505 100%)',
-            'radial-gradient(circle at 55% 45%, #120202 0%, #050505 100%)',
-            'radial-gradient(circle at 50% 50%, #120202 0%, #050505 100%)'
-          ]
+      {/* Layer 1: Static Background */}
+      <div 
+        className="fixed inset-0 pointer-events-none bg-black"
+        style={{
+          background: 'radial-gradient(circle at 50% 50%, #120202 0%, #050505 100%)'
         }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
       />
 
-      {/* Layer 2: Noise Overlay */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.04] mix-blend-overlay animate-noise"
+      {/* Layer 2: Noise Overlay - Static */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay"
            style={{ 
              backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")',
              backgroundSize: '200px 200px'
            }}
       />
 
-      {/* Layer 3: Purple Fog (Secret Sauce - Cosmic Unease) with Parallax */}
-      <motion.div
-        className="fixed inset-0 pointer-events-none"
-        style={{ y: useTransform(scrollY, [0, 1000], [0, -150]) }}
-        animate={{
-          y: [-100, 100, -100]
-        }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-      >
-        <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-purple-600/8 rounded-full blur-[120px]" />
-      </motion.div>
+      {/* Layer 3: Static Purple Fog */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-purple-600/6 rounded-full blur-[120px]" />
+      </div>
 
       {/* CRT Scanlines Effect */}
       <div className="fixed inset-0 pointer-events-none z-50 opacity-10">
@@ -196,14 +157,8 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
           <span className="font-mono uppercase tracking-wider">Back to Events</span>
         </motion.button>
 
-        {/* Hero Section with Parallax */}
-        <motion.div 
-          className="text-center max-w-5xl mx-auto mb-16 sm:mb-24"
-          style={{ 
-            opacity: heroOpacity,
-            scale: heroScale
-          }}
-        >
+        {/* Hero Section */}
+        <div className="text-center max-w-5xl mx-auto mb-16 sm:mb-24">
             {/* Protocol Badge */}
             <motion.div 
               initial={{ opacity: 0, scale: 0.8 }}
@@ -314,7 +269,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                     </p>
                 </motion.div>
             </motion.div>
-        </motion.div>
+        </div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
@@ -322,12 +277,12 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
             {/* Left Column - Details */}
             <div className="lg:col-span-8 space-y-8 sm:space-y-12">
                 
-                {/* Mission Structure (renamed from Event Format) */}
+                {/* Mission Structure */}
                 <motion.div
                     variants={fadeInUp}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: true, margin: "-100px" }}
+                    viewport={{ once: true }}
                     className="bg-gradient-to-br from-red-950/30 via-black to-black border border-red-900/30 p-6 sm:p-8 rounded-2xl relative overflow-hidden group backdrop-blur-sm"
                 >
                     {/* Pulsing Left Border */}
@@ -345,13 +300,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             <h3 className="text-2xl font-black text-white uppercase tracking-wider">Mission Structure</h3>
                         </div>
                         
-                        <motion.ul 
-                          className="space-y-4 font-mono text-sm"
-                          variants={staggerContainer}
-                          initial="hidden"
-                          whileInView="visible"
-                          viewport={{ once: true }}
-                        >
+                        <ul className="space-y-4 font-mono text-sm">
                             {[
                                 "TEAM-BASED EVENT (2–4 MEMBERS PER TEAM)",
                                 "5 LEVELS - 5 PCS (TO BE COMPLETED IN ORDER)",
@@ -359,16 +308,15 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                                 "DIFFICULTY INCREASES GRADUALLY",
                                 "FASTEST TEAM TO COMPLETE ALL LEVELS WINS"
                             ].map((text, i) => (
-                                <motion.li
+                                <li
                                     key={i}
-                                    variants={fadeInUp}
                                     className="flex items-start gap-3 p-3 rounded-lg hover:bg-red-950/20 transition-colors"
                                 >
                                     <span className="text-red-500 mt-0.5 text-lg">⚠</span>
                                     <span className="text-gray-300">{text}</span>
-                                </motion.li>
+                                </li>
                             ))}
-                        </motion.ul>
+                        </ul>
                     </div>
                 </motion.div>
 
