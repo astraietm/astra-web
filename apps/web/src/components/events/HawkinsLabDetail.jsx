@@ -167,14 +167,14 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
               transition={{ duration: 0.6, type: "spring" }}
               className="mb-6 sm:mb-8"
             >
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-red-950/40 border border-red-500/30 backdrop-blur-sm">
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-red-950/20 border border-red-500/20 backdrop-blur-md">
                     <motion.span 
-                      animate={{ opacity: [1, 0.3, 1] }}
+                      animate={{ opacity: [1, 0.5, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
-                      className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]" 
+                      className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.4)]" 
                     />
-                    <span className="text-xs sm:text-sm font-mono text-red-400 uppercase tracking-[0.2em] font-bold">
-                      HAWKINS LAB PROTOCOL
+                    <span className="text-xs sm:text-sm font-medium text-red-300 uppercase tracking-[0.15em]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+                      Hawkins Lab Protocol
                     </span>
                 </div>
             </motion.div>
@@ -189,13 +189,17 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                 <motion.h1 
                     animate={glitch ? { x: [-1, 1, -1, 0], y: [-1, 1, 0] } : {}}
                     transition={{ duration: 0.15 }}
-                    className="text-6xl sm:text-7xl md:text-9xl font-black tracking-[0.015em] relative inline-block"
-                    style={{ letterSpacing: '0.015em' }}
+                    className="text-6xl sm:text-7xl md:text-9xl font-bold relative inline-block"
+                    style={{ 
+                      letterSpacing: '-0.02em',
+                      fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+                      fontWeight: 700
+                    }}
                 >
-                    <span className="relative z-10 text-[#ff1e1e]"
+                    <span className="relative z-10 bg-gradient-to-b from-white via-red-50 to-red-200 bg-clip-text text-transparent"
                           style={{ 
-                            textShadow: '0 0 18px rgba(255, 30, 30, 0.6), 0 0 40px rgba(255, 30, 30, 0.4)',
-                            fontFamily: 'system-ui, -apple-system, sans-serif'
+                            textShadow: '0 0 60px rgba(239, 68, 68, 0.15), 0 0 120px rgba(239, 68, 68, 0.1)',
+                            filter: 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5))'
                           }}>
                         HAWKINS LAB
                     </span>
@@ -204,16 +208,17 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
 
             {/* Tagline with Radio Signal Fluctuation */}
             <motion.p 
-                animate={{ opacity: [1, 0.9, 1] }}
+                animate={{ opacity: [1, 0.95, 1] }}
                 transition={{ duration: 8, repeat: Infinity }}
-                className="text-xl sm:text-2xl md:text-3xl font-black tracking-[0.15em] mb-8 sm:mb-12 font-mono uppercase"
+                className="text-lg sm:text-xl md:text-2xl font-medium mb-8 sm:mb-12"
                 style={{ 
-                  color: '#ff5a5a',
-                  opacity: 0.85,
-                  textShadow: '0 0 8px rgba(255, 90, 90, 0.3)'
+                  color: '#fca5a5',
+                  letterSpacing: '0.05em',
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                  textShadow: '0 2px 20px rgba(252, 165, 165, 0.2)'
                 }}
             >
-                "ENTER THE UPSIDE DOWN AND STOP VECNA!"
+                Enter the Upside Down and Stop Vecna
             </motion.p>
 
             {/* Description */}
