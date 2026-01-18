@@ -19,6 +19,8 @@ const Gallery = React.lazy(() => import('./pages/Gallery'));
 const About = React.lazy(() => import('./pages/About'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const TermsAndConditions = React.lazy(() => import('./pages/TermsAndConditions'));
+const RefundPolicy = React.lazy(() => import('./pages/RefundPolicy'));
 
 // Admin Lazy Loading
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
@@ -85,6 +87,8 @@ function App() {
                 <Route path="about" element={<About />} />
 
                 <Route path="contact" element={<Contact />} />
+                <Route path="terms" element={<TermsAndConditions />} />
+                <Route path="refund-policy" element={<RefundPolicy />} />
                 
                 {/* 404 Catch-all */}
                 <Route path="*" element={<NotFound />} />

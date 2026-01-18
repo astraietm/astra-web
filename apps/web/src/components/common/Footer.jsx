@@ -116,14 +116,32 @@ const Footer = () => {
                             </ul>
                         </FooterSection>
                     </div>
+
+                    {/* Links Column 3 - Legal */}
+                    <div className="col-span-1 md:col-span-2">
+                        <FooterSection title="Legal">
+                            <ul className="space-y-2">
+                                <li>
+                                    <Link to="/terms" className="text-sm text-gray-500 hover:text-primary hover:translate-x-1 transition-all duration-300 inline-block py-1">
+                                        Terms & Conditions
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/refund-policy" className="text-sm text-gray-500 hover:text-primary hover:translate-x-1 transition-all duration-300 inline-block py-1">
+                                        Refund Policy
+                                    </Link>
+                                </li>
+                            </ul>
+                        </FooterSection>
+                    </div>
                 </div>
 
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-gray-600 lg:pl-72">
                     <div className="flex flex-wrap justify-center gap-6 md:gap-8">
                         <span>© {currentYear} Astra Security</span>
-                        <a href="#" className="hover:text-primary/70 transition-colors">Privacy</a>
-                        <a href="#" className="hover:text-primary/70 transition-colors">Terms</a>
+                        <Link to="/terms" className="hover:text-primary/70 transition-colors">Terms</Link>
+                        <Link to="/refund-policy" className="hover:text-primary/70 transition-colors">Refund Policy</Link>
                     </div>
                     
 
