@@ -16,6 +16,12 @@ class Event(models.Model):
     registration_end = models.DateTimeField(default=timezone.now)
     registration_limit = models.PositiveIntegerField(default=100)
     is_registration_open = models.BooleanField(default=True)
+    
+    # Team Logic
+    is_team_event = models.BooleanField(default=False)
+    team_size_min = models.PositiveIntegerField(default=1)
+    team_size_max = models.PositiveIntegerField(default=1)
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -34,6 +40,10 @@ class Registration(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     token = models.CharField(max_length=64, unique=True, blank=True, db_index=True)
     
+    # Team Data
+    team_name = models.CharField(max_length=255, blank=True)
+    team_members = models.TextField(blank=True, help_text="Comma separated names or JSON")
+
     # Status fields
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='REGISTERED')
     is_used = models.BooleanField(default=False) # Deprecated but kept for backward compat

@@ -26,7 +26,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Registration
-        fields = ['id', 'user', 'user_email', 'user_name', 'event', 'event_details', 'timestamp', 'updated_at', 'token', 'qr_code', 'status', 'is_used']
+        fields = ['id', 'user', 'user_email', 'user_name', 'event', 'event_details', 'timestamp', 'updated_at', 'token', 'qr_code', 'status', 'is_used', 'team_name', 'team_members']
         read_only_fields = ['id', 'user', 'timestamp', 'updated_at', 'token', 'qr_code', 'is_used', 'status']
 
     def get_qr_code(self, obj):

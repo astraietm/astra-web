@@ -10,6 +10,7 @@ import { useToast } from '../context/ToastContext';
 import SkeletonLoader from '../components/common/SkeletonLoader';
 import HawkinsLabDetail from '../components/events/HawkinsLabDetail';
 import { useAuth } from '../context/AuthContext';
+import TeamRegistrationModal from '../components/events/TeamRegistrationModal';
 
 const EventDetail = () => {
   const { id } = useParams();
@@ -22,7 +23,9 @@ const EventDetail = () => {
   const [timeLeft, setTimeLeft] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [registering, setRegistering] = useState(false);
+  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
+  // ... (useEffect fetches remain same) ...
   useEffect(() => {
     const fetchEvent = async () => {
       try {
@@ -59,6 +62,7 @@ const EventDetail = () => {
   useEffect(() => {
     if (!event) return;
     const calculateTimeLeft = () => {
+      // ... (timer logic) ...
       const eventDate = new Date(event.date);
       const now = new Date();
       const difference = eventDate - now;
@@ -87,9 +91,15 @@ const EventDetail = () => {
                 toast.info("You are already registered.");
                 return;
             }
+            
+            // Check for Team Event
+            if (event.is_team_event) {
+                setIsTeamModalOpen(true);
+                return;
+            }
+
             try {
                 setRegistering(true);
-                // Use freshToken if available (from login flow), otherwise current token
                 const activeToken = freshToken || token;
                 
                 const response = await axios.post(
@@ -111,7 +121,8 @@ const EventDetail = () => {
   if (loading) return <SkeletonLoader variant="hero" />;
 
   if (!event) {
-    return (
+    // ... (404 logic) ...
+      return (
       <div className="min-h-screen bg-[#020408] flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-400 mb-4">Event not found</p>
@@ -128,11 +139,28 @@ const EventDetail = () => {
 
   // Custom Event Loader for Hawkins Lab
   if (event.title.toLowerCase().includes('hawkins')) {
-      return <HawkinsLabDetail onRegister={handleRegister} isRegistered={isRegistered} />;
+      return (
+          <>
+            <HawkinsLabDetail onRegister={handleRegister} isRegistered={isRegistered} />
+            <TeamRegistrationModal 
+                isOpen={isTeamModalOpen} 
+                onClose={() => setIsTeamModalOpen(false)} 
+                event={event} 
+                onSuccess={() => setIsRegistered(true)} 
+            />
+          </>
+      );
   }
 
   return (
     <div className="min-h-screen bg-[#020408] text-gray-200 selection:bg-blue-500/30 font-sans">
+      <TeamRegistrationModal 
+            isOpen={isTeamModalOpen} 
+            onClose={() => setIsTeamModalOpen(false)} 
+            event={event} 
+            onSuccess={() => setIsRegistered(true)} 
+      />
+      {/* ... rest of UI ... */}
       
       {/* --- AMBIENT LIGHTING --- */}
       <div className="fixed inset-0 z-0 pointer-events-none">
