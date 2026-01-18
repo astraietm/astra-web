@@ -2,77 +2,33 @@ import React, { useState } from 'react';
 import { Shield, Github, Instagram, ArrowRight, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const FooterSection = ({ title, children }) => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    return (
-        <div className="w-full">
-            {/* Mobile Header */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-between w-full py-3 md:hidden group"
-            >
-                <h3 className="text-sm font-medium text-neutral-400 group-hover:text-white transition-colors uppercase tracking-wider">{title}</h3>
-                <ChevronDown
-                    className={`w-4 h-4 text-neutral-500 transition-transform duration-300 ${isOpen ? 'rotate-180 text-white' : ''}`}
-                />
-            </button>
-
-            {/* Desktop Header */}
-            <h3 className="text-sm font-medium text-neutral-500 mb-4 hidden md:block uppercase tracking-wider">{title}</h3>
-
-            {/* Content */}
-            <div className="hidden md:block">
-                {children}
-            </div>
-
-            {/* Mobile Content */}
-            <div
-                className={`overflow-hidden md:hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
-            >
-                <div className="pb-4">
-                    {children}
-                </div>
-            </div>
-        </div>
-    );
-};
-
 const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="relative bg-[#050505] border-t border-white/10 pt-24 pb-12 overflow-hidden">
+        <footer className="relative bg-[#050505] border-t border-white/5 pt-20 pb-10 overflow-hidden font-sans">
             
-            {/* Subtle Grid Background */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.02]" 
-                 style={{
-                   backgroundImage: `
-                     linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                     linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
-                   `,
-                   backgroundSize: '80px 80px'
-                 }}
-            />
+            {/* Premium background noise */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
 
-            <div className="container mx-auto px-6 md:px-12 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-12">
+            <div className="container mx-auto px-6 md:px-8 relative z-10">
+                <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-16">
                     
-                    {/* Brand Section - Aura Style */}
-                    <div className="col-span-1 md:col-span-4">
-                        <Link to="/" className="inline-flex items-center gap-2.5 mb-6 group">
-                            <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 group-hover:border-white/20 transition-all duration-300">
-                                <Shield className="w-4 h-4 text-white" />
+                    {/* Brand Section */}
+                    <div className="lg:w-1/3">
+                        <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
+                            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 group-hover:border-white/20 transition-all duration-300">
+                                <Shield className="w-5 h-5 text-white" />
                             </div>
                             <span className="text-xl font-bold tracking-tight text-white">ASTRA</span>
                         </Link>
                         
-                        <p className="text-sm text-neutral-500 leading-relaxed max-w-xs mb-8">
-                            Securing the digital frontier through innovation, education, and elite research. Join the next generation of defenders.
+                        <p className="text-base text-neutral-400 leading-relaxed mb-8 max-w-sm">
+                            Securing the digital frontier through innovation, elite research, and next-gen defense systems.
                         </p>
 
-                        {/* Social Links - Aura Style */}
-                        <div className="flex gap-3">
+                        {/* Social Links */}
+                        <div className="flex gap-4">
                             {[
                                 { Icon: Github, href: "https://github.com/astraietm", label: "GitHub" },
                                 { Icon: Instagram, href: "https://instagram.com/astra.ietm", label: "Instagram" }
@@ -83,82 +39,80 @@ const Footer = () => {
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     aria-label={label}
-                                    className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-300"
+                                    className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-neutral-400 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-300"
                                 >
-                                    <Icon className="w-4 h-4" />
+                                    <Icon className="w-5 h-5" />
                                 </a>
                             ))}
                         </div>
                     </div>
 
-                    {/* Spacer */}
-                    <div className="hidden md:block md:col-span-2"></div>
-
-                    {/* Links Column 1 - Platform */}
-                    <div className="col-span-1 md:col-span-2">
-                        <FooterSection title="Platform">
+                    {/* Links Grid - 2 Col static on mobile, 3 Col on Desktop */}
+                    <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
+                        
+                        {/* Platform */}
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Platform</h3>
                             <ul className="space-y-3">
                                 <li>
-                                    <Link to="/events" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
+                                    <Link to="/events" className="text-sm text-neutral-400 hover:text-white transition-colors">
                                         Events
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/gallery" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
+                                    <Link to="/gallery" className="text-sm text-neutral-400 hover:text-white transition-colors">
                                         Gallery
                                     </Link>
                                 </li>
                             </ul>
-                        </FooterSection>
-                    </div>
+                        </div>
 
-                    {/* Links Column 2 - Organization */}
-                    <div className="col-span-1 md:col-span-2">
-                        <FooterSection title="Organization">
+                        {/* Organization */}
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Company</h3>
                             <ul className="space-y-3">
                                 <li>
-                                    <Link to="/about" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
+                                    <Link to="/about" className="text-sm text-neutral-400 hover:text-white transition-colors">
                                         About Us
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/contact" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
-                                        Contact Us
+                                    <Link to="/contact" className="text-sm text-neutral-400 hover:text-white transition-colors">
+                                        Contact
                                     </Link>
                                 </li>
                             </ul>
-                        </FooterSection>
-                    </div>
+                        </div>
 
-                    {/* Links Column 3 - Legal */}
-                    <div className="col-span-1 md:col-span-2">
-                        <FooterSection title="Legal">
+                        {/* Legal */}
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Legal</h3>
                             <ul className="space-y-3">
                                 <li>
-                                    <Link to="/terms" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
-                                        Terms & Conditions
+                                    <Link to="/terms" className="text-sm text-neutral-400 hover:text-white transition-colors">
+                                        Terms
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to="/refund-policy" className="text-sm text-neutral-400 hover:text-white transition-colors inline-block">
+                                    <Link to="/refund-policy" className="text-sm text-neutral-400 hover:text-white transition-colors">
                                         Refund Policy
                                     </Link>
                                 </li>
                             </ul>
-                        </FooterSection>
+                        </div>
                     </div>
                 </div>
 
-                {/* Bottom Bar - Aura Style */}
-                <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex flex-wrap justify-center md:justify-start gap-6 text-xs text-neutral-600">
-                        <span>© {currentYear} Astra Security</span>
-                        <Link to="/terms" className="hover:text-neutral-400 transition-colors">Terms</Link>
-                        <Link to="/refund-policy" className="hover:text-neutral-400 transition-colors">Refund Policy</Link>
-                    </div>
+                {/* Bottom Bar */}
+                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-sm text-neutral-500">
+                        © {currentYear} Astra Security. All rights reserved.
+                    </p>
                     
-                    <div className="flex items-center gap-1.5 text-xs text-neutral-600">
-                        Designed by <span className="text-neutral-400 font-medium">Astra</span>
+                    <div className="flex items-center gap-6 text-sm text-neutral-500">
+                        <Link to="/privacy" className="hover:text-neutral-300 transition-colors">Privacy</Link>
+                        <Link to="/terms" className="hover:text-neutral-300 transition-colors">Terms</Link>
+                        <span>Designed by Astra</span>
                     </div>
                 </div>
             </div>

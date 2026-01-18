@@ -1,415 +1,277 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Gamepad2, Keyboard, Brain, Search, Lock, AlertTriangle, Users, Zap, Target, Award, Shield, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Gamepad2, Keyboard, Brain, Search, Lock, AlertTriangle, Users, Zap, Target, Award, Shield, CheckCircle, Activity, ChevronRight, Terminal } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const navigate = useNavigate();
-
-
-
-
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden font-sans selection:bg-red-500/30">
-      
-      {/* Aura-inspired Grid Background */}
-      <div className="fixed inset-0 pointer-events-none" 
-           style={{
-             backgroundImage: `
-               linear-gradient(to right, rgba(255, 30, 30, 0.03) 1px, transparent 1px),
-               linear-gradient(to bottom, rgba(255, 30, 30, 0.03) 1px, transparent 1px)
-             `,
-             backgroundSize: '80px 80px'
-           }}
-      />
-
-      {/* Radial gradient overlay */}
-      <div 
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at 50% 20%, rgba(139, 0, 0, 0.15) 0%, transparent 50%)'
-        }}
-      />
-
-      {/* Subtle noise texture */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.02] mix-blend-overlay"
-           style={{ 
-             backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 400 400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")',
-             backgroundSize: '200px 200px'
-           }}
-      />
-
-      {/* Subtle top glow */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[80%] h-[300px] bg-red-600/5 rounded-full blur-[100px] pointer-events-none" />
-
-
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
-        
-        {/* Back Button */}
-        <button
-          onClick={() => navigate('/events')}
-          className="group flex items-center gap-2 text-sm text-gray-500 hover:text-red-400 transition-colors mb-8 sm:mb-12"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="font-mono uppercase tracking-wider">Back to Events</span>
-        </button>
-
-        {/* Hero Section - Aura-inspired Clean Design */}
-        <div className="text-center max-w-5xl mx-auto mb-16 sm:mb-24">
-            {/* Protocol Badge - Refined */}
-            <div className="mb-8">
-                <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-red-950/10 border border-red-500/10 backdrop-blur-sm">
-                    <span className="w-1 h-1 rounded-full bg-red-400" />
-                    <span className="text-xs font-medium text-red-300/90 uppercase tracking-[0.2em]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-                      Hawkins Lab Protocol
-                    </span>
-                </div>
-            </div>
-
-            {/* Main Title - Clean & Bold */}
-            <div className="mb-8 relative">
-                <h1 
-                    className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold relative inline-block leading-none"
-                    style={{ 
-                      letterSpacing: '-0.04em',
-                      fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-                      fontWeight: 800
-                    }}
-                >
-                    <span className="bg-gradient-to-b from-white via-gray-100 to-gray-300 bg-clip-text text-transparent"
-                          style={{ 
-                            filter: 'drop-shadow(0 0 40px rgba(255, 30, 30, 0.1))'
-                          }}>
-                        HAWKINS LAB
-                    </span>
-                </h1>
-            </div>
-
-            {/* Tagline - Minimalist */}
-            <p 
-                className="text-base sm:text-lg md:text-xl font-normal mb-12 text-gray-400"
-                style={{ 
-                  letterSpacing: '0.02em',
-                  fontFamily: 'Inter, system-ui, sans-serif'
-                }}
-            >
-                Enter the Upside Down and Stop Vecna
-            </p>
-
-            {/* Description */}
-            <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
-                <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed font-medium px-4">
-                    A <span className="text-red-400 font-bold">Stranger Things-themed</span> cyber mystery event where teams solve clues, analyze patterns, and complete computer-based tasks to progress through an immersive storyline.
-                </p>
-                
-                {/* Feature Chips */}
-                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto px-4">
-                    {[
-                        { icon: Shield, text: "Data Accuracy" },
-                        { icon: Zap, text: "Signal Analysis" },
-                        { icon: Target, text: "Social Engineering" },
-                        { icon: Lock, text: "Authentication" }
-                    ].map((item, i) => (
-                        <div
-                            key={i}
-                            className="flex items-center gap-3 p-3 border border-[#ff1e1e] rounded-lg backdrop-blur-xl hover:bg-red-500/10 transition-colors cursor-pointer"
-                            style={{ backgroundColor: 'rgba(255, 0, 0, 0.05)' }}
-                        >
-                            <item.icon className="w-4 h-4 text-red-500" />
-                            <span className="text-sm font-mono text-gray-300">{item.text}</span>
-                        </div>
-                    ))}
-                </div>
-                
-                <div className="inline-block px-6 py-3 bg-gradient-to-r from-red-900/50 via-red-800/30 to-transparent border-l-4 border-red-500 rounded-r-lg backdrop-blur-sm mx-4">
-                    <p className="text-white font-bold text-sm sm:text-base flex items-center gap-2">
-                        <Award className="w-5 h-5 text-yellow-400" />
-                        No advanced technical knowledge required — all students can participate!
-                    </p>
-                </div>
-            </div>
+    <div className="min-h-screen bg-[#030303] text-white selection:bg-red-500/30 font-sans overflow-x-hidden">
+        {/* Premium Ambient Background */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+            {/* Subtle Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,black_70%,transparent_100%)]" />
+            
+            {/* Cinematic Glows */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-red-900/20 blur-[120px] rounded-full mix-blend-screen opacity-50" />
+            <div className="absolute top-[20%] left-[20%] w-[400px] h-[400px] bg-blue-900/10 blur-[100px] rounded-full mix-blend-screen opacity-30" />
+            
+            {/* Fine Grain */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay" />
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12">
-            
-            {/* Left Column - Details */}
-            <div className="lg:col-span-8 space-y-8 sm:space-y-12">
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 pt-24 pb-12">
+            {/* Minimalist Navigation */}
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="flex items-center justify-between mb-24"
+            >
+                <button 
+                  onClick={() => navigate('/events')}
+                  className="group flex items-center gap-3 text-zinc-400 hover:text-white transition-colors duration-300"
+                >
+                    <div className="p-2.5 rounded-full bg-white/5 border border-white/5 group-hover:bg-white/10 group-hover:border-white/10 transition-all">
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+                    </div>
+                    <span className="text-sm font-medium tracking-wide">Back</span>
+                </button>
                 
-                {/* Mission Structure */}
-                <div className="bg-gradient-to-br from-red-950/30 via-black to-black border border-red-900/30 p-6 sm:p-8 rounded-2xl relative overflow-hidden group backdrop-blur-sm">
-                    {/* Static Left Border */}
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500/60" />
-                    
-                    <div className="relative z-10">
-                        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-red-900/30">
-                            <div className="p-2 bg-red-500/10 rounded-lg">
-                                <Users className="w-6 h-6 text-red-500" />
-                            </div>
-                            <h3 className="text-2xl font-black text-white uppercase tracking-wider">Mission Structure</h3>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-xs font-mono text-zinc-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    SYSTEM ONLINE
+                </div>
+            </motion.div>
+
+            {/* Premium Hero Section */}
+            <div className="max-w-6xl mx-auto mb-32">
+                <div className="flex flex-col items-start text-left">
+                    {/* Badge */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="mb-8"
+                    >
+                        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/20 backdrop-blur-md">
+                            <span className="flex h-2 w-2 relative">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            </span>
+                            <span className="text-xs font-semibold text-red-200 uppercase tracking-widest">
+                              Protocol 011
+                            </span>
                         </div>
-                        
-                        <ul className="space-y-4 font-mono text-sm">
-                            {[
-                                "TEAM-BASED EVENT (2–4 MEMBERS PER TEAM)",
-                                "5 LEVELS - 5 PCS (TO BE COMPLETED IN ORDER)",
-                                "EACH LEVEL UNLOCKS THE NEXT",
-                                "DIFFICULTY INCREASES GRADUALLY",
-                                "FASTEST TEAM TO COMPLETE ALL LEVELS WINS"
-                            ].map((text, i) => (
-                                <li
-                                    key={i}
-                                    className="flex items-start gap-3 p-3 rounded-lg hover:bg-red-950/20 transition-colors"
-                                >
-                                    <span className="text-red-500 mt-0.5 text-lg">⚠</span>
-                                    <span className="text-gray-300">{text}</span>
-                                </li>
-                            ))}
-                        </ul>
+                    </motion.div>
+
+                    {/* Massive Title */}
+                    <motion.div 
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                        className="mb-10 relative"
+                    >
+                        <h1 className="text-7xl sm:text-8xl md:text-9xl lg:text-[10rem] font-bold leading-[0.9] tracking-tighter text-white">
+                            HAWKINS <br/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-300 to-white/50">
+                                LAB.
+                            </span>
+                        </h1>
+                    </motion.div>
+
+                    {/* Content & Stats Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 w-full items-end">
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            className="lg:col-span-7"
+                        >
+                            <p className="text-xl sm:text-2xl font-light text-zinc-400 leading-relaxed max-w-3xl">
+                                An immersive cyber-mystery event. Teams compete to solve cryptic clues, analyze signals, and breach the Upside Down. <span className="text-white font-normal">Beginner friendly.</span>
+                            </p>
+                        </motion.div>
+
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.3 }}
+                            className="lg:col-span-5 flex flex-wrap gap-8 lg:justify-end"
+                        >
+                            <div className="flex flex-col gap-1">
+                                <span className="text-4xl font-bold tracking-tight text-white">2-4</span>
+                                <span className="text-sm font-mono text-zinc-500 uppercase tracking-wider">Members/Team</span>
+                            </div>
+                            <div className="w-px h-12 bg-white/10 hidden sm:block" />
+                            <div className="flex flex-col gap-1">
+                                <span className="text-4xl font-bold tracking-tight text-white">5</span>
+                                <span className="text-sm font-mono text-zinc-500 uppercase tracking-wider">Levels</span>
+                            </div>
+                            <div className="w-px h-12 bg-white/10 hidden sm:block" />
+                            <div className="flex flex-col gap-1">
+                                <span className="text-4xl font-bold tracking-tight text-white">0%</span>
+                                <span className="text-sm font-mono text-zinc-500 uppercase tracking-wider">Coding Needed</span>
+                            </div>
+                        </motion.div>
                     </div>
                 </div>
+            </div>
 
-                {/* Clearance Levels with Lock States */}
-                <div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="bg-gradient-to-br from-black via-red-950/20 to-black border border-red-900/30 p-6 sm:p-8 rounded-2xl backdrop-blur-sm"
-                >
-                    <div className="flex items-center gap-3 mb-8 pb-4 border-b border-red-900/30">
-                        <div className="p-2 bg-red-500/10 rounded-lg">
-                            <Zap className="w-6 h-6 text-red-500" />
+            {/* Split View Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-32">
+                
+                {/* Left: Mission Details */}
+                <div className="space-y-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        className="sticky top-8"
+                    >
+                        <h2 className="text-3xl font-bold mb-8 tracking-tight flex items-center gap-3">
+                            <Terminal className="w-6 h-6 text-red-500" />
+                            Mission Protocol
+                        </h2>
+                        
+                        <div className="bg-zinc-900/20 border border-white/5 rounded-3xl p-8 backdrop-blur-xl hover:border-white/10 transition-colors duration-500">
+                             <ul className="space-y-8">
+                                {[
+                                    { title: "Team Assembly", desc: "Form a squad of 2-4 agents. Diverse skills recommended." },
+                                    { title: "Sequential Clearance", desc: "5 security levels. Each key unlocks the next tier." },
+                                    { title: "Pattern Recognition", desc: "Decode signals, analyze logs, and find the breach." },
+                                    { title: "Race Against Time", desc: "The first team to seal the gate claims victory." }
+                                ].map((item, i) => (
+                                    <li key={i} className="flex gap-5 group">
+                                        <div className="flex flex-col items-center">
+                                            <div className="w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-xs font-mono text-zinc-500 group-hover:border-red-500/50 group-hover:text-red-400 transition-colors">
+                                                0{i + 1}
+                                            </div>
+                                            {i !== 3 && <div className="w-px flex-1 bg-white/5 my-2 group-hover:bg-red-500/20 transition-colors" />}
+                                        </div>
+                                        <div className="pb-2">
+                                            <h4 className="text-lg font-semibold text-white mb-1 group-hover:text-red-400 transition-colors">
+                                                {item.title}
+                                            </h4>
+                                            <p className="text-zinc-400 leading-relaxed text-sm">
+                                                {item.desc}
+                                            </p>
+                                        </div>
+                                    </li>
+                                ))}
+                             </ul>
                         </div>
-                        <h3 className="text-2xl font-black text-white uppercase tracking-wider">Clearance Levels</h3>
-                    </div>
-                    
-                    <div className="space-y-4">
-                        {[
-                            { title: "GAMING", icon: Gamepad2, desc: "Test your reflexes and coordination", status: 'active' },
-                            { title: "SPEED TYPING", icon: Keyboard, desc: "Data entry under pressure", status: 'locked' },
-                            { title: "ANALYSIS & DECODING", icon: Brain, desc: "Pattern recognition challenge", status: 'locked' },
-                            { title: "DIGITAL STALKING (TRACING)", icon: Search, desc: "OSINT investigation", status: 'locked' },
-                            { title: "BRUTE FORCE APPROACH", icon: Lock, desc: "Authentication bypass", status: 'locked' }
-                        ].map((lvl, i) => (
-                            <div
-                                key={i}
-                                initial={{ opacity: 0, x: -30 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                whileHover={{
-                                  boxShadow: '0 0 30px rgba(255, 30, 30, 0.3)'
-                                }}
-                                className="group relative"
-                                style={{ opacity: lvl.status === 'locked' ? 0.6 : 1 }}
-                            >
-                                <div className={`flex items-center gap-4 p-4 bg-gradient-to-r from-red-950/20 to-transparent border rounded-xl transition-all duration-300 ${
-                                  lvl.status === 'active' 
-                                    ? 'border-red-500/40 bg-red-950/30' 
-                                    : 'border-red-900/20'
-                                }`}>
-                                    {/* Level number */}
-                                    <div className="text-5xl font-black text-red-900/40 group-hover:text-red-500/60 transition-colors tabular-nums">
-                                        0{i + 1}
-                                    </div>
-                                    
-                                    {/* Icon */}
-                                    <div className="p-3 bg-red-500/10 rounded-lg group-hover:bg-red-500/20 transition-colors relative">
-                                        <lvl.icon className="w-6 h-6 text-red-400 group-hover:text-red-300 transition-colors" />
-                                        {lvl.status === 'locked' && (
-                                          <Lock className="w-3 h-3 text-red-500 absolute -top-1 -right-1" />
-                                        )}
-                                    </div>
-                                    
-                                    {/* Text */}
-                                    <div className="flex-1">
-                                        <h4 className="text-lg font-black text-white mb-1 group-hover:text-red-400 transition-colors tracking-wide">
-                                            {lvl.title}
-                                        </h4>
-                                        <p className="text-sm text-gray-500 group-hover:text-gray-400 transition-colors">
-                                            {lvl.desc}
-                                        </p>
-                                    </div>
-                                    
-                                    {/* Status indicator */}
-                                    {lvl.status === 'active' && (
-                                      <div
-                                        animate={{ opacity: [0.4, 1, 0.4] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        className="w-2 h-2 bg-red-500 rounded-full"
-                                      />
-                                    )}
+                    </motion.div>
+                </div>
+
+                {/* Right: Security Clearance Levels */}
+                <div className="space-y-4 pt-12 lg:pt-0">
+                    <h2 className="text-3xl font-bold mb-8 tracking-tight flex items-center gap-3">
+                        <Activity className="w-6 h-6 text-red-500" />
+                        Security Clearance
+                    </h2>
+
+                    {[
+                        { title: "Reflex Test", icon: Gamepad2, desc: "Neuromotor synchronization check", active: true },
+                        { title: "Data Entry", icon: Keyboard, desc: "High-speed information processing", active: false },
+                        { title: "Pattern Analysis", icon: Brain, desc: "Cognitive logic puzzle solving", active: false },
+                        { title: "Signal Tracing", icon: Search, desc: "Digital footprint investigation", active: false },
+                        { title: "System Override", icon: Lock, desc: "Mainframe brute force access", active: false }
+                    ].map((lvl, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, margin: "-50px" }}
+                            transition={{ delay: i * 0.1 }}
+                            onMouseEnter={() => setHoveredCard(i)}
+                            onMouseLeave={() => setHoveredCard(null)}
+                            className={`relative group rounded-2xl border p-6 transition-all duration-500 ${
+                                lvl.active 
+                                    ? 'bg-zinc-900/40 border-red-500/30' 
+                                    : 'bg-zinc-900/10 border-white/5 hover:border-white/10'
+                            }`}
+                        >
+                            {lvl.active && (
+                                <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent rounded-2xl" />
+                            )}
+                            
+                            <div className="relative flex items-center gap-6">
+                                <div className={`text-4xl font-bold tracking-tighter w-16 tabular-nums ${lvl.active ? 'text-red-500' : 'text-zinc-800 group-hover:text-zinc-700'}`}>
+                                    0{i + 1}
                                 </div>
                                 
-                                {/* Noise overlay for locked levels */}
-                                {lvl.status === 'locked' && (
-                                  <div className="absolute inset-0 opacity-20 pointer-events-none mix-blend-overlay rounded-xl"
-                                       style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'2\' /%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\' /%3E%3C/svg%3E")' }}
-                                  />
-                                )}
+                                <div className={`p-3 rounded-xl transition-colors ${lvl.active ? 'bg-red-500/20 text-red-500' : 'bg-white/5 text-zinc-500 group-hover:text-zinc-300'}`}>
+                                    <lvl.icon className="w-6 h-6" />
+                                </div>
+                                
+                                <div className="flex-1">
+                                    <h3 className={`text-lg font-semibold mb-1 ${lvl.active ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}>
+                                        {lvl.title}
+                                    </h3>
+                                    <p className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">
+                                        {lvl.desc}
+                                    </p>
+                                </div>
+
+                                <div className="text-zinc-600">
+                                    {lvl.active ? (
+                                        <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse" />
+                                    ) : (
+                                        <Lock className="w-4 h-4" />
+                                    )}
+                                </div>
                             </div>
-                        ))}
-                    </div>
+                        </motion.div>
+                    ))}
                 </div>
-
-                {/* Containment Protocols (Enhanced) */}
-                <div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className="bg-gradient-to-r from-red-950/40 via-red-900/20 to-transparent border-l-4 border-red-600 p-6 sm:p-8 rounded-r-2xl backdrop-blur-sm relative"
-                >
-                    {/* Flicker effect on border (once on load) */}
-                    <div
-                      initial={{ opacity: 1 }}
-                      animate={{ opacity: [1, 0.3, 1, 0.5, 1] }}
-                      transition={{ duration: 0.5, delay: 0.5 }}
-                      className="absolute left-0 top-0 bottom-0 w-1 bg-red-600"
-                    />
-                    
-                    <div className="flex items-center gap-3 mb-6">
-                        <div
-                          animate={{ opacity: [1, 0.5, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        >
-                          <AlertTriangle className="w-7 h-7 text-red-500" />
-                        </div>
-                        <h3 className="text-2xl font-black text-white uppercase tracking-[0.15em]">Containment Protocols</h3>
-                    </div>
-                    
-                    <ul className="grid gap-4 font-mono text-sm">
-                        {[
-                            "TEAMS MUST FOLLOW THE ASSIGNED PC ORDER",
-                            "SKIPPING LEVELS OR SHARING CLUES IS STRICTLY PROHIBITED",
-                            "ONLY THE PROVIDED SYSTEMS MAY BE USED",
-                            "NO TEAM CHANGES ONCE THE EVENT STARTS"
-                        ].map((rule, i) => (
-                            <li
-                                key={i}
-                                initial={{ opacity: 0, y: 10 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-500/10 transition-colors border border-red-900/20 hover:border-red-500/30"
-                            >
-                                <span className="w-2 h-2 bg-red-500 transform rotate-45 shrink-0" />
-                                <span className="text-gray-300">{rule}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
             </div>
 
-            {/* Right Column - Cinematic CTA */}
-            <div className="lg:col-span-4">
-                <div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="sticky top-8"
-                >
-                    <div className="bg-gradient-to-br from-red-950/40 via-black to-black border border-red-900/40 p-6 sm:p-8 rounded-2xl shadow-2xl shadow-red-900/30 backdrop-blur-sm">
-                        {/* Status Badge with Breathing Glow */}
-                        <div className="mb-8 text-center">
-                            <p className="text-gray-500 uppercase tracking-[0.2em] text-xs mb-3 font-mono">Registration Status</p>
-                            <div 
-                                animate={{ 
-                                    boxShadow: [
-                                      '0 0 20px rgba(34, 197, 94, 0.3)', 
-                                      '0 0 30px rgba(34, 197, 94, 0.5)', 
-                                      '0 0 20px rgba(34, 197, 94, 0.3)'
-                                    ]
-                                }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                                className="inline-block px-5 py-2 bg-green-500/20 text-green-400 border border-green-500/40 rounded-full text-sm font-black uppercase tracking-wider"
-                            >
-                                ● OPEN FOR ALL STUDENTS
-                            </div>
+            {/* Registration CTA - Bottom Floating or Section */}
+            <motion.div 
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-zinc-900/50 backdrop-blur-2xl"
+            >
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 via-transparent to-blue-600/10 opacity-50" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay" />
+                
+                <div className="relative p-8 sm:p-16 flex flex-col md:flex-row items-center justify-between gap-12">
+                    <div className="space-y-6 max-w-2xl text-center md:text-left">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-mono uppercase tracking-wider">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                            Registrations Open
                         </div>
-
-                        {/* Event Info */}
-                        <ul className="space-y-4 mb-8 pb-8 border-b border-red-900/30">
-                            {[
-                                { label: "Theme", value: "Stranger Things" },
-                                { label: "Difficulty", value: "Beginner Friendly" },
-                                { label: "Prerequisites", value: "None" }
-                            ].map((item, i) => (
-                                <li key={i} className="flex justify-between items-center text-sm p-3 rounded-lg bg-red-950/20 border border-red-900/20">
-                                    <span className="text-gray-500 font-mono uppercase tracking-wider">{item.label}</span>
-                                    <span className="text-white font-bold">{item.value}</span>
-                                </li>
-                            ))}
-                        </ul>
-
-                        {/* Cinematic CTA Button */}
-                        <button 
-                            onClick={onRegister}
-                            disabled={isRegistered}
-                            whileHover={!isRegistered ? { 
-                              scale: 1.02,
-                              boxShadow: '0 0 50px rgba(220, 38, 38, 0.8)'
-                            } : {}}
-                            whileTap={!isRegistered ? { 
-                              scale: 0.98 
-                            } : {}}
-                            animate={{
-                              boxShadow: isRegistered 
-                                ? 'none'
-                                : [
-                                    '0 0 30px rgba(220, 38, 38, 0.5)',
-                                    '0 0 40px rgba(220, 38, 38, 0.7)',
-                                    '0 0 30px rgba(220, 38, 38, 0.5)'
-                                  ]
-                            }}
-                            transition={{ duration: 3, repeat: Infinity }}
-                            className="w-full py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-500 text-white font-black text-lg rounded-xl transition-all disabled:shadow-none uppercase tracking-wider relative overflow-hidden"
-                        >
-                            {/* Screen pulse on click */}
-                            <span className="relative z-10">
-                              {isRegistered ? '✓ Already Registered' : 'Initiate Protocol'}
-                            </span>
-                        </button>
-                        
-                        <p className="text-center text-xs text-gray-600 mt-4 font-mono uppercase tracking-widest">
-                            Save Hawkins. Save the World.
+                        <h2 className="text-4xl sm:text-5xl font-bold tracking-tighter text-white">
+                            Ready to enter the Upside Down?
+                        </h2>
+                        <p className="text-xl text-zinc-400 font-light">
+                            Secure your team's spot in the registry. The gate is opening soon.
                         </p>
                     </div>
+
+                    <motion.button 
+                        whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(220, 38, 38, 0.3)" }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={onRegister}
+                        disabled={isRegistered}
+                        className="group relative px-10 py-5 bg-white text-black text-lg font-bold rounded-2xl overflow-hidden transition-shadow"
+                    >
+                        <span className="relative z-10 flex items-center gap-3">
+                            {isRegistered ? 'Protocol Active' : 'Initiate Sequence'}
+                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </motion.button>
                 </div>
-            </div>
+            </motion.div>
 
+             {/* Footer Space */}
+             <div className="h-32" />
         </div>
-      </div>
-
-      {/* Custom CSS */}
-      <style jsx>{`
-        @keyframes scan {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100vh); }
-        }
-        .animate-scan {
-          animation: scan 8s linear infinite;
-        }
-        @keyframes noise {
-          0%, 100% { transform: translate(0, 0); }
-          10% { transform: translate(-5%, -5%); }
-          20% { transform: translate(-10%, 5%); }
-          30% { transform: translate(5%, -10%); }
-          40% { transform: translate(-5%, 15%); }
-          50% { transform: translate(-10%, 5%); }
-          60% { transform: translate(15%, 0); }
-          70% { transform: translate(0, 10%); }
-          80% { transform: translate(-15%, 0); }
-          90% { transform: translate(10%, 5%); }
-        }
-        .animate-noise {
-          animation: noise 8s steps(10) infinite;
-        }
-      `}</style>
     </div>
   );
 };
