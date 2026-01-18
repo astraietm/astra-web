@@ -1,115 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useMotionValue, useMotionTemplate } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, ArrowUpRight } from 'lucide-react';
-import { generateRandomString, Icon } from '../ui/evervault-card';
+import { Calendar, ArrowUpRight, Clock, ShieldCheck } from 'lucide-react';
 
 const EventModule = ({ event, index }) => {
     const navigate = useNavigate();
     const isCompleted = new Date(event.date) < new Date();
+    const isHawkins = event.image?.includes('hawkins') || event.title?.includes('Hawkins');
     
-    // Evervault Logic
-    let mouseX = useMotionValue(0);
-    let mouseY = useMotionValue(0);
-    const [randomString, setRandomString] = useState("");
-
-    useEffect(() => {
-        let str = generateRandomString(1500);
-        setRandomString(str);
-    }, []);
-
-    function onMouseMove({ currentTarget, clientX, clientY }) {
-        let { left, top } = currentTarget.getBoundingClientRect();
-        mouseX.set(clientX - left);
-        mouseY.set(clientY - top);
-        const str = generateRandomString(1500);
-        setRandomString(str);
-    }
-
-    let maskImage = useMotionTemplate`radial-gradient(250px at ${mouseX}px ${mouseY}px, white, transparent)`;
-    let style = { maskImage, WebkitMaskImage: maskImage };
-    
-    const getStatus = () => {
-        if (isCompleted) return { label: 'Past', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' };
-        if (!event.is_registration_open) return { label: 'Closed', color: 'bg-orange-500/10 text-orange-400 border-orange-500/20' };
-        return { label: 'Open', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' };
-    };
-    
-    const status = getStatus();
+    // Fix: Use a verified Deep Red Circuitry image to match the color scheme
+    const displayImage = isHawkins 
+        ? 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80'
+        : (event.image || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80');
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
-            transition={{ delay: index * 0.05, duration: 0.5, ease: "easeOut" }}
+            transition={{ delay: index * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             onClick={() => navigate(`/events/${event.id}`)}
-            onMouseMove={onMouseMove}
-            className="group relative cursor-pointer border border-white/[0.1] bg-white/[0.02] flex flex-col items-start p-4 h-[32rem]"
+            className="group relative w-full h-[480px] rounded-[2rem] overflow-hidden bg-[#050505] border border-white/10 cursor-pointer shadow-2xl shadow-black/50"
         >
-            {/* Corner Icons (The + signs) */}
-            <Icon className="absolute h-6 w-6 -top-3 -left-3 text-white/40 group-hover:text-primary transition-colors duration-500" />
-            <Icon className="absolute h-6 w-6 -bottom-3 -left-3 text-white/40 group-hover:text-primary transition-colors duration-500" />
-            <Icon className="absolute h-6 w-6 -top-3 -right-3 text-white/40 group-hover:text-primary transition-colors duration-500" />
-            <Icon className="absolute h-6 w-6 -bottom-3 -right-3 text-white/40 group-hover:text-primary transition-colors duration-500" />
+            {/* Background Image with Cinematic Zoom */}
+            <div className="absolute inset-0 w-full h-full overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-red-950/90 via-[#050505]/60 to-transparent z-10 opacity-90" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay z-20 pointer-events-none" />
+                
+                <img 
+                    src={displayImage} 
+                    alt={event.title}
+                    className="w-full h-full object-cover transition-transform duration-1000 ease-out will-change-transform group-hover:scale-110"
+                />
+            </div>
 
-            {/* Pattern Area (The visual core) */}
-            <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-black/40 border border-white/5 mb-6">
-                 {/* Evervault Pattern */}
-                 <div className="absolute inset-0">
-                    <motion.div
-                        className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/30 to-primary/30 opacity-0 group-hover:opacity-100 transition duration-500"
-                        style={style}
-                    />
-                    <motion.div
-                        className="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay group-hover:opacity-100"
-                        style={style}
-                    >
-                        <p className="absolute inset-x-0 text-[8px] h-full break-words whitespace-pre-wrap text-white font-mono font-bold transition duration-500">
-                            {randomString}
-                        </p>
-                    </motion.div>
-                </div>
-
-                {/* Status Overlay */}
-                <div className="absolute top-4 right-4 z-20">
-                     <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${status.color} bg-black/80 backdrop-blur-md uppercase tracking-wider`}>
-                        {status.label}
+            {/* Top Floating Badge */}
+            <div className="absolute top-6 right-6 z-20">
+                <div className={`px-4 py-2 rounded-full backdrop-blur-xl border flex items-center gap-2 ${
+                    isCompleted 
+                    ? 'bg-zinc-900/50 border-zinc-800 text-zinc-400' 
+                    : 'bg-white/10 border-white/20 text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]'
+                }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-zinc-500' : 'bg-green-500 animate-pulse'}`} />
+                    <span className="text-xs font-bold tracking-widest uppercase">
+                        {isCompleted ? 'Archived' : 'Live Event'}
                     </span>
-                </div>
-
-                {/* Center Badge */}
-                <div className="relative z-10 w-full h-full flex items-center justify-center">
-                    <div className="relative h-28 w-28 rounded-full flex items-center justify-center text-white font-bold text-center p-2">
-                        <div className="absolute w-full h-full bg-black/80 blur-sm rounded-full border border-white/10" />
-                        <span className="text-white text-xs font-mono tracking-tighter uppercase relative z-20 group-hover:scale-110 transition-transform">
-                            {event.category || 'Access'}<br/>Granted
-                        </span>
-                    </div>
                 </div>
             </div>
 
-            {/* Footer Text */}
-            <h3 className="text-white text-lg font-bold tracking-tight mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-                {event.title}
-            </h3>
-            <p className="text-xs text-gray-500 font-light mb-6 line-clamp-2">
-                {event.description || event.short_description || "Neural interface established. Proceed to operation briefing."}
-            </p>
+            {/* Content Container - Bottom Aligned */}
+            <div className="absolute bottom-0 left-0 w-full p-8 z-20 flex flex-col justify-end h-full">
+                
+                {/* Decorative Line (animates width) */}
+                <div className="w-12 h-1 bg-red-500 rounded-full mb-6 group-hover:w-20 transition-all duration-500" />
 
-            {/* View Button */}
-            <div className="mt-auto w-full flex items-center justify-between">
-                <div className="text-[10px] font-mono text-gray-400 flex items-center gap-3">
-                    <Calendar className="w-3 h-3 text-primary/60" />
-                    <span>{new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
-                </div>
-                <div className="px-4 py-1.5 rounded-full border border-white/10 text-[10px] font-medium text-white group-hover:bg-primary group-hover:border-primary transition-all duration-300">
-                    Operation Briefing
+                {/* Metadata */}
+                <div className="space-y-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                    <div className="flex items-center gap-4 text-xs font-mono tracking-wider text-zinc-400">
+                        <div className="flex items-center gap-2">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                        </div>
+                        <div className="w-1 h-1 rounded-full bg-zinc-600" />
+                        <div className="flex items-center gap-2">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>20:00 EST</span>
+                        </div>
+                    </div>
+
+                    <h3 className="text-4xl font-bold text-white leading-[0.9] tracking-tight group-hover:text-red-500 transition-colors duration-300">
+                        {event.title}
+                    </h3>
+                    
+                    <div className="overflow-hidden">
+                        <p className="text-zinc-400 text-sm leading-relaxed max-w-[90%] opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                            {event.description || "Authorized personnel only. Access classified event data."}
+                        </p>
+                    </div>
+
+                    {/* Action Row */}
+                    <div className="pt-6 flex items-center justify-between border-t border-white/5 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
+                        <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest">
+                            <ShieldCheck className="w-4 h-4 text-red-500" />
+                            <span>Secure Entry</span>
+                        </div>
+                        <div className="p-3 rounded-full bg-white text-black group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
+                            <ArrowUpRight className="w-5 h-5" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </motion.div>
     );
 };
-
 
 export default EventModule;

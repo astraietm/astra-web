@@ -1,25 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Gamepad2, Keyboard, Brain, Search, Lock, AlertTriangle, Users, Zap, Target, Award, Shield, CheckCircle, Activity, ChevronRight, Terminal } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 
 const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const navigate = useNavigate();
   const [hoveredCard, setHoveredCard] = useState(null);
+  const { scrollY } = useScroll();
+  const yBg = useTransform(scrollY, [0, 1000], [0, 200]);
+  const yGrid = useTransform(scrollY, [0, 1000], [0, 50]);
 
   return (
     <div className="min-h-screen bg-[#030303] text-white selection:bg-red-500/30 font-sans overflow-x-hidden">
         {/* Premium Ambient Background - Optimized for Mobile FPS */}
         <div className="fixed inset-0 z-0 pointer-events-none">
-            {/* Subtle Grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,black_70%,transparent_100%)]" />
+
+
+            {/* Subtle Grid - Parallax */}
+            <motion.div 
+                style={{ y: yGrid }}
+                className="absolute inset-0 bg-[linear-gradient(rgba(220,38,38,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(220,38,38,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,black_70%,transparent_100%)] relative z-10" 
+            />
             
-            {/* Cinematic Glows - High Performance Gradients (Zero Blur Cost) */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[radial-gradient(circle,rgba(69,10,10,0.4)_0%,transparent_70%)] mix-blend-screen opacity-60" />
-            <div className="absolute top-[20%] left-[20%] w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(30,58,138,0.2)_0%,transparent_70%)] mix-blend-screen opacity-40" />
+            {/* Cinematic Glows - All Red - Parallax */}
+            <motion.div 
+                style={{ y: yBg }}
+                className="absolute inset-0 pointer-events-none"
+            >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[radial-gradient(circle,rgba(69,10,10,0.5)_0%,transparent_70%)] mix-blend-screen opacity-70" />
+                <div className="absolute top-[20%] left-[20%] w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(153,27,27,0.2)_0%,transparent_70%)] mix-blend-screen opacity-50" />
+            </motion.div>
             
             {/* Fine Grain */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay" />
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay relative z-10" />
         </div>
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 pt-24 pb-12">
@@ -166,67 +179,87 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                     </motion.div>
                 </div>
 
-                {/* Right: Security Clearance Levels */}
-                <div className="space-y-4 pt-12 lg:pt-0">
-                    <h2 className="text-3xl font-bold mb-8 tracking-tight flex items-center gap-3">
+                <motion.div 
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, margin: "-100px" }}
+                    variants={{
+                        hidden: {},
+                        show: {
+                            transition: {
+                                staggerChildren: 0.1
+                            }
+                        }
+                    }}
+                    className="space-y-4 pt-12 lg:pt-0"
+                >
+                    <motion.h2 
+                        variants={{
+                            hidden: { opacity: 0, x: -20 },
+                            show: { opacity: 1, x: 0 }
+                        }}
+                        className="text-3xl font-bold mb-8 tracking-tight flex items-center gap-3"
+                    >
                         <Activity className="w-6 h-6 text-red-500" />
                         Security Clearance
-                    </h2>
+                    </motion.h2>
 
                     {[
-                        { title: "Reflex Test", icon: Gamepad2, desc: "Neuromotor synchronization check", active: true },
-                        { title: "Data Entry", icon: Keyboard, desc: "High-speed information processing", active: false },
-                        { title: "Pattern Analysis", icon: Brain, desc: "Cognitive logic puzzle solving", active: false },
-                        { title: "Signal Tracing", icon: Search, desc: "Digital footprint investigation", active: false },
-                        { title: "System Override", icon: Lock, desc: "Mainframe brute force access", active: false }
-                    ].map((lvl, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true, margin: "-50px" }}
-                            transition={{ delay: i * 0.1 }}
-                            onMouseEnter={() => setHoveredCard(i)}
-                            onMouseLeave={() => setHoveredCard(null)}
-                            className={`relative group rounded-2xl border p-6 transition-all duration-500 ${
-                                lvl.active 
-                                    ? 'bg-zinc-900/40 border-red-500/30' 
-                                    : 'bg-zinc-900/10 border-white/5 hover:border-white/10'
-                            }`}
-                        >
-                            {lvl.active && (
-                                <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent rounded-2xl" />
-                            )}
-                            
-                            <div className="relative flex items-center gap-6">
-                                <div className={`text-4xl font-bold tracking-tighter w-16 tabular-nums ${lvl.active ? 'text-red-500' : 'text-zinc-800 group-hover:text-zinc-700'}`}>
-                                    0{i + 1}
-                                </div>
+                        { title: "Reflex Test", icon: Gamepad2, desc: "Neuromotor synchronization check" },
+                        { title: "Data Entry", icon: Keyboard, desc: "High-speed information processing" },
+                        { title: "Pattern Analysis", icon: Brain, desc: "Cognitive logic puzzle solving" },
+                        { title: "Signal Tracing", icon: Search, desc: "Digital footprint investigation" },
+                        { title: "System Override", icon: Lock, desc: "Mainframe brute force access" }
+                    ].map((lvl, i) => {
+                        const isActive = hoveredCard === i;
+                        return (
+                            <motion.div
+                                key={i}
+                                variants={{
+                                    hidden: { opacity: 0, x: -30 },
+                                    show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 50, damping: 20 } }
+                                }}
+                                onMouseEnter={() => setHoveredCard(i)}
+                                onMouseLeave={() => setHoveredCard(null)}
+                                className={`relative group rounded-2xl border p-6 transition-all duration-500 cursor-pointer ${
+                                    isActive 
+                                        ? 'bg-red-950/30 border-red-500/40 shadow-[0_0_20px_rgba(220,38,38,0.15)] scale-[1.02]' 
+                                        : 'bg-red-950/5 border-red-900/20 hover:border-red-500/40 hover:bg-red-950/10'
+                                }`}
+                            >
+                                {/* Constant Red Glow on Hover */}
+                                <div className={`absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent rounded-2xl transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`} />
                                 
-                                <div className={`p-3 rounded-xl transition-colors ${lvl.active ? 'bg-red-500/20 text-red-500' : 'bg-white/5 text-zinc-500 group-hover:text-zinc-300'}`}>
-                                    <lvl.icon className="w-6 h-6" />
-                                </div>
-                                
-                                <div className="flex-1">
-                                    <h3 className={`text-lg font-semibold mb-1 ${lvl.active ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}>
-                                        {lvl.title}
-                                    </h3>
-                                    <p className="text-sm text-zinc-500 group-hover:text-zinc-400 transition-colors">
-                                        {lvl.desc}
-                                    </p>
-                                </div>
+                                <div className="relative flex items-center gap-6">
+                                    <div className={`text-4xl font-bold tracking-tighter w-16 tabular-nums transition-colors ${isActive ? 'text-red-500' : 'text-red-900/40'}`}>
+                                        0{i + 1}
+                                    </div>
+                                    
+                                    <div className={`p-3 rounded-xl transition-colors ${isActive ? 'bg-red-500/20 text-red-500' : 'bg-red-950/20 text-red-800'}`}>
+                                        <lvl.icon className="w-6 h-6" />
+                                    </div>
+                                    
+                                    <div className="flex-1">
+                                        <h3 className={`text-lg font-semibold mb-1 transition-colors ${isActive ? 'text-white' : 'text-red-100/60'}`}>
+                                            {lvl.title}
+                                        </h3>
+                                        <p className="text-sm text-red-200/40 transition-colors">
+                                            {lvl.desc}
+                                        </p>
+                                    </div>
 
-                                <div className="text-zinc-600">
-                                    {lvl.active ? (
-                                        <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse" />
-                                    ) : (
-                                        <Lock className="w-4 h-4" />
-                                    )}
+                                    <div className="text-red-900/60 transition-colors duration-300">
+                                        {isActive ? (
+                                            <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)] animate-pulse" />
+                                        ) : (
+                                            <Lock className="w-4 h-4" />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+                            </motion.div>
+                        );
+                    })}
+                </motion.div>
             </div>
 
             {/* Registration CTA - Bottom Floating or Section */}
@@ -234,9 +267,9 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="relative rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#080808]/80 backdrop-blur-md"
+                className="relative rounded-[2.5rem] overflow-hidden border border-red-900/20 bg-[#080202]/90 backdrop-blur-md"
             >
-                <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 via-transparent to-blue-600/10 opacity-50" />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-transparent to-red-900/20 opacity-50" />
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay" />
                 
                 <div className="relative p-8 sm:p-16 flex flex-col md:flex-row items-center justify-between gap-12">

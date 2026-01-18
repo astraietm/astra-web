@@ -17,7 +17,8 @@ const Events = () => {
         const mappedEvents = response.data.map(event => ({
           ...event,
           date: event.event_date,
-          image: event.image || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2070'
+          // Custom cover for Hawkins Lab (ID 1)
+          image: event.id === 1 ? '/hawkins-cover.png' : (event.image || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2070')
         }));
         
         // Sort by date (newest first)

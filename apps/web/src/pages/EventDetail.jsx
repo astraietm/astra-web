@@ -9,14 +9,19 @@ import {
 import { useToast } from '../context/ToastContext';
 import SkeletonLoader from '../components/common/SkeletonLoader';
 import HawkinsLabDetail from '../components/events/HawkinsLabDetail';
+import { useAuth } from '../context/AuthContext';
 
 const EventDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
+  const { user, token, requireLogin } = useAuth();
+  
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState(null);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [registering, setRegistering] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -36,6 +41,20 @@ const EventDetail = () => {
     };
     fetchEvent();
   }, [id]);
+
+  // Check Registration Status
+  useEffect(() => {
+    if (token && id) {
+        axios.get(`${import.meta.env.VITE_API_URL}/my-registrations/`, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+        .then(res => {
+            const registered = res.data.some(r => r.event === parseInt(id));
+            setIsRegistered(registered);
+        })
+        .catch(err => console.error("Failed to check registration", err));
+    }
+  }, [token, id]);
 
   useEffect(() => {
     if (!event) return;
@@ -62,7 +81,28 @@ const EventDetail = () => {
   }, [event]);
 
   const handleRegister = () => {
-    toast?.success?.('Registration initiated...');
+    requireLogin({
+        run: async () => {
+            if (isRegistered) {
+                toast.info("You are already registered.");
+                return;
+            }
+            try {
+                setRegistering(true);
+                const response = await axios.post(
+                    `${import.meta.env.VITE_API_URL}/register/`, 
+                    { event: id }, 
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+                setIsRegistered(true);
+                toast.success('Registration Successful! Access Granted.');
+            } catch (err) {
+                toast.error(err.response?.data?.error || 'Registration failed.');
+            } finally {
+                setRegistering(false);
+            }
+        }
+    });
   };
 
   if (loading) return <SkeletonLoader variant="hero" />;
@@ -85,7 +125,7 @@ const EventDetail = () => {
 
   // Custom Event Loader for Hawkins Lab
   if (event.title.toLowerCase().includes('hawkins')) {
-      return <HawkinsLabDetail onRegister={handleRegister} isRegistered={false} />;
+      return <HawkinsLabDetail onRegister={handleRegister} isRegistered={isRegistered} />;
   }
 
   return (
@@ -196,11 +236,26 @@ const EventDetail = () => {
 
                     <button
                         onClick={handleRegister}
-                        disabled={isCompleted || isLocked}
-                        className="w-full py-4 bg-white text-black font-bold rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 mb-3 flex items-center justify-center gap-2"
+                        disabled={isCompleted || isLocked || isRegistered || registering}
+                        className={`w-full py-4 font-bold rounded-xl transition-all flex items-center justify-center gap-2 mb-3
+                           ${isRegistered 
+                            ? 'bg-green-500/10 text-green-500 border border-green-500/20 cursor-default'
+                            : 'bg-white text-black hover:scale-[1.02] active:scale-[0.98]'
+                           } disabled:opacity-50 disabled:hover:scale-100`}
                     >
-                        <span>{isCompleted ? 'Event Ended' : 'Register Now'}</span>
-                        {!isCompleted && <ChevronRight className="w-4 h-4" />}
+                        {registering ? (
+                            <span className="animate-pulse">Processing...</span>
+                        ) : isRegistered ? (
+                            <>
+                                <CheckCircle2 className="w-5 h-5" />
+                                <span>Ticket Confirmed</span>
+                            </>
+                        ) : (
+                            <>
+                                <span>{isCompleted ? 'Event Ended' : 'Register Now'}</span>
+                                {!isCompleted && <ChevronRight className="w-4 h-4" />}
+                            </>
+                        )}
                     </button>
                     
                     <button className="w-full py-3 bg-white/5 text-white font-medium rounded-xl hover:bg-white/10 transition-colors border border-white/5 text-sm">
