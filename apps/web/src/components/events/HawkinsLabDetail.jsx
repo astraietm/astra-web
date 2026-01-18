@@ -5,67 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const navigate = useNavigate();
-  const [flicker, setFlicker] = useState(false);
-  const [glitch, setGlitch] = useState(false);
-  const [systemStatus, setSystemStatus] = useState('SCANNING VULNERABILITIES');
-  const [dots, setDots] = useState('');
 
-  // Simple fade animation - optimized for mobile
-  const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.4 } }
-  };
 
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
-  };
 
-  // Flickering lights effect (scarcity = fear)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (Math.random() > 0.92) { // Increased rarity
-        setFlicker(true);
-        setTimeout(() => setFlicker(false), 100);
-      }
-    }, 6000); // Less frequent
-    return () => clearInterval(interval);
-  }, []);
 
-  // Micro-glitch on title (every 6-10s)
-  useEffect(() => {
-    const glitchInterval = setInterval(() => {
-      setGlitch(true);
-      setTimeout(() => setGlitch(false), 150);
-    }, Math.random() * 4000 + 6000); // 6-10s
-    return () => clearInterval(glitchInterval);
-  }, []);
-
-  // System status typing animation
-  useEffect(() => {
-    const statuses = [
-      'SCANNING VULNERABILITIES',
-      'THREAT LEVEL: LOW',
-      'SYSTEM STABLE',
-      'UPSIDE DOWN PROTOCOL ACTIVE'
-    ];
-    let currentIndex = 0;
-    
-    const statusInterval = setInterval(() => {
-      currentIndex = (currentIndex + 1) % statuses.length;
-      setSystemStatus(statuses[currentIndex]);
-    }, 4000);
-
-    return () => clearInterval(statusInterval);
-  }, []);
-
-  // Animated dots for system status
-  useEffect(() => {
-    const dotInterval = setInterval(() => {
-      setDots(prev => prev.length >= 3 ? '' : prev + '.');
-    }, 500);
-    return () => clearInterval(dotInterval);
-  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden font-sans selection:bg-red-500/30">
@@ -91,103 +34,37 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
         <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-purple-600/6 rounded-full blur-[120px]" />
       </div>
 
-      {/* CRT Scanlines Effect */}
-      <div className="fixed inset-0 pointer-events-none z-50 opacity-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent animate-scan" 
-             style={{ 
-               backgroundSize: '100% 4px',
-               backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px)'
-             }} 
-        />
-      </div>
+      {/* Static red glow - no animation */}
+      <div className="fixed top-[-20%] left-1/2 -translate-x-1/2 w-[100vw] h-[60vh] bg-red-600/10 rounded-full blur-[150px] pointer-events-none" />
 
-      {/* Flickering Overlay */}
-      <AnimatePresence>
-        {flicker && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-red-500 pointer-events-none z-40"
-          />
-        )}
-      </AnimatePresence>
 
-      {/* Pulsing Red Glow */}
-      <motion.div 
-        animate={{ 
-          opacity: [0.1, 0.2, 0.1],
-          scale: [1, 1.1, 1]
-        }}
-        transition={{ 
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="fixed top-[-20%] left-1/2 -translate-x-1/2 w-[100vw] h-[60vh] bg-red-600/20 rounded-full blur-[150px] pointer-events-none" 
-      />
-
-      {/* System Status (Bottom Left) */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1 }}
-        className="fixed bottom-6 left-6 z-50 font-mono text-xs text-green-500/70 tracking-wider"
-      >
-        <div className="flex items-center gap-2 bg-black/80 backdrop-blur-sm px-3 py-2 rounded border border-green-500/20">
-          <motion.div
-            animate={{ opacity: [1, 0.3, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-1.5 h-1.5 bg-green-500 rounded-full"
-          />
-          <span>{systemStatus}{dots}</span>
-        </div>
-      </motion.div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
         
         {/* Back Button */}
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
+        <button
           onClick={() => navigate('/events')}
-          className="group flex items-center gap-2 text-sm text-gray-500 hover:text-red-400 transition-all mb-8 sm:mb-12 hover:gap-3"
+          className="group flex items-center gap-2 text-sm text-gray-500 hover:text-red-400 transition-colors mb-8 sm:mb-12"
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="font-mono uppercase tracking-wider">Back to Events</span>
-        </motion.button>
+        </button>
 
         {/* Hero Section */}
         <div className="text-center max-w-5xl mx-auto mb-16 sm:mb-24">
             {/* Protocol Badge */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, type: "spring" }}
-              className="mb-6 sm:mb-8"
-            >
+            <div className="mb-6 sm:mb-8">
                 <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-red-950/20 border border-red-500/20 backdrop-blur-md">
-                    <motion.span 
-                      animate={{ opacity: [1, 0.5, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.4)]" 
-                    />
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-[0_0_8px_rgba(248,113,113,0.4)]" />
                     <span className="text-xs sm:text-sm font-medium text-red-300 uppercase tracking-[0.15em]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
                       Hawkins Lab Protocol
                     </span>
                 </div>
-            </motion.div>
+            </div>
 
-            {/* Main Title with Micro-Glitch */}
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="mb-6 sm:mb-8 relative"
-            >
-                <motion.h1 
-                    animate={glitch ? { x: [-1, 1, -1, 0], y: [-1, 1, 0] } : {}}
-                    transition={{ duration: 0.15 }}
+            {/* Main Title */}
+            <div className="mb-6 sm:mb-8 relative">
+                <h1 
                     className="text-6xl sm:text-7xl md:text-9xl font-bold relative inline-block"
                     style={{ 
                       letterSpacing: '-0.02em',
@@ -202,13 +79,11 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                           }}>
                         HAWKINS LAB
                     </span>
-                </motion.h1>
-            </motion.div>
+                </h1>
+            </div>
 
-            {/* Tagline with Radio Signal Fluctuation */}
-            <motion.p 
-                animate={{ opacity: [1, 0.95, 1] }}
-                transition={{ duration: 8, repeat: Infinity }}
+            {/* Tagline */}
+            <p 
                 className="text-lg sm:text-xl md:text-2xl font-medium mb-8 sm:mb-12"
                 style={{ 
                   color: '#fca5a5',
@@ -218,20 +93,15 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                 }}
             >
                 Enter the Upside Down and Stop Vecna
-            </motion.p>
+            </p>
 
             {/* Description */}
-            <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6, duration: 0.6 }}
-                className="max-w-4xl mx-auto space-y-6 sm:space-y-8"
-            >
+            <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
                 <p className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed font-medium px-4">
                     A <span className="text-red-400 font-bold">Stranger Things-themed</span> cyber mystery event where teams solve clues, analyze patterns, and complete computer-based tasks to progress through an immersive storyline.
                 </p>
                 
-                {/* Dangerous Feature Chips */}
+                {/* Feature Chips */}
                 <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto px-4">
                     {[
                         { icon: Shield, text: "Data Accuracy" },
@@ -239,36 +109,24 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                         { icon: Target, text: "Social Engineering" },
                         { icon: Lock, text: "Authentication" }
                     ].map((item, i) => (
-                        <motion.div
+                        <div
                             key={i}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.8 + i * 0.1 }}
-                            whileHover={{ 
-                              scale: 1.03,
-                              boxShadow: '0 0 20px rgba(139, 92, 246, 0.4)'
-                            }}
-                            className="flex items-center gap-3 p-3 border border-[#ff1e1e] rounded-lg backdrop-blur-xl hover:bg-red-500/10 transition-all cursor-pointer"
+                            className="flex items-center gap-3 p-3 border border-[#ff1e1e] rounded-lg backdrop-blur-xl hover:bg-red-500/10 transition-colors cursor-pointer"
                             style={{ backgroundColor: 'rgba(255, 0, 0, 0.05)' }}
                         >
                             <item.icon className="w-4 h-4 text-red-500" />
                             <span className="text-sm font-mono text-gray-300">{item.text}</span>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
                 
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 1.2 }}
-                    className="inline-block px-6 py-3 bg-gradient-to-r from-red-900/50 via-red-800/30 to-transparent border-l-4 border-red-500 rounded-r-lg backdrop-blur-sm mx-4"
-                >
+                <div className="inline-block px-6 py-3 bg-gradient-to-r from-red-900/50 via-red-800/30 to-transparent border-l-4 border-red-500 rounded-r-lg backdrop-blur-sm mx-4">
                     <p className="text-white font-bold text-sm sm:text-base flex items-center gap-2">
                         <Award className="w-5 h-5 text-yellow-400" />
                         No advanced technical knowledge required — all students can participate!
                     </p>
-                </motion.div>
-            </motion.div>
+                </div>
+            </div>
         </div>
 
         {/* Main Content Grid */}
