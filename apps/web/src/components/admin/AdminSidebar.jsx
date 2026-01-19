@@ -111,46 +111,47 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
             <motion.aside
                 initial={false}
                 animate={{ 
-                    width: isCollapsed ? 88 : 280,
+                    width: isCollapsed ? 80 : 280,
                     x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -280 : 0)
                 }}
-                className={`fixed left-6 top-6 bottom-6 rounded-[24px] flex flex-col z-[100] transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden
-                    bg-gradient-to-br from-white/[0.03] to-white/[0.01] backdrop-blur-2xl
+                className={`fixed left-4 top-4 bottom-4 rounded-3xl z-[100] transition-all duration-500 cubic-bezier(0.2, 0.8, 0.2, 1) flex flex-col overflow-hidden
+                    bg-[#050505]/80 backdrop-blur-3xl border border-white/5 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)]
                     ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}
             >
-             {/* Glass Reflection */}
-             <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none z-0" />
+                {/* Internal Lighting */}
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/[0.03] to-transparent pointer-events-none" />
 
-            {/* Top Brand Area */}
-            <div className="p-6 pb-2 relative z-10">
-                <button
-                    onClick={() => navigate('/')}
-                    className={`flex items-center gap-4 w-full p-2.5 rounded-2xl transition-all group ${isCollapsed ? 'justify-center' : ''}`}
-                >
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4F46E5] to-[#9333EA] flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 group-hover:scale-105 transition-all duration-300">
-                         <div className="absolute inset-0 bg-white/20 mix-blend-overlay rounded-xl" />
-                        <ArrowLeft size={22} />
-                    </div>
-                    {!isCollapsed && (
-                        <div className="flex flex-col items-start min-w-0">
-                            <span className="text-base font-bold text-white tracking-tight font-display leading-none mb-1">ASTRA<span className="text-indigo-400">.ADMIN</span></span>
-                            <span className="text-[10px] text-gray-400 font-medium tracking-wide uppercase group-hover:text-white transition-colors">Back to Website</span>
+                {/* Header */}
+                <div className="p-6 pb-2 md:pt-8 relative shrink-0">
+                    <button 
+                        onClick={() => navigate('/')}
+                        className={`flex items-center gap-3 w-full group ${isCollapsed ? 'justify-center' : ''}`}
+                    >
+                        <div className="relative w-10 h-10 shrink-0 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 p-[1px] shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow duration-500">
+                             <div className="w-full h-full rounded-[11px] bg-black/90 flex items-center justify-center">
+                                <span className="font-rajdhani font-bold text-lg text-white">A</span>
+                             </div>
                         </div>
-                    )}
-                </button>
-            </div>
-
-            {/* Navigation Sections */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-8 no-scrollbar relative z-10 my-4">
-                {sections.map((section, idx) => (
-                    <div key={idx} className="space-y-2">
+                        
                         {!isCollapsed && (
-                            <h3 className="px-5 text-[11px] font-bold text-indigo-200/50 uppercase tracking-[0.15em] mb-3">
-                                {section.group}
-                            </h3>
+                             <div className="flex flex-col items-start overflow-hidden">
+                                <span className="font-rajdhani font-bold text-xl text-white tracking-wide leading-none">ASTRA<span className="text-indigo-500">.OS</span></span>
+                                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-[0.2em] group-hover:text-white transition-colors">System Admin</span>
+                            </div>
                         )}
-                        <div className="space-y-1">
+                    </button>
+                </div>
+
+                {/* Nav */}
+                <div className="flex-1 overflow-y-auto overflow-x-hidden py-6 px-3 space-y-8 custom-scrollbar relative">
+                    {sections.map((section, idx) => (
+                        <div key={idx} className="space-y-1">
+                             {!isCollapsed && (
+                                <h3 className="px-4 text-[10px] font-bold text-gray-600 uppercase tracking-[0.15em] mb-2 font-inter">
+                                    {section.group}
+                                </h3>
+                            )}
                             {section.items.map((item, i) => (
                                 <SidebarItem 
                                     key={i} 
@@ -163,45 +164,36 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                                 />
                             ))}
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
 
-            {/* User Profile & Toggle */}
-            <div className="p-4 m-2 mt-0 bg-white/[0.02] border border-white/5 rounded-2xl relative z-10 backdrop-blur-md">
-                {!isCollapsed && (
-                    <div className="flex items-center gap-3 mb-4 px-1">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-800 to-gray-700 p-[1px]">
-                             <div className="w-full h-full rounded-full bg-[#111] flex items-center justify-center relative overflow-hidden">
-                                  {user?.avatar ? (
-                                    <img src={user.avatar} className="w-full h-full object-cover" />
-                                  ) : (
-                                    <span className="text-sm font-bold text-indigo-400">{user?.name?.[0]}</span>
-                                  )}
-                             </div>
+                {/* Footer / User */}
+                <div className="p-4 relative shrink-0 border-t border-white/5 bg-white/[0.01]">
+                    <button
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        className={`w-full flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-all group ${isCollapsed ? 'justify-center' : ''}`}
+                    >
+                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/5">
+                            {user?.avatar ? (
+                                <img src={user.avatar} className="w-full h-full rounded-full object-cover" />
+                            ) : (
+                                <span className="text-xs font-bold font-rajdhani text-white">{user?.name?.[0]}</span>
+                            )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-white truncate">{user?.name || 'Admin'}</p>
-                            <p className="text-[10px] text-indigo-400 font-medium tracking-wide">SYSTEM ADMIN</p>
-                        </div>
-                    </div>
-                )}
-                
-                <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className={`w-full h-9 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all duration-300 group`}
-                >
-                    {isCollapsed ? <ChevronRight size={16} /> : (
-                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-300">
-                             <span className="group-hover:-translate-x-1 transition-transform">
-                                <ChevronLeft size={14} />
-                            </span>
-                            Collapse
-                        </div>
-                    )}
-                </button>
-            </div>
-        </motion.aside>
+                        
+                        {!isCollapsed && (
+                            <div className="flex-1 text-left overflow-hidden">
+                                <p className="text-sm font-semibold text-white truncate font-rajdhani">{user?.name || 'Commander'}</p>
+                                <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-medium tracking-wider">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    ONLINE
+                                </div>
+                            </div>
+                        )}
+                        {!isCollapsed && <ChevronLeft size={14} className="text-gray-500 group-hover:text-white transition-colors" />}
+                    </button>
+                </div>
+            </motion.aside>
         </>
     );
 };

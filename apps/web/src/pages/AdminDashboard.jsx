@@ -68,189 +68,197 @@ const AdminDashboard = () => {
         return () => clearInterval(interval);
     }, [token]);
 
-    const GlassStatCard = ({ label, value, subtext, icon: Icon, gradient }) => (
-        <div className="relative group p-[1px] rounded-3xl bg-gradient-to-b from-white/10 to-white/0 overflow-hidden isolate">
-            <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-500`} />
+    // Render Widget Helpers
+    const HoloCard = ({ label, value, subtext, icon: Icon, color = "text-indigo-400", border = "border-indigo-500/30" }) => (
+        <div className={`relative group p-6 rounded-2xl bg-[#08080a] border ${border} overflow-hidden`}>
+            {/* Dynamic Background */}
+            <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full ${color.replace('text-', 'bg-')}/10 blur-[40px] group-hover:blur-[60px] transition-all duration-500`} />
             
-            <div className="bg-[#050505]/80 backdrop-blur-xl h-full rounded-[23px] p-6 relative z-10">
+            <div className="relative z-10">
                 <div className="flex justify-between items-start mb-4">
-                    <div className={`p-3 rounded-2xl bg-white/5 border border-white/5 text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <div className="flex flex-col">
+                        <span className="text-xs font-rajdhani font-semibold text-gray-500 uppercase tracking-widest mb-1">{label}</span>
+                         <span className={`text-4xl font-bold font-rajdhani text-white tracking-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]`}>
+                            {value}
+                        </span>
+                    </div>
+                    <div className={`p-3 rounded-lg bg-white/5 border border-white/5 ${color} shadow-[0_0_15px_-5px_rgba(99,102,241,0.3)]`}>
                         <Icon size={24} />
                     </div>
-                    {subtext && (
-                        <div className="px-3 py-1 rounded-full bg-white/5 border border-white/5 text-[10px] font-bold text-gray-400 uppercase tracking-wider backdrop-blur-sm">
-                            {subtext}
-                        </div>
-                    )}
                 </div>
                 
-                <div>
-                    <h4 className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">{label}</h4>
-                    <div className="text-3xl font-bold text-white tracking-tight flex items-baseline gap-2">
-                        {value}
-                        <span className="text-sm font-normal text-gray-500 opacity-50">/ UNIT</span>
+                {subtext && (
+                    <div className="flex items-center gap-2">
+                         <div className={`h-0.5 w-4 rounded-full ${color.replace('text-', 'bg-')}`} />
+                         <span className="text-[10px] font-mono text-gray-400 uppercase">{subtext}</span>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );
 
     return (
-        <div className="min-h-full space-y-8 animate-fade-in-up">
+        <div className="min-h-full space-y-8 animate-fade-in-up pb-10">
             
             {/* Header Area */}
-            <div className="flex justify-between items-end">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-4 border-b border-white/5 pb-6">
                 <div>
-                   <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500 pb-2">
-                       Mission Control
+                   <h1 className="text-5xl font-bold font-rajdhani text-white tracking-tight mb-2">
+                       COMMAND <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">CENTER</span>
                    </h1>
-                   <p className="text-gray-400 font-medium">Welcome back, Commander {user?.name || 'Admin'} </p>
+                   <div className="flex items-center gap-3 text-sm text-gray-400 font-medium">
+                        <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-xs font-mono">SYS.VER.2.0.4</span>
+                        <span>Welcome back, Commander {user?.name || 'Admin'}</span>
+                   </div>
                 </div>
-                <div className="hidden md:flex gap-3">
-                    <button className="px-4 py-2 rounded-xl bg-white/5 text-sm font-medium hover:bg-white/10 transition-colors border border-white/5">
-                        System Diagnostics
+                <div className="flex gap-3">
+                   {/* Date Display */}
+                   <div className="hidden lg:flex flex-col items-end mr-6 font-rajdhani">
+                        <span className="text-2xl font-bold text-white">{new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                        <span className="text-xs text-gray-500 uppercase tracking-widest">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric'})}</span>
+                   </div>
+                   
+                    <button className="h-10 px-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors flex items-center gap-2 text-sm text-gray-300 font-rajdhani font-semibold tracking-wide">
+                        <Zap size={16} className="text-amber-400" />
+                        DIAGNOSTICS
                     </button>
-                    <button className="px-4 py-2 rounded-xl bg-indigo-600/20 text-indigo-400 text-sm font-medium hover:bg-indigo-600/30 transition-colors border border-indigo-500/20 flex items-center gap-2">
-                        <Zap size={16} fill="currentColor" />
-                        Live Status
+                    <button className="h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center gap-2 text-sm text-white font-rajdhani font-bold tracking-wide shadow-[0_0_20px_-5px_rgba(79,70,229,0.5)]">
+                        <Activity size={16} />
+                        LIVE MONITOR
                     </button>
                 </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <GlassStatCard 
-                    label="Total Operatives" 
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <HoloCard 
+                    label="Operatives Registered" 
                     value={loading ? "..." : stats.totalRegistrations} 
-                    subtext="+12%"
+                    subtext="Real-time Database"
                     icon={Users}
-                    gradient="from-blue-500 to-indigo-500"
+                    color="text-blue-400"
+                    border="border-blue-500/20"
                 />
-                <GlassStatCard 
+                <HoloCard 
                     label="Active Missions" 
                     value={loading ? "..." : stats.activeEvents} 
-                    subtext="ONLINE"
+                    subtext="Deployed Units"
                     icon={Target}
-                    gradient="from-emerald-500 to-teal-500"
+                    color="text-emerald-400"
+                    border="border-emerald-500/20"
                 />
-                <GlassStatCard 
-                    label="Access Granted" 
+                <HoloCard 
+                    label="Gate Access" 
                     value={loading ? "..." : `${stats.attendanceRate}%`} 
-                    subtext="SECURE"
+                    subtext="Security Clearance"
                     icon={ShieldCheck}
-                    gradient="from-amber-500 to-orange-500"
+                    color="text-amber-400"
+                    border="border-amber-500/20"
                 />
-                <GlassStatCard 
-                    label="System Load" 
+                <HoloCard 
+                    label="Server Load" 
                     value={`${stats.serverLoad}%`} 
-                    subtext="STABLE"
+                    subtext="Core Temperature Stabilized"
                     icon={Cpu}
-                    gradient="from-rose-500 to-pink-500"
+                    color="text-rose-400"
+                    border="border-rose-500/20"
                 />
             </div>
 
             {/* Main Content Split */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px]">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[450px]">
                 
-                {/* 3D Global Map Simulation */}
-                <div className="lg:col-span-2 relative rounded-3xl bg-[#080808] border border-white/5 overflow-hidden isolate shadow-2xl">
-                     {/* Ambient Glows */}
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
-
-                    {/* Header */}
-                    <div className="absolute top-6 left-6 z-20">
-                        <h3 className="text-white font-bold text-lg flex items-center gap-2">
-                            <Globe className="text-indigo-400" size={20} />
-                            Active Surveillance
-                        </h3>
-                        <p className="text-gray-500 text-xs mt-1">Real-time global event tracking</p>
-                    </div>
-
-                    <div className="absolute top-6 right-6 z-20 flex gap-2">
-                        <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center gap-2">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            LIVE FEED
+                {/* Network Traffic Visualization (Replacing Map) */}
+                <div className="lg:col-span-2 relative rounded-2xl bg-[#08080a] border border-white/5 overflow-hidden flex flex-col">
+                    <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
+                        <div>
+                            <h3 className="font-rajdhani font-bold text-lg text-white flex items-center gap-2">
+                                <Globe size={18} className="text-indigo-400" />
+                                NETWORK TRAFFIC
+                            </h3>
+                        </div>
+                         <div className="flex gap-2">
+                            {['REQ', 'RES', 'ERR'].map(t => (
+                                <span key={t} className="text-[10px] font-mono text-gray-500 px-2 py-1 rounded bg-white/5">{t}</span>
+                            ))}
                         </div>
                     </div>
-
-                    {/* Central Globe Graphic */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                         {/* Orbital Rings */}
-                        <div className="w-[400px] h-[400px] rounded-full border border-white/[0.03] animate-[spin_20s_linear_infinite]" />
-                        <div className="absolute w-[550px] h-[550px] rounded-full border border-white/[0.02] animate-[spin_30s_linear_infinite_reverse]" />
-                        
-                        {/* Globe Sphere */}
-                        <div className="w-[300px] h-[300px] rounded-full bg-gradient-to-br from-indigo-900/40 to-black border border-indigo-500/20 shadow-[0_0_50px_rgba(79,70,229,0.15)] relative backdrop-blur-sm overflow-hidden flex items-center justify-center">
-                              {/* Grid Lines on Globe */}
-                              <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 transform rotate-12 scale-[1.2]" />
-                              
-                              {/* Glowing Core */}
-                              <div className="w-full h-full bg-radial-gradient from-indigo-500/20 via-transparent to-transparent opacity-50" />
-                        </div>
+                    
+                    {/* Visualizer Area */}
+                    <div className="flex-1 relative flex items-end justify-center gap-1 px-8 pb-0 overflow-hidden">
+                        {/* Faux Bar Graph */}
+                        {Array.from({ length: 40 }).map((_, i) => (
+                             <motion.div 
+                                key={i}
+                                initial={{ height: '10%' }}
+                                animate={{ height: [`${Math.random() * 60 + 10}%`, `${Math.random() * 60 + 10}%`] }}
+                                transition={{ duration: 0.5 + Math.random(), repeat: Infinity, repeatType: 'reverse' }}
+                                className={`w-full max-w-[12px] rounded-t-sm opacity-60 ${i % 3 === 0 ? 'bg-indigo-500' : 'bg-blue-600/50'}`}
+                             />
+                        ))}
+                         
+                         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/10 border-t border-dashed border-white/20" />
+                         <div className="absolute top-1/4 left-0 w-full h-[1px] bg-white/5 border-t border-dashed border-white/10" />
                     </div>
                 </div>
 
-                {/* Right Feed Panel */}
-                <div className="rounded-3xl bg-white/[0.02] border border-white/5 flex flex-col backdrop-blur-xl overflow-hidden relative">
-                    <div className="p-6 border-b border-white/5 bg-white/[0.01]">
-                        <h3 className="text-white font-bold flex items-center gap-2">
-                            <Activity className="text-orange-400" size={18} />
-                            System Activity
+                {/* Log Feed */}
+                <div className="rounded-2xl bg-[#08080a] border border-white/5 flex flex-col overflow-hidden">
+                    <div className="p-6 border-b border-white/5 bg-white/[0.01] flex justify-between items-center">
+                        <h3 className="font-rajdhani font-bold text-lg text-white flex items-center gap-2">
+                            <Activity className="text-emerald-400" size={18} />
+                            SYS_LOGS
                         </h3>
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
                         {loading ? (
-                            <div className="flex justify-center py-10"><div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" /></div>
+                            <div className="flex justify-center py-10"><div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" /></div>
                         ) : (
                             stats.logs.map((log, i) => (
-                                <div key={i} className="flex gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors cursor-default group">
-                                    <div className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${log.id % 2 === 0 ? 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)]' : 'bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.5)]'}`} />
-                                    <div>
-                                        <p className="text-sm text-gray-200 font-medium group-hover:text-white transition-colors">
+                                <div key={i} className="group p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.02] transition-all flex gap-3">
+                                    <div className={`mt-1.5 w-1.5 h-1.5 rounded-sm shrink-0 ${log.id % 2 === 0 ? 'bg-emerald-500' : 'bg-blue-500'}`} />
+                                    <div className="min-w-0">
+                                        <p className="text-xs font-semibold font-rajdhani text-gray-200 truncate group-hover:text-white transition-colors">
                                             {log.user_name}
                                         </p>
-                                        <p className="text-xs text-gray-500 mt-0.5">
-                                            Authenticated via {log.id % 2 === 0 ? 'QR Scan' : 'Manual Entry'}
+                                        <p className="text-[10px] text-gray-500 font-mono mt-0.5 truncate">
+                                            ID: #{log.id.toString().padStart(4, '0')} • {log.id % 2 === 0 ? 'AUTH_SUCCESS' : 'REG_NEW'}
                                         </p>
                                     </div>
-                                    <span className="text-[10px] text-gray-600 ml-auto whitespace-nowrap font-mono mt-1">
+                                    <span className="text-[10px] text-gray-600 ml-auto whitespace-nowrap font-mono mt-0.5">
                                         {new Date(log.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
                                     </span>
                                 </div>
                             ))
                         )}
-                        <div className="p-3 text-center text-xs text-gray-600 uppercase tracking-widest font-medium">End of Log</div>
                     </div>
                 </div>
             </div>
 
-             {/* Quick Actions Actions */}
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             {/* Footer Actions */}
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                    { title: 'Create Event', desc: 'Deploy new mission parameters', icon: Calendar, color: 'text-blue-400', to: '/admin/events' },
-                    { title: 'Scanner Link', desc: 'Connect to field operatives', icon: Crosshair, color: 'text-emerald-400', to: '/admin/scanner' },
-                    { title: 'Media Assets', desc: 'Manage mission archives', icon: Database, color: 'text-purple-400', to: '/admin/gallery' },
+                    { title: 'DEPLOY EVENT', desc: 'Initialize New Mission Protocol', icon: Calendar, color: 'text-blue-400', to: '/admin/events' },
+                    { title: 'SCANNER UPLINK', desc: 'Connect Field Operative Units', icon: Crosshair, color: 'text-emerald-400', to: '/admin/scanner' },
+                    { title: 'ASSET ARCHIVES', desc: 'Manage Encrypted Media Files', icon: Database, color: 'text-purple-400', to: '/admin/gallery' },
                 ].map((action, i) => (
                     <button 
                         key={i}
                         onClick={() => navigate(action.to)}
-                        className="group relative p-[1px] rounded-2xl overflow-hidden bg-gradient-to-b from-white/10 to-white/0 hover:scale-[1.01] transition-transform duration-300"
+                        className="group relative h-24 rounded-2xl overflow-hidden bg-[#0a0a0c] border border-white/5 hover:border-white/10 transition-all flex items-center px-6 gap-5"
                     >
-                         <div className="bg-[#080808] p-5 rounded-[15px] h-full flex items-center gap-4 relative z-10">
-                              <div className={`p-3 rounded-xl bg-white/5 text-gray-300 group-hover:text-white group-hover:bg-white/10 transition-colors ${action.color}`}>
-                                  <action.icon size={24} />
-                              </div>
-                              <div className="text-left">
-                                  <h4 className="text-white font-bold text-sm tracking-wide group-hover:text-indigo-300 transition-colors">{action.title}</h4>
-                                  <p className="text-xs text-gray-500">{action.desc}</p>
-                              </div>
-                              <ArrowUpRight className="ml-auto text-gray-700 group-hover:text-indigo-400 transition-colors" size={18} />
+                         <div className={`p-4 rounded-xl bg-white/5 ${action.color} group-hover:scale-110 transition-transform duration-300`}>
+                             <action.icon size={26} />
                          </div>
+                         <div className="text-left">
+                             <h4 className="font-rajdhani font-bold text-white tracking-wide text-lg group-hover:text-indigo-300 transition-colors">{action.title}</h4>
+                             <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{action.desc}</p>
+                         </div>
+                         
+                         {/* Hover Gradient */}
+                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </button>
                 ))}
              </div>
