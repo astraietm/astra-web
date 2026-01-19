@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const useRazorpayPayment = () => {
-    const { token, user } = useAuth();
+    const { token, user, logout } = useAuth();
 
     const loadRazorpayScript = () => {
         return new Promise((resolve) => {
@@ -43,6 +43,12 @@ const useRazorpayPayment = () => {
             });
 
             console.log('API Response Status:', response.status);
+
+            if (response.status === 401) {
+                logout();
+                onFailure('Session expired. Please login again.');
+                return;
+            }
 
             let data;
             const contentType = response.headers.get("content-type");
