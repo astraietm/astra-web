@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { 
     Users, 
     Calendar, 
-    ShieldCheck, 
     Activity, 
     ArrowUpRight,
     Search,
@@ -14,7 +13,10 @@ import {
     Globe,
     Target,
     Database,
-    Crosshair
+    Crosshair,
+    TrendingUp,
+    CreditCard,
+    MoreHorizontal
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -38,13 +40,14 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // ... (Keep existing data fetching logic)
                 const [regRes, eventRes] = await Promise.all([
                     axios.get(`${API_URL}/admin-registrations/`, { headers: { Authorization: `Bearer ${token}` } }),
                     axios.get(`${API_URL}/operations/events/`, { headers: { Authorization: `Bearer ${token}` } })
                 ]);
                 const regs = regRes.data || [];
                 const events = eventRes.data || [];
-                
+                // ...
                 setStats({
                     totalRegistrations: regs.length,
                     activeEvents: events.filter(e => e.is_registration_open).length,
@@ -68,201 +71,195 @@ const AdminDashboard = () => {
         return () => clearInterval(interval);
     }, [token]);
 
-    // Render Widget Helpers
-    const HoloCard = ({ label, value, subtext, icon: Icon, color = "text-indigo-400", border = "border-indigo-500/30" }) => (
-        <div className={`relative group p-6 rounded-2xl bg-[#08080a] border ${border} overflow-hidden`}>
-            {/* Dynamic Background */}
-            <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full ${color.replace('text-', 'bg-')}/10 blur-[40px] group-hover:blur-[60px] transition-all duration-500`} />
-            
-            <div className="relative z-10">
-                <div className="flex justify-between items-start mb-4">
-                    <div className="flex flex-col">
-                        <span className="text-xs font-rajdhani font-semibold text-gray-500 uppercase tracking-widest mb-1">{label}</span>
-                         <span className={`text-4xl font-bold font-rajdhani text-white tracking-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]`}>
-                            {value}
-                        </span>
-                    </div>
-                    <div className={`p-3 rounded-lg bg-white/5 border border-white/5 ${color} shadow-[0_0_15px_-5px_rgba(99,102,241,0.3)]`}>
-                        <Icon size={24} />
-                    </div>
+    // NeuroBank Style Card = "Obsidian Glass"
+    const BentoCard = ({ children, className = "", title, action }) => (
+        <div className={`relative rounded-[32px] bg-[#12121A]/60 backdrop-blur-2xl border border-white/[0.03] p-6 flex flex-col overflow-hidden ${className}`}>
+            {/* Header */}
+            {(title || action) && (
+                <div className="flex justify-between items-center mb-4 z-10 relative">
+                    {title && <h3 className="text-gray-400 font-medium text-sm tracking-wide">{title}</h3>}
+                    {action}
                 </div>
-                
-                {subtext && (
-                    <div className="flex items-center gap-2">
-                         <div className={`h-0.5 w-4 rounded-full ${color.replace('text-', 'bg-')}`} />
-                         <span className="text-[10px] font-mono text-gray-400 uppercase">{subtext}</span>
-                    </div>
-                )}
-            </div>
+            )}
+            <div className="relative z-10 flex-1">{children}</div>
+            
+            {/* Subtle Inner Glow */}
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
         </div>
     );
 
+    const StatBig = ({ label, value, trend, icon: Icon, color = "text-white" }) => (
+        <BentoCard>
+            <div className="flex justify-between items-start mb-6">
+                <div className="p-3 bg-white/5 rounded-2xl border border-white/5 text-gray-300">
+                    <Icon size={20} />
+                </div>
+                {trend && (
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                        <TrendingUp size={12} className="text-emerald-400" />
+                        <span className="text-emerald-400 text-xs font-bold">{trend}</span>
+                    </div>
+                )}
+            </div>
+            <div>
+                <h4 className="text-4xl font-bold text-white mb-2 font-inter tracking-tight">{value}</h4>
+                <p className="text-gray-500 text-sm font-medium">{label}</p>
+            </div>
+        </BentoCard>
+    );
+
     return (
-        <div className="min-h-full space-y-8 animate-fade-in-up pb-10">
+        <div className="min-h-full space-y-8 animate-fade-in-up pb-10 font-inter">
             
-            {/* Header Area */}
-            <div className="flex flex-col md:flex-row justify-between items-end gap-4 border-b border-white/5 pb-6">
+            {/* Header */}
+            <header className="flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
-                   <h1 className="text-5xl font-bold font-rajdhani text-white tracking-tight mb-2">
-                       COMMAND <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">CENTER</span>
+                   <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-2">
+                       Dashboard
                    </h1>
-                   <div className="flex items-center gap-3 text-sm text-gray-400 font-medium">
-                        <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-xs font-mono">SYS.VER.2.0.4</span>
-                        <span>Welcome back, Commander {user?.name || 'Admin'}</span>
-                   </div>
+                   <p className="text-gray-500 font-medium">Overview of system performance and events.</p>
                 </div>
                 <div className="flex gap-3">
-                   {/* Date Display */}
-                   <div className="hidden lg:flex flex-col items-end mr-6 font-rajdhani">
-                        <span className="text-2xl font-bold text-white">{new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-widest">{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric'})}</span>
-                   </div>
-                   
-                    <button className="h-10 px-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors flex items-center gap-2 text-sm text-gray-300 font-rajdhani font-semibold tracking-wide">
-                        <Zap size={16} className="text-amber-400" />
-                        DIAGNOSTICS
+                    <button className="h-11 px-5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors text-sm text-white font-medium">
+                        View Reports
                     </button>
-                    <button className="h-10 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors flex items-center gap-2 text-sm text-white font-rajdhani font-bold tracking-wide shadow-[0_0_20px_-5px_rgba(79,70,229,0.5)]">
-                        <Activity size={16} />
-                        LIVE MONITOR
+                    <button className="h-11 px-5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-[0_0_20px_-5px_rgba(59,130,246,0.5)] transition-all text-sm text-white font-bold flex items-center gap-2">
+                        <Zap size={16} fill="currentColor" />
+                        Quick Action
                     </button>
                 </div>
-            </div>
+            </header>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <HoloCard 
-                    label="Operatives Registered" 
+            {/* Main Bento Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                
+                {/* 1. Key Stat - Users */}
+                <StatBig 
+                    label="Total Operatives" 
                     value={loading ? "..." : stats.totalRegistrations} 
-                    subtext="Real-time Database"
-                    icon={Users}
-                    color="text-blue-400"
-                    border="border-blue-500/20"
+                    trend="+12.5%" 
+                    icon={Users} 
                 />
-                <HoloCard 
+
+                {/* 2. Key Stat - Events */}
+                <StatBig 
                     label="Active Missions" 
                     value={loading ? "..." : stats.activeEvents} 
-                    subtext="Deployed Units"
-                    icon={Target}
-                    color="text-emerald-400"
-                    border="border-emerald-500/20"
+                    trend="+2 Active" 
+                    icon={Target} 
                 />
-                <HoloCard 
-                    label="Gate Access" 
-                    value={loading ? "..." : `${stats.attendanceRate}%`} 
-                    subtext="Security Clearance"
-                    icon={ShieldCheck}
-                    color="text-amber-400"
-                    border="border-amber-500/20"
-                />
-                <HoloCard 
-                    label="Server Load" 
-                    value={`${stats.serverLoad}%`} 
-                    subtext="Core Temperature Stabilized"
-                    icon={Cpu}
-                    color="text-rose-400"
-                    border="border-rose-500/20"
-                />
-            </div>
 
-            {/* Main Content Split */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[450px]">
-                
-                {/* Network Traffic Visualization (Replacing Map) */}
-                <div className="lg:col-span-2 relative rounded-2xl bg-[#08080a] border border-white/5 overflow-hidden flex flex-col">
-                    <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
-                        <div>
-                            <h3 className="font-rajdhani font-bold text-lg text-white flex items-center gap-2">
-                                <Globe size={18} className="text-indigo-400" />
-                                NETWORK TRAFFIC
-                            </h3>
-                        </div>
-                         <div className="flex gap-2">
-                            {['REQ', 'RES', 'ERR'].map(t => (
-                                <span key={t} className="text-[10px] font-mono text-gray-500 px-2 py-1 rounded bg-white/5">{t}</span>
-                            ))}
-                        </div>
+                {/* 3. Spending / Load Chart Card (2x1) */}
+                <BentoCard className="md:col-span-2 relative" title="System Load Analysis">
+                    <div className="absolute right-6 top-6 flex gap-2">
+                        <span className="px-3 py-1 rounded-full bg-white/5 text-[10px] uppercase font-bold text-gray-400">Daily</span>
+                        <span className="px-3 py-1 rounded-full bg-blue-600 text-[10px] uppercase font-bold text-white">Live</span>
                     </div>
-                    
-                    {/* Visualizer Area */}
-                    <div className="flex-1 relative flex items-end justify-center gap-1 px-8 pb-0 overflow-hidden">
-                        {/* Faux Bar Graph */}
-                        {Array.from({ length: 40 }).map((_, i) => (
-                             <motion.div 
+
+                    <div className="flex items-end h-32 gap-2 mt-4 px-2">
+                         {/* Faux Chart Bars */}
+                         {Array.from({ length: 24 }).map((_, i) => (
+                             <div 
                                 key={i}
-                                initial={{ height: '10%' }}
-                                animate={{ height: [`${Math.random() * 60 + 10}%`, `${Math.random() * 60 + 10}%`] }}
-                                transition={{ duration: 0.5 + Math.random(), repeat: Infinity, repeatType: 'reverse' }}
-                                className={`w-full max-w-[12px] rounded-t-sm opacity-60 ${i % 3 === 0 ? 'bg-indigo-500' : 'bg-blue-600/50'}`}
+                                className="flex-1 rounded-t-sm bg-gradient-to-t from-blue-600/20 to-blue-500/80 hover:to-blue-400 transition-all opacity-80"
+                                style={{ height: `${20 + Math.random() * 60}%` }}
                              />
-                        ))}
-                         
-                         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/10 border-t border-dashed border-white/20" />
-                         <div className="absolute top-1/4 left-0 w-full h-[1px] bg-white/5 border-t border-dashed border-white/10" />
+                         ))}
                     </div>
-                </div>
+                    <div className="flex justify-between mt-4 text-xs text-gray-500 font-medium px-2">
+                        <span>00:00</span>
+                        <span>12:00</span>
+                        <span>23:59</span>
+                    </div>
+                </BentoCard>
 
-                {/* Log Feed */}
-                <div className="rounded-2xl bg-[#08080a] border border-white/5 flex flex-col overflow-hidden">
-                    <div className="p-6 border-b border-white/5 bg-white/[0.01] flex justify-between items-center">
-                        <h3 className="font-rajdhani font-bold text-lg text-white flex items-center gap-2">
-                            <Activity className="text-emerald-400" size={18} />
-                            SYS_LOGS
-                        </h3>
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                {/* 4. Portfolio / Map (2x2) */}
+                <BentoCard className="lg:col-span-2 row-span-2 relative min-h-[400px]" title="Global Live Tracker">
+                    <div className="absolute right-6 top-6">
+                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-emerald-500 text-xs font-bold">Online</span>
+                        </div>
                     </div>
                     
-                    <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-                        {loading ? (
-                            <div className="flex justify-center py-10"><div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" /></div>
-                        ) : (
-                            stats.logs.map((log, i) => (
-                                <div key={i} className="group p-3 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.02] transition-all flex gap-3">
-                                    <div className={`mt-1.5 w-1.5 h-1.5 rounded-sm shrink-0 ${log.id % 2 === 0 ? 'bg-emerald-500' : 'bg-blue-500'}`} />
-                                    <div className="min-w-0">
-                                        <p className="text-xs font-semibold font-rajdhani text-gray-200 truncate group-hover:text-white transition-colors">
-                                            {log.user_name}
-                                        </p>
-                                        <p className="text-[10px] text-gray-500 font-mono mt-0.5 truncate">
-                                            ID: #{log.id.toString().padStart(4, '0')} • {log.id % 2 === 0 ? 'AUTH_SUCCESS' : 'REG_NEW'}
-                                        </p>
-                                    </div>
-                                    <span className="text-[10px] text-gray-600 ml-auto whitespace-nowrap font-mono mt-0.5">
-                                        {new Date(log.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
-                                    </span>
-                                </div>
-                            ))
-                        )}
+                    {/* Abstract Blue Map/Orb */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
+                         <div className="w-[500px] h-[500px] rounded-full border border-blue-500/10 animate-[spin_60s_linear_infinite]" />
+                         <div className="absolute w-[300px] h-[300px] rounded-full border border-indigo-500/20 animate-[spin_40s_linear_infinite_reverse]" />
+                         <div className="absolute w-[150px] h-[150px] bg-blue-500/20 blur-[100px]" />
                     </div>
-                </div>
-            </div>
 
-             {/* Footer Actions */}
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                    { title: 'DEPLOY EVENT', desc: 'Initialize New Mission Protocol', icon: Calendar, color: 'text-blue-400', to: '/admin/events' },
-                    { title: 'SCANNER UPLINK', desc: 'Connect Field Operative Units', icon: Crosshair, color: 'text-emerald-400', to: '/admin/scanner' },
-                    { title: 'ASSET ARCHIVES', desc: 'Manage Encrypted Media Files', icon: Database, color: 'text-purple-400', to: '/admin/gallery' },
-                ].map((action, i) => (
-                    <button 
-                        key={i}
-                        onClick={() => navigate(action.to)}
-                        className="group relative h-24 rounded-2xl overflow-hidden bg-[#0a0a0c] border border-white/5 hover:border-white/10 transition-all flex items-center px-6 gap-5"
-                    >
-                         <div className={`p-4 rounded-xl bg-white/5 ${action.color} group-hover:scale-110 transition-transform duration-300`}>
-                             <action.icon size={26} />
-                         </div>
-                         <div className="text-left">
-                             <h4 className="font-rajdhani font-bold text-white tracking-wide text-lg group-hover:text-indigo-300 transition-colors">{action.title}</h4>
-                             <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">{action.desc}</p>
-                         </div>
-                         
-                         {/* Hover Gradient */}
-                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    {/* Overlay Stats */}
+                    <div className="relative z-10 mt-10 grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-2xl bg-[#08080C]/50 border border-white/5 backdrop-blur-md">
+                            <p className="text-xs text-gray-500 mb-1">Grid Coordinates</p>
+                            <p className="text-white font-mono text-sm">24.551° N, 78.112° E</p>
+                        </div>
+                        <div className="p-4 rounded-2xl bg-[#08080C]/50 border border-white/5 backdrop-blur-md">
+                            <p className="text-xs text-gray-500 mb-1">Signal Strength</p>
+                            <p className="text-emerald-400 font-mono text-sm">EXCELLENT (98%)</p>
+                        </div>
+                    </div>
+                </BentoCard>
+
+                {/* 5. Transactions / Logs List */}
+                <BentoCard className="lg:col-span-2" title="Recent Activity">
+                    <div className="space-y-1 mt-2">
+                        {loading ? (
+                            <div className="py-8 text-center text-gray-600">Syncing...</div>
+                        ) : stats.logs.slice(0,4).map((log, i) => (
+                            <div key={i} className="flex items-center justify-between p-3.5 rounded-2xl hover:bg-white/[0.03] transition-colors group cursor-default">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${log.id % 2 === 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                                        <Activity size={18} />
+                                    </div>
+                                    <div>
+                                        <p className="text-white font-medium text-sm group-hover:text-blue-400 transition-colors">{log.user_name}</p>
+                                        <p className="text-gray-500 text-xs">Auth ID: #{log.id}</p>
+                                    </div>
+                                </div>
+                                <span className="text-gray-500 text-xs font-mono">
+                                    {new Date(log.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                    <button className="w-full mt-4 py-3 rounded-xl border border-white/5 text-xs text-gray-400 font-medium hover:bg-white/5 transition-colors">
+                        View All Logs
                     </button>
-                ))}
-             </div>
+                </BentoCard>
 
+                {/* 6. Quick Transfer / Action */}
+                <BentoCard title="Security Level">
+                    <div className="flex flex-col items-center justify-center h-full py-4">
+                        <div className="relative w-32 h-32 flex items-center justify-center">
+                            <svg className="w-full h-full transform -rotate-90">
+                                <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-gray-800" />
+                                <circle cx="64" cy="64" r="56" stroke="#3B82F6" strokeWidth="8" fill="transparent" strokeDasharray="351.86" strokeDashoffset={351.86 * (1 - 0.85)} strokeLinecap="round" />
+                            </svg>
+                            <div className="absolute text-center">
+                                <span className="text-2xl font-bold text-white">85%</span>
+                            </div>
+                        </div>
+                        <p className="text-center text-gray-400 text-xs mt-4">System integrity is high.</p>
+                    </div>
+                </BentoCard>
+                
+                {/* 7. Card */}
+                <BentoCard className="bg-gradient-to-br from-blue-600 to-indigo-700 !border-0" title="">
+                    <div className="h-full flex flex-col justify-between text-white">
+                        <div className="flex justify-between items-start">
+                             <CreditCard size={24} className="opacity-80" />
+                             <MoreHorizontal size={20} className="opacity-60" />
+                        </div>
+                        <div>
+                             <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Master Access</p>
+                             <p className="text-lg font-mono tracking-widest">**** **** 4242</p>
+                        </div>
+                    </div>
+                </BentoCard>
+
+            </div>
         </div>
     );
 };
