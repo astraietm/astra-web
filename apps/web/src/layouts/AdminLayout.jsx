@@ -72,7 +72,7 @@ const AdminLayout = () => {
     }
 
     return (
-    return (
+
         <div className="min-h-screen bg-[#F9FAFB] text-gray-900 flex overflow-hidden font-inter selection:bg-gray-200 selection:text-gray-900 relative">
             
             <AdminSidebar 
