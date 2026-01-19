@@ -14,21 +14,56 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user, setIsLoginModalOpen } = useAuth();
 
-  // Mock event data - In production, fetch from API
-  const hawkinsLabEvent = {
-    id: 1, // Replace with actual event ID
+  const [eventData, setEventData] = useState({
+    id: null,
     title: 'Hawkins Lab',
     requires_payment: true,
     payment_amount: 100,
     is_team_event: true,
     team_size_min: 2,
     team_size_max: 4
-  };
+  });
+
+  useEffect(() => {
+    // Fetch event details to get the correct ID
+    const fetchEvent = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/events/`);
+            if (response.ok) {
+                const events = await response.json();
+                // Find Hawkins Lab event (case insensitive search)
+                const hawkinsEvent = events.find(e => 
+                    e.title.toLowerCase().includes('hawkins') || 
+                    e.title.toLowerCase().includes('cyber mystery')
+                );
+                
+                if (hawkinsEvent) {
+                    console.log('Found Hawkins Lab Event:', hawkinsEvent);
+                    setEventData(prev => ({
+                        ...prev,
+                        id: hawkinsEvent.id, // Use real ID
+                        payment_amount: hawkinsEvent.payment_amount || 100
+                    }));
+                } else {
+                    console.error('Hawkins Lab event not found in API');
+                }
+            }
+        } catch (error) {
+            console.error('Failed to fetch events:', error);
+        }
+    };
+
+    fetchEvent();
+  }, []);
 
   const handleRegisterClick = () => {
     if (!user) {
       setIsLoginModalOpen(true);
       return;
+    }
+    if (!eventData.id) {
+        alert("Event data loading or not found. Please try again later.");
+        return;
     }
     setIsModalOpen(true);
   };
@@ -333,7 +368,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
         <HawkinsLabRegistrationModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            event={hawkinsLabEvent}
+            event={eventData}
         />
     </div>
   );
