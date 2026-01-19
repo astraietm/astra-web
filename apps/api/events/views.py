@@ -6,6 +6,7 @@ from django.utils import timezone
 from .models import Registration, Event
 from .serializers import RegistrationSerializer, EventSerializer
 from .utils import send_registration_email
+from django.db.models import Q
 
 class EventListView(generics.ListAPIView):
     queryset = Event.objects.all()
@@ -64,7 +65,11 @@ class MyRegistrationsView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Registration.objects.filter(user=self.request.user).order_by('-timestamp')
+        # Only show registrations that are confirmed (Paid Success OR Free Event)
+        return Registration.objects.filter(user=self.request.user).filter(
+            Q(event__requires_payment=False) | 
+            Q(payment__status='SUCCESS')
+        ).order_by('-timestamp')
 
 class VerifyTokenView(APIView):
     # Depending on requirements, this might need Admin permission
@@ -132,8 +137,19 @@ class CreatePaymentOrderView(APIView):
             return Response({"error": "This event does not require payment."}, status=status.HTTP_400_BAD_REQUEST)
         
         # Check if already registered
-        if Registration.objects.filter(user=request.user, event=event).exists():
-            return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
+        existing_reg = Registration.objects.filter(user=request.user, event=event).first()
+        if existing_reg:
+            # If payment exists and is SUCCESS, then it's a real duplicate
+            if hasattr(existing_reg, 'payment') and existing_reg.payment.status == 'SUCCESS':
+                return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # If it's a free event, existence of registration is enough
+            if not event.requires_payment:
+                return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Otherwise, it's a failed/abandoned payment attempt.
+            # Clean it up so we can create a fresh order.
+            existing_reg.delete()
         
         # Validate registration rules (same as RegistrationCreateView)
         if not event.is_registration_open:
