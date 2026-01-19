@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import HawkinsLabRegistrationModal from './HawkinsLabRegistrationModal';
 import { useAuth } from '../../context/AuthContext';
 
-const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
+const HawkinsLabDetail = ({ onRegister, isRegistered, registrationData }) => {
   const navigate = useNavigate();
   const [hoveredCard, setHoveredCard] = useState(null);
   const { scrollY } = useScroll();
@@ -369,6 +369,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             event={eventData}
+            initialData={registrationData}
         />
     </div>
   );

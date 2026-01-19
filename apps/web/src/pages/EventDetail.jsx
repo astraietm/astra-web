@@ -22,6 +22,7 @@ const EventDetail = () => {
   const [loading, setLoading] = useState(true);
   const [timeLeft, setTimeLeft] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [registrationData, setRegistrationData] = useState(null);
   const [registering, setRegistering] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
@@ -52,8 +53,11 @@ const EventDetail = () => {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(res => {
-            const registered = res.data.some(r => r.event === parseInt(id));
-            setIsRegistered(registered);
+            const registration = res.data.find(r => r.event === parseInt(id));
+            if (registration) {
+                setIsRegistered(true);
+                setRegistrationData(registration);
+            }
         })
         .catch(err => console.error("Failed to check registration", err));
     }
@@ -141,7 +145,7 @@ const EventDetail = () => {
   if (event.title.toLowerCase().includes('hawkins')) {
       return (
           <>
-            <HawkinsLabDetail onRegister={handleRegister} isRegistered={isRegistered} />
+            <HawkinsLabDetail onRegister={handleRegister} isRegistered={isRegistered} registrationData={registrationData} />
             <TeamRegistrationModal 
                 isOpen={isTeamModalOpen} 
                 onClose={() => setIsTeamModalOpen(false)} 

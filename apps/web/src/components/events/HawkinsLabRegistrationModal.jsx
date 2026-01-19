@@ -3,12 +3,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Users, Plus, Trash2, CreditCard, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import RazorpayPayment from '../payment/RazorpayPayment';
 
-const HawkinsLabRegistrationModal = ({ isOpen, onClose, event }) => {
+const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) => {
     const [teamName, setTeamName] = useState('');
     const [teamMembers, setTeamMembers] = useState(['', '']); // Min 2 members
     const [status, setStatus] = useState('idle'); // idle, processing, success, error
     const [errorMsg, setErrorMsg] = useState('');
     const [registrationData, setRegistrationData] = useState(null);
+
+    React.useEffect(() => {
+        if (initialData) {
+            setRegistrationData(initialData);
+            setStatus('success');
+        }
+    }, [initialData, isOpen]);
     
     // Initialize payment hook
     const handlePayment = RazorpayPayment();
@@ -81,7 +88,7 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event }) => {
         if (!registrationData?.qr_code) return;
         const link = document.createElement('a');
         link.href = registrationData.qr_code;
-        link.download = `${teamName.replace(/\s+/g, '_')}_HawkinsLab_Ticket.png`;
+        link.download = `${(registrationData?.team_name || teamName).replace(/\s+/g, '_')}_HawkinsLab_Ticket.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -148,8 +155,12 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event }) => {
                                     <div className="absolute inset-0 border border-green-500/30 rounded-full animate-ping" />
                                     <CheckCircle className="w-12 h-12 text-green-500" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-white mb-2">Payment Successful!</h3>
-                                <p className="text-zinc-400 mb-8">Your team has been registered for Hawkins Lab</p>
+                                <h3 className="text-2xl font-bold text-white mb-2">
+                                    {initialData ? 'Access Granted' : 'Payment Successful!'}
+                                </h3>
+                                <p className="text-zinc-400 mb-8">
+                                    {initialData ? 'Authorized Personnel Ticket' : 'Your team has been registered for Hawkins Lab'}
+                                </p>
 
                                 {/* QR Code */}
                                 <div className="bg-white p-6 rounded-2xl border-4 border-green-500/20 shadow-inner mb-8 mx-auto inline-block">
