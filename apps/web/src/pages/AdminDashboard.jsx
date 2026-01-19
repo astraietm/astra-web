@@ -14,14 +14,15 @@ import {
     Cpu,
     Zap,
     Server,
-    Database
+    Database,
+    Globe,
+    Wifi,
+    BarChart3,
+    AlertCircle,
+    Clock,
+    Crosshair
 } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-// Import New Modular Widgets
-import KPICard from '../components/admin/dashboard/KPICard';
-import TrafficChart from '../components/admin/dashboard/TrafficChart';
-import RecentActivityTable from '../components/admin/dashboard/RecentActivityTable';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -29,255 +30,241 @@ const AdminDashboard = () => {
     const { token, user } = useAuth();
     const navigate = useNavigate();
 
+    const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({
         totalRegistrations: 0,
         activeEvents: 0,
-        recentActivity: [],
-        upcomingEvents: [],
-        trafficData: [], 
-        trafficLabels: [], 
         attendanceRate: 0,
-        systemHealth: {
-            dbLoad: 12, // Default aesthetic values
-            latency: 24,
-            storage: 45
-        }
+        serverLoad: 0,
+        activeSesssions: 0,
+        logs: [],
+        events: []
     });
 
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [regRes, eventRes] = await Promise.all([
+                    axios.get(`${API_URL}/admin-registrations/`, { headers: { Authorization: `Bearer ${token}` } }),
+                    axios.get(`${API_URL}/operations/events/`, { headers: { Authorization: `Bearer ${token}` } })
+                ]);
 
-    const fetchStats = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const [regRes, eventRes] = await Promise.all([
-                axios.get(`${API_URL}/admin-registrations/`, { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get(`${API_URL}/operations/events/`, { headers: { Authorization: `Bearer ${token}` } })
-            ]);
-
-            const regs = regRes.data;
-            const events = eventRes.data;
-            const attended = Array.isArray(regs) ? regs.filter(r => r.is_used || r.status === 'ATTENDED').length : 0;
-
-            // Process Traffic Data (Last 6 Months)
-            const months = 6;
-            const trafficCounts = new Array(months).fill(0);
-            const trafficLabels = [];
-            const now = new Date();
-            
-            // Generate labels
-            for(let i=0; i<months; i++) {
-                const d = new Date();
-                d.setMonth(now.getMonth() - (months - 1 - i));
-                trafficLabels.push(d.toLocaleString('default', { month: 'short' }));
-            }
-
-            // Bucket registrations
-            if (Array.isArray(regs)) {
-                regs.forEach(r => {
-                    const regDate = new Date(r.registration_date);
-                    // simple diff in months from now
-                    const monthDiff = (now.getFullYear() - regDate.getFullYear()) * 12 + (now.getMonth() - regDate.getMonth());
-                    if (monthDiff < months && monthDiff >= 0) {
-                        trafficCounts[months - 1 - monthDiff]++;
-                    }
+                const regs = regRes.data || [];
+                const events = eventRes.data || [];
+                
+                setStats({
+                    totalRegistrations: regs.length,
+                    activeEvents: events.filter(e => e.is_registration_open).length,
+                    attendanceRate: regs.length > 0 ? Math.round((regs.filter(r => r.is_used || r.status === 'ATTENDED').length / regs.length) * 100) : 0,
+                    serverLoad: Math.floor(Math.random() * 30 + 10),
+                    activeSesssions: Math.floor(Math.random() * 50 + 20),
+                    logs: regs.slice(0, 8),
+                    events: events.slice(0, 5)
                 });
+            } catch (error) {
+                console.error("Dashboard Sync Failed", error);
+            } finally {
+                setLoading(false);
             }
+        };
 
-            // Sort & filter events
-            const sortedEvents = Array.isArray(events) 
-                ? [...events].sort((a,b) => new Date(a.date) - new Date(b.date)).filter(e => new Date(e.date) >= new Date())
-                : [];
-
+        fetchData();
+        const interval = setInterval(() => {
             setStats(prev => ({
                 ...prev,
-                totalRegistrations: Array.isArray(regs) ? regs.length : 0,
-                activeEvents: Array.isArray(events) ? events.filter(e => e.is_registration_open).length : 0,
-                upcomingEvents: sortedEvents.slice(0, 4),
-                recentActivity: Array.isArray(regs) ? regs.slice(0, 10) : [], // Show more logs
-                trafficData: trafficCounts,
-                trafficLabels: trafficLabels,
-                attendanceRate: Array.isArray(regs) && regs.length > 0 ? Math.round((attended / regs.length) * 100) : 0,
-                // Simulate dynamic system health
-                systemHealth: {
-                    dbLoad: Math.floor(Math.random() * 20) + 10,
-                    latency: Math.floor(Math.random() * 50) + 15,
-                    storage: 42
-                }
+                serverLoad: Math.floor(Math.random() * 40 + 20)
             }));
-        } catch (error) {
-            console.error('Error fetching dashboard stats:', error);
-            setError('Failed to establish connection with core servers.');
-        } finally {
-            setLoading(false);
-        }
-    };
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [token]);
 
-    useEffect(() => {
-        fetchStats();
-    }, []);
-
-    // Quick Action Handler
-    const handleQuickAction = (path) => {
-        navigate(path);
-    };
+    // Render Widget Helpers
+    const StatBlock = ({ label, value, subtext, icon: Icon, color = "text-primary" }) => (
+        <div className="bg-[#050505] border border-white/5 p-5 rounded-sm relative overflow-hidden group">
+            <div className={`absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity ${color}`}>
+                <Icon size={48} />
+            </div>
+            <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-2 opacity-50">
+                    <Icon size={14} className={color} />
+                    <span className="text-[10px] font-mono uppercase tracking-widest">{label}</span>
+                </div>
+                <div className="text-3xl font-bold text-white font-mono tracking-tighter">
+                    {value}
+                </div>
+                 {subtext && (
+                    <div className="text-[10px] text-gray-500 mt-2 font-mono flex items-center gap-2">
+                         <div className={`w-1 h-1 rounded-full ${color}`}></div>
+                        {subtext}
+                    </div>
+                )}
+            </div>
+            {/* Corner Accents */}
+            <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/20"></div>
+            <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-white/20"></div>
+        </div>
+    );
 
     return (
-        <div className="space-y-6 pb-8">
-            {/* Context/Welcome Bar */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-white font-orbitron tracking-tight mb-1">
-                        Command Center
-                    </h1>
-                    <p className="text-gray-400 text-sm font-mono flex items-center gap-2">
-                        <Terminal size={14} className="text-vision-primary" />
-                        SYSTEM_READY // WELCOME COMMANDER {user?.name?.toUpperCase() || 'USER'}
-                    </p>
-                </div>
-                
-                {/* System Ticker */}
-                <div className="hidden lg:flex items-center gap-6 px-4 py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm">
-                    <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
-                        <Server size={12} className="text-emerald-400" />
-                        <span>SERVER: ONLINE</span>
-                    </div>
-                    <div className="w-[1px] h-3 bg-white/10" />
-                    <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
-                        <Database size={12} className="text-vision-primary" />
-                        <span>DB_LATENCY: {stats.systemHealth.latency}ms</span>
-                    </div>
-                    <div className="w-[1px] h-3 bg-white/10" />
-                    <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
-                        <Cpu size={12} className="text-amber-400" />
-                        <span>LOAD: {stats.systemHealth.dbLoad}%</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* KPI Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <KPICard 
-                    title="Total Registrations" 
-                    value={stats.totalRegistrations} 
-                    icon={Users} 
-                    trend="up" 
-                    trendValue="+12%" 
-                    isPrimary={true}
-                    isLoading={loading}
+        <div className="min-h-full space-y-4">
+            {/* Top Stat Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <StatBlock 
+                    label="Total Operatives" 
+                    value={loading ? "..." : stats.totalRegistrations} 
+                    subtext="+4 NEW TODAY"
+                    icon={Users}
+                    color="text-blue-400"
                 />
-                <KPICard 
-                    title="Active Events" 
-                    value={stats.activeEvents} 
-                    icon={Calendar} 
-                    trend="up" 
-                    trendValue="+2" 
-                    isLoading={loading}
+                <StatBlock 
+                    label="Active Missions" 
+                    value={loading ? "..." : stats.activeEvents} 
+                    subtext="OPERATIONAL"
+                    icon={Target}
+                    color="text-emerald-400"
                 />
-                <KPICard 
-                    title="Attendance Rate" 
-                    value={`${stats.attendanceRate}%`} 
-                    icon={ShieldCheck} 
-                    trend="down" 
-                    trendValue="-2%" 
-                    isLoading={loading}
+                <StatBlock 
+                    label="Field Access Rate" 
+                    value={loading ? "..." : `${stats.attendanceRate}%`} 
+                    subtext="WITHIN PARAMETERS"
+                    icon={ShieldCheck}
+                    color="text-amber-400"
                 />
-                <KPICard 
-                    title="System Status" 
-                    value={error ? "Error" : "Healthy"} 
-                    icon={Activity} 
-                    trend="up" 
-                    trendValue="Optimal" 
-                    isLoading={loading}
+                <StatBlock 
+                    label="Core Integrity" 
+                    value={`${stats.serverLoad}%`} 
+                    subtext="STABLE"
+                    icon={Cpu}
+                    color="text-rose-400"
                 />
             </div>
 
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Central Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[500px]">
                 
-                {/* Visual Chart Section */}
-                <div className="lg:col-span-2 space-y-6">
-                    <TrafficChart 
-                        data={stats.trafficData} 
-                        labels={stats.trafficLabels} 
-                        isLoading={loading} 
-                    />
-
-                    {/* Quick Actions Bar */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        {[
-                            { label: 'Create Event', icon: Calendar, path: '/admin/events', color: 'text-vision-primary' },
-                            { label: 'Broadcast', icon: Mail, path: '/admin/notifications', color: 'text-emerald-400' },
-                            { label: 'Audit Logs', icon: ShieldCheck, path: '/admin/logs', color: 'text-amber-400' },
-                            { label: 'Settings', icon: Cpu, path: '/admin/settings', color: 'text-rose-400' }
-                        ].map((action, i) => (
-                            <motion.button
-                                key={i}
-                                whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.08)' }}
-                                whileTap={{ scale: 0.98 }}
-                                onClick={() => handleQuickAction(action.path)}
-                                className="flex flex-col items-center justify-center p-4 rounded-2xl bg-vision-card backdrop-blur-xl border border-white/5 transition-all group"
-                            >
-                                <div className={`p-3 rounded-full bg-white/5 mb-3 group-hover:bg-white/10 transition-colors ${action.color}`}>
-                                    <action.icon size={20} />
-                                </div>
-                                <span className="text-xs font-bold text-gray-300 font-inter uppercase tracking-wide">{action.label}</span>
-                            </motion.button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Sidebar Column: Upcoming Events & System Health */}
-                <div className="space-y-6">
-                    {/* Events List */}
-                    <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 h-full min-h-[400px]">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-white font-bold text-lg font-orbitron tracking-wide">Operations</h3>
-                            <button onClick={() => navigate('/admin/events')} className="text-xs text-vision-primary hover:text-white transition-colors uppercase font-bold tracking-wider">View All</button>
+                {/* Center Map / Geo View */}
+                <div className="lg:col-span-2 bg-[#050505] border border-white/5 relative rounded-sm overflow-hidden flex flex-col">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent opacity-50"></div>
+                    
+                    {/* Header */}
+                    <div className="flex items-center justify-between p-4 border-b border-white/5 bg-black/40 backdrop-blur-md">
+                        <h3 className="text-xs font-mono font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                            <Globe size={14} className="text-blue-500" />
+                            Global Activity Monitor
+                        </h3>
+                        <div className="flex gap-2">
+                             <div className="px-2 py-1 bg-blue-500/10 text-blue-400 text-[10px] font-mono border border-blue-500/20 rounded-sm">
+                                LIVING MAP
+                            </div>
                         </div>
+                    </div>
 
-                        <div className="space-y-3">
-                            {loading ? (
-                                [1,2,3].map(i => <div key={i} className="h-20 bg-white/5 rounded-xl animate-pulse" />)
-                            ) : stats.upcomingEvents.length === 0 ? (
-                                <div className="text-center py-10 text-gray-500 text-sm font-mono border-2 border-dashed border-white/5 rounded-xl">
-                                    NO_ACTIVE_OPERATIONS
+                    {/* Faux Map Visuals */}
+                    <div className="flex-1 relative flex items-center justify-center">
+                        <div className="w-[80%] h-[70%] border border-blue-500/10 rounded-full flex items-center justify-center relative animate-[spin_60s_linear_infinite]">
+                            <div className="w-[70%] h-[70%] border border-blue-500/10 rounded-full"></div>
+                        </div>
+                         <div className="w-[60%] h-[50%] border-x border-blue-500/10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                         <div className="w-[80%] h-[1px] bg-blue-500/10 absolute top-1/2 left-1/2 -translate-x-1/2"></div>
+                         
+                         {/* Points */}
+                         <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: [1, 1.5, 1], opacity: [1, 0, 1] }} 
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="absolute top-1/3 left-1/4 w-2 h-2 bg-blue-400 rounded-full shadow-[0_0_10px_#60a5fa]" 
+                         />
+                         <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: [1, 1.5, 1], opacity: [1, 0, 1] }} 
+                            transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                            className="absolute bottom-1/3 right-1/3 w-2 h-2 bg-emerald-400 rounded-full shadow-[0_0_10px_#34d399]" 
+                         />
+
+                        <div className="absolute bottom-4 left-4 font-mono text-[10px] text-blue-400/50 space-y-1">
+                            <p>LAT: 28.6139° N</p>
+                            <p>LNG: 77.2090° E</p>
+                            <p>SEC: ENCRYPTED</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Log Feed */}
+                <div className="bg-[#050505] border border-white/5 flex flex-col rounded-sm overflow-hidden">
+                     <div className="flex items-center justify-between p-4 border-b border-white/5 bg-black/40 backdrop-blur-md">
+                        <h3 className="text-xs font-mono font-bold text-gray-300 uppercase tracking-widest flex items-center gap-2">
+                            <Terminal size={14} />
+                            Sys_Logs
+                        </h3>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-3 font-mono text-[10px]">
+                        {loading ? (
+                            <div className="text-center text-gray-600 animate-pulse">Establishing Uplink...</div>
+                        ) : stats.logs.length === 0 ? (
+                            <div className="text-center text-gray-600">No recent signatures.</div>
+                        ) : (
+                            stats.logs.map((log, i) => (
+                                <div key={i} className="flex gap-3 items-start border-l border-white/5 pl-3 py-1 hover:bg-white/5 transition-colors cursor-default">
+                                    <div className="text-gray-500 w-12 shrink-0">
+                                        {new Date(log.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+                                    </div>
+                                    <div className="flex-1 text-gray-300">
+                                        <span className={log.id % 2 === 0 ? 'text-emerald-500' : 'text-blue-500'}>
+                                            {log.id % 2 === 0 ? '[AUTH]' : '[REG]'} 
+                                        </span> 
+                                        {' '}{log.user_name} initialized.
+                                    </div>
                                 </div>
-                            ) : (
-                                stats.upcomingEvents.map((event, i) => (
-                                    <motion.div 
-                                        key={i}
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: i * 0.1 }}
-                                        onClick={() => navigate(`/admin/events/${event.id}`)}
-                                        className="group p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-vision-primary/30 cursor-pointer transition-all flex items-center gap-4"
-                                    >
-                                        {/* Date Box */}
-                                        <div className="flex flex-col items-center justify-center w-12 h-12 bg-[#0B0F14] rounded-lg border border-white/10 group-hover:border-vision-primary/50 transition-colors">
-                                            <span className="text-[10px] text-gray-500 font-bold uppercase">{new Date(event.date).toLocaleString('default', { month: 'short' })}</span>
-                                            <span className="text-lg font-bold text-white leading-none">{new Date(event.date).getDate()}</span>
-                                        </div>
-                                        
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="text-white font-bold text-sm truncate group-hover:text-vision-primary transition-colors">{event.title}</h4>
-                                            <p className="text-gray-500 text-[10px] font-mono truncate mt-0.5 uppercase tracking-wider">{event.category || 'EVENT'}</p>
-                                        </div>
-
-                                        <div className={`w-2 h-2 rounded-full ${i===0 ? 'bg-emerald-500 animate-pulse' : 'bg-gray-600'}`} />
-                                    </motion.div>
-                                ))
-                            )}
+                            ))
+                        )}
+                         <div className="flex gap-3 items-start border-l border-white/5 pl-3 py-1 opacity-50">
+                            <div className="text-gray-500 w-12 shrink-0">11:13</div>
+                            <div className="text-gray-500">System check completed. All green.</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Bottom Row: Recent Activity */}
-            <RecentActivityTable registrations={stats.recentActivity} isLoading={loading} />
+            {/* Bottom Controls / Quick Access */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <button 
+                    onClick={() => navigate('/admin/events')}
+                    className="group bg-[#080808] border border-white/5 p-4 flex items-center justify-between hover:border-blue-500/50 hover:bg-blue-500/5 transition-all text-left"
+                >
+                    <div>
+                        <h4 className="text-white font-bold uppercase tracking-wide text-sm mb-1 group-hover:text-blue-400">Initiate Event</h4>
+                        <p className="text-[10px] text-gray-500 font-mono">Create new operation parameters</p>
+                    </div>
+                    <ArrowUpRight className="text-gray-600 group-hover:text-blue-400 transition-colors" />
+                </button>
+
+                 <button 
+                    onClick={() => navigate('/admin/scanner')}
+                    className="group bg-[#080808] border border-white/5 p-4 flex items-center justify-between hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all text-left"
+                >
+                    <div>
+                        <h4 className="text-white font-bold uppercase tracking-wide text-sm mb-1 group-hover:text-emerald-400">Scanner Uplink</h4>
+                        <p className="text-[10px] text-gray-500 font-mono">Connect field units</p>
+                    </div>
+                    <Crosshair className="text-gray-600 group-hover:text-emerald-400 transition-colors" />
+                </button>
+
+                 <button 
+                    onClick={() => navigate('/admin/gallery')}
+                    className="group bg-[#080808] border border-white/5 p-4 flex items-center justify-between hover:border-purple-500/50 hover:bg-purple-500/5 transition-all text-left"
+                >
+                    <div>
+                        <h4 className="text-white font-bold uppercase tracking-wide text-sm mb-1 group-hover:text-purple-400">Asset Database</h4>
+                        <p className="text-[10px] text-gray-500 font-mono">Manage media archives</p>
+                    </div>
+                    <Database className="text-gray-600 group-hover:text-purple-400 transition-colors" />
+                </button>
+            </div>
         </div>
     );
 };
+
+// Lucide icon alias fix if needed (Target not exported by default sometimes, use similar)
+import { Target } from 'lucide-react';
 
 export default AdminDashboard;

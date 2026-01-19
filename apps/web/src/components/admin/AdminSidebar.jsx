@@ -114,38 +114,40 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                     width: isCollapsed ? 80 : 260,
                     x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -260 : 0)
                 }}
-                className={`fixed left-0 top-0 h-screen bg-vision-bg border-r border-white/5 flex flex-col z-[100] transition-all duration-300 lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+                className={`fixed left-4 top-4 bottom-4 rounded-2xl bg-[#050505]/90 backdrop-blur-xl border border-white/5 flex flex-col z-[100] transition-all duration-300 lg:translate-x-0 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} shadow-2xl`}
             >
 
 
             {/* Top Brand/Back Area */}
-            <div className="p-4 border-b border-white/5">
+            <div className="p-6 border-b border-white/5">
                 <button
                     onClick={() => navigate('/')}
-                    className={`flex items-center gap-3 w-full p-2 rounded-lg hover:bg-white/5 text-gray-400 hover:text-white transition-all group ${isCollapsed ? 'justify-center' : ''}`}
+                    className={`flex items-center gap-3 w-full p-2 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-all group ${isCollapsed ? 'justify-center' : ''}`}
                 >
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-vision-primary to-purple-600 flex items-center justify-center text-white shadow-lg group-hover:shadow-vision-primary/50 transition-all">
-                        <ArrowLeft size={18} />
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-vision-primary via-blue-600 to-purple-600 flex items-center justify-center text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] group-hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all relative overflow-hidden">
+                        <div className="absolute inset-0 bg-white/20 mix-blend-overlay group-hover:opacity-100 opacity-0 transition-opacity"></div>
+                        <ArrowLeft size={20} />
                     </div>
                     {!isCollapsed && (
                         <div className="flex flex-col items-start">
-                            <span className="text-sm font-bold text-white tracking-wide">ASTRA ADMIN</span>
-                            <span className="text-[10px] text-gray-500">Voltar para Home</span>
+                            <span className="text-sm font-black text-white tracking-widest font-mono">ASTRA<span className="text-vision-primary">.OS</span></span>
+                            <span className="text-[10px] text-gray-500 font-mono uppercase tracking-widest group-hover:text-vision-primary transition-colors">Return to Surface</span>
                         </div>
                     )}
                 </button>
             </div>
 
             {/* Navigation Sections */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-6 no-scrollbar">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-8 no-scrollbar">
                 {sections.map((section, idx) => (
-                    <div key={idx} className="space-y-1">
+                    <div key={idx} className="space-y-2">
                         {!isCollapsed && (
-                            <h3 className="px-3 text-xs font-medium text-gray-500 uppercase mb-2">
+                            <h3 className="px-4 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] font-mono mb-2 flex items-center gap-2">
+                                <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
                                 {section.group}
                             </h3>
                         )}
-                        <div className="space-y-0.5">
+                        <div className="space-y-1">
                             {section.items.map((item, i) => (
                                 <SidebarItem 
                                     key={i} 
@@ -163,15 +165,16 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
             </div>
 
             {/* User Profile & Toggle */}
-            <div className="p-4 border-t border-white/5 bg-black/20">
+            <div className="p-4 border-t border-white/5 bg-black/40 rounded-b-2xl">
                 {!isCollapsed && (
                     <div className="flex items-center gap-3 mb-4 px-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-vision-primary to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white font-mono text-xs shadow-lg relative">
+                             <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                             {user?.name?.[0].toUpperCase() || 'A'}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-white truncate">{user?.name || 'Admin User'}</p>
-                            <p className="text-[10px] text-gray-400 font-mono truncate">{user?.role || 'COMMANDER'}</p>
+                            <p className="text-xs font-bold text-white truncate font-mono">{user?.name || 'Admin User'}</p>
+                            <p className="text-[10px] text-emerald-500 font-mono truncate tracking-wider">COMMANDER LVL.1</p>
                         </div>
                     </div>
                 )}
@@ -181,9 +184,9 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                     className={`w-full h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white transition-all group ${isCollapsed ? '' : 'hover:scale-[1.02]'}`}
                 >
                     {isCollapsed ? <ChevronRight size={14} /> : (
-                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest font-mono">
                             <ChevronLeft size={12} />
-                            Collapse Panel
+                            Collapse Sidebar
                         </div>
                     )}
                 </button>
