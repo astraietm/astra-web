@@ -22,6 +22,7 @@ const Contact = React.lazy(() => import('./pages/Contact'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const TermsAndConditions = React.lazy(() => import('./pages/TermsAndConditions'));
 const RefundPolicy = React.lazy(() => import('./pages/RefundPolicy'));
+const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
 
 // Admin Lazy Loading
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
@@ -59,43 +60,44 @@ function App() {
           <AnalyticsTracker />
           <Analytics />
           <SpeedInsights />
-          
+
           {/* <CustomCursor /> */}
           <ScrollToTop />
           <LoginModal /> {/* Global Login Modal */}
           <CompleteProfileModal /> {/* Global Complete Profile Modal */}
           {/* <SmoothScroll> */}
-            <Routes>
-              {/* NEW ADMIN CONSOLE LAYOUT */}
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="registrations" element={<AdminRegistrations />} />
-                <Route path="events" element={<AdminEvents />} />
-                <Route path="gallery" element={<AdminGallery />} />
-                <Route path="scanner" element={<AdminScanner />} />
+          <Routes>
+            {/* NEW ADMIN CONSOLE LAYOUT */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="registrations" element={<AdminRegistrations />} />
+              <Route path="events" element={<AdminEvents />} />
+              <Route path="gallery" element={<AdminGallery />} />
+              <Route path="scanner" element={<AdminScanner />} />
 
-                <Route path="notifications" element={<AdminNotifications />} />
-                <Route path="logs" element={<AdminLogs />} />
-                <Route path="settings" element={<AdminSettings />} />
-              </Route>
+              <Route path="notifications" element={<AdminNotifications />} />
+              <Route path="logs" element={<AdminLogs />} />
+              <Route path="settings" element={<AdminSettings />} />
+            </Route>
 
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<Home />} />
-                <Route path="events" element={<Events />} />
-                <Route path="events/:id" element={<EventDetail />} />
-                <Route path="register/:id" element={<Register />} />
-                <Route path="my-registrations" element={<Dashboard />} />
-                <Route path="gallery" element={<Gallery />} />
-                <Route path="about" element={<About />} />
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<Home />} />
+              <Route path="events" element={<Events />} />
+              <Route path="events/:id" element={<EventDetail />} />
+              <Route path="register/:id" element={<Register />} />
+              <Route path="my-registrations" element={<Dashboard />} />
+              <Route path="gallery" element={<Gallery />} />
+              <Route path="about" element={<About />} />
 
-                <Route path="contact" element={<Contact />} />
-                <Route path="terms" element={<TermsAndConditions />} />
-                <Route path="refund-policy" element={<RefundPolicy />} />
-                
-                {/* 404 Catch-all */}
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
+              <Route path="contact" element={<Contact />} />
+              <Route path="terms" element={<TermsAndConditions />} />
+              <Route path="refund-policy" element={<RefundPolicy />} />
+              <Route path="privacy" element={<PrivacyPolicy />} />
+
+              {/* 404 Catch-all */}
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
           {/* </SmoothScroll> */}
         </Router>
       </ToastProvider>
