@@ -28,18 +28,16 @@ const SidebarItem = ({ to, icon: Icon, label, isCollapsed, end = false, onClick 
             end={end}
             onClick={onClick}
             className={({ isActive }) => `
-                flex items-center gap-3 px-4 py-3 my-1 rounded-xl transition-all duration-300 group
+                flex items-center gap-3 px-3 py-2.5 my-1 rounded-md transition-all duration-200 group
                 ${isActive 
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_4px_20px_-4px_rgba(37,99,235,0.5)]' 
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'}
+                    ? 'bg-gray-900 text-white shadow-sm' 
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'}
             `}
         >
-            <div className="relative z-10">
-                <Icon size={isCollapsed ? 22 : 20} strokeWidth={2} />
-            </div>
+            <Icon size={isCollapsed ? 20 : 18} strokeWidth={2} />
 
             {!isCollapsed && (
-                <span className="font-medium text-sm font-inter tracking-wide relative z-10">
+                <span className="font-medium text-sm font-inter tracking-tight">
                     {label}
                 </span>
             )}
@@ -95,39 +93,35 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
             <motion.aside
                 initial={false}
                 animate={{ 
-                    width: isCollapsed ? 80 : 260,
+                    width: isCollapsed ? 72 : 260,
                     x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -260 : 0)
                 }}
-                className={`fixed left-4 top-4 bottom-4 rounded-[32px] z-[100] transition-all duration-500 cubic-bezier(0.2, 0.8, 0.2, 1) flex flex-col overflow-hidden
-                    bg-[#0C0C12]/90 backdrop-blur-2xl border border-white/5 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5)]
+                className={`fixed left-0 top-0 h-screen bg-white border-r border-gray-200 z-[100] transition-all duration-300 flex flex-col
                     ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}
             >
                 {/* Header */}
-                <div className="p-8 pb-4 relative shrink-0 flex items-center justify-center">
+                <div className="h-16 flex items-center px-6 border-b border-gray-100 shrink-0">
                     <button 
                         onClick={() => navigate('/')}
                         className={`flex items-center gap-3 w-full group ${isCollapsed ? 'justify-center' : ''}`}
                     >
-                        <div className="relative w-10 h-10 shrink-0 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-                            <span className="font-bold text-lg font-inter">A</span>
+                        <div className="w-8 h-8 rounded-lg bg-gray-900 flex items-center justify-center text-white shrink-0">
+                            <span className="font-bold text-sm">A</span>
                         </div>
                         
                         {!isCollapsed && (
-                             <div className="flex flex-col items-start overflow-hidden">
-                                <span className="font-bold text-lg text-white tracking-tight">ASTRA<span className="text-blue-500">.OS</span></span>
-                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Admin Panel</span>
-                            </div>
+                             <span className="font-bold text-gray-900 tracking-tight">Astra<span className="text-gray-400">Panel</span></span>
                         )}
                     </button>
                 </div>
 
                 {/* Nav */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 px-4 space-y-6 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden py-6 px-3 space-y-8 custom-scrollbar">
                     {sections.map((section, idx) => (
                         <div key={idx} className="space-y-1">
                              {!isCollapsed && (
-                                <h3 className="px-4 text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2 font-inter">
+                                <h3 className="px-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2 font-inter">
                                     {section.group}
                                 </h3>
                             )}
@@ -147,27 +141,30 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                 </div>
 
                 {/* Footer / User */}
-                <div className="p-6 relative shrink-0 border-t border-white/5 bg-white/[0.01]">
+                <div className="p-4 border-t border-gray-100 bg-gray-50/50">
                     <button
                         onClick={() => setIsCollapsed(!isCollapsed)}
-                        className={`w-full flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-all group ${isCollapsed ? 'justify-center' : ''}`}
+                        className={`w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white hover:shadow-sm hover:ring-1 hover:ring-gray-200 transition-all ${isCollapsed ? 'justify-center' : ''}`}
                     >
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-800 flex items-center justify-center shrink-0 border border-white/10 overflow-hidden">
+                        <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0 overflow-hidden">
                             {user?.avatar ? (
                                 <img src={user.avatar} className="w-full h-full object-cover" />
                             ) : (
-                                <span className="text-sm font-bold text-white">{user?.name?.[0]}</span>
+                                <span className="text-xs font-bold text-gray-600">{user?.name?.[0]}</span>
                             )}
                         </div>
                         
                         {!isCollapsed && (
                             <div className="flex-1 text-left overflow-hidden">
-                                <p className="text-sm font-semibold text-white truncate font-inter">{user?.name || 'Commander'}</p>
-                                <p className="text-[11px] text-gray-400">View Profile</p>
+                                <p className="text-sm font-medium text-gray-900 truncate">{user?.name || 'Admin User'}</p>
+                                <p className="text-[11px] text-gray-500">View Profile</p>
                             </div>
                         )}
-                        {!isCollapsed && <ChevronLeft size={16} className="text-gray-500 group-hover:text-white transition-colors" />}
+                        {!isCollapsed && <ChevronLeft size={14} className="text-gray-400" />}
                     </button>
+                    
+                    {/* Access Level Badge */}
+                    {!isCollapsed && <div className="mt-3 text-[10px] text-center text-gray-400 font-medium">SYS_ADMIN_ACCESS_Lvl_5</div>}
                 </div>
             </motion.aside>
         </>

@@ -72,22 +72,8 @@ const AdminLayout = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#08080C] text-white flex overflow-hidden font-inter selection:bg-indigo-500/30 selection:text-white relative">
-            
-            {/* Ambient Background - Deep Space Gradients */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#3B82F6]/10 blur-[120px]" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[#8B5CF6]/10 blur-[120px]" />
-                
-                {/* Technical Grid Overlay */}
-                <div 
-                    className="absolute inset-0 opacity-[0.03]"
-                    style={{ 
-                        backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`, 
-                        backgroundSize: '40px 40px' 
-                    }}
-                />
-            </div>
+    return (
+        <div className="min-h-screen bg-[#F9FAFB] text-gray-900 flex overflow-hidden font-inter selection:bg-gray-200 selection:text-gray-900 relative">
             
             <AdminSidebar 
                 isCollapsed={isCollapsed} 
@@ -96,7 +82,7 @@ const AdminLayout = () => {
                 setIsMobileOpen={setIsMobileOpen}
             />
 
-            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] relative z-10 ${isCollapsed ? 'lg:ml-[100px]' : 'lg:ml-[300px]'} ml-0`}>
+            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out relative z-10 ${isCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[260px]'} ml-0`}>
                 <AdminHeader 
                     title={getPageTitle()} 
                     onMenuClick={() => setIsMobileOpen(true)} 
@@ -104,14 +90,14 @@ const AdminLayout = () => {
                     onSearchClick={() => setIsCommandPaletteOpen(true)}
                 />
 
-                <main className="flex-1 overflow-y-auto p-6 md:p-8 relative custom-scrollbar">
+                <main className="flex-1 overflow-y-auto p-6 md:p-10 relative custom-scrollbar">
                     <Suspense fallback={<PageLoader />}>
                         <motion.div
                             key={location.pathname}
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 5 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.15 }}
                             className="relative z-10 h-full max-w-7xl mx-auto"
                         >
                             <Outlet />
@@ -119,13 +105,13 @@ const AdminLayout = () => {
                     </Suspense>
                 </main>
                 
-                <footer className="h-10 border-t border-white/5 flex items-center justify-between px-8 text-[10px] text-gray-500 font-medium uppercase tracking-widest backdrop-blur-md bg-[#08080C]/80">
+                <footer className="h-12 border-t border-gray-200 flex items-center justify-between px-8 text-xs text-gray-500 font-medium bg-white">
                     <div className="flex gap-4">
-                        <span className="text-gray-600 font-mono">ASTRA.OS <span className="text-indigo-500">v2.1.0</span></span>
+                        <span className="text-gray-400">© 2026 Astra System. All rights reserved.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>Connected</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                        <span className="text-gray-500">System Information Systems</span>
                     </div>
                 </footer>
             </div>
