@@ -162,13 +162,30 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                 ))}
             </div>
 
-            {/* Toggle Button */}
-            <div className="p-4 border-t border-border">
+            {/* User Profile & Toggle */}
+            <div className="p-4 border-t border-white/5 bg-black/20">
+                {!isCollapsed && (
+                    <div className="flex items-center gap-3 mb-4 px-2">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-vision-primary to-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                            {user?.name?.[0].toUpperCase() || 'A'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-white truncate">{user?.name || 'Admin User'}</p>
+                            <p className="text-[10px] text-gray-400 font-mono truncate">{user?.role || 'COMMANDER'}</p>
+                        </div>
+                    </div>
+                )}
+                
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="w-full h-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                    className={`w-full h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white transition-all group ${isCollapsed ? '' : 'hover:scale-[1.02]'}`}
                 >
-                    {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                    {isCollapsed ? <ChevronRight size={14} /> : (
+                        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider">
+                            <ChevronLeft size={12} />
+                            Collapse Panel
+                        </div>
+                    )}
                 </button>
             </div>
         </motion.aside>
