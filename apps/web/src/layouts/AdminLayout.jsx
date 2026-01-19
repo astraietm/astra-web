@@ -72,13 +72,17 @@ const AdminLayout = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#020202] text-white flex overflow-hidden font-inter selection:bg-primary/30 selection:text-white">
+        <div className="min-h-screen bg-[#030305] text-white flex overflow-hidden font-inter selection:bg-indigo-500/30 selection:text-white">
             <NoiseOverlay />
             
-            {/* Ambient Background Effects */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.012)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.012)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-primary/5 blur-[120px] rounded-full mix-blend-screen opacity-50" />
+            {/* Ambient Background Effects - Premium Aurora */}
+            <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+                <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full bg-indigo-800/10 blur-[150px] mix-blend-screen" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] rounded-full bg-blue-900/10 blur-[150px] mix-blend-screen" />
+                <div className="absolute top-[40%] left-[40%] w-[40%] h-[40%] rounded-full bg-fuchsia-900/5 blur-[120px] mix-blend-screen animate-pulse" />
+                
+                {/* Subtle Grid Pattern */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)]" />
             </div>
             
             {/* Sidebar Component */}
@@ -90,7 +94,7 @@ const AdminLayout = () => {
             />
 
             {/* Main Content Area */}
-            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 relative z-10 ${isCollapsed ? 'lg:ml-20' : 'lg:ml-[260px]'} ml-0`}>
+            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] relative z-10 ${isCollapsed ? 'lg:ml-24' : 'lg:ml-[300px]'} ml-0`}>
                 <AdminHeader 
                     title={getPageTitle()} 
                     onMenuClick={() => setIsMobileOpen(true)} 
@@ -104,11 +108,11 @@ const AdminLayout = () => {
                     <Suspense fallback={<PageLoader />}>
                         <motion.div
                             key={location.pathname}
-                            initial={{ opacity: 0, y: 10, scale: 0.99 }}
+                            initial={{ opacity: 0, y: 15, scale: 0.98 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -10, scale: 0.99 }}
-                            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                            className="relative z-10 h-full"
+                            exit={{ opacity: 0, y: -15, scale: 0.98 }}
+                            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                            className="relative z-10 h-full max-w-7xl mx-auto"
                         >
                             <Outlet />
                         </motion.div>
@@ -116,14 +120,10 @@ const AdminLayout = () => {
                 </main>
                 
                 {/* Fixed Status Footer */}
-                <footer className="h-8 bg-[#050505] border-t border-white/5 flex items-center justify-between px-6 text-[10px] text-gray-500 font-mono uppercase tracking-widest backdrop-blur-md">
+                <footer className="h-8 border-t border-white/5 flex items-center justify-between px-6 text-[10px] text-gray-500 font-medium uppercase tracking-widest backdrop-blur-md bg-white/[0.01]">
                     <div className="flex gap-6">
-                        <span>ASTRA OS v2.0.4</span>
-                        <span>SECURE CONNECTION</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                        {isSystemOnline ? 'SYSTEM OPERATIONAL' : 'SYSTEM OFFLINE'}
+                        <span className="text-gray-600">ASTRA OS <span className="text-indigo-500/50">v2.0.4</span></span>
+                        <span className="flex items-center gap-1.5"><div className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"/> SECURE CONNECTION</span>
                     </div>
                 </footer>
             </div>
