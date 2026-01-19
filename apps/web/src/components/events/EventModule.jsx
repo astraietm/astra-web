@@ -20,7 +20,7 @@ const EventModule = ({ event, index }) => {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ delay: index * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             onClick={() => navigate(`/events/${event.id}`)}
-            className="group relative w-full h-[480px] rounded-[2rem] overflow-hidden bg-[#050505] border border-white/10 cursor-pointer shadow-2xl shadow-black/50"
+            className="group relative w-full h-[400px] sm:h-[480px] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-[#050505] border border-white/10 cursor-pointer shadow-2xl shadow-black/50 active:scale-[0.98] transition-all duration-300"
         >
             {/* Background Image with Cinematic Zoom */}
             <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -35,27 +35,27 @@ const EventModule = ({ event, index }) => {
             </div>
 
             {/* Top Floating Badge */}
-            <div className="absolute top-6 right-6 z-20">
-                <div className={`px-4 py-2 rounded-full backdrop-blur-xl border flex items-center gap-2 ${
+            <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+                <div className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full backdrop-blur-xl border flex items-center gap-2 ${
                     isCompleted 
                     ? 'bg-zinc-900/50 border-zinc-800 text-zinc-400' 
                     : 'bg-white/10 border-white/20 text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]'
                 }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-zinc-500' : 'bg-green-500 animate-pulse'}`} />
-                    <span className="text-xs font-bold tracking-widest uppercase">
+                    <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase">
                         {isCompleted ? 'Archived' : 'Live Event'}
                     </span>
                 </div>
             </div>
 
             {/* Content Container - Bottom Aligned */}
-            <div className="absolute bottom-0 left-0 w-full p-8 z-20 flex flex-col justify-end h-full">
+            <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 z-20 flex flex-col justify-end h-full">
                 
                 {/* Decorative Line (animates width) */}
-                <div className="w-12 h-1 bg-red-500 rounded-full mb-6 group-hover:w-20 transition-all duration-500" />
+                <div className="w-12 h-1 bg-red-500 rounded-full mb-4 sm:mb-6 group-hover:w-20 transition-all duration-500" />
 
                 {/* Metadata */}
-                <div className="space-y-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <div className="space-y-2 sm:space-y-4 transform lg:translate-y-4 lg:group-hover:translate-y-0 transition-transform duration-500">
                     <div className="flex items-center gap-4 text-xs font-mono tracking-wider text-zinc-400">
                         <div className="flex items-center gap-2">
                             <Calendar className="w-3.5 h-3.5" />
@@ -68,24 +68,24 @@ const EventModule = ({ event, index }) => {
                         </div>
                     </div>
 
-                    <h3 className="text-4xl font-bold text-white leading-[0.9] tracking-tight group-hover:text-red-500 transition-colors duration-300">
+                    <h3 className="text-3xl sm:text-4xl font-bold text-white leading-[0.9] tracking-tight group-hover:text-red-500 transition-colors duration-300">
                         {event.title}
                     </h3>
                     
                     <div className="overflow-hidden">
-                        <p className="text-zinc-400 text-sm leading-relaxed max-w-[90%] opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                        <p className="text-zinc-400 text-sm leading-relaxed max-w-[95%] sm:max-w-[90%] lg:opacity-0 lg:group-hover:opacity-100 lg:translate-y-4 lg:group-hover:translate-y-0 transition-all duration-500 delay-100">
                             {event.description || "Authorized personnel only. Access classified event data."}
                         </p>
                     </div>
 
                     {/* Action Row */}
-                    <div className="pt-6 flex items-center justify-between border-t border-white/5 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
+                    <div className="pt-4 sm:pt-6 flex items-center justify-between border-t border-white/5 mt-2 sm:mt-4 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-500 delay-200">
                         <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest">
                             <ShieldCheck className="w-4 h-4 text-red-500" />
                             <span>Secure Entry</span>
                         </div>
-                        <div className="p-3 rounded-full bg-white text-black group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
-                            <ArrowUpRight className="w-5 h-5" />
+                        <div className="p-2 sm:p-3 rounded-full bg-white text-black group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
+                            <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                     </div>
                 </div>
