@@ -24,8 +24,12 @@ const RazorpayPayment = ({ eventId, eventName, amount, teamName, teamMembers, on
         }
 
         try {
+            console.log('Initiating payment for event:', eventId);
+            const apiUrl = `${import.meta.env.VITE_API_URL}/payment/create-order/`;
+            console.log('Calling API:', apiUrl);
+
             // Create order on backend
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/payment/create-order/`, {
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -38,9 +42,22 @@ const RazorpayPayment = ({ eventId, eventName, amount, teamName, teamMembers, on
                 })
             });
 
-            const data = await response.json();
+            console.log('API Response Status:', response.status);
+
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                console.error('Non-JSON response:', text);
+                throw new Error('Server returned non-JSON response. Check console for details.');
+            }
+
+            console.log('API Response Data:', data);
 
             if (!response.ok) {
+                console.error('Payment order creation failed:', data);
                 onFailure(data.error || 'Failed to create payment order');
                 return;
             }
@@ -54,6 +71,7 @@ const RazorpayPayment = ({ eventId, eventName, amount, teamName, teamMembers, on
                 description: `Registration for ${eventName}`,
                 order_id: data.order_id,
                 handler: async function (response) {
+                    console.log('Razorpay payment successful, verifying...', response);
                     // Verify payment on backend
                     try {
                         const verifyResponse = await fetch(`${import.meta.env.VITE_API_URL}/payment/verify/`, {
@@ -70,13 +88,16 @@ const RazorpayPayment = ({ eventId, eventName, amount, teamName, teamMembers, on
                         });
 
                         const verifyData = await verifyResponse.json();
+                        console.log('Verification response:', verifyData);
 
                         if (verifyResponse.ok && verifyData.success) {
                             onSuccess(verifyData.registration);
                         } else {
+                            console.error('Verification failed:', verifyData);
                             onFailure(verifyData.error || 'Payment verification failed');
                         }
                     } catch (error) {
+                        console.error('Verification error:', error);
                         onFailure('Failed to verify payment: ' + error.message);
                     }
                 },
