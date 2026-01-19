@@ -63,26 +63,52 @@ const Contact = () => {
               </p>
             </div>
 
-            <div className="space-y-6 mb-12">
-              <div className="group flex items-center gap-5 p-5 rounded-2xl border border-white/5 hover:border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-300 hover:translate-x-2 cursor-pointer relative overflow-hidden">
+            <div className="space-y-4 mb-12">
+              {/* Merchant Legal Entity Name */}
+              <div className="group flex items-center gap-5 p-4 rounded-2xl border border-white/5 hover:border-primary/20 bg-black/40 backdrop-blur-md transition-all duration-300 hover:translate-x-2 cursor-pointer relative overflow-hidden">
                 <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(0,224,255,0.1)]">
-                  <Mail className="w-5 h-5 text-primary" />
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 border border-primary/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(0,224,255,0.1)]">
+                  <Shield className="w-4 h-4 text-primary" />
                 </div>
                 <div className="relative z-10">
-                  <h3 className="font-mono text-[10px] text-primary uppercase tracking-widest mb-1 opacity-70">Customer Support Email</h3>
-                  <p className="text-white font-medium text-lg">contact@astraietm.in</p>
+                  <h3 className="font-mono text-[10px] text-primary uppercase tracking-widest mb-1 opacity-70">Merchant Legal Entity Name</h3>
+                  <p className="text-white font-medium text-base">ASTRA IETM</p>
                 </div>
               </div>
 
-              <div className="group flex items-center gap-5 p-5 rounded-2xl border border-white/5 hover:border-blue-500/20 bg-black/40 backdrop-blur-md transition-all duration-300 hover:translate-x-2 cursor-pointer relative overflow-hidden">
+              {/* Addresses */}
+              <div className="group flex items-center gap-5 p-4 rounded-2xl border border-white/5 hover:border-blue-500/20 bg-black/40 backdrop-blur-md transition-all duration-300 hover:translate-x-2 cursor-pointer relative overflow-hidden">
                 <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0 border border-blue-500/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
-                  <MapPin className="w-5 h-5 text-blue-500" />
+                <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center flex-shrink-0 border border-blue-500/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                  <MapPin className="w-4 h-4 text-blue-500" />
                 </div>
                 <div className="relative z-10">
-                  <h3 className="font-mono text-[10px] text-blue-500 uppercase tracking-widest mb-1 opacity-70">Operating Address</h3>
-                  <p className="text-white font-medium text-lg">KMCT IETM, Kerala 673601</p>
+                  <h3 className="font-mono text-[10px] text-blue-500 uppercase tracking-widest mb-1 opacity-70">Registered & Operational Address</h3>
+                  <p className="text-white font-medium text-base">KMCT Institute of Emerging Technology and Management Mukkam Kozhikode, 673602</p>
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div className="group flex items-center gap-5 p-4 rounded-2xl border border-white/5 hover:border-green-500/20 bg-black/40 backdrop-blur-md transition-all duration-300 hover:translate-x-2 cursor-pointer relative overflow-hidden">
+                <div className="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center flex-shrink-0 border border-green-500/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(34,197,94,0.1)]">
+                  <Terminal className="w-4 h-4 text-green-500" />
+                </div>
+                <div className="relative z-10">
+                  <h3 className="font-mono text-[10px] text-green-500 uppercase tracking-widest mb-1 opacity-70">Telephone No</h3>
+                  <p className="text-white font-medium text-base">+91 8891396933</p>
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="group flex items-center gap-5 p-4 rounded-2xl border border-white/5 hover:border-purple-500/20 bg-black/40 backdrop-blur-md transition-all duration-300 hover:translate-x-2 cursor-pointer relative overflow-hidden">
+                <div className="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center flex-shrink-0 border border-purple-500/20 group-hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(168,85,247,0.1)]">
+                  <Mail className="w-4 h-4 text-purple-500" />
+                </div>
+                <div className="relative z-10">
+                  <h3 className="font-mono text-[10px] text-purple-500 uppercase tracking-widest mb-1 opacity-70">E-Mail ID</h3>
+                  <p className="text-white font-medium text-base">contact@astraietm.in</p>
                 </div>
               </div>
             </div>
