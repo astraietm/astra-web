@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Gamepad2, Keyboard, Brain, Search, Lock, AlertTriangle, Users, Zap, Target, Award, Shield, CheckCircle, Activity, ChevronRight, Terminal } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import HawkinsLabRegistrationModal from './HawkinsLabRegistrationModal';
+import { useAuth } from '../../context/AuthContext';
 
 const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const navigate = useNavigate();
@@ -9,6 +11,27 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
   const { scrollY } = useScroll();
   const yBg = useTransform(scrollY, [0, 1000], [0, 200]);
   const yGrid = useTransform(scrollY, [0, 1000], [0, 50]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user, setIsLoginModalOpen } = useAuth();
+
+  // Mock event data - In production, fetch from API
+  const hawkinsLabEvent = {
+    id: 1, // Replace with actual event ID
+    title: 'Hawkins Lab',
+    requires_payment: true,
+    payment_amount: 100,
+    is_team_event: true,
+    team_size_min: 2,
+    team_size_max: 4
+  };
+
+  const handleRegisterClick = () => {
+    if (!user) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-[#030303] text-white selection:bg-red-500/30 font-sans overflow-x-hidden">
@@ -125,8 +148,8 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             </div>
                             <div className="w-px h-12 bg-white/10 hidden sm:block" />
                             <div className="flex flex-col gap-1">
-                                <span className="text-4xl font-bold tracking-tight text-white">0%</span>
-                                <span className="text-sm font-mono text-zinc-500 uppercase tracking-wider">Coding Needed</span>
+                                <span className="text-4xl font-bold tracking-tight text-white">₹100</span>
+                                <span className="text-sm font-mono text-zinc-500 uppercase tracking-wider">Per Team</span>
                             </div>
                         </motion.div>
                     </div>
@@ -282,14 +305,14 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
                             Ready to enter the Upside Down?
                         </h2>
                         <p className="text-xl text-zinc-400 font-light">
-                            Secure your team's spot in the registry. The gate is opening soon.
+                            Secure your team's spot in the registry. ₹100 per team.
                         </p>
                     </div>
 
                     <motion.button 
                         whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(220, 38, 38, 0.3)" }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={isRegistered ? () => navigate('/dashboard') : onRegister}
+                        onClick={handleRegisterClick}
                         disabled={false}
                         className="group relative px-10 py-5 bg-white text-black text-lg font-bold rounded-2xl overflow-hidden transition-shadow"
                     >
@@ -305,6 +328,13 @@ const HawkinsLabDetail = ({ onRegister, isRegistered }) => {
              {/* Footer Space */}
              <div className="h-32" />
         </div>
+
+        {/* Registration Modal */}
+        <HawkinsLabRegistrationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            event={hawkinsLabEvent}
+        />
     </div>
   );
 };
