@@ -72,8 +72,7 @@ const AdminLayout = () => {
     }
 
     return (
-
-        <div className="min-h-screen bg-[#F9FAFB] text-gray-900 flex overflow-hidden font-inter selection:bg-gray-200 selection:text-gray-900 relative">
+        <div className="min-h-screen bg-[#020617] text-slate-50 flex overflow-hidden font-inter selection:bg-indigo-500/30 selection:text-white relative">
             
             <AdminSidebar 
                 isCollapsed={isCollapsed} 
@@ -105,13 +104,13 @@ const AdminLayout = () => {
                     </Suspense>
                 </main>
                 
-                <footer className="h-12 border-t border-gray-200 flex items-center justify-between px-8 text-xs text-gray-500 font-medium bg-white">
+                <footer className="h-12 border-t border-slate-800 flex items-center justify-between px-8 text-xs text-slate-500 font-medium bg-[#0f172a]">
                     <div className="flex gap-4">
-                        <span className="text-gray-400">© 2026 Astra System. All rights reserved.</span>
+                        <span className="text-slate-500">© 2026 Astra System. All rights reserved.</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                        <span className="text-gray-500">System Information Systems</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <span className="text-slate-500">System Online</span>
                     </div>
                 </footer>
             </div>
