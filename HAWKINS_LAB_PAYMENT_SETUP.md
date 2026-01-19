@@ -250,6 +250,18 @@ Response:
 5. **Add email notifications** for successful payments
 6. **Create refund workflow** if needed
 
+## Razorpay Compliance Pages
+
+To activate your Razorpay account, the following pages have been created/updated with ASTRA branding and required legal text:
+
+1.  **Terms & Conditions**: `apps/web/src/pages/TermsAndConditions.jsx`
+2.  **Privacy Policy**: `apps/web/src/pages/PrivacyPolicy.jsx`
+3.  **Refund Policy**: `apps/web/src/pages/RefundPolicy.jsx`
+4.  **Shipping Policy** (Digital Delivery): `apps/web/src/pages/ShippingPolicy.jsx`
+5.  **Contact Us**: `apps/web/src/pages/Contact.jsx`
+
+**Note:** All these pages are linked in the website footer and are publicly accessible as per Razorpay guidelines.
+
 ## Files Modified
 
 ### Backend

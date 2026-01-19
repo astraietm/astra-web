@@ -1,181 +1,117 @@
 import React from 'react';
-import FadeInUp from '../components/common/FadeInUp';
-import CyberBackground from '../components/common/CyberBackground';
-import { Shield, Lock, Eye, Server, Globe, Mail } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Lock, Eye, Database, Cookie, Share2, Mail } from 'lucide-react';
 
 const PrivacyPolicy = () => {
     return (
-        <div className="bg-background min-h-screen relative overflow-hidden">
-            <CyberBackground />
-            <div className="absolute inset-0 bg-background/90 pointer-events-none"></div>
-            
-            <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-16 sm:pb-24 relative z-10">
-                {/* Hero Section */}
-                <div className="max-w-4xl mx-auto mb-16 sm:mb-24 text-center">
-                    <FadeInUp>
-                        <div className="inline-flex items-center gap-3 mb-6 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-                            <Shield className="w-5 h-5 text-primary" />
-                            <span className="text-sm font-mono text-primary uppercase tracking-wider">Legal Document</span>
-                        </div>
-                        <h1 className="text-4xl sm:text-5xl md:text-7xl font-display font-medium text-white mb-6">
-                            Privacy <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">Policy</span>
-                        </h1>
-                        <p className="text-lg sm:text-xl text-gray-400 font-light max-w-3xl mx-auto leading-relaxed">
-                            We are committed to protecting your personal information and your right to privacy.
-                        </p>
-                    </FadeInUp>
-                </div>
+        <div className="min-h-screen bg-black text-white pt-32 pb-20 selection:bg-green-500/30">
+            <div className="fixed inset-0 pointer-events-none">
+                <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-green-900/5 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-900/5 rounded-full blur-[120px]" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]" />
+            </div>
 
-                {/* Information We Collect */}
-                <div className="max-w-5xl mx-auto mb-12">
-                    <FadeInUp delay={0.1}>
-                        <div className="bg-[#0A0A0A] border border-white/10 rounded-xl p-6 sm:p-8 hover:border-primary/30 transition-colors duration-300">
-                            <div className="flex items-start gap-4 mb-6">
-                                <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
-                                    <Eye className="w-6 h-6 text-primary" />
-                                </div>
-                                <h2 className="text-2xl sm:text-3xl font-display font-medium text-white mt-2">
-                                    Information We Collect
-                                </h2>
+            <div className="container mx-auto px-4 relative z-10 max-w-4xl">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center mb-16"
+                >
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-zinc-400 text-xs font-medium uppercase tracking-wider mb-6">
+                        <Lock className="w-4 h-4" />
+                        Data Protection
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">
+                        Privacy Policy
+                    </h1>
+                    <p className="text-zinc-400 max-w-2xl mx-auto leading-relaxed">
+                        We value your privacy. This policy outlines how ASTRA collects, uses, and protects your information.
+                    </p>
+                </motion.div>
+
+                <div className="space-y-6">
+                    {/* Data Collection */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                        className="bg-zinc-900/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm"
+                    >
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 shrink-0">
+                                <Database className="w-6 h-6 text-green-400" />
                             </div>
-                            
-                            <div className="ml-0 sm:ml-16 space-y-4 text-gray-400 leading-relaxed">
-                                <p>
-                                    We collect personal information that you voluntarily provide to us when you register on the website, express an interest in obtaining information about us or our products and services, when you participate in activities on the website or otherwise when you contact us.
+                            <div>
+                                <h2 className="text-xl font-semibold text-white mb-3">Information We Collect</h2>
+                                <p className="text-zinc-400 leading-relaxed mb-4">
+                                    We collect minimal data necessary for event registration and communication:
                                 </p>
-                                <ul className="list-disc pl-5 space-y-2 mt-4">
-                                    <li>Names and Contact Data (email addresses, phone numbers, etc.)</li>
-                                    <li>Credentials (passwords, hints, and similar security information)</li>
-                                    <li>Payment Data (data necessary to process your payment if you make purchases)</li>
+                                <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-zinc-400 text-sm">
+                                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-green-500 rounded-full"></span> Full Name</li>
+                                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-green-500 rounded-full"></span> Email Address</li>
+                                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-green-500 rounded-full"></span> Phone Number</li>
+                                    <li className="flex items-center gap-2"><span className="w-1 h-1 bg-green-500 rounded-full"></span> Payment Status (via Razorpay)</li>
                                 </ul>
                             </div>
                         </div>
-                    </FadeInUp>
-                </div>
+                    </motion.div>
 
-                {/* How We Use Information */}
-                <div className="max-w-5xl mx-auto mb-12">
-                    <FadeInUp delay={0.2}>
-                        <div className="bg-[#0A0A0A] border border-white/10 rounded-xl p-6 sm:p-8 hover:border-primary/30 transition-colors duration-300">
-                            <div className="flex items-start gap-4 mb-6">
-                                <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
-                                    <Server className="w-6 h-6 text-primary" />
-                                </div>
-                                <h2 className="text-2xl sm:text-3xl font-display font-medium text-white mt-2">
-                                    How We Use Your Information
-                                </h2>
+                    {/* How we use data */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                        className="bg-zinc-900/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm"
+                    >
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 shrink-0">
+                                <Eye className="w-6 h-6 text-blue-400" />
                             </div>
-                            
-                            <div className="ml-0 sm:ml-16 space-y-4 text-gray-400 leading-relaxed">
-                                <p>
-                                    We use personal information collected via our website for a variety of business purposes described below. We process your personal information for these purposes in reliance on our legitimate business interests, in order to enter into or perform a contract with you, with your consent, and/or for compliance with our legal obligations.
-                                </p>
-                                <div className="grid sm:grid-cols-2 gap-4 mt-6">
-                                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                                        <h4 className="text-white font-medium mb-2">Account Handling</h4>
-                                        <p className="text-sm">To facilitate account creation and logon process.</p>
-                                    </div>
-                                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                                        <h4 className="text-white font-medium mb-2">Communication</h4>
-                                        <p className="text-sm">To send you marketing and promotional communications.</p>
-                                    </div>
-                                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                                        <h4 className="text-white font-medium mb-2">Security</h4>
-                                        <p className="text-sm">To protect our Services and for fraud monitoring/prevention.</p>
-                                    </div>
-                                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                                        <h4 className="text-white font-medium mb-2">Improvement</h4>
-                                        <p className="text-sm">To enforce our terms, conditions and policies for business purposes.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </FadeInUp>
-                </div>
-
-                {/* Sharing Information */}
-                <div className="max-w-5xl mx-auto mb-12">
-                    <FadeInUp delay={0.3}>
-                        <div className="bg-[#0A0A0A] border border-white/10 rounded-xl p-6 sm:p-8 hover:border-primary/30 transition-colors duration-300">
-                            <div className="flex items-start gap-4 mb-6">
-                                <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
-                                    <Globe className="w-6 h-6 text-primary" />
-                                </div>
-                                <h2 className="text-2xl sm:text-3xl font-display font-medium text-white mt-2">
-                                    Sharing Your Information
-                                </h2>
-                            </div>
-                            
-                            <div className="ml-0 sm:ml-16 text-gray-400 leading-relaxed">
-                                <p className="mb-4">
-                                    We may process or share your data that we hold based on the following legal basis:
-                                </p>
-                                <ul className="space-y-3">
-                                    <li className="flex items-start gap-3">
-                                        <span className="text-primary mt-1">•</span>
-                                        <span><strong>Consent:</strong> We may process your data if you have given us specific consent to use your personal information for a specific purpose.</span>
-                                    </li>
-                                    <li className="flex items-start gap-3">
-                                        <span className="text-primary mt-1">•</span>
-                                        <span><strong>Legitimate Interests:</strong> We may process your data when it is reasonably necessary to achieve our legitimate business interests.</span>
-                                    </li>
-                                    <li className="flex items-start gap-3">
-                                        <span className="text-primary mt-1">•</span>
-                                        <span><strong>Legal Obligations:</strong> We may disclose your information where we are legally required to do so in order to comply with applicable law, governmental requests, a judicial proceeding, court order, or legal process.</span>
-                                    </li>
+                            <div>
+                                <h2 className="text-xl font-semibold text-white mb-3">How We Use Data</h2>
+                                <ul className="space-y-2 text-zinc-400">
+                                    <li>• To process your event registration and issue tickets.</li>
+                                    <li>• To communicate event schedules, updates, and changes.</li>
+                                    <li>• To verify student identity for restricted events.</li>
                                 </ul>
                             </div>
                         </div>
-                    </FadeInUp>
-                </div>
+                    </motion.div>
 
-                {/* Data Security */}
-                <div className="max-w-5xl mx-auto mb-12">
-                    <FadeInUp delay={0.4}>
-                        <div className="bg-[#0A0A0A] border border-white/10 rounded-xl p-6 sm:p-8 hover:border-primary/30 transition-colors duration-300">
-                            <div className="flex items-start gap-4 mb-6">
-                                <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
-                                    <Lock className="w-6 h-6 text-primary" />
-                                </div>
-                                <h2 className="text-2xl sm:text-3xl font-display font-medium text-white mt-2">
-                                    Data Security
-                                </h2>
+                    {/* Third Party */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                        className="bg-zinc-900/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm"
+                    >
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 shrink-0">
+                                <Share2 className="w-6 h-6 text-purple-400" />
                             </div>
-                            
-                            <div className="ml-0 sm:ml-16 text-gray-400 leading-relaxed">
-                                <p>
-                                    We have implemented appropriate technical and organizational security measures designed to protect the security of any personal information we process. However, please also remember that we cannot guarantee that the internet itself is 100% secure. Although we will do our best to protect your personal information, transmission of personal information to and from our website is at your own risk. You should only access the services within a secure environment.
+                            <div>
+                                <h2 className="text-xl font-semibold text-white mb-3">Third-Party Disclosure</h2>
+                                <p className="text-zinc-400 leading-relaxed">
+                                    We do not sell, trade, or transfer your personal data to outside parties. This does not include trusted third parties like <strong>Razorpay</strong> (for payment processing) who agree to keep this information confidential.
                                 </p>
                             </div>
                         </div>
-                    </FadeInUp>
-                </div>
+                    </motion.div>
 
-                {/* Contact Us */}
-                <div className="max-w-5xl mx-auto">
-                    <FadeInUp delay={0.5}>
-                        <div className="bg-gradient-to-br from-primary/10 to-cyan-500/10 border border-primary/30 rounded-xl p-6 sm:p-8">
-                            <div className="flex items-center gap-4 mb-6">
-                                <Mail className="w-6 h-6 text-primary" />
-                                <h2 className="text-2xl sm:text-3xl font-display font-medium text-white">
-                                    Contact Us
-                                </h2>
+                    {/* Cookies */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                        className="bg-zinc-900/30 border border-white/10 rounded-2xl p-8 backdrop-blur-sm"
+                    >
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 shrink-0">
+                                <Cookie className="w-6 h-6 text-orange-400" />
                             </div>
-                            
-                            <div className="text-gray-300 leading-relaxed">
-                                <p className="mb-4">
-                                    If you have questions or comments about this policy, you may email us at:
+                            <div>
+                                <h2 className="text-xl font-semibold text-white mb-3">Cookies</h2>
+                                <p className="text-zinc-400 leading-relaxed">
+                                    We use cookies solely for session management and to improve website performance (e.g., keeping you logged in). We do not use cookies for invasive ad tracking.
                                 </p>
-                                <a 
-                                    href="mailto:contact@astra.ietm" 
-                                    className="text-primary hover:text-cyan-400 transition-colors text-lg font-medium"
-                                >
-                                    contact@astraietm.com
-                                </a>
                             </div>
                         </div>
-                    </FadeInUp>
+                    </motion.div>
                 </div>
+
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-12 text-center">
+                    <p className="text-zinc-500 text-sm">
+                        Questions? Contact our Data Officer at <a href="mailto:support@astraietm.in" className="text-white hover:underline transition-colors">support@astraietm.in</a>
+                    </p>
+                </motion.div>
             </div>
         </div>
     );

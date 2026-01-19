@@ -24,6 +24,8 @@ const TermsAndConditions = React.lazy(() => import('./pages/TermsAndConditions')
 const RefundPolicy = React.lazy(() => import('./pages/RefundPolicy'));
 const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
 
+const ShippingPolicy = React.lazy(() => import('./pages/ShippingPolicy'));
+
 // Admin Lazy Loading
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const AdminRegistrations = React.lazy(() => import('./pages/AdminRegistrations'));
@@ -92,6 +94,7 @@ function App() {
               <Route path="contact" element={<Contact />} />
               <Route path="terms" element={<TermsAndConditions />} />
               <Route path="refund-policy" element={<RefundPolicy />} />
+              <Route path="shipping-policy" element={<ShippingPolicy />} />
               <Route path="privacy" element={<PrivacyPolicy />} />
 
               {/* 404 Catch-all */}
