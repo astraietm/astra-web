@@ -161,6 +161,7 @@ class CreatePaymentOrderView(APIView):
         
         # Create Razorpay order
         try:
+            print(f"DEBUG: Initializing Razorpay Client with Key ID: {settings.RAZORPAY_KEY_ID[:5]}*** and Secret present: {bool(settings.RAZORPAY_KEY_SECRET)}")
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
             
             # Amount in paise (multiply by 100)
