@@ -59,15 +59,28 @@ const Contact = () => {
                                 </div>
 
                                 <div className="flex items-start gap-4">
+                                    <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                                        <Phone className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-white mb-1">Phone</h3>
+                                        <p className="text-zinc-400">
+                                            +91 88913 96933
+                                        </p>
+                                        <p className="text-zinc-500 text-sm mt-1">Mon-Fri, 9am - 6pm IST</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start gap-4">
                                     <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
                                         <MapPin className="w-6 h-6" />
                                     </div>
                                     <div>
                                         <h3 className="font-semibold text-white mb-1">Location</h3>
                                         <p className="text-zinc-400">
-                                            Institute of Engineering and Technology<br />
-                                            Sitapur Road, Lucknow, Uttar Pradesh<br />
-                                            India - 226021
+                                            Mundoth Vayal, West Hill<br />
+                                            Chungam P.O, Kozhikode<br />
+                                            Kerala - 673005
                                         </p>
                                     </div>
                                 </div>

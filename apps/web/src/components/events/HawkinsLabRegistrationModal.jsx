@@ -9,6 +9,9 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event }) => {
     const [status, setStatus] = useState('idle'); // idle, processing, success, error
     const [errorMsg, setErrorMsg] = useState('');
     const [registrationData, setRegistrationData] = useState(null);
+    
+    // Initialize payment hook
+    const handlePayment = RazorpayPayment();
 
     const addMember = () => {
         if (teamMembers.length < 4) {
@@ -62,8 +65,8 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event }) => {
         setStatus('processing');
         setErrorMsg('');
 
-        // Get payment handler
-        const handlePayment = RazorpayPayment({
+        // Trigger payment
+        await handlePayment({
             eventId: event.id,
             eventName: event.title,
             amount: event.payment_amount,
@@ -72,9 +75,6 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event }) => {
             onSuccess: handlePaymentSuccess,
             onFailure: handlePaymentFailure
         });
-
-        // Trigger payment
-        await handlePayment();
     };
 
     const downloadQR = () => {

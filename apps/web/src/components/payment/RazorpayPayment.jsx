@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
-const RazorpayPayment = ({ eventId, eventName, amount, teamName, teamMembers, onSuccess, onFailure }) => {
+const useRazorpayPayment = () => {
     const { token, user } = useAuth();
 
     const loadRazorpayScript = () => {
@@ -14,7 +14,7 @@ const RazorpayPayment = ({ eventId, eventName, amount, teamName, teamMembers, on
         });
     };
 
-    const handlePayment = async () => {
+    const handlePayment = async ({ eventId, eventName, amount, teamName, teamMembers, onSuccess, onFailure }) => {
         // Load Razorpay script
         const scriptLoaded = await loadRazorpayScript();
         
@@ -127,4 +127,4 @@ const RazorpayPayment = ({ eventId, eventName, amount, teamName, teamMembers, on
     return handlePayment;
 };
 
-export default RazorpayPayment;
+export default useRazorpayPayment;
