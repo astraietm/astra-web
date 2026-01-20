@@ -8,6 +8,7 @@ from google.auth.transport import requests as google_requests
 from .models import User
 from .serializers import UserSerializer
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,6 @@ class GoogleLoginView(APIView):
             return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            import os
             client_id = os.environ.get('GOOGLE_CLIENT_ID')
             if not client_id:
                 logger.error("GOOGLE_CLIENT_ID is missing in server environment.")
@@ -108,10 +108,10 @@ class GoogleLoginView(APIView):
             })
 
         except ValueError as e:
-            logger.error(f"Google Token Error: {e}")
+            logger.error(f"Google Token Error: {e}", exc_info=True)
             return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
-            logger.error(f"Login Error: {e}")
+            logger.error(f"Login Error: {e}", exc_info=True)
             return Response({'error': 'Authentication failed'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
