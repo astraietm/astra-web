@@ -100,8 +100,8 @@ const Navbar = () => {
                         onClick={() => setActiveTab('/')}
                         className="relative z-10 flex items-center justify-center w-11 h-11 rounded-full hover:scale-105 transition-transform"
                     >
-                        <div className="w-[44px] h-[44px] bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-full flex items-center justify-center overflow-hidden">
-                            <img src="/vite.svg" alt="Astra Logo" className="w-[85%] h-[85%] object-contain" />
+                        <div className="w-[44px] h-[44px] bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-full flex items-center justify-center overflow-hidden group-hover:border-primary/50 transition-colors">
+                            <Shield className="w-[65%] h-[65%] text-primary fill-primary/10" strokeWidth={1.5} />
                         </div>
                     </Link>
 
@@ -242,8 +242,8 @@ const Navbar = () => {
                 <div className="w-full max-w-[340px] mx-auto relative pointer-events-auto">
                     <div className="bg-white/[0.03] backdrop-blur-2xl backdrop-saturate-150 border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] rounded-full p-1.5 pl-3 flex items-center justify-between h-[58px] relative z-50">
                         <Link to="/" className="relative w-11 h-11 rounded-full overflow-hidden flex items-center justify-center group" onClick={() => setIsOpen(false)}>
-                            <div className="absolute inset-0 bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-full" />
-                            <img src="/vite.svg" alt="Astra Logo" className="relative z-10 w-[85%] h-[85%] object-contain" />
+                            <div className="absolute inset-0 bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-full group-hover:border-primary/50 transition-colors" />
+                            <Shield className="relative z-10 w-[60%] h-[60%] text-primary fill-primary/10" strokeWidth={1.5} />
                         </Link>
 
                         <button

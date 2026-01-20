@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
-const TextReveal = ({ text, className = "", delay = 0 }) => {
+const TextReveal = ({ text, className = "", delay = 0, immediate = false }) => {
     // Split text into words
     const words = text.split(" ");
 
@@ -34,8 +34,7 @@ const TextReveal = ({ text, className = "", delay = 0 }) => {
         <motion.div 
             variants={container}
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
+            {...(immediate ? { animate: "visible" } : { whileInView: "visible", viewport: { once: true, amount: 0.5 } })}
             className={`flex flex-wrap ${className}`}
         >
             {words.map((word, index) => (

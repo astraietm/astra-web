@@ -45,7 +45,7 @@ const Hero = () => {
             >
                 {/* Heading */}
                 <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-medium text-white mb-3 sm:mb-4 md:mb-6 leading-tight tracking-tight flex flex-col items-center w-full">
-                    <TextReveal text="ASTRA" delay={0.3} />
+                    <TextReveal text="ASTRA" delay={0.1} immediate={true} />
                     <motion.span
                         initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
                         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
