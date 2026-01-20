@@ -11,8 +11,8 @@ const CyberBackground = ({ fixed = true }) => {
             
             {/* 2. Cyber Noise REMOVED (Provided by MainLayout NoiseOverlay) */}
 
-            {/* 3. Moving Scanlines */}
-            <div className={`${positionClass} inset-0 pointer-events-none overflow-hidden z-0 opacity-50`}>
+            {/* 3. Moving Scanlines - Desktop Only */}
+            <div className={`${positionClass} inset-0 pointer-events-none overflow-hidden z-0 opacity-50 hidden md:block`}>
                 <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20"></div>
                 <motion.div 
                     initial={{ translateY: "-100%" }}

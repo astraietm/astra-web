@@ -57,7 +57,7 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
                         key={`${item.id}-${idx}`} 
                         className="relative min-w-[250px] h-[160px] md:min-w-[400px] md:h-[250px] rounded-2xl overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-all duration-500 ease-out 
                         opacity-100 scale-100
-                        group-hover/marquee:blur-[4px] group-hover/marquee:opacity-40 group-hover/marquee:scale-100
+                        md:group-hover/marquee:blur-[4px] md:group-hover/marquee:opacity-40 md:group-hover/marquee:scale-100
                         hover:!blur-0 hover:!opacity-100 hover:!scale-105 hover:z-20 hover:shadow-2xl hover:border-primary/50 cursor-pointer bg-black"
                     >
                          {/* Dimming Layer only on group hover (siblings) */}
