@@ -24,6 +24,9 @@ class GoogleLoginView(APIView):
         try:
             import os
             client_id = os.environ.get('GOOGLE_CLIENT_ID')
+            if not client_id:
+                logger.error("GOOGLE_CLIENT_ID is missing in server environment.")
+                return Response({'error': 'Server configuration error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             # Verify the token
             try:
