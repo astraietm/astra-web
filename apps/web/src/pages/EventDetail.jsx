@@ -158,12 +158,7 @@ const EventDetail = () => {
 
   return (
     <div className="min-h-screen bg-[#020408] text-gray-200 selection:bg-blue-500/30 font-sans">
-      <TeamRegistrationModal 
-            isOpen={isTeamModalOpen} 
-            onClose={() => setIsTeamModalOpen(false)} 
-            event={event} 
-            onSuccess={() => setIsRegistered(true)} 
-      />
+
       {/* ... rest of UI ... */}
       
       {/* --- AMBIENT LIGHTING --- */}
@@ -302,6 +297,12 @@ const EventDetail = () => {
 
         </div>
       </div>
+      <TeamRegistrationModal 
+        isOpen={isTeamModalOpen} 
+        onClose={() => setIsTeamModalOpen(false)} 
+        event={event} 
+        onSuccess={() => setIsRegistered(true)} 
+      />
     </div>
   );
 };
