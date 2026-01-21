@@ -10,6 +10,7 @@ import { ToastProvider } from './context/ToastContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import ScrollToTop from './components/common/ScrollToTop';
 import CustomCursor from './components/common/CustomCursor';
+import SmoothScroll from './components/common/SmoothScroll';
 
 // Lazy Load Pages for Performance
 const Home = React.lazy(() => import('./pages/Home'));
@@ -67,41 +68,41 @@ function App() {
           <ScrollToTop />
           <LoginModal /> {/* Global Login Modal */}
           <CompleteProfileModal /> {/* Global Complete Profile Modal */}
-          {/* <SmoothScroll> */}
-          <Routes>
-            {/* NEW ADMIN CONSOLE LAYOUT */}
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="registrations" element={<AdminRegistrations />} />
-              <Route path="events" element={<AdminEvents />} />
-              <Route path="gallery" element={<AdminGallery />} />
-              <Route path="scanner" element={<AdminScanner />} />
-
-              <Route path="notifications" element={<AdminNotifications />} />
-              <Route path="logs" element={<AdminLogs />} />
-              <Route path="settings" element={<AdminSettings />} />
-            </Route>
-
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<Home />} />
-              <Route path="events" element={<Events />} />
-              <Route path="events/:id" element={<EventDetail />} />
-              <Route path="register/:id" element={<Register />} />
-              <Route path="my-registrations" element={<Dashboard />} />
-              <Route path="gallery" element={<Gallery />} />
-              <Route path="about" element={<About />} />
-
-              <Route path="contact" element={<Contact />} />
-              <Route path="terms" element={<TermsAndConditions />} />
-              <Route path="refund-policy" element={<RefundPolicy />} />
-              <Route path="shipping-policy" element={<ShippingPolicy />} />
-              <Route path="privacy" element={<PrivacyPolicy />} />
-
-              {/* 404 Catch-all */}
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-          {/* </SmoothScroll> */}
+          <SmoothScroll>
+            <Routes>
+              {/* NEW ADMIN CONSOLE LAYOUT */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="registrations" element={<AdminRegistrations />} />
+                <Route path="events" element={<AdminEvents />} />
+                <Route path="gallery" element={<AdminGallery />} />
+                <Route path="scanner" element={<AdminScanner />} />
+  
+                <Route path="notifications" element={<AdminNotifications />} />
+                <Route path="logs" element={<AdminLogs />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
+  
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<Home />} />
+                <Route path="events" element={<Events />} />
+                <Route path="events/:id" element={<EventDetail />} />
+                <Route path="register/:id" element={<Register />} />
+                <Route path="my-registrations" element={<Dashboard />} />
+                <Route path="gallery" element={<Gallery />} />
+                <Route path="about" element={<About />} />
+  
+                <Route path="contact" element={<Contact />} />
+                <Route path="terms" element={<TermsAndConditions />} />
+                <Route path="refund-policy" element={<RefundPolicy />} />
+                <Route path="shipping-policy" element={<ShippingPolicy />} />
+                <Route path="privacy" element={<PrivacyPolicy />} />
+  
+                {/* 404 Catch-all */}
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </SmoothScroll>
         </Router>
       </ToastProvider>
     </ErrorBoundary>
