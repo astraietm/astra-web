@@ -1,74 +1,61 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getOptimizedImageUrl } from '../../utils/helpers';
+import { cn } from "@/lib/utils";
 
-// Optimized Marquee Row with Intersection Observer
-const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
-    const rowRef = useRef(null);
-    const [isPaused, setIsPaused] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
-    
-    // Duplicate just enough for a smooth loop. 
-    const rowItems = [...items, ...items, ...items].slice(0, 25); 
-    const mobileSpeed = speed / 3.5; // significantly faster on mobile
+const FALLBACK_IMAGES = [
+    { src: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1740&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1504384308090-c54be3855485?q=80&w=1664&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1776&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=1740&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1505373877741-e15124ca4839?q=80&w=2070&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1740&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1740&auto=format&fit=crop" },
+];
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(([entry]) => {
-            setIsPaused(!entry.isIntersecting);
-        }, { threshold: 0.1 });
+const MarqueeRow = ({ items, direction = 'left', speed = 50, variant = 'default' }) => {
+    // Ensure we have enough items for a smooth loop (at least 20)
+    const effectiveItems = items.length > 0 ? items : FALLBACK_IMAGES;
+    const rowItems = Array(20).fill(effectiveItems).flat().slice(0, 30);
 
-        if (rowRef.current) observer.observe(rowRef.current);
-
-        return () => observer.disconnect();
-    }, []);
+    // Define shapes based on variant
+    const shapeClass = variant === 'default' 
+        ? "rounded-tl-[3rem] rounded-br-[3rem] rounded-tr-none rounded-bl-none"
+        : "rounded-tr-[3rem] rounded-bl-[3rem] rounded-tl-none rounded-br-none";
 
     return (
-        <div 
-            ref={rowRef}
-            className="relative flex overflow-hidden w-full select-none" 
-            style={{ 
-                contain: 'layout paint'
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onTouchStart={() => setIsHovered(true)}
-            onTouchEnd={() => setIsHovered(false)}
-        >
+        <div className="relative flex overflow-hidden w-full select-none">
             <style>{`
-                @media (max-width: 768px) {
-                    #marquee-${direction} {
-                        animation-duration: ${mobileSpeed}s !important;
-                    }
+                @keyframes marquee-${direction} {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(${direction === 'left' ? '-33.33%' : '33.33%'}); }
                 }
             `}</style>
             
             <div 
-                id={`marquee-${direction}`}
-                className={`flex gap-4 md:gap-8 min-w-full py-8 will-change-transform group/marquee`} 
+                className="flex gap-4 md:gap-6 w-max py-4 will-change-transform"
                 style={{
                     animation: `marquee-${direction} ${speed}s linear infinite`,
-                    animationPlayState: isPaused || isHovered ? 'paused' : 'running',
-                    transform: 'translateZ(0)', 
-                    backfaceVisibility: 'hidden'
+                    marginLeft: direction === 'right' ? '-33.33%' : '0' 
                 }}
             >
                 {rowItems.map((item, idx) => (
                     <div 
-                        key={`${item.id}-${idx}`} 
-                        className="relative min-w-[250px] h-[160px] md:min-w-[400px] md:h-[250px] rounded-2xl overflow-hidden bg-white/5 border border-white/5 flex-shrink-0 transition-all duration-500 ease-out 
-                        opacity-100 scale-100
-                        md:group-hover/marquee:blur-[4px] md:group-hover/marquee:opacity-40 md:group-hover/marquee:scale-100
-                        hover:!blur-0 hover:!opacity-100 hover:!scale-105 hover:z-20 hover:shadow-2xl hover:border-primary/50 cursor-pointer bg-black"
+                        key={`${idx}-${item.id || idx}`} 
+                        className={cn(
+                            "relative min-w-[280px] h-[180px] md:min-w-[400px] md:h-[260px] overflow-hidden bg-white/5 flex-shrink-0 transition-all duration-500 group cursor-pointer border-none",
+                            shapeClass
+                        )}
                     >
-                         {/* Dimming Layer only on group hover (siblings) */}
-                         <div className="absolute inset-0 bg-transparent transition-colors duration-500 z-10 pointer-events-none group-hover/marquee:bg-black/20 hover:!bg-transparent"/>
-                         
                         <img 
-                            src={getOptimizedImageUrl(item.src, 'grid')} 
-                            alt="" 
+                            src={item.src} 
+                            alt="Gallery" 
+                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-out transform group-hover:scale-105"
                             loading="lazy"
-                            decoding="async"
-                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = FALLBACK_IMAGES[idx % FALLBACK_IMAGES.length].src;
+                            }}
                         />
                     </div>
                 ))}
@@ -79,68 +66,54 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50 }) => {
 
 const GalleryMarquee = () => {
     const [images, setImages] = useState([]);
-    const [loading, setLoading] = useState(true);
     const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const fetchImages = async () => {
             try {
+                if (!API_URL) throw new Error("No API URL");
+                
                 const response = await axios.get(`${API_URL}/gallery/`);
-                 // Take top 15 only
                  const mappedItems = response.data
-                    .slice(0, 15) 
+                    .filter(item => item.image_url)
                     .map(item => ({
                         id: item.id,
-                        src: item.image_url, 
+                        src: getOptimizedImageUrl(item.image_url, 'grid'), 
                     }));
+                
+                // Set images regardless of count (fallback is handled in MarqueeRow)
                 setImages(mappedItems);
             } catch (error) {
-                console.error("Failed to load gallery images", error);
-            } finally {
-                setLoading(false);
+                console.log("Using fallback gallery images", error);
+                setImages([]); // Empty array triggers fallback in MarqueeRow
             }
         };
 
         fetchImages();
     }, [API_URL]);
 
-    if (loading || images.length === 0) return null;
-
-    const sourceImages = images.length < 10 ? [...images, ...images] : images;
-    
-    const half = Math.ceil(sourceImages.length / 2);
-    const row1 = sourceImages.slice(0, half);
-    const row2 = sourceImages.slice(half);
+    // Split items for variety if we have enough, otherwise reuse
+    const half = Math.ceil(images.length / 2);
+    const row1 = images.length > 1 ? images.slice(0, half) : images;
+    const row2 = images.length > 1 ? images.slice(half) : images;
 
     return (
-        <section className="py-12 md:py-24 bg-background overflow-hidden relative" style={{ contentVisibility: 'auto' }}>
-             <style>{`
-                @keyframes marquee-left {
-                    0% { transform: translate3d(0, 0, 0); }
-                    100% { transform: translate3d(-50%, 0, 0); }
-                }
-                @keyframes marquee-right {
-                    0% { transform: translate3d(-50%, 0, 0); }
-                    100% { transform: translate3d(0, 0, 0); }
-                }
-             `}</style>
-             
-             {/* Simple Header */}
-             <div className="container mx-auto px-4 mb-8 md:mb-12 text-center relative z-10">
-                <h2 className="text-3xl md:text-5xl font-display font-medium text-white mb-2 md:mb-4">
-                    Captured Moments
-                </h2>
-                <p className="text-gray-400 text-sm md:text-lg max-w-2xl mx-auto font-light">
-                    Highlights from our workshops, hackathons, and community events.
-                </p>
+        <section className="py-24 bg-background overflow-hidden relative border-t border-border">
+            
+             {/* Header */}
+             <div className="container mx-auto px-6 mb-16 relative z-10 flex items-center justify-center">
+                <div className="flex items-center gap-4">
+                     <h2 className="text-4xl md:text-6xl font-sans font-bold text-foreground tracking-tight uppercase">
+                        Gallery
+                    </h2>
+                    <div className="h-2 w-16 md:w-24 bg-cyan-400 rounded-full mt-2" />
+                </div>
              </div>
 
-            {/* Marquee Container - Full Width */}
-            <div className="w-full">
-                <div className="flex flex-col gap-4 md:gap-8 relative">
-                    <MarqueeRow items={row1} direction="left" speed={30} />
-                    <MarqueeRow items={row2} direction="right" speed={35} />
-                </div>
+            {/* Marquee Rows */}
+            <div className="flex flex-col gap-8 w-[120%] -ml-[10%] -rotate-3 scale-110 origin-center py-10">
+                <MarqueeRow items={row1} direction="left" speed={40} variant="default" />
+                <MarqueeRow items={row2} direction="right" speed={40} variant="reverse" />
             </div>
         </section>
     );

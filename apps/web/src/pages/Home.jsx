@@ -1,37 +1,27 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import Hero from '../components/home/Hero';
-import ScrollReveal from '../components/common/ScrollReveal';
+import { HeroSection } from '../components/home/HeroSection';
 import GalleryMarquee from '../components/home/GalleryMarquee';
-import VisionMission from '../components/home/VisionMission';
+import { StatsSection } from '../components/home/StatsSection';
+import { EventTracks } from '../components/home/EventTracks';
+import { TimelineSection } from '../components/home/TimelineSection';
+import { FAQSection } from '../components/home/FAQSection';
 import HODMessage from '../components/home/HODMessage';
-import ToolsMarquee from '../components/home/ToolsMarquee';
 import CyberBackground from '../components/common/CyberBackground';
 
 const Home = () => {
   return (
-    <div className="bg-background relative min-h-screen">
+    <div className="relative min-h-screen bg-background text-foreground font-sans">
       <CyberBackground fixed={false} />
-
-
-
-      <div className="relative z-10">
-        <Hero />
-        
-        <ToolsMarquee />
-
-        <ScrollReveal variant="up" width="100%">
-          <VisionMission />
-        </ScrollReveal>
-
-        <ScrollReveal variant="blur" width="100%">
-          <HODMessage />
-        </ScrollReveal>
-
+      
+      <main className="relative z-10">
+        <HeroSection />
+        <StatsSection />
+        <HODMessage />
+        <EventTracks />
+        <TimelineSection />
         <GalleryMarquee />
-
-
-      </div>
+        <FAQSection />
+      </main>
     </div>
   );
 };

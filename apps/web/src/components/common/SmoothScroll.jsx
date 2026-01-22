@@ -1,56 +1,46 @@
-import { useEffect, useRef, createContext, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
-import Lenis from '@studio-freight/lenis';
-import { useAnimationFrame } from 'framer-motion';
+import { useEffect, useRef, createContext, useContext, useState } from 'react';
+import Lenis from 'lenis';
 
-const ScrollContext = createContext({
-    lenis: null
-});
+const LenisContext = createContext(null);
 
-export const useLenis = () => useContext(ScrollContext);
+export const useLenis = () => useContext(LenisContext);
 
-const SmoothScroll = ({ children }) => {
-  const lenisRef = useRef(null);
-  const location = useLocation();
+export default function SmoothScroll({ children }) {
+  const [lenisInstance, setLenisInstance] = useState(null);
 
   useEffect(() => {
-    // 1. Initialize Lenis (User's Exact Config)
+    // Initialize Lenis
     const lenis = new Lenis({
-      duration: 1.1,
-      easing: (t) => 1 - Math.pow(1 - t, 4),
-      smoothWheel: true,
-      smoothTouch: false
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      mouseMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
     });
-    
-    lenisRef.current = lenis;
 
-    // 3. Cleanup
+    setLenisInstance(lenis);
+
+    // RAF loop
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    
+    requestAnimationFrame(raf);
+
+    // Cleanup
     return () => {
       lenis.destroy();
-      lenisRef.current = null;
+      setLenisInstance(null);
     };
   }, []);
 
-  // 2. Framer Motion Integration (Drive Lenis with Framer's RAF)
-  useAnimationFrame((time) => {
-    lenisRef.current?.raf(time);
-  });
-
-  // 4. Reset Scroll on Route Change
-  useEffect(() => {
-    if (lenisRef.current) {
-        // Immediate scroll to top to prevent visual jump
-        lenisRef.current.scrollTo(0, { immediate: true });
-    } else {
-        window.scrollTo(0, 0); 
-    }
-  }, [location.pathname]);
-
   return (
-    <ScrollContext.Provider value={{ lenis: lenisRef.current }}>
-        {children}
-    </ScrollContext.Provider>
+    <LenisContext.Provider value={lenisInstance}>
+      {children}
+    </LenisContext.Provider>
   );
-};
-
-export default SmoothScroll;
+}

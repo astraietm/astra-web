@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/common/Navbar';
-import Footer from '../components/common/Footer';
+import { FooterSection } from '../components/home/FooterSection';
 import NoiseOverlay from '../components/common/NoiseOverlay';
 import BackgroundOrbs from '../components/common/BackgroundOrbs';
 import TerminalBackground from '../components/common/TerminalBackground';
@@ -8,6 +8,8 @@ import SystemStatus from '../components/common/SystemStatus';
 import TerminalOverlay from '../components/common/TerminalOverlay';
 import { Outlet } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+
+import { ReactLenis } from '@studio-freight/react-lenis';
 
 const MainLayout = () => {
   const [showTerminal, setShowTerminal] = useState(false);
@@ -26,6 +28,7 @@ const MainLayout = () => {
   }, []);
 
   return (
+    <ReactLenis root>
     <div className="flex flex-col min-h-screen bg-background text-white font-sans selection:bg-primary selection:text-background relative overflow-x-hidden max-w-full">
       <NoiseOverlay />
       {/* <MatrixBackground /> Removed per request */}
@@ -37,13 +40,14 @@ const MainLayout = () => {
         <Outlet />
       </main>
       
-      <Footer />
+      <FooterSection />
       <SystemStatus onClick={() => setShowTerminal(true)} />
 
       <AnimatePresence>
         {showTerminal && <TerminalOverlay onClose={() => setShowTerminal(false)} />}
       </AnimatePresence>
     </div>
+    </ReactLenis>
   );
 };
 
