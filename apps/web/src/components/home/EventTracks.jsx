@@ -1,7 +1,4 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Shield, Brain, Lightbulb, Box } from "lucide-react";
-import axios from 'axios';
+import eventsData from '../../data/events';
 
 // Static config for styling (cycling colors/icons)
 const STYLE_CONFIG = [
@@ -20,32 +17,21 @@ export function EventTracks() {
     const fetchEvents = async () => {
         try {
             const response = await axios.get(`${API_URL}/events/`);
-            setEvents(response.data.slice(0, 4)); // Show max 4 events
+            const apiEvents = response.data;
+
+            // Merge with local events
+            const apiIds = new Set(apiEvents.map(e => e.id));
+            const localEvents = eventsData.filter(e => !apiIds.has(e.id));
+            const allEvents = [...apiEvents, ...localEvents];
+            
+            // Sort by date descending (Newest/Upcoming first)
+            allEvents.sort((a, b) => new Date(b.date || b.event_date) - new Date(a.date || a.event_date));
+
+            setEvents(allEvents.slice(0, 4)); 
         } catch (error) {
             console.error("Failed to fetch events for tracks:", error);
-             // Fallback Mock Events (Same as FeaturedEvents)
-            setEvents([
-                {
-                    id: 991,
-                    title: "CYBER SECURITY WORKSHOP",
-                    category: "Defense & Offense simulations",
-                },
-                {
-                    id: 992,
-                    title: "AI & ML HACKATHON",
-                    category: "Neural Networks & GenAI",
-                },
-                {
-                    id: 993,
-                    title: "OPEN INNOVATION SUMMIT",
-                    category: "Social Impact Solutions",
-                },
-                {
-                    id: 994,
-                    title: "WEB3 & BLOCKCHAIN",
-                    category: "Decentralized Future",
-                }
-            ]);
+             // Fallback to local eventsData
+            setEvents(eventsData.slice(0, 4));
         } finally {
             setLoading(false);
         }
