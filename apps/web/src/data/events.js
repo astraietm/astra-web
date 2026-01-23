@@ -46,79 +46,99 @@
 
 /** @type {Event[]} */
 const eventsData = [
+
     {
-        id: 1,
-        title: "Cyber Security Summit 2024",
-        date: "October 15, 2024",
-        venue: "Main Auditorium",
-        description: "The biggest gathering of security professionals, featuring keynote speakers from industry leaders.",
-        category: "Conference",
-        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2070",
-        registration_config: {
-            isOpen: true, // SET TO FALSE TO CLOSE REGISTRATION
-            deadline: "2024-10-14",
-            fields: [
-                { name: "fullName", label: "Full Name", type: "text", required: true, placeholder: "John Doe" },
-                { name: "email", label: "Email Address", type: "email", required: true, placeholder: "john@example.com" },
-                { name: "organization", label: "Organization / College", type: "text", required: true, placeholder: "KMCT IETM" },
-                { name: "role", label: "Role", type: "select", options: ["Student", "Professional", "Faculty"], required: true }
-            ]
-        }
+        id: 995,
+        title: "Shadow Login",
+        description: "Crack. Decode. Access. Shadow Login is a time-bound individual cybersecurity challenge designed to test your skills in cryptography, logical analysis, and real-world password attack techniques.",
+        long_description: "Shadow Login is a time-bound individual cybersecurity challenge designed to test your skills in cryptography, logical analysis, and real-world password attack techniques. Participants must progress through three increasingly complex levels to gain unauthorized access to a simulated secure login system.",
+        date: "2026-02-20",
+        event_date: "2026-02-20",
+        time: "10:00 AM",
+        venue: "Cyber Lab 1",
+        image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=800",
+        duration: "2 Hours",
+        is_registration_open: true,
+        category: "CTF Challenge",
+        content_blocks: [
+            {
+                title: "Game Structure",
+                items: [
+                   { title: "Level 1 – Hash Hunt", content: "Participants are provided with a set of hashed passwords. Using appropriate tools and techniques, players must identify the correct plaintext password. Successful completion unlocks the next level and provides access to users.txt." },
+                   { title: "Level 2 – Cipher Break", content: "Participants receive a multi-layer encrypted ciphertext. The objective is to analyze and decrypt the ciphertext to retrieve the original plaintext password. On completion, players receive passwords.txt." },
+                   { title: "Level 3 – Shadow Login", content: "Using users.txt and passwords.txt, participants must identify the correct username–password combination and successfully log in to unlock the secured page." }
+                ]
+            },
+            {
+                title: "Rules & Guidelines",
+                list: [
+                    "Individual participation only",
+                    "Internet access is allowed",
+                    "Fixed time limit for all levels",
+                    "Sharing of answers or files is strictly prohibited",
+                    "Ethical hacking and fair play must be followed"
+                ]
+            },
+            {
+                title: "Winning Criteria",
+                content: "The participant who successfully completes Level 3 and logs in first within the allotted time will be declared the winner of Shadow Login."
+            }
+        ]
     },
     {
-        id: 2,
-        title: "CTF Championship",
-        date: "November 5, 2024",
-        venue: "Computer Science Dept",
-        description: "A 24-hour Capture The Flag competition. Test your skills in web exploitation, cryptography, and reverse engineering.",
-        category: "Competition",
-        image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=2070",
-        registration_config: {
-            isOpen: true,
-            fields: [
-                { name: "teamName", label: "Team Name", type: "text", required: true, placeholder: "CyberWarriors" },
-                { name: "leaderEmail", label: "Team Leader Email", type: "email", required: true, placeholder: "leader@team.com" },
-                { name: "members", label: "Team Members (comma separated)", type: "text", required: true, placeholder: "Alice, Bob, Charlie" }
-            ]
-        }
-    },
-    {
-        id: 3,
-        title: "Ethical Hacking Workshop",
-        date: "November 12, 2024",
-        venue: "Lab 3",
-        description: "Hands-on workshop on network security and penetration testing tools.",
-        category: "Workshop",
-        image: "https://images.unsplash.com/photo-1563206767-5b1d972e9fb9?auto=format&fit=crop&q=80&w=2073",
-        // No registration config = "Registration Closed" or "Info Only" by default
-        // Add 'registration_link' for external forms (e.g., Google Forms)
-    },
-    {
-        id: 4,
-        title: "Tech Talk: Zero Trust",
-        date: "November 20, 2024",
-        venue: "Seminar Hall",
-        description: "Deep dive into Zero Trust architecture and why it's the future of enterprise security.",
-        category: "Talk",
-        image: "https://images.unsplash.com/photo-1558494949-efc5270f9c01?auto=format&fit=crop&q=80&w=2002"
-    },
-    {
-        id: 5,
-        title: "Networking Night",
-        date: "December 1, 2024",
-        venue: "Campus Cafe",
-        description: "Connect with alumni and industry professionals in an informal setting.",
-        category: "Networking",
-        image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&q=80&w=2070"
-    },
-    {
-        id: 6,
-        title: "Winter Hackathon",
-        date: "December 15, 2024",
-        venue: "Online / Hybrid",
-        description: "Build innovative security tools and solutions in this 48-hour hackathon.",
-        category: "Hackathon",
-        image: "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=2070"
+        id: 996,
+        title: "Cipher Decode",
+        description: "Decode the Chat. Find the Secret. A hands-on cryptography challenge where participants must manually decrypt an encrypted WhatsApp-style conversation using a physical cipher key.",
+        long_description: "Cipher Decode is a hands-on cryptography challenge where participants must manually decrypt an encrypted WhatsApp-style conversation using a physical cipher key. Accuracy, speed, and logical reasoning are crucial—there are no shortcuts.",
+        date: "2026-02-21",
+        event_date: "2026-02-21",
+        time: "11:00 AM",
+        venue: "Cyber Lab 2",
+        image: "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&q=80&w=2070",
+        duration: "1.5 Hours",
+        is_registration_open: true,
+        category: "Cryptanalysis Challenge",
+        content_blocks: [
+            {
+                title: "The Mission",
+                content: "A laptop has been left unlocked with WhatsApp Web open. The messages on the screen are completely scrambled using a custom encryption standard. Your objective is to manually decrypt the conversation, reveal the hidden messages, and extract proof of a secret relationship before time runs out."
+            },
+            {
+                title: "Technical Brief – Cryptography Used",
+                content: "This challenge is based on Monoalphabetic Substitution Decryption using a Randomized Key. Each letter in the plaintext is replaced with a randomly assigned letter, making pattern-based guessing impossible (e.g., A -> Q, B -> W). There is no formula to reverse this cipher—only the correct key works."
+            },
+            {
+                title: "How to Decrypt (Offline Only)",
+                list: [
+                    "Cipher Key Printout will be provided at the start",
+                    "Cross-reference each encrypted letter with the key",
+                    "Manually translate the entire conversation",
+                    "Speed and precision are critical"
+                ]
+            },
+             {
+                title: "Rules & Guidelines",
+                list: [
+                    "Offline environment — no internet or digital tools",
+                    "No online solvers or cryptography software",
+                    "Frequency analysis tools are prohibited",
+                    "Manual decoding only (pen & paper)",
+                    "Fair play and ethical conduct must be followed"
+                ]
+            },
+            {
+                title: "Proof of Work",
+                content: "Participants must submit the correctly decrypted Name, Time, and Location. All details must be accurate to qualify."
+            },
+            {
+                title: "Tools Provided",
+                list: [
+                    "Encrypted chat terminal",
+                    "Cipher key printout",
+                    "Pen and paper"
+                ]
+            }
+        ]
     }
 ];
 

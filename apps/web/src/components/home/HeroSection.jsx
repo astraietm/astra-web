@@ -26,9 +26,6 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-background via-transparent to-transparent" />
-
-
       {/* 3D Visual Element - Abstract Triangle Shape */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -93,66 +90,7 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Bottom Info Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-t border-border pt-8"
-        >
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 w-full md:w-auto">
-            <div>
-              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                Location
-              </p>
-              <p className="mt-1 text-sm text-foreground">
-                KERALA
-                <br />
-                AND ONLINE
-              </p>
-            </div>
-            <div>
-              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                Date
-              </p>
-              <p className="mt-1 text-sm text-foreground">
-                FEB 9-10
-                <br />
-                2026
-              </p>
-            </div>
-            <div>
-              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                Format
-              </p>
-              <p className="mt-1 text-sm text-foreground">
-                HYBRID
-                <br />
-                FREE ENTRY
-              </p>
-            </div>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-            <div className="text-left md:text-right">
-              <p className="text-[10px] sm:text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                Prize Pool
-              </p>
-              <p className="mt-1 text-sm text-foreground">
-                <span className="font-semibold">₹50K+</span>
-              </p>
-            </div>
-            <Link to="/register/astra-2026">
-                <Button
-                size="lg"
-                className="btn-premium w-full sm:w-auto group gap-2 rounded-full bg-foreground px-6 text-background hover:bg-foreground/90"
-                >
-                Register Now
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-            </Link>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

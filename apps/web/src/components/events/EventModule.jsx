@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, ArrowUpRight, Clock, ShieldCheck } from 'lucide-react';
+import { Calendar, ArrowUpRight, Clock, ShieldCheck, Terminal } from 'lucide-react';
+import { getOptimizedImageUrl } from '../../utils/helpers';
 
 const EventModule = ({ event, index }) => {
     const navigate = useNavigate();
@@ -9,9 +10,11 @@ const EventModule = ({ event, index }) => {
     const isHawkins = event.image?.includes('hawkins') || event.title?.includes('Hawkins');
     
     // Fix: Use a verified Deep Red Circuitry image to match the color scheme
-    const displayImage = isHawkins 
-        ? 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80'
-        : (event.image || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80');
+    const rawImage = isHawkins 
+        ? 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800'
+        : (event.image || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800');
+
+    const displayImage = getOptimizedImageUrl(rawImage, 'grid');
 
     return (
         <motion.div
@@ -20,11 +23,11 @@ const EventModule = ({ event, index }) => {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ delay: index * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             onClick={() => navigate(`/events/${event.id}`)}
-            className="group relative w-full h-[400px] sm:h-[480px] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-[#050505] border border-white/10 cursor-pointer shadow-2xl shadow-black/50 active:scale-[0.98] transition-all duration-300"
+            className="group relative w-full h-[400px] sm:h-[480px] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-black border border-white/10 cursor-pointer shadow-2xl shadow-black/50 active:scale-[0.98] transition-all duration-300"
         >
             {/* Background Image with Cinematic Zoom */}
             <div className="absolute inset-0 w-full h-full overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-red-950/90 via-[#050505]/60 to-transparent z-10 opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-cyan-950/90 via-black/60 to-transparent z-10 opacity-90" />
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay z-20 pointer-events-none" />
                 
                 <img 
@@ -41,7 +44,7 @@ const EventModule = ({ event, index }) => {
                     ? 'bg-zinc-900/50 border-zinc-800 text-zinc-400' 
                     : 'bg-white/10 border-white/20 text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]'
                 }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-zinc-500' : 'bg-green-500 animate-pulse'}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-zinc-500' : 'bg-cyan-500 animate-pulse'}`} />
                     <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase">
                         {isCompleted ? 'Archived' : 'Live Event'}
                     </span>
@@ -52,7 +55,7 @@ const EventModule = ({ event, index }) => {
             <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 z-20 flex flex-col justify-end h-full">
                 
                 {/* Decorative Line (animates width) */}
-                <div className="w-12 h-1 bg-red-500 rounded-full mb-4 sm:mb-6 group-hover:w-20 transition-all duration-500" />
+                <div className="w-12 h-1 bg-cyan-500 rounded-full mb-4 sm:mb-6 group-hover:w-20 transition-all duration-500" />
 
                 {/* Metadata */}
                 <div className="space-y-2 sm:space-y-4 transform lg:translate-y-4 lg:group-hover:translate-y-0 transition-transform duration-500">
@@ -63,12 +66,12 @@ const EventModule = ({ event, index }) => {
                         </div>
                         <div className="w-1 h-1 rounded-full bg-zinc-600" />
                         <div className="flex items-center gap-2">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span>20:00 EST</span>
+                             {event.id === 995 || event.id === 996 ? <Terminal className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
+                            <span>{event.category || 'Event'}</span>
                         </div>
                     </div>
 
-                    <h3 className="text-3xl sm:text-4xl font-bold text-white leading-[0.9] tracking-tight group-hover:text-red-500 transition-colors duration-300">
+                    <h3 className="text-3xl sm:text-4xl font-bold text-white leading-[0.9] tracking-tight group-hover:text-cyan-500 transition-colors duration-300">
                         {event.title}
                     </h3>
                     
@@ -81,10 +84,10 @@ const EventModule = ({ event, index }) => {
                     {/* Action Row */}
                     <div className="pt-4 sm:pt-6 flex items-center justify-between border-t border-white/5 mt-2 sm:mt-4 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-500 delay-200">
                         <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest">
-                            <ShieldCheck className="w-4 h-4 text-red-500" />
+                            <ShieldCheck className="w-4 h-4 text-cyan-500" />
                             <span>Secure Entry</span>
                         </div>
-                        <div className="p-2 sm:p-3 rounded-full bg-white text-black group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
+                        <div className="p-2 sm:p-3 rounded-full bg-white text-black group-hover:bg-cyan-500 group-hover:text-white transition-colors duration-300">
                             <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5" />
                         </div>
                     </div>

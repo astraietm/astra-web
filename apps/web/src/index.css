@@ -31,7 +31,7 @@
   * {
     @apply border-border;
   }
-  body {
+  html, body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
@@ -140,6 +140,8 @@
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
 }
+
+
 
 /* Premium Button */
 .btn-premium {

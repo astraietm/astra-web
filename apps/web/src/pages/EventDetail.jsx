@@ -11,6 +11,7 @@ import SkeletonLoader from '../components/common/SkeletonLoader';
 import HawkinsLabDetail from '../components/events/HawkinsLabDetail';
 import { useAuth } from '../context/AuthContext';
 import TeamRegistrationModal from '../components/events/TeamRegistrationModal';
+import eventsData from '../data/events';
 
 const EventDetail = () => {
   const { id } = useParams();
@@ -38,7 +39,14 @@ const EventDetail = () => {
         setEvent(mappedEvent);
       } catch (error) {
         console.error('Failed to fetch event:', error);
-        toast?.error?.('Failed to load event details');
+        // Fallback to local data
+        const localEvent = eventsData.find(e => e.id === parseInt(id));
+        if (localEvent) {
+             setEvent(localEvent);
+             // toast?.success('Loaded event from local cache');
+        } else {
+             toast?.error?.('Failed to load event details');
+        }
       } finally {
         setLoading(false);
       }
@@ -206,6 +214,39 @@ const EventDetail = () => {
             {/* LEFT COLUMN: Details & Timer */}
             <div className="lg:col-span-2 space-y-6">
                 
+                {/* Custom Content Blocks (e.g. Shadow Login) */}
+                {event.content_blocks && event.content_blocks.map((block, index) => (
+                    <div key={index} className="bg-[#0A0C10]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-8 space-y-4">
+                        <h3 className="text-xl font-semibold text-white">{block.title}</h3>
+                        
+                        {/* List Items */}
+                        {block.list && (
+                            <ul className="space-y-2 list-disc list-inside text-gray-400">
+                                {block.list.map((item, idx) => (
+                                    <li key={idx}>{item}</li>
+                                ))}
+                            </ul>
+                        )}
+
+                        {/* Structured Items (e.g. Levels) */}
+                        {block.items && (
+                            <div className="space-y-4">
+                                {block.items.map((item, idx) => (
+                                    <div key={idx} className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                        <h4 className="text-white font-medium mb-1">{item.title}</h4>
+                                        <p className="text-gray-400 text-sm">{item.content}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Plain Text Content */}
+                        {block.content && (
+                            <p className="text-gray-400 leading-relaxed">{block.content}</p>
+                        )}
+                    </div>
+                ))}
+
                 {/* Countdown Card */}
                 {!isCompleted && timeLeft && (
                     <div className="bg-[#0A0C10]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-8">

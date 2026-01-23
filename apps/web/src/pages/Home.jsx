@@ -1,10 +1,11 @@
 import React from 'react';
 import { HeroSection } from '../components/home/HeroSection';
+import AboutSection from '../components/home/AboutSection';
 import GalleryMarquee from '../components/home/GalleryMarquee';
-import { StatsSection } from '../components/home/StatsSection';
+
 import { EventTracks } from '../components/home/EventTracks';
 import { TimelineSection } from '../components/home/TimelineSection';
-import { FAQSection } from '../components/home/FAQSection';
+import { HomeCTA } from '../components/home/HomeCTA';
 import HODMessage from '../components/home/HODMessage';
 import CyberBackground from '../components/common/CyberBackground';
 
@@ -15,12 +16,12 @@ const Home = () => {
       
       <main className="relative z-10">
         <HeroSection />
-        <StatsSection />
+        <AboutSection />
         <HODMessage />
         <EventTracks />
         <TimelineSection />
         <GalleryMarquee />
-        <FAQSection />
+        <HomeCTA />
       </main>
     </div>
   );

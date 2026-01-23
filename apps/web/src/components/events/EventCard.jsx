@@ -74,7 +74,7 @@ const EventCard = ({ event, index }) => {
       <div className="relative h-56 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent z-10"></div>
         <img
-          src={getOptimizedImageUrl(event.image, 'grid')}
+          src={getOptimizedImageUrl(event.image || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=600', 'grid')}
           alt={event.title}
           loading="lazy"
           decoding="async"
