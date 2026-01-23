@@ -29,7 +29,7 @@ export function FooterSection() {
           
           {/* Left Side: Headline */}
           <div className="max-w-2xl">
-            <h2 className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[0.85] mb-8">
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[0.85] mb-8">
               LETS <br />
               <span className="text-cyan-500">CONNECT</span>
             </h2>
