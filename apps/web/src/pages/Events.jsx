@@ -23,7 +23,16 @@ const Events = () => {
         }));
         
         mappedEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
-        setEvents(mappedEvents);
+        
+        // Merge with local events (Shadow Login, Cipher Decode) to ensure they appear
+        const apiIds = new Set(mappedEvents.map(e => e.id));
+        const localEvents = eventsData.filter(e => !apiIds.has(e.id));
+        const allEvents = [...mappedEvents, ...localEvents];
+        
+        // Re-sort all events
+        allEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        setEvents(allEvents);
 
       } catch (error) {
         console.error("Failed to fetch events:", error);
