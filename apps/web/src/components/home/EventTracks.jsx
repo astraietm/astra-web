@@ -1,130 +1,127 @@
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Shield, Brain, Lightbulb, Blocks, ArrowUpRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Shield, Brain, Lightbulb, Box } from "lucide-react";
+import axios from 'axios';
 
-const tracks = [
-  {
-    icon: Shield,
-    title: "Cyber Security",
-    description: "Build defense systems, ethical hacking tools, and security solutions for the digital age.",
-    tags: ["Encryption", "Penetration Testing", "Zero Trust"],
-    gradient: "from-blue-500/20 to-cyan-500/20",
-    border: "group-hover:border-cyan-500/50"
-  },
-  {
-    icon: Brain,
-    title: "AI/ML",
-    description: "Create intelligent systems using machine learning, neural networks, and generative AI.",
-    tags: ["Deep Learning", "NLP", "Computer Vision"],
-    gradient: "from-purple-500/20 to-pink-500/20",
-    border: "group-hover:border-purple-500/50"
-  },
-  {
-    icon: Lightbulb,
-    title: "Open Innovation",
-    description: "Solve real-world problems with creative solutions. No boundaries, just innovation.",
-    tags: ["Social Impact", "Sustainability", "EdTech"],
-    gradient: "from-amber-500/20 to-orange-500/20",
-    border: "group-hover:border-amber-500/50"
-  },
-  {
-    icon: Blocks,
-    title: "Web3",
-    description: "Build the decentralized future with blockchain, DeFi, and distributed applications.",
-    tags: ["Smart Contracts", "DeFi", "NFTs"],
-    gradient: "from-emerald-500/20 to-teal-500/20",
-    border: "group-hover:border-emerald-500/50"
-  },
+// Static config for styling (cycling colors/icons)
+const STYLE_CONFIG = [
+  { icon: Shield, color: "bg-cyan-500", text: "text-cyan-500", shadow: "shadow-cyan-500/20" },
+  { icon: Brain, color: "bg-purple-500", text: "text-purple-500", shadow: "shadow-purple-500/20" },
+  { icon: Lightbulb, color: "bg-yellow-500", text: "text-yellow-500", shadow: "shadow-yellow-500/20" },
+  { icon: Box, color: "bg-emerald-500", text: "text-emerald-500", shadow: "shadow-emerald-500/20" },
 ];
 
 export function EventTracks() {
-  const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/events/`);
+            setEvents(response.data.slice(0, 4)); // Show max 4 events
+        } catch (error) {
+            console.error("Failed to fetch events for tracks:", error);
+             // Fallback Mock Events (Same as FeaturedEvents)
+            setEvents([
+                {
+                    id: 991,
+                    title: "CYBER SECURITY WORKSHOP",
+                    category: "Defense & Offense simulations",
+                },
+                {
+                    id: 992,
+                    title: "AI & ML HACKATHON",
+                    category: "Neural Networks & GenAI",
+                },
+                {
+                    id: 993,
+                    title: "OPEN INNOVATION SUMMIT",
+                    category: "Social Impact Solutions",
+                },
+                {
+                    id: 994,
+                    title: "WEB3 & BLOCKCHAIN",
+                    category: "Decentralized Future",
+                }
+            ]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchEvents();
+  }, [API_URL]);
 
   return (
-    <section id="tracks" className="relative bg-background py-32 overflow-hidden">
-       {/* Ambient Background Glows */}
-       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[128px] pointer-events-none" />
-       <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[128px] pointer-events-none" />
-
-      <div className="mx-auto max-w-7xl px-6 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-24 max-w-2xl"
+    <section className="bg-black py-24 px-6 md:px-12 overflow-hidden">
+      <div className="max-w-[1400px] mx-auto">
+        
+        {/* Header - Magnathon Style */}
+        <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-16"
         >
-          <div className="flex items-center gap-4 mb-4">
-            <div className="h-px w-8 bg-blue-500" />
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-400">
-              Event Tracks
-            </p>
-          </div>
-          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-white mb-6">
-            CHOOSE YOUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">PATH</span>
-          </h2>
-          <p className="text-lg text-gray-400 leading-relaxed max-w-lg">
-            Four specialized tracks designed to challenge boundaries. 
-            Pick your domain and architect the future.
-          </p>
+            <h2 className="text-6xl md:text-8xl font-bold text-white tracking-tighter opacity-90">
+                EVENTS<span className="text-white/20">/</span>
+            </h2>
         </motion.div>
 
-        {/* Tracks Grid */}
-        <div ref={containerRef} className="grid gap-6 md:grid-cols-2 lg:gap-8">
-          {tracks.map((track, index) => (
-            <motion.div
-              key={track.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className={cn(
-                "group relative p-8 md:p-12 rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all duration-500 hover:-translate-y-2 hover:bg-white/[0.04]",
-                track.border
-              )}
-            >
-               {/* Hover Gradient Overlay */}
-               <div className={cn(
-                   "absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br pointer-events-none",
-                   track.gradient
-               )} />
+        {/* Tracks/Events Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {events.map((event, index) => {
+             // Cyclically assign styles
+             const style = STYLE_CONFIG[index % STYLE_CONFIG.length];
+             const formattedId = (index + 1).toString().padStart(2, '0');
 
-              <div className="relative z-10">
-                {/* Icon Header */}
-                <div className="mb-8 flex items-start justify-between">
-                  <div className="h-14 w-14 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 group-hover:scale-110 transition-transform duration-500">
-                    <track.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <ArrowUpRight className="h-6 w-6 text-white/30 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />
-                </div>
+             return (
+                <motion.div
+                  key={event.id || index}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
+                  className="group relative h-[450px] bg-[#0A0A0A] border border-white/10 rounded-[2rem] overflow-hidden flex flex-col justify-between p-8 hover:border-white/20 transition-colors duration-500"
+                >
+                    {/* Background Number */}
+                    <div className="absolute top-4 right-6 text-8xl font-bold text-white/[0.03] select-none font-mono transition-transform duration-500 group-hover:scale-110">
+                        {formattedId}
+                    </div>
 
-                {/* Text Content */}
-                <h3 className="text-3xl font-bold text-white mb-4 tracking-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-colors">
-                  {track.title}
-                </h3>
-                <p className="text-base text-gray-400 leading-relaxed mb-8">
-                  {track.description}
-                </p>
+                    {/* Center Icon/Visual */}
+                    <div className="flex-1 flex items-center justify-center relative z-10">
+                        <div className={`relative w-32 h-32 rounded-3xl flex items-center justify-center bg-white/5 backdrop-blur-sm border border-white/10 group-hover:scale-105 transition-transform duration-500 ${style.shadow} shadow-2xl group-hover:shadow-[0_0_50px_-10px_rgba(255,255,255,0.1)]`}>
+                            <style.icon className={`w-16 h-16 ${style.text} transition-all duration-300 drop-shadow-md`} />
+                             {/* Fake Inner Glow */}
+                            <div className={`absolute inset-0 ${style.color} opacity-0 group-hover:opacity-20 blur-xl rounded-full transition-opacity duration-500`} />
+                        </div>
+                    </div>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {track.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1 text-xs font-medium uppercase tracking-wider text-white/50 bg-white/5 rounded-full border border-white/5 group-hover:border-white/20 transition-colors"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          ))}
+                    {/* Bottom Content */}
+                    <div className="relative z-10 mt-auto">
+                        {/* Accent Line - Expands on Hover */}
+                        <div className="w-12 h-1 bg-white/10 rounded-full mb-6 overflow-hidden">
+                            <motion.div 
+                                className={`h-full ${style.color} w-0 group-hover:w-full transition-all duration-500 ease-out`}
+                            />
+                        </div>
+                        
+                        <h3 className="text-2xl font-bold text-white uppercase leading-tight tracking-wider mb-2 group-hover:text-white transition-colors duration-300">
+                            {event.title}
+                        </h3>
+                        <p className="text-gray-500 text-sm font-medium group-hover:text-gray-400 transition-colors duration-300">
+                            {event.category || event.desc || "Event"}
+                        </p>
+                    </div>
+
+                    {/* Subtle Hover Gradient Overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-t from-${style.color.replace('bg-', '')}/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+                </motion.div>
+             );
+          })}
         </div>
       </div>
     </section>

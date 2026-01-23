@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 const EventHero = () => {
     const containerRef = useRef(null);
@@ -11,17 +11,8 @@ const EventHero = () => {
     const opacity = useTransform(scrollY, [0, 300], [1, 0]);
 
     return (
-        <section ref={containerRef} className="relative min-h-[60vh] w-full flex flex-col items-center justify-center overflow-hidden bg-[#020408]">
+        <section ref={containerRef} className="relative min-h-[60vh] w-full flex flex-col items-center justify-center overflow-hidden bg-black">
             
-            {/* --- PREMIUM LIGHTING EFFECTS --- */}
-            
-            {/* 1. Top Center Spotlight (Subtle) */}
-            <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/20 rounded-full blur-[120px] opacity-40 pointer-events-none" />
-
-            {/* 2. Secondary Ambient Glow */}
-            <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[100px] opacity-30 pointer-events-none" />
-
-
             {/* --- HERO CONTENT --- */}
             <motion.div 
                 style={{ y, opacity }}

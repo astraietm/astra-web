@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import eventsData from '../data/events';
 
 import EventHero from '../components/events/EventHero';
 import EventModule from '../components/events/EventModule';
@@ -18,15 +19,17 @@ const Events = () => {
           ...event,
           date: event.event_date,
           // Custom cover for Hawkins Lab (ID 1)
-          image: event.id === 1 ? '/hawkins-cover.png' : (event.image || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=2070')
+          image: event.id === 1 ? '/hawkins-cover.png' : (event.image || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800')
         }));
         
-        // Sort by date (newest first)
         mappedEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
         setEvents(mappedEvents);
 
       } catch (error) {
         console.error("Failed to fetch events:", error);
+        // Fallback Mock Events so the page is never empty
+        // Fallback Mock Events so the page is never empty
+        setEvents(eventsData);
       } finally {
         setLoading(false);
       }
@@ -35,13 +38,9 @@ const Events = () => {
   }, []);
 
   return (
-    <div className="bg-[#020408] min-h-screen text-gray-200 font-sans selection:bg-blue-500/30">
+    <div className="bg-black min-h-screen text-foreground font-sans selection:bg-cyan-500/30">
       
-      {/* Subtle Background Glow */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vh] bg-blue-900/10 rounded-full blur-[150px]" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vh] bg-indigo-900/10 rounded-full blur-[150px]" />
-      </div>
+
 
 
       {/* Hero */}

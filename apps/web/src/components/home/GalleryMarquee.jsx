@@ -4,19 +4,28 @@ import { getOptimizedImageUrl } from '../../utils/helpers';
 import { cn } from "@/lib/utils";
 
 const FALLBACK_IMAGES = [
-    { src: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1740&auto=format&fit=crop" },
-    { src: "https://images.unsplash.com/photo-1504384308090-c54be3855485?q=80&w=1664&auto=format&fit=crop" },
-    { src: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1776&auto=format&fit=crop" },
-    { src: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?q=80&w=1740&auto=format&fit=crop" },
-    { src: "https://images.unsplash.com/photo-1505373877741-e15124ca4839?q=80&w=2070&auto=format&fit=crop" },
-    { src: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1740&auto=format&fit=crop" },
-    { src: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1740&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1531297461136-82lw9z2l3b80?q=80&w=600&auto=format&fit=crop" }, 
+    { src: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1550003018-48595398dc71?q=80&w=600&auto=format&fit=crop" },
+    { src: "https://images.unsplash.com/photo-1510915228340-29c85a43dcfe?q=80&w=600&auto=format&fit=crop" },
 ];
 
 const MarqueeRow = ({ items, direction = 'left', speed = 50, variant = 'default' }) => {
-    // Ensure we have enough items for a smooth loop (at least 20)
     const effectiveItems = items.length > 0 ? items : FALLBACK_IMAGES;
-    const rowItems = Array(20).fill(effectiveItems).flat().slice(0, 30);
+    
+    // Create a base sequence that is guaranteed to cover a wide screen
+    // We duplicate the effectiveItems until we have at least 10 items
+    let baseSequence = [...effectiveItems];
+    while (baseSequence.length < 10) {
+        baseSequence = [...baseSequence, ...effectiveItems];
+    }
+
+    // Create the final rowItems by duplicating the base sequence exactly once
+    // This allows us to animate from 0% to -50% (or vice versa) for a perfect loop
+    const rowItems = [...baseSequence, ...baseSequence];
 
     // Define shapes based on variant
     const shapeClass = variant === 'default' 
@@ -26,9 +35,13 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50, variant = 'default'
     return (
         <div className="relative flex overflow-hidden w-full select-none">
             <style>{`
-                @keyframes marquee-${direction} {
+                @keyframes marquee-left {
                     0% { transform: translateX(0); }
-                    100% { transform: translateX(${direction === 'left' ? '-33.33%' : '33.33%'}); }
+                    100% { transform: translateX(-50%); }
+                }
+                @keyframes marquee-right {
+                    0% { transform: translateX(-50%); }
+                    100% { transform: translateX(0); }
                 }
             `}</style>
             
@@ -36,7 +49,8 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50, variant = 'default'
                 className="flex gap-4 md:gap-6 w-max py-4 will-change-transform"
                 style={{
                     animation: `marquee-${direction} ${speed}s linear infinite`,
-                    marginLeft: direction === 'right' ? '-33.33%' : '0' 
+                    // For right direction, we naturally start at -50% due to keyframes, 
+                    // but we ensure the container aligns correctly
                 }}
             >
                 {rowItems.map((item, idx) => (
@@ -81,11 +95,10 @@ const GalleryMarquee = () => {
                         src: getOptimizedImageUrl(item.image_url, 'grid'), 
                     }));
                 
-                // Set images regardless of count (fallback is handled in MarqueeRow)
                 setImages(mappedItems);
             } catch (error) {
                 console.log("Using fallback gallery images", error);
-                setImages([]); // Empty array triggers fallback in MarqueeRow
+                setImages([]); 
             }
         };
 

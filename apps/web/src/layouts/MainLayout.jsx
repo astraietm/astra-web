@@ -30,7 +30,7 @@ const MainLayout = () => {
   return (
     <ReactLenis root>
     <div className="flex flex-col min-h-screen bg-background text-white font-sans selection:bg-primary selection:text-background relative overflow-x-hidden max-w-full">
-      <NoiseOverlay />
+      {/* <NoiseOverlay /> */}
       {/* <MatrixBackground /> Removed per request */}
       <BackgroundOrbs />
       
