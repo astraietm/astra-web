@@ -187,22 +187,25 @@ const EventDetail = () => {
         </button>
 
         {/* HERO SECTION */}
-        <div className="text-center max-w-4xl mx-auto mb-20">
+        <div className="text-center max-w-4xl mx-auto mb-24 relative">
+            {/* Decorative Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-32 bg-blue-500/20 blur-[100px] -z-10 pointer-events-none" />
+
             {/* Status Pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-                <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' : isLocked ? 'bg-orange-500' : 'bg-green-500 animate-pulse'}`} />
-                <span className="text-xs font-medium text-gray-300 uppercase tracking-wide">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full bg-[#0A0C10]/80 border border-white/10 backdrop-blur-md shadow-2xl">
+                <span className={`w-1.5 h-1.5 rounded-full shadow-[0_0_10px_currentColor] ${isCompleted ? 'bg-gray-500 text-gray-500' : isLocked ? 'bg-orange-500 text-orange-500' : 'bg-cyan-500 text-cyan-500 animate-pulse'}`} />
+                <span className="text-[10px] font-bold text-gray-300 uppercase tracking-[0.2em]">
                     {isCompleted ? 'Event Ended' : isLocked ? 'Registration Closed' : 'Registration Open'}
                 </span>
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1]">
+            <h1 className="font-space font-bold text-5xl md:text-7xl lg:text-8xl tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 mb-8 leading-[0.9]">
                 {event.title}
             </h1>
 
             {/* Description */}
-            <p className="text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">
+            <p className="font-light text-lg md:text-xl text-gray-400 leading-relaxed max-w-2xl mx-auto tracking-wide">
                 {event.description || event.short_description}
             </p>
         </div>
@@ -216,25 +219,29 @@ const EventDetail = () => {
                 
                 {/* Custom Content Blocks (e.g. Shadow Login) */}
                 {event.content_blocks && event.content_blocks.map((block, index) => (
-                    <div key={index} className="bg-[#0A0C10]/60 backdrop-blur-xl border border-white/5 rounded-2xl p-8 space-y-4">
-                        <h3 className="text-xl font-semibold text-white">{block.title}</h3>
+
+                    <div key={index} className="bg-white/[0.02] backdrop-blur-md border border-white/5 rounded-3xl p-8 hover:border-white/10 transition-colors duration-500">
+                        <h3 className="font-space text-2xl font-bold text-white mb-6 uppercase tracking-tight">{block.title}</h3>
                         
                         {/* List Items */}
                         {block.list && (
-                            <ul className="space-y-2 list-disc list-inside text-gray-400">
+                            <ul className="space-y-4">
                                 {block.list.map((item, idx) => (
-                                    <li key={idx}>{item}</li>
+                                    <li key={idx} className="flex items-start gap-3 text-gray-400">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-500/50 mt-2.5 shrink-0" />
+                                        <span className="leading-relaxed">{item}</span>
+                                    </li>
                                 ))}
                             </ul>
                         )}
 
                         {/* Structured Items (e.g. Levels) */}
                         {block.items && (
-                            <div className="space-y-4">
+                            <div className="grid gap-4">
                                 {block.items.map((item, idx) => (
-                                    <div key={idx} className="bg-white/5 p-4 rounded-xl border border-white/5">
-                                        <h4 className="text-white font-medium mb-1">{item.title}</h4>
-                                        <p className="text-gray-400 text-sm">{item.content}</p>
+                                    <div key={idx} className="bg-black/20 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
+                                        <h4 className="font-space text-white text-lg font-bold mb-2">{item.title}</h4>
+                                        <p className="text-gray-400 text-sm leading-relaxed">{item.content}</p>
                                     </div>
                                 ))}
                             </div>
@@ -242,10 +249,11 @@ const EventDetail = () => {
 
                         {/* Plain Text Content */}
                         {block.content && (
-                            <p className="text-gray-400 leading-relaxed">{block.content}</p>
+                            <p className="text-gray-400 leading-relaxed font-light">{block.content}</p>
                         )}
                     </div>
                 ))}
+
 
                 {/* Countdown Card */}
                 {!isCompleted && timeLeft && (
@@ -289,30 +297,97 @@ const EventDetail = () => {
             <div className="space-y-6">
                 
                 {/* Action Card */}
-                <div className="bg-[#0A0C10]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sticky top-8">
-                    <div className="space-y-4 mb-8">
-                         <div className="flex items-center gap-3 text-gray-300">
-                            <Calendar className="w-4 h-4 text-blue-500" />
-                            <span className="text-sm">{new Date(event.date).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+                {/* Action Card */}
+                <div className="bg-[#050505] backdrop-blur-xl border border-white/10 rounded-3xl p-8 sticky top-8 shadow-2xl overflow-hidden">
+                    {/* Subtle Gradient Line at Top */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
+
+                    <div className="space-y-6 mb-8 relative z-10">
+                         <div className="flex items-center gap-4 text-gray-300 group">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-cyan-500/30 transition-colors">
+                                <Calendar className="w-5 h-5 text-gray-400 group-hover:text-cyan-400 transition-colors" />
+                            </div>
+                            <div>
+                                <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-0.5">Date</div>
+                                <div className="text-sm font-medium">{new Date(event.date).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+                            </div>
                          </div>
-                         <div className="flex items-center gap-3 text-gray-300">
-                            <Clock className="w-4 h-4 text-blue-500" />
-                            <span className="text-sm">{event.duration || '2 Hours'}</span>
+                         
+                         <div className="flex items-center gap-4 text-gray-300 group">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-cyan-500/30 transition-colors">
+                                <Clock className="w-5 h-5 text-gray-400 group-hover:text-cyan-400 transition-colors" />
+                            </div>
+                             <div>
+                                <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-0.5">Time</div>
+                                <div className="text-sm font-medium">{event.time} • {event.duration || '2 Hours'}</div>
+                            </div>
                          </div>
-                         <div className="flex items-center gap-3 text-gray-300">
-                            <MapPin className="w-4 h-4 text-blue-500" />
-                            <span className="text-sm">{event.venue || 'TBA'}</span>
+
+                         <div className="flex items-center gap-4 text-gray-300 group">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-cyan-500/30 transition-colors">
+                                <MapPin className="w-5 h-5 text-gray-400 group-hover:text-cyan-400 transition-colors" />
+                            </div>
+                            <div>
+                                <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-0.5">Venue</div>
+                                <div className="text-sm font-medium">{event.venue || 'TBA'}</div>
+                            </div>
                          </div>
+
+                         {event.fee && (
+                             <div className="flex items-center gap-4 text-gray-300 group">
+                                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-green-500/30 transition-colors">
+                                    <Wallet className="w-5 h-5 text-gray-400 group-hover:text-green-400 transition-colors" />
+                                </div>
+                                <div>
+                                    <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-0.5">Entry Fee</div>
+                                    <div className="text-sm font-medium text-white">{event.fee}</div>
+                                </div>
+                             </div>
+                         )}
+                         
+                         {/* Prize & Meta Block */}
+                         {(event.prize || event.max_participation) && (
+                            <div className="pt-6 border-t border-white/5 grid grid-cols-2 gap-4">
+                                {event.prize && (
+                                    <div>
+                                        <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-1">Prize Pool</div>
+                                        <div className="text-lg font-space font-bold text-yellow-400">{event.prize}</div>
+                                    </div>
+                                )}
+                                {event.max_participation && (
+                                     <div>
+                                        <div className="text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-1">Max Seats</div>
+                                        <div className="text-lg font-space font-bold text-white">{event.max_participation}</div>
+                                    </div>
+                                )}
+                            </div>
+                         )}
+
+                         {event.coordinators && event.coordinators.length > 0 && (
+                            <div className="pt-6 border-t border-white/5">
+                                <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-3 font-bold">Event Coordinators</p>
+                                <div className="space-y-3">
+                                    {event.coordinators.map((c, i) => (
+                                        <div key={i} className="flex items-center gap-3 text-sm text-gray-300">
+                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border border-white/10 flex items-center justify-center text-[10px] font-bold">
+                                                {c.name.charAt(0)}
+                                            </div>
+                                            <span>{c.name}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                         )}
                     </div>
 
                     <button
                         onClick={handleRegister}
                         disabled={isCompleted || isLocked || isRegistered || registering}
-                        className={`w-full py-4 font-bold rounded-xl transition-all flex items-center justify-center gap-2 mb-3
+                        className={`w-full py-4 font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mb-3 relative overflow-hidden group
                            ${isRegistered 
                             ? 'bg-green-500/10 text-green-500 border border-green-500/20 cursor-default'
-                            : 'bg-white text-black hover:scale-[1.02] active:scale-[0.98]'
-                           } disabled:opacity-50 disabled:hover:scale-100`}
+                            : 'bg-white text-black hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.3)]'
+                           } disabled:opacity-50 disabled:hover:scale-100 disabled:shadow-none`}
                     >
                         {registering ? (
                             <span className="animate-pulse">Processing...</span>
@@ -323,13 +398,13 @@ const EventDetail = () => {
                             </>
                         ) : (
                             <>
-                                <span>{isCompleted ? 'Event Ended' : 'Register Now'}</span>
-                                {!isCompleted && <ChevronRight className="w-4 h-4" />}
+                                <span className="relative z-10">{isCompleted ? 'Event Ended' : 'Register Now'}</span>
+                                {!isCompleted && <ChevronRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />}
                             </>
                         )}
                     </button>
                     
-                    <button className="w-full py-3 bg-white/5 text-white font-medium rounded-xl hover:bg-white/10 transition-colors border border-white/5 text-sm">
+                    <button className="w-full py-3 bg-white/5 text-gray-400 font-medium rounded-xl hover:bg-white/10 hover:text-white transition-colors border border-white/5 text-sm">
                         Add to Calendar
                     </button>
                 </div>

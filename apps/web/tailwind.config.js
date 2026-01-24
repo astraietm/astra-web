@@ -59,6 +59,9 @@ export default {
           sans: ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
           display: ['Outfit', 'Inter', '-apple-system', 'system-ui', 'sans-serif'],
           mono: ['JetBrains Mono', 'monospace'],
+          monument: ['Monument Extended', 'sans-serif'],
+          rajdhani: ['Rajdhani', 'sans-serif'],
+          space: ['"Space Grotesk"', 'sans-serif'],
         },
         borderRadius: {
             lg: "var(--radius)",
