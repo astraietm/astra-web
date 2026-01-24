@@ -39,7 +39,7 @@ export function HeroSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-200 to-gray-500 drop-shadow-2xl uppercase mb-[-10px] sm:mb-[-20px] relative z-20"
+            className="font-sans text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-200 to-gray-500 drop-shadow-2xl uppercase mb-[-10px] sm:mb-[-20px] relative z-20"
         >
             ASTRA
         </motion.h1>
@@ -49,7 +49,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-display text-[5rem] sm:text-[8rem] md:text-[10rem] lg:text-[13rem] font-black leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-cyan-400 to-blue-600 relative z-10"
+            className="font-sans text-[5rem] sm:text-[8rem] md:text-[10rem] lg:text-[13rem] font-black leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-cyan-400 to-blue-600 relative z-10"
             style={{
                 WebkitTextStroke: '0px',
             }}
