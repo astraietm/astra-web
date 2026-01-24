@@ -4,7 +4,6 @@ import AboutSection from '../components/home/AboutSection';
 import GalleryMarquee from '../components/home/GalleryMarquee';
 
 import { EventTracks } from '../components/home/EventTracks';
-import { TimelineSection } from '../components/home/TimelineSection';
 import { HomeCTA } from '../components/home/HomeCTA';
 import CyberBackground from '../components/common/CyberBackground';
 
@@ -17,7 +16,6 @@ const Home = () => {
         <HeroSection />
         <AboutSection />
         <EventTracks />
-        <TimelineSection />
         <GalleryMarquee />
         <HomeCTA />
       </main>
