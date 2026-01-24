@@ -64,7 +64,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="font-sans text-xs sm:text-sm md:text-base font-bold text-gray-400 tracking-[0.2em] sm:tracking-[0.3em] uppercase mt-6 sm:mt-8 mb-8 text-center"
         >
-            A 2-DAY NATIONAL LEVEL CYBERSECURITY EVENT.
+            A 2-DAY CYBERSECURITY EVENT.
         </motion.p>
 
         {/* Date & Venue Pill */}
