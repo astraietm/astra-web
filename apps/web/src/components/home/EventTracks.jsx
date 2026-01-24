@@ -1,3 +1,7 @@
+import React, { useState, useEffect } from 'react';
+import { Shield, Brain, Lightbulb, Box } from 'lucide-react';
+import { motion } from 'framer-motion';
+import axios from 'axios';
 import eventsData from '../../data/events';
 
 // Static config for styling (cycling colors/icons)
