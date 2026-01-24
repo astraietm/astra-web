@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Ticket, Calendar, MapPin, Download, ArrowRight, Loader2, CheckCircle2, Clock } from 'lucide-react';
+import TicketDownload from '../components/events/TicketDownload';
 
 const Dashboard = () => {
     const { token, user, logout } = useAuth();
@@ -43,15 +44,6 @@ const Dashboard = () => {
         return () => clearInterval(interval);
     }, [user, token, navigate, logout]);
 
-    const downloadQR = (reg) => {
-        if (!reg.qr_code) return;
-        const link = document.createElement('a');
-        link.href = reg.qr_code;
-        link.download = `${reg.event_details.title.replace(/\s+/g, '_')}_Ticket.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
 
     if (loading) {
         return (
@@ -160,12 +152,11 @@ const Dashboard = () => {
                                             </div>
 
                                             {!isUsed && (
-                                                <button 
-                                                    onClick={() => downloadQR(reg)}
+                                                <TicketDownload 
+                                                    registration={reg}
+                                                    event={reg.event_details}
                                                     className="w-full sm:w-auto px-4 py-2 bg-white/5 hover:bg-primary hover:text-black border border-white/10 rounded-lg text-xs font-bold uppercase tracking-wider text-white transition-all flex items-center justify-center gap-2"
-                                                >
-                                                    <Download className="w-3 h-3" /> Save to Device
-                                                </button>
+                                                />
                                             )}
                                         </div>
                                     </div>

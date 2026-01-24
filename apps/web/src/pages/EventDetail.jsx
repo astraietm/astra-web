@@ -11,6 +11,7 @@ import SkeletonLoader from '../components/common/SkeletonLoader';
 import HawkinsLabDetail from '../components/events/HawkinsLabDetail';
 import { useAuth } from '../context/AuthContext';
 import TeamRegistrationModal from '../components/events/TeamRegistrationModal';
+import TicketDownload from '../components/events/TicketDownload';
 import useRazorpayPayment from '../components/payment/RazorpayPayment';
 import eventsData from '../data/events';
 
@@ -442,20 +443,11 @@ const EventDetail = () => {
                     </button>
 
                     {isRegistered && registrationData?.qr_code && (
-                        <button 
-                            onClick={() => {
-                                const link = document.createElement('a');
-                                link.href = registrationData.qr_code;
-                                link.download = `${event.title.replace(/\s+/g, '_')}_Ticket.png`;
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                            }}
+                        <TicketDownload 
+                            registration={registrationData}
+                            event={event}
                             className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 mb-3 shadow-[0_0_15px_rgba(37,99,235,0.2)]"
-                        >
-                            <CreditCard className="w-4 h-4" />
-                            Download Ticket
-                        </button>
+                        />
                     )}
                     
                     <button className="w-full py-3 bg-white/5 text-gray-400 font-medium rounded-xl hover:bg-white/10 hover:text-white transition-colors border border-white/5 text-sm">
