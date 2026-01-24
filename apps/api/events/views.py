@@ -130,7 +130,13 @@ class CreatePaymentOrderView(APIView):
         if not event_id:
             return Response({"error": "Event ID is required."}, status=status.HTTP_400_BAD_REQUEST)
         
-        event = get_object_or_404(Event, id=event_id)
+        try:
+            event = Event.objects.get(id=event_id)
+        except Event.DoesNotExist:
+            return Response(
+                {"error": f"Event with ID {event_id} was not found in the database. Please ensure the event is created in the admin panel."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
         
         # Check if event requires payment
         if not event.requires_payment:

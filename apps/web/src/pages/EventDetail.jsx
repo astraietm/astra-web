@@ -38,17 +38,25 @@ const EventDetail = () => {
         const mappedEvent = {
           ...response.data,
           date: response.data.event_date,
+          // Map backend fields to frontend names used in local data
+          is_paid: response.data.requires_payment,
+          fee: response.data.payment_amount ? `₹${response.data.payment_amount}` : response.data.fee,
+          is_registration_open: response.data.is_registration_open !== undefined ? response.data.is_registration_open : true,
+          is_team_event: response.data.is_team_event,
+          registration_start: response.data.registration_start,
+          registration_end: response.data.registration_end,
+          registration_limit: response.data.registration_limit,
         };
         setEvent(mappedEvent);
       } catch (error) {
-        console.error('Failed to fetch event:', error);
+        console.error('Failed to fetch event from backend:', error);
         // Fallback to local data
         const localEvent = eventsData.find(e => e.id === parseInt(id));
         if (localEvent) {
              setEvent(localEvent);
-             // toast?.success('Loaded event from local cache');
+             toast.info('Event data loaded locally. Registration requires backend sync.');
         } else {
-             toast?.error?.('Failed to load event details');
+             toast.error('Event not found in database or local storage');
         }
       } finally {
         setLoading(false);
