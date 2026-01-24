@@ -105,7 +105,12 @@ export const AuthProvider = ({ children }) => {
             setIsLoginModalOpen,
             isProfileModalOpen,
             setIsProfileModalOpen,
-            updateUser: (updates) => setUser({ ...user, ...updates }), 
+            updateUser: (updates) => {
+                const normalizedUpdates = { ...updates };
+                if (updates.full_name && !updates.name) normalizedUpdates.name = updates.full_name;
+                if (updates.name && !updates.full_name) normalizedUpdates.full_name = updates.name;
+                setUser(prev => ({ ...prev, ...normalizedUpdates }));
+            }, 
             handleServerLogin, 
             logout,
             requireLogin,

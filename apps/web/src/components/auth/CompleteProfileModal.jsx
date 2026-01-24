@@ -28,6 +28,7 @@ const CompleteProfileModal = () => {
         }
 
         setSubmitting(true);
+        let success = false;
         try {
             const res = await axios.patch(
                 `${import.meta.env.VITE_API_URL}/auth/me/`,
@@ -35,20 +36,32 @@ const CompleteProfileModal = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            updateUser(res.data);
+            // Normalize response data: backend returns full_name, frontend uses name
+            const updatedUser = {
+                ...res.data,
+                name: res.data.full_name
+            };
+
+            updateUser(updatedUser);
             toast.success('Profile Updated!');
             setIsProfileModalOpen(false);
-            
-            // Execute pending action if any (e.g. Register for event)
-            if (pendingAction) {
-                pendingAction.run(token); // Pass token to be safe
-                setPendingAction(null);
-            }
+            success = true;
         } catch (error) {
-            console.error(error);
-            toast.error('Failed to update profile.');
+            console.error('Profile Update Error:', error);
+            toast.error(error.response?.data?.error || 'Failed to update profile.');
         } finally {
             setSubmitting(false);
+        }
+
+        // Execute pending action outside the previous catch to avoid misleading error messages
+        if (success && pendingAction) {
+            try {
+                await pendingAction.run(token);
+                setPendingAction(null);
+            } catch (pendingError) {
+                console.error('Pending Action Error:', pendingError);
+                // The pending action (like handleRegister) usually has its own toast error
+            }
         }
     };
 
