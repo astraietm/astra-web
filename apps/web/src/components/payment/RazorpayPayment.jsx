@@ -113,7 +113,7 @@ const useRazorpayPayment = () => {
                     contact: user?.phone_number || ''
                 },
                 theme: {
-                    color: '#DC2626'
+                    color: '#2563EB'
                 },
                 modal: {
                     ondismiss: function() {

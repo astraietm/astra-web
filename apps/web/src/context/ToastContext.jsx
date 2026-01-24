@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, Info, X, Zap } from 'lucide-react';
 
 const ToastContext = createContext();
 
@@ -15,7 +15,7 @@ export const useToast = () => {
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
-  const addToast = useCallback((message, type = 'info', duration = 3000) => {
+  const addToast = useCallback((message, type = 'info', duration = 4000) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, message, type, duration }]);
 
@@ -45,8 +45,8 @@ export const ToastProvider = ({ children }) => {
 
 const ToastContainer = ({ toasts, removeToast }) => {
   return (
-    <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none">
-      <AnimatePresence>
+    <div className="fixed top-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none">
+      <AnimatePresence mode="popLayout">
         {toasts.map((toast) => (
           <Toast key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
         ))}
@@ -57,35 +57,61 @@ const ToastContainer = ({ toasts, removeToast }) => {
 
 const Toast = ({ toast, onClose }) => {
   const icons = {
-    success: <CheckCircle className="w-5 h-5 text-green-400" />,
-    error: <XCircle className="w-5 h-5 text-red-400" />,
-    warning: <AlertCircle className="w-5 h-5 text-yellow-400" />,
-    info: <Info className="w-5 h-5 text-blue-400" />,
+    success: <CheckCircle className="w-5 h-5 text-emerald-400" />,
+    error: <XCircle className="w-5 h-5 text-rose-400" />,
+    warning: <AlertCircle className="w-5 h-5 text-amber-400" />,
+    info: <Info className="w-5 h-5 text-sky-400" />,
   };
 
   const colors = {
-    success: 'border-green-500/50 bg-green-500/10',
-    error: 'border-red-500/50 bg-red-500/10',
-    warning: 'border-yellow-500/50 bg-yellow-500/10',
-    info: 'border-blue-500/50 bg-blue-500/10',
+    success: 'border-emerald-500/20 bg-[#050505]/95 shadow-[0_4px_20px_rgba(16,185,129,0.1)]',
+    error: 'border-rose-500/20 bg-[#050505]/95 shadow-[0_4px_20px_rgba(244,63,94,0.1)]',
+    warning: 'border-amber-500/20 bg-[#050505]/95 shadow-[0_4px_20px_rgba(245,158,11,0.1)]',
+    info: 'border-sky-500/20 bg-[#050505]/95 shadow-[0_4px_20px_rgba(14,165,233,0.1)]',
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 100, scale: 0.8 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 100, scale: 0.8 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-      className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg border backdrop-blur-sm ${colors[toast.type]} min-w-[300px] max-w-md shadow-lg`}
+      layout
+      initial={{ opacity: 0, x: 50, filter: 'blur(10px)', scale: 0.9 }}
+      animate={{ opacity: 1, x: 0, filter: 'blur(0px)', scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8, filter: 'blur(10px)', transition: { duration: 0.2 } }}
+      className={`pointer-events-auto relative flex items-center gap-4 px-5 py-4 rounded-2xl border backdrop-blur-3xl ${colors[toast.type]} min-w-[320px] max-w-md group`}
     >
-      {icons[toast.type]}
-      <p className="flex-1 text-sm text-white font-medium">{toast.message}</p>
+      {/* Aesthetic Side Accent */}
+      <div className={`absolute left-0 top-1/4 bottom-1/4 w-[2px] rounded-full ${
+        toast.type === 'success' ? 'bg-emerald-500' : 
+        toast.type === 'error' ? 'bg-rose-500' : 
+        toast.type === 'warning' ? 'bg-amber-500' : 'bg-sky-500'
+      } opacity-50 group-hover:opacity-100 transition-opacity`} />
+      
+      <div className="shrink-0">{icons[toast.type]}</div>
+      
+      <div className="flex-1 space-y-0.5">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+            {toast.type === 'success' ? 'Confirmed' : toast.type === 'error' ? 'Alert' : 'System Message'}
+          </p>
+          <p className="text-sm text-gray-200 font-medium leading-tight">{toast.message}</p>
+      </div>
+
       <button
         onClick={onClose}
-        className="text-gray-400 hover:text-white transition-colors"
+        className="shrink-0 p-1.5 hover:bg-white/5 rounded-lg text-gray-500 hover:text-white transition-all ml-2"
       >
-        <X className="w-4 h-4" />
+        <X className="w-3.5 h-3.5" />
       </button>
+
+      {/* Progress Bar Bloom */}
+      <motion.div 
+        initial={{ width: '100%' }}
+        animate={{ width: '0%' }}
+        transition={{ duration: toast.duration / 1000, ease: 'linear' }}
+        className={`absolute bottom-0 left-4 right-4 h-[1px] ${
+            toast.type === 'success' ? 'bg-emerald-500/30' : 
+            toast.type === 'error' ? 'bg-rose-500/30' : 
+            toast.type === 'warning' ? 'bg-amber-500/30' : 'bg-sky-500/30'
+          }`}
+      />
     </motion.div>
   );
 };
