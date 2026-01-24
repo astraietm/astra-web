@@ -104,11 +104,19 @@ const CompleteProfileModal = () => {
                                     <input 
                                         type="text" 
                                         required
+                                        list="college-options"
                                         value={formData.college}
                                         onChange={e => setFormData({...formData, college: e.target.value})}
                                         className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all pl-11 text-sm placeholder:text-gray-600 focus:shadow-[0_0_20px_rgba(59,130,246,0.1)]"
-                                        placeholder="Enter your college name"
+                                        placeholder="Search or enter your college"
                                     />
+                                    <datalist id="college-options">
+                                        <option value="KMCT Institute Of Emerging Technology and Management" />
+                                        <option value="KMCT College of Engineering" />
+                                        <option value="AWH Engineering College" />
+                                        <option value="NIT Calicut" />
+                                        <option value="Government Engineering College, Kozhikode" />
+                                    </datalist>
                                     <School className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
                                 </div>
                             </div>
