@@ -4,13 +4,14 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import {
   Calendar, Clock, MapPin, Users, ArrowLeft, Share2,
-  Wallet, CheckCircle2, XCircle, Timer, Sparkles, Award, Target, ChevronRight
+  Wallet, CheckCircle2, XCircle, Timer, Sparkles, Award, Target, ChevronRight, CreditCard
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import SkeletonLoader from '../components/common/SkeletonLoader';
 import HawkinsLabDetail from '../components/events/HawkinsLabDetail';
 import { useAuth } from '../context/AuthContext';
 import TeamRegistrationModal from '../components/events/TeamRegistrationModal';
+import useRazorpayPayment from '../components/payment/RazorpayPayment';
 import eventsData from '../data/events';
 
 const EventDetail = () => {
@@ -26,6 +27,8 @@ const EventDetail = () => {
   const [registrationData, setRegistrationData] = useState(null);
   const [registering, setRegistering] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
+
+  const handlePayment = useRazorpayPayment();
 
   // ... (useEffect fetches remain same) ...
   useEffect(() => {
@@ -107,6 +110,32 @@ const EventDetail = () => {
             // Check for Team Event
             if (event.is_team_event) {
                 setIsTeamModalOpen(true);
+                return;
+            }
+
+            // Check for Paid Event
+            if (event.is_paid) {
+                setRegistering(true);
+                try {
+                    await handlePayment({
+                        eventId: event.id,
+                        eventName: event.title,
+                        amount: parseInt(event.fee.replace(/\D/g, '')),
+                        onSuccess: (registration) => {
+                            setIsRegistered(true);
+                            setRegistrationData(registration);
+                            setRegistering(false);
+                            toast.success(`Payment Successful! Registered for ${event.title}.`);
+                        },
+                        onFailure: (error) => {
+                            setRegistering(false);
+                            toast.error(error);
+                        }
+                    });
+                } catch (err) {
+                    setRegistering(false);
+                    toast.error("Failed to initialize payment");
+                }
                 return;
             }
 
@@ -385,7 +414,7 @@ const EventDetail = () => {
                         disabled={isCompleted || isLocked || isRegistered || registering}
                         className={`w-full py-4 font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mb-3 relative overflow-hidden group
                            ${isRegistered 
-                            ? 'bg-green-500/10 text-green-500 border border-green-500/20 cursor-default'
+                            ? 'bg-green-500/10 text-green-500 border border-green-500/20 cursor-default shadow-[0_0_15px_rgba(34,197,94,0.1)]'
                             : 'bg-white text-black hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.3)]'
                            } disabled:opacity-50 disabled:hover:scale-100 disabled:shadow-none`}
                     >
@@ -403,6 +432,23 @@ const EventDetail = () => {
                             </>
                         )}
                     </button>
+
+                    {isRegistered && registrationData?.qr_code && (
+                        <button 
+                            onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = registrationData.qr_code;
+                                link.download = `${event.title.replace(/\s+/g, '_')}_Ticket.png`;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            }}
+                            className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 mb-3 shadow-[0_0_15px_rgba(37,99,235,0.2)]"
+                        >
+                            <CreditCard className="w-4 h-4" />
+                            Download Ticket
+                        </button>
+                    )}
                     
                     <button className="w-full py-3 bg-white/5 text-gray-400 font-medium rounded-xl hover:bg-white/10 hover:text-white transition-colors border border-white/5 text-sm">
                         Add to Calendar

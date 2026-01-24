@@ -62,6 +62,7 @@ const eventsData = [
         is_paid: true,
         fee: "₹50",
         category: "CTF Challenge",
+        is_team_event: false,
         prize: "₹500",
         coordinators: [{ name: "Archana", phone: "" }],
         max_participation: 30,
@@ -106,9 +107,8 @@ const eventsData = [
         fee: "₹50",
         prize: "₹500",
         category: "Cryptanalysis Challenge",
-        is_team_event: true,
-        team_size: 2,
-        max_participation: 20, // 10 Teams of 2
+        is_team_event: false,
+        max_participation: 20,
         coordinators: [{ name: "Jenna", phone: "" }, { name: "Anjal", phone: "" }],
         content_blocks: [
             {
