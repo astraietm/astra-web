@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminHeader from '../components/admin/AdminHeader';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Shield } from 'lucide-react';
 import NoiseOverlay from '../components/common/NoiseOverlay';
 import CommandPalette from '../components/admin/CommandPalette';
 import PageLoader from '../components/common/PageLoader';
