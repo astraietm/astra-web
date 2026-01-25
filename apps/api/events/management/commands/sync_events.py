@@ -60,7 +60,8 @@ class Command(BaseCommand):
                     {"name": "Dustin Henderson", "role": "Field Tech"},
                     {"name": "Mike Wheeler", "role": "Operations"}
                 ],
-                "image": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2070"
+                "image": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2070",
+                "is_registration_open": False
             },
             {
                 "id": 995,
@@ -150,7 +151,7 @@ class Command(BaseCommand):
                     "registration_limit": event_data['registration_limit'],
                     "is_team_event": event_data['is_team_event'],
                     "event_date": event_data['event_date'],
-                    "is_registration_open": True,
+                    "is_registration_open": event_data.get('is_registration_open', True),
                     "registration_start": timezone.now(),
                     "registration_end": event_data['event_date'],
                     "prize": event_data.get('prize', ''),

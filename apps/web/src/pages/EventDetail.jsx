@@ -419,7 +419,10 @@ const EventDetail = () => {
                                 ) : (
                                     <CreditCard className="w-4 h-4" />
                                 )}
-                                {registering ? 'Processing' : isRegistered ? 'Access Granted' : isCompleted ? 'Entry Terminated' : 'Secure Ticket'}
+                                {registering ? 'Processing' : 
+                                 isRegistered ? 'Access Granted' : 
+                                 isCompleted ? 'Entry Terminated' : 
+                                 isLocked ? 'Coming Soon' : 'Secure Ticket'}
                             </span>
                         </button>
 
