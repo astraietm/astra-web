@@ -50,7 +50,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
     const navigate = useNavigate();
 
     let sections = [
-        { group: "Main", items: [
+        { group: "Overview", items: [
             { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
             { to: "/admin/events", icon: Calendar, label: "Events" },
             { to: "/admin/registrations", icon: Users, label: "Registrations" },
@@ -58,7 +58,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
         { group: "Content", items: [
             { to: "/admin/gallery", icon: ImageIcon, label: "Gallery" },
         ]},
-        { group: "System", items: [
+        { group: "Tools", items: [
             { to: "/admin/scanner", icon: QrCode, label: "Scanner" },
             { to: "/admin/logs", icon: Activity, label: "Logs" },
             { to: "/admin/settings", icon: Settings, label: "Settings" },
@@ -85,7 +85,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsMobileOpen(false)}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[95] lg:hidden"
+                        className="fixed inset-0 bg-black/70 backdrop-blur-md z-[95] lg:hidden"
                     />
                 )}
             </AnimatePresence>
@@ -93,43 +93,49 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
             <motion.aside
                 initial={false}
                 animate={{ 
-                    width: isCollapsed ? 80 : 280,
-                    x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -280 : 0)
+                    width: isCollapsed ? 88 : 320,
+                    x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -320 : 0)
                 }}
-                className={`fixed left-0 top-0 h-screen bg-[#050505] border-r border-white/5 z-[100] transition-all duration-300 flex flex-col
+                className={`fixed left-0 top-0 h-screen bg-slate-950/80 backdrop-blur-2xl border-r border-white/[0.08] z-[100] transition-all duration-700 flex flex-col shadow-2xl shadow-black/50
                     ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}
             >
+                {/* Sidebar Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-violet-600/5 via-transparent to-blue-600/5 pointer-events-none" />
+                
                 {/* Header branding */}
-                <div className="h-20 flex items-center px-8 border-b border-white/5 shrink-0">
+                <div className="h-20 flex items-center px-6 border-b border-white/[0.08] shrink-0 relative z-10">
                     <button 
                         onClick={() => navigate('/')}
                         className={`flex items-center gap-4 w-full group ${isCollapsed ? 'justify-center' : ''}`}
                     >
-                        <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.3)] group-hover:scale-110 transition-transform duration-500">
-                             <Shield size={20} className="fill-white" />
+                        <div className="relative">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-violet-600/30 group-hover:shadow-violet-600/50 transition-all duration-500 group-hover:scale-110">
+                                <Shield size={24} className="fill-white" />
+                            </div>
+                            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-violet-600 to-blue-600 blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
                         </div>
                         
                         {!isCollapsed && (
-                             <div className="flex flex-col">
-                                <span className="font-black text-white tracking-widest text-sm uppercase">Astra<span className="text-blue-500 font-black">OS</span></span>
-                                <span className="text-[8px] font-bold text-slate-600 uppercase tracking-[0.3em] leading-none mt-1">Admin Interface</span>
-                             </div>
+                            <div className="flex flex-col">
+                                <span className="font-black text-white tracking-tight text-lg">
+                                    Astra<span className="text-violet-400 font-black">OS</span>
+                                </span>
+                                <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider leading-none mt-0.5">Admin Console</span>
+                            </div>
                         )}
                     </button>
                 </div>
 
                 {/* Navigation Nodes */}
-                <div className="flex-1 overflow-y-auto overflow-x-hidden py-8 px-4 space-y-10 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto overflow-x-hidden py-6 px-4 space-y-8 custom-scrollbar relative z-10">
                     {sections.map((section, idx) => (
-                        <div key={idx} className="space-y-2">
-                             {!isCollapsed && (
-                                <div className="px-4 flex items-center gap-3 mb-4">
-                                    <div className="h-px flex-1 bg-white/5" />
-                                    <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">
+                        <div key={idx} className="space-y-1.5">
+                            {!isCollapsed && (
+                                <div className="px-4 mb-3">
+                                    <h3 className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">
                                         {section.group}
                                     </h3>
-                                    <div className="h-px w-2 bg-white/5" />
                                 </div>
                             )}
                             <div className="space-y-1">
@@ -140,26 +146,31 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                                         end={item.end}
                                         onClick={() => setIsMobileOpen(false)}
                                         className={({ isActive }) => `
-                                            flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group relative
+                                            flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative overflow-hidden
                                             ${isActive 
-                                                ? 'bg-blue-600/10 text-white' 
-                                                : 'text-slate-500 hover:text-slate-200 hover:bg-white/[0.03]'}
+                                                ? 'bg-gradient-to-r from-violet-600/20 to-blue-600/20 text-white shadow-lg shadow-violet-600/10' 
+                                                : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'}
                                         `}
                                     >
-                                        <div className={`relative z-10 transition-colors duration-300 ${isCollapsed ? 'mx-auto' : ''}`}>
-                                            <item.icon size={isCollapsed ? 22 : 20} strokeWidth={2.5} className="group-hover:scale-110 transition-transform duration-300" />
+                                        {/* Active Gradient Background */}
+                                        <NavLink to={item.to} end={item.end} className={({ isActive }) => 
+                                            isActive ? "absolute inset-0 bg-gradient-to-r from-violet-600/10 to-blue-600/10 rounded-2xl" : "hidden"
+                                        } />
+                                        
+                                        {/* Active Border */}
+                                        <NavLink to={item.to} end={item.end} className={({ isActive }) => 
+                                            isActive ? "absolute left-0 top-1/4 bottom-1/4 w-1 bg-gradient-to-b from-violet-500 to-blue-500 rounded-r-full shadow-lg shadow-violet-500/50" : "hidden"
+                                        } />
+                                        
+                                        <div className={`relative z-10 transition-all duration-300 ${isCollapsed ? 'mx-auto' : ''}`}>
+                                            <item.icon size={isCollapsed ? 24 : 22} strokeWidth={2.5} className="group-hover:scale-110 transition-transform duration-300" />
                                         </div>
 
                                         {!isCollapsed && (
-                                            <span className="font-bold text-[13px] tracking-tight relative z-10">
+                                            <span className="font-semibold text-[14px] tracking-tight relative z-10">
                                                 {item.label}
                                             </span>
                                         )}
-
-                                        {/* Active State Indicator */}
-                                        <NavLink to={item.to} end={item.end} className={({ isActive }) => isActive ? "absolute inset-0 rounded-2xl border border-blue-500/20 bg-blue-500/[0.02] shadow-[inset_0_0_20px_rgba(59,130,246,0.05)]" : "hidden"} />
-                                        
-                                        <NavLink to={item.to} end={item.end} className={({ isActive }) => isActive ? "absolute left-[-4px] top-1/4 bottom-1/4 w-[3px] bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" : "hidden"} />
                                     </NavLink>
                                 ))}
                             </div>
@@ -167,16 +178,16 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                     ))}
                 </div>
 
-                {/* Personnel Clearance */}
-                <div className="p-6 border-t border-white/5 bg-black/40 backdrop-blur-xl">
+                {/* User Profile Section */}
+                <div className="p-5 border-t border-white/[0.08] bg-slate-950/60 backdrop-blur-xl relative z-10">
                     <button
                         onClick={() => setIsCollapsed(!isCollapsed)}
-                        className={`w-full flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all duration-300 ${isCollapsed ? 'justify-center' : ''}`}
+                        className={`w-full flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] hover:bg-white/[0.06] transition-all duration-300 group ${isCollapsed ? 'justify-center' : ''}`}
                     >
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 p-0.5 shrink-0">
-                            <div className="w-full h-full rounded-[10px] bg-[#050505] flex items-center justify-center overflow-hidden">
+                        <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 p-[2px] shrink-0">
+                            <div className="w-full h-full rounded-[10px] bg-slate-950 flex items-center justify-center overflow-hidden">
                                 {user?.avatar ? (
-                                    <img src={user.avatar} className="w-full h-full object-cover" />
+                                    <img src={user.avatar} className="w-full h-full object-cover" alt="User" />
                                 ) : (
                                     <span className="text-sm font-black text-white">{user?.name?.[0]?.toUpperCase()}</span>
                                 )}
@@ -185,27 +196,29 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                         
                         {!isCollapsed && (
                             <div className="flex-1 text-left overflow-hidden">
-                                <p className="text-[11px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1.5">Authorized User</p>
-                                <p className="text-sm font-bold text-white truncate leading-none">{user?.name || 'Admin User'}</p>
+                                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider leading-none mb-1.5">Admin User</p>
+                                <p className="text-sm font-semibold text-white truncate leading-none">{user?.name || 'Administrator'}</p>
                             </div>
                         )}
-                        {!isCollapsed && <ChevronLeft size={16} className="text-slate-600 group-hover:text-blue-500 transition-colors" />}
+                        {!isCollapsed && (
+                            <ChevronLeft size={18} className="text-slate-600 group-hover:text-violet-400 transition-colors" />
+                        )}
                     </button>
                     
                     {!isCollapsed && (
-                        <div className="mt-4 flex flex-col gap-2">
-                             <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-[0.2em] text-slate-700">
-                                <span>Security Level</span>
-                                <span className="text-blue-500/80">Lvl_5 Alpha</span>
-                             </div>
-                             <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div className="mt-4 space-y-2">
+                            <div className="flex items-center justify-between text-[9px] font-semibold uppercase tracking-wider text-slate-600">
+                                <span>Access Level</span>
+                                <span className="text-violet-400/90">Premium</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden">
                                 <motion.div 
-                                    className="h-full bg-blue-500"
+                                    className="h-full bg-gradient-to-r from-violet-500 to-blue-500 rounded-full"
                                     initial={{ width: 0 }}
-                                    animate={{ width: "85%" }}
+                                    animate={{ width: "90%" }}
                                     transition={{ duration: 2, ease: "easeOut" }}
                                 />
-                             </div>
+                            </div>
                         </div>
                     )}
                 </div>
