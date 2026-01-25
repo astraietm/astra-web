@@ -5,13 +5,13 @@ import { Calendar, MapPin, Clock, User, Hash, Download, Ticket as TicketIcon, Qr
 const Ticket = React.forwardRef(({ registration, event: rawEvent }, ref) => {
   if (!registration || !rawEvent) return null;
 
-  const isHawkins = rawEvent.title?.toLowerCase().includes('hawkins') || rawEvent.id === 1;
+  const isHawkins = false; // Standardized theme
   const theme = {
-    primary: isHawkins ? '#ef4444' : '#3b82f6',
-    secondary: isHawkins ? '#b91c1c' : '#1d4ed8',
+    primary: '#3b82f6',
+    secondary: '#1d4ed8',
     bg: '#020202',
-    accent: isHawkins ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-    glow: isHawkins ? '0 0 40px rgba(239, 68, 68, 0.2)' : '0 0 40px rgba(59, 130, 246, 0.2)'
+    accent: 'rgba(59, 130, 246, 0.1)',
+    glow: '0 0 40px rgba(59, 130, 246, 0.2)'
   };
 
   const event = {

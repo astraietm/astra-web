@@ -7,12 +7,10 @@ import { getOptimizedImageUrl } from '../../utils/helpers';
 const EventModule = ({ event, index }) => {
     const navigate = useNavigate();
     const isCompleted = new Date(event.date) < new Date();
-    const isHawkins = event.title?.toLowerCase().includes('hawkins') || event.id === 1;
+    const isHawkins = false; // Standardize to blue theme
     
     // Fallback images based on theme
-    const rawImage = isHawkins 
-        ? 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800' // Deep Circuitry/Tech Red
-        : (event.image || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800');
+    const rawImage = event.image || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800';
 
     const displayImage = getOptimizedImageUrl(rawImage, 'grid');
 

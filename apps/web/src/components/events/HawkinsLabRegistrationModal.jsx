@@ -153,9 +153,9 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) =>
                                 className="text-center py-4"
                             >
                                 <div className="space-y-2 mb-10">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 mb-4">
-                                        <Shield className="w-3 h-3 text-red-500" />
-                                        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Authentication Verified</span>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4">
+                                        <Shield className="w-3 h-3 text-blue-500" />
+                                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Authentication Verified</span>
                                     </div>
                                     <h3 className="text-4xl font-black text-white tracking-tighter uppercase italic leading-none">
                                         Access Granted
@@ -166,11 +166,11 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) =>
                                 {/* QR Code Display - Premium Styled */}
                                 <div className="relative group mb-10 inline-block">
                                     {/* Scan Glow */}
-                                    <div className="absolute inset-0 bg-red-600/20 blur-[60px] animate-pulse" />
+                                    <div className="absolute inset-0 bg-blue-600/20 blur-[60px] animate-pulse" />
                                     
-                                    <div className="relative p-2 bg-white rounded-[2.5rem] shadow-2xl border-4 border-red-950/20 backdrop-blur-3xl overflow-hidden hover:scale-105 transition-transform duration-500">
+                                    <div className="relative p-2 bg-white rounded-[2.5rem] shadow-2xl border-4 border-blue-950/20 backdrop-blur-3xl overflow-hidden hover:scale-105 transition-transform duration-500">
                                         {/* Scanner Line Animation */}
-                                        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent animate-scan z-20" />
+                                        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-scan z-20" />
                                         
                                         <img
                                             src={registrationData.qr_code}
@@ -189,7 +189,7 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) =>
                                     <TicketDownload 
                                         registration={registrationData}
                                         event={event}
-                                        className="flex items-center justify-center gap-2 py-4 bg-white text-black hover:bg-red-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-xl"
+                                        className="flex items-center justify-center gap-2 py-4 bg-white text-black hover:bg-blue-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-xl"
                                     />
                                     <button
                                         onClick={resetAndClose}

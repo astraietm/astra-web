@@ -187,20 +187,6 @@ const EventDetail = () => {
   const isCompleted = new Date(event.date) < new Date();
   const isLocked = !event.is_registration_open;
 
-  // Custom Event Loader for Hawkins Lab
-  if (event.title.toLowerCase().includes('hawkins')) {
-      return (
-          <>
-            <HawkinsLabDetail onRegister={handleRegister} isRegistered={isRegistered} registrationData={registrationData} />
-            <TeamRegistrationModal 
-                isOpen={isTeamModalOpen} 
-                onClose={() => setIsTeamModalOpen(false)} 
-                event={event} 
-                onSuccess={() => setIsRegistered(true)} 
-            />
-          </>
-      );
-  }
 
   return (
     <div className="min-h-screen bg-[#020202] text-white selection:bg-blue-500/30 overflow-x-hidden font-outfit">
