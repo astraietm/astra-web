@@ -24,27 +24,33 @@ def add_event():
     # 2. Modern Content Definition
     content_blocks = [
         {
-            "title": "Mission Objectives",
+            "title": "Mission Briefing",
+            "content": "ENTER THE UPSIDE DOWN AND STOP VECNA! This event is task-based and story-driven, inspired by cybersecurity concepts such as data accuracy, signal analysis, social engineering, and authentication, presented in a safe, fun, and interactive simulation.",
+        },
+        {
+            "title": "Levels Breakdown",
             "items": [
-                {"title": "Level 1 – Reflex Test", "content": "Neuromotor synchronization check. Beat the system clock to gain initial access."},
-                {"title": "Level 2 – Data Entry", "content": "High-speed information processing. Decrypt real-time streams to find the breach."},
-                {"title": "Level 3 – Pattern Analysis", "content": "Cognitive logic puzzle solving. Analyze the Upside Down signal patterns."},
-                {"title": "Level 4 – Signal Tracing", "content": "Digital footprint investigation. Trace the source of the anomaly across the Hawkins network."},
-                {"title": "Level 5 – System Override", "content": "Mainframe brute force access. Complete the final handshake to seal the gate."}
+                {"title": "Level 1 – Gaming", "content": "Initial contact. Test your focus and reflexes in the digital void."},
+                {"title": "Level 2 – Speed Typing", "content": "Critical data entry. Extract credentials under high-pressure constraints."},
+                {"title": "Level 3 – Analysis & Decoding", "content": "Cognitive override. Analyze signals and solve cryptic patterns to unlock the breach."},
+                {"title": "Level 4 – Digital Stalking", "content": "Network tracing. Track an anomaly's footprint across the Hawkins infrastructure."},
+                {"title": "Level 5 – Brute Force", "content": "The final approach. Execute a system override to seal the gate and stop Vecna."}
             ]
         },
         {
-            "title": "Participation Rules",
+            "title": "Operational Rules",
             "list": [
-                "Teams must consist of 2 to 4 members.",
-                "Sequential clearance is required; each level unlocks the next tier.",
-                "No external solving tools or internet search for specific flags.",
-                "The first team to complete Level 5 successfully wins."
+                "Team Size: 2-4 members per squad.",
+                "Sequential Protocol: 5 Levels - 5 PCs. Levels must be completed in order.",
+                "PC Order: Teams must strictly follow the assigned hardware sequence.",
+                "Integrity: Skipping levels or sharing clues is strictly prohibited.",
+                "System Use: Only provided systems/terminals may be used for the mission.",
+                "No team changes are permitted once the countdown begins."
             ]
         },
         {
-            "title": "Guidelines",
-            "content": "Hawkins Lab is an immersive, story-driven cyber-mystery. While technical skills help, pattern recognition and logic are your primary tools. Stay focused, stay synchronized."
+            "title": "Mission Outcome",
+            "content": "Fastest team to successfully navigate all 5 levels and execute the final override wins. No advanced technical knowledge is required—all students are authorized to participate."
         }
     ]
 
@@ -57,7 +63,7 @@ def add_event():
     event = Event.objects.create(
         id=997,
         title=new_title,
-        description="An immersive cyber-mystery event. Teams compete to solve cryptic clues, analyze signals, and breach the Upside Down. Beginner friendly.",
+        description="A Stranger Things–themed cyber mystery event where teams solve clues, analyze patterns, and complete computer-based tasks to progress through an immersive storyline.",
         event_date=timezone.now() + timezone.timedelta(days=14),
         venue="Computer Lab 1",
         category="Cyber Mystery",
