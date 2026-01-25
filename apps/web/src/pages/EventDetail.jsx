@@ -130,6 +130,7 @@ const EventDetail = () => {
                         eventId: event.id,
                         eventName: event.title,
                         amount: parseInt(event.fee.replace(/\D/g, '')),
+                        tokenOverride: freshToken,
                         onSuccess: (registration) => {
                             setIsRegistered(true);
                             setRegistrationData(registration);

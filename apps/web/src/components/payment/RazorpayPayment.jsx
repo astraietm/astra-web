@@ -14,7 +14,7 @@ const useRazorpayPayment = () => {
         });
     };
 
-    const handlePayment = async ({ eventId, eventName, amount, teamName, teamMembers, onSuccess, onFailure }) => {
+    const handlePayment = async ({ eventId, eventName, amount, teamName, teamMembers, onSuccess, onFailure, tokenOverride }) => {
         // Load Razorpay script
         const scriptLoaded = await loadRazorpayScript();
         
@@ -22,6 +22,8 @@ const useRazorpayPayment = () => {
             onFailure('Failed to load Razorpay SDK. Please check your internet connection.');
             return;
         }
+
+        const activeToken = tokenOverride || token;
 
         try {
             console.log('Initiating payment for event:', eventId);
@@ -33,7 +35,7 @@ const useRazorpayPayment = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${activeToken}`
                 },
                 body: JSON.stringify({
                     event_id: eventId,
@@ -84,7 +86,7 @@ const useRazorpayPayment = () => {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
+                                'Authorization': `Bearer ${activeToken}`
                             },
                             body: JSON.stringify({
                                 razorpay_order_id: response.razorpay_order_id,

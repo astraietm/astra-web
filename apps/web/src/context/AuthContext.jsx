@@ -115,6 +115,7 @@ export const AuthProvider = ({ children }) => {
             logout,
             requireLogin,
             pendingAction,
+            setPendingAction,
             loading
         }}>
             {children}
