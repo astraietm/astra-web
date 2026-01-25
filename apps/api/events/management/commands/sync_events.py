@@ -18,7 +18,28 @@ class Command(BaseCommand):
                 "payment_amount": 50.00,
                 "registration_limit": 30,
                 "is_team_event": False,
-                "event_date": timezone.make_aware(datetime(2026, 2, 12, 11, 0))
+                "event_date": timezone.make_aware(datetime(2026, 2, 12, 11, 0)),
+                "prize": "₹500",
+                "content_blocks": [
+                    {
+                        "title": "Protocol Structure",
+                        "items": [
+                           {"title": "Tier 1 – Hash Hunt", "content": "Identify the correct plaintext from provided hashes to unlock system credentials."},
+                           {"title": "Tier 2 – Cipher Break", "content": "Analyze and decrypt multi-layer encrypted payloads to retrieve operational passwords."},
+                           {"title": "Tier 3 – Shadow Login", "content": "Execute final authentication using recovered credentials to breach the secured vault."}
+                        ]
+                    },
+                    {
+                        "title": "Operational Rules",
+                        "list": [
+                            "Individual participation strictly enforced.",
+                            "Restricted internet access permitted for decryption research.",
+                            "Zero-tolerance policy for credential sharing.",
+                            "Speed and accuracy determine ranking."
+                        ]
+                    }
+                ],
+                "coordinators": [{"name": "Archana", "role": "Lead Moderator"}]
             },
             {
                 "id": 996,
@@ -30,7 +51,27 @@ class Command(BaseCommand):
                 "payment_amount": 50.00,
                 "registration_limit": 20,
                 "is_team_event": False,
-                "event_date": timezone.make_aware(datetime(2026, 2, 12, 14, 0))
+                "event_date": timezone.make_aware(datetime(2026, 2, 12, 14, 0)),
+                "prize": "₹500",
+                "content_blocks": [
+                    {
+                        "title": "The Intelligence Mission",
+                        "content": "A high-value terminal has been seized. Communication logs are encrypted with a custom randomized monoalphabetic standard. Your task is to perform an offline manual override."
+                    },
+                    {
+                        "title": "Mission Constraints",
+                        "list": [
+                            "Strict offline environment — no digital solvers allowed.",
+                            "Manual decryption using provided physical cipher keys.",
+                            "Accuracy required for Name, Time, and Location extraction.",
+                            "Pen and paper are your primary assets."
+                        ]
+                    }
+                ],
+                "coordinators": [
+                    {"name": "Jenna", "role": "Security Specialist"},
+                    {"name": "Anjal", "role": "Cryptography Lead"}
+                ]
             }
         ]
 
@@ -49,7 +90,10 @@ class Command(BaseCommand):
                     "event_date": event_data['event_date'],
                     "is_registration_open": True,
                     "registration_start": timezone.now(),
-                    "registration_end": event_data['event_date']
+                    "registration_end": event_data['event_date'],
+                    "prize": event_data.get('prize', ''),
+                    "content_blocks": event_data.get('content_blocks', []),
+                    "coordinators": event_data.get('coordinators', [])
                 }
             )
             if created:

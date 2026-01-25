@@ -16,37 +16,67 @@ from events.models import Event
 def add_event():
     new_title = "HAWKINS LAB"
     old_title = "HAWKINS LAB – Cyber Mystery Event"
+    premium_image = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2070"
     
-    # Check for old title and update if it exists
-    existing_old = Event.objects.filter(title=old_title).first()
-    if existing_old:
-        existing_old.title = new_title
-        existing_old.save()
-        print(f"Updated existing event title from '{old_title}' to '{new_title}'")
-        return
+    # 1. Clean up potential conflicts
+    Event.objects.filter(title__icontains="Hawkins").delete()
 
-    # Check if new title already exists
-    if Event.objects.filter(title=new_title).exists():
-        print(f"Event '{new_title}' already exists. Skipping creation.")
-        return
+    # 2. Modern Content Definition
+    content_blocks = [
+        {
+            "title": "Mission Objectives",
+            "items": [
+                {"title": "Level 1 – Reflex Test", "content": "Neuromotor synchronization check. Beat the system clock to gain initial access."},
+                {"title": "Level 2 – Data Entry", "content": "High-speed information processing. Decrypt real-time streams to find the breach."},
+                {"title": "Level 3 – Pattern Analysis", "content": "Cognitive logic puzzle solving. Analyze the Upside Down signal patterns."},
+                {"title": "Level 4 – Signal Tracing", "content": "Digital footprint investigation. Trace the source of the anomaly across the Hawkins network."},
+                {"title": "Level 5 – System Override", "content": "Mainframe brute force access. Complete the final handshake to seal the gate."}
+            ]
+        },
+        {
+            "title": "Participation Rules",
+            "list": [
+                "Teams must consist of 2 to 4 members.",
+                "Sequential clearance is required; each level unlocks the next tier.",
+                "No external solving tools or internet search for specific flags.",
+                "The first team to complete Level 5 successfully wins."
+            ]
+        },
+        {
+            "title": "Guidelines",
+            "content": "Hawkins Lab is an immersive, story-driven cyber-mystery. While technical skills help, pattern recognition and logic are your primary tools. Stay focused, stay synchronized."
+        }
+    ]
 
-    # Create the event
+    coordinators = [
+        {"name": "Dustin Henderson", "phone": "999-011-2026", "role": "Field Tech"},
+        {"name": "Mike Wheeler", "phone": "999-012-2026", "role": "Operations"}
+    ]
+
+    # 3. Create/Update the event
     event = Event.objects.create(
+        id=997,
         title=new_title,
-        description="Hawkins Lab is a Stranger Things–themed, story-driven cybersecurity mystery event where teams progress through multiple levels by solving clues, analyzing patterns, and completing computer-based challenges.",
-        # Set a default date 14 days from now, can be changed in Admin
+        description="An immersive cyber-mystery event. Teams compete to solve cryptic clues, analyze signals, and breach the Upside Down. Beginner friendly.",
         event_date=timezone.now() + timezone.timedelta(days=14),
         venue="Computer Lab 1",
         category="Cyber Mystery",
-        # Dark/Red aesthetic image
-        image="https://images.unsplash.com/photo-1519060888021-35966d58597c?auto=format&fit=crop&q=80&w=2070",
+        image=premium_image,
         is_registration_open=True,
-        registration_limit=20, # Teams
+        registration_limit=20, 
         registration_start=timezone.now(),
-        registration_end=timezone.now() + timezone.timedelta(days=13)
+        registration_end=timezone.now() + timezone.timedelta(days=13),
+        is_team_event=True,
+        team_size_min=2,
+        team_size_max=4,
+        requires_payment=True,
+        payment_amount=100.00,
+        prize="₹1000 + Merit Certificates",
+        content_blocks=content_blocks,
+        coordinators=coordinators
     )
     
-    print(f"Successfully created event: {event.title} (ID: {event.id})")
+    print(f"Successfully synced Premium Event: {event.title} (ID: {event.id})")
 
 if __name__ == '__main__':
     add_event()

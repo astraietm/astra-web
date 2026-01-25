@@ -26,6 +26,11 @@ class Event(models.Model):
     requires_payment = models.BooleanField(default=False)
     payment_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Amount in INR")
     
+    # Structured Content (Modern Layout Support)
+    content_blocks = models.JSONField(default=list, blank=True, help_text="List of {title, content, list[], items[]} for premium rendering")
+    coordinators = models.JSONField(default=list, blank=True, help_text="List of {name, phone, role}")
+    prize = models.CharField(max_length=255, blank=True, help_text="Prize pool amount or description")
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
