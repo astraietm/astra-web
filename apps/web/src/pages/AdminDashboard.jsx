@@ -14,7 +14,13 @@ import {
     Loader2,
     CheckCircle2,
     Clock,
-    AlertCircle
+    AlertCircle,
+    Zap,
+    Cpu,
+    Globe,
+    Target,
+    Database,
+    Shield
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -63,231 +69,238 @@ const AdminDashboard = () => {
 
     const statCards = [
         {
-            title: 'Total Registrations',
+            title: 'NETWORK POPULATION',
             value: stats.totalRegistrations,
             change: '+12.5%',
             trend: 'up',
             icon: Users,
             color: 'blue',
-            bgColor: 'bg-blue-500/10',
-            iconColor: 'text-blue-400',
-            borderColor: 'border-blue-500/20'
+            glow: 'rgba(37,99,235,0.4)'
         },
         {
-            title: 'Active Events',
+            title: 'LIVE PROTOCOLS',
             value: stats.activeEvents,
             change: '+3',
             trend: 'up',
-            icon: Calendar,
+            icon: Cpu,
             color: 'violet',
-            bgColor: 'bg-violet-500/10',
-            iconColor: 'text-violet-400',
-            borderColor: 'border-violet-500/20'
+            glow: 'rgba(124,58,237,0.4)'
         },
         {
-            title: 'Attendance Rate',
+            title: 'SYNC PRECISION',
             value: `${stats.attendanceRate}%`,
             change: '+5.2%',
             trend: 'up',
             icon: Activity,
             color: 'emerald',
-            bgColor: 'bg-emerald-500/10',
-            iconColor: 'text-emerald-400',
-            borderColor: 'border-emerald-500/20'
+            glow: 'rgba(16,185,129,0.4)'
         },
         {
-            title: 'Conversion Rate',
-            value: '68%',
-            change: '-2.1%',
-            trend: 'down',
-            icon: BarChart3,
+            title: 'NODE INTEGRITY',
+            value: 'CRITICAL',
+            change: 'V8.1 Alpha',
+            trend: 'none',
+            icon: Shield,
             color: 'amber',
-            bgColor: 'bg-amber-500/10',
-            iconColor: 'text-amber-400',
-            borderColor: 'border-amber-500/20'
+            glow: 'rgba(245,158,11,0.4)'
         }
     ];
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-96">
-                <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+            <div className="flex flex-col items-center justify-center h-96 gap-4">
+                <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+                <span className="text-[10px] font-black tracking-[0.4em] text-slate-500 uppercase">INITIALIZING_TERMINAL</span>
             </div>
         );
     }
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-semibold text-slate-100">Dashboard</h1>
-                    <p className="text-sm text-slate-400 mt-1">Welcome back, {user?.name || 'Admin'}</p>
+        <div className="space-y-12">
+            {/* Header / Tactical Overview */}
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="h-px w-12 bg-blue-500" />
+                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Live Operations Active</span>
+                    </div>
+                    <div>
+                        <h1 className="text-6xl font-black text-white/5 uppercase tracking-tighter absolute -mt-4 pointer-events-none select-none">Tactical Oversight</h1>
+                        <h1 className="text-3xl font-black text-white uppercase tracking-wider relative z-10">Command Center</h1>
+                        <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-2 max-w-md leading-relaxed">
+                            Advanced telemetry protocols monitoring real-time user interaction across the Astra ecosystem.
+                        </p>
+                    </div>
                 </div>
-                <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    Generate Report
-                </button>
+                <div className="flex items-center gap-4">
+                   <div className="flex flex-col items-end mr-4">
+                      <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Registry Export</span>
+                      <span className="text-[9px] font-medium text-slate-700 uppercase tracking-tighter">Authorized Personal Only</span>
+                   </div>
+                    <button className="relative group overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-lg opacity-40 group-hover:opacity-100 transition-opacity" />
+                        <div className="relative px-8 py-4 bg-blue-600 rounded-2xl flex items-center gap-3 border border-white/10 group-active:scale-95 transition-transform">
+                            <Zap className="w-4 h-4 text-white fill-white animate-pulse" />
+                            <span className="text-[11px] font-black text-white uppercase tracking-[0.2em]">Dispatch Order</span>
+                        </div>
+                    </button>
+                </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Stats Grid - High-End Tactile Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {statCards.map((stat, idx) => (
                     <motion.div
                         key={idx}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.1 }}
-                        className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-slate-600 transition-all duration-300"
+                        transition={{ delay: idx * 0.1, duration: 0.6, ease: "easeOut" }}
+                        className="relative group h-48"
                     >
-                        <div className="flex items-start justify-between mb-4">
-                            <div className={`p-3 ${stat.bgColor} rounded-lg`}>
-                                <stat.icon className={`w-5 h-5 ${stat.iconColor}`} strokeWidth={2} />
+                        <div className="absolute inset-0 bg-white/[0.02] border border-white/[0.05] rounded-[2rem] transition-all duration-500 group-hover:bg-white/[0.04] group-hover:border-white/[0.1] shadow-2xl" />
+                        <div className="absolute inset-0 rounded-[2rem] transition-opacity duration-700 opacity-0 group-hover:opacity-100" 
+                             style={{ background: `radial-gradient(400px circle at 50% 50%, ${stat.glow}, transparent 80%)` }} />
+                        
+                        <div className="relative p-8 h-full flex flex-col justify-between z-10">
+                            <div className="flex items-start justify-between">
+                                <div className="p-3 bg-white/[0.03] border border-white/[0.05] rounded-xl group-hover:scale-110 group-hover:border-white/15 transition-all duration-500">
+                                    <stat.icon className="w-5 h-5 text-white/40 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                                </div>
+                                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] text-[9px] font-black uppercase tracking-widest ${
+                                    stat.trend === 'up' ? 'text-emerald-500' : stat.trend === 'none' ? 'text-amber-500' : 'text-red-500'
+                                }`}>
+                                    {stat.trend === 'up' && <TrendingUp size={10} />}
+                                    {stat.trend === 'none' && <Shield size={10} />}
+                                    {stat.change}
+                                </div>
                             </div>
-                            <div className={`flex items-center gap-1 text-xs font-medium ${
-                                stat.trend === 'up' ? 'text-emerald-600' : 'text-rose-600'
-                            }`}>
-                                {stat.trend === 'up' ? (
-                                    <TrendingUp className="w-3 h-3" />
-                                ) : (
-                                    <TrendingDown className="w-3 h-3" />
-                                )}
-                                {stat.change}
+                            
+                            <div>
+                                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-2 group-hover:text-slate-400 transition-colors">{stat.title}</p>
+                                <p className="text-4xl font-black text-white uppercase tracking-tighter group-hover:scale-105 origin-left transition-transform duration-500">
+                                    {stat.value}
+                                </p>
                             </div>
-                        </div>
-                        <div>
-                            <p className="text-sm text-slate-400 mb-1">{stat.title}</p>
-                            <p className="text-3xl font-semibold text-slate-100">{stat.value}</p>
                         </div>
                     </motion.div>
                 ))}
             </div>
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Activity Chart */}
-                <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h3 className="text-lg font-semibold text-slate-100">Registration Trends</h3>
-                            <p className="text-sm text-slate-400 mt-1">Last 7 days</p>
-                        </div>
-                        <button className="text-sm text-slate-400 hover:text-slate-100 font-medium">
-                            View All
-                        </button>
-                    </div>
-                    <div className="h-64 flex items-end justify-between gap-3">
-                        {[40, 65, 45, 80, 55, 90, 70].map((height, idx) => (
-                            <div key={idx} className="flex-1 flex flex-col items-center gap-2">
-                                <motion.div
-                                    initial={{ height: 0 }}
-                                    animate={{ height: `${height}%` }}
-                                    transition={{ delay: idx * 0.1, duration: 0.5 }}
-                                    className="w-full bg-gradient-to-t from-blue-600 to-blue-500 rounded-t-lg hover:from-blue-500 hover:to-blue-400 transition-all cursor-pointer"
-                                />
-                                <span className="text-xs text-slate-400 font-medium">
-                                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][idx]}
-                                </span>
+            {/* Main Operational Data */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Advanced Analytics Chart */}
+                <div className="lg:col-span-2 relative group overflow-hidden">
+                    <div className="absolute inset-0 bg-white/[0.01] border border-white/[0.04] rounded-[2.5rem] backdrop-blur-3xl" />
+                    <div className="relative p-10 h-full min-h-[450px] flex flex-col">
+                        <div className="flex items-center justify-between mb-12">
+                            <div>
+                                <h3 className="text-xl font-black text-white uppercase tracking-widest">Spectral Analysis</h3>
+                                <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.5em] mt-1">Integrated Neural Interaction Telemetry</p>
                             </div>
-                        ))}
+                            <div className="flex items-center gap-4 p-1 rounded-2xl bg-black/40 border border-white/[0.04]">
+                                <button className="px-5 py-2.5 bg-blue-600 text-[10px] font-black text-white uppercase tracking-widest rounded-xl shadow-lg shadow-blue-600/20">Real-Time Feed</button>
+                                <button className="px-5 py-2.5 text-[10px] font-black text-slate-600 uppercase tracking-widest hover:text-white transition-colors">Archived Logs</button>
+                            </div>
+                        </div>
+                        
+                        <div className="flex-1 flex items-end justify-between gap-6 pb-4">
+                            {[20, 60, 40, 95, 30, 80, 50, 90, 35, 75, 45, 100].map((height, idx) => (
+                                <div key={idx} className="flex-1 flex flex-col items-center gap-6 group/bar">
+                                    <div className="relative w-full flex flex-col items-center">
+                                         <div className="absolute bottom-full mb-3 px-2 py-1 bg-white/5 border border-white/10 rounded uppercase text-[8px] font-black opacity-0 group-hover/bar:opacity-100 transition-opacity">
+                                            {height}%
+                                         </div>
+                                         <motion.div
+                                            initial={{ height: 0 }}
+                                            animate={{ height: `${height}%` }}
+                                            transition={{ delay: idx * 0.05, duration: 1, ease: [0.19, 1, 0.22, 1] }}
+                                            className="w-full max-w-[12px] min-h-[4px] rounded-full bg-gradient-to-t from-blue-600/20 via-blue-500/80 to-indigo-400 group-hover/bar:from-blue-500 transition-all shadow-[0_0_20px_rgba(37,99,235,0.2)]"
+                                         />
+                                    </div>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-white/[0.05] group-hover/bar:bg-blue-500 transition-colors duration-500" />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                {/* Recent Activity */}
-                <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <div>
-                            <h3 className="text-lg font-semibold text-slate-100">Recent Activity</h3>
-                            <p className="text-sm text-slate-400 mt-1">Latest registrations</p>
+                {/* Secondary Tactical Intel */}
+                <div className="relative group">
+                    <div className="absolute inset-0 bg-white/[0.01] border border-white/[0.04] rounded-[2.5rem] backdrop-blur-3xl" />
+                    <div className="relative p-10 flex flex-col h-full">
+                        <div className="flex items-center justify-between mb-10">
+                            <div>
+                                <h3 className="text-xl font-black text-white uppercase tracking-widest">Protocol Logs</h3>
+                                <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.4em] mt-1">Live Identity Verification</p>
+                            </div>
+                            <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse border-4 border-blue-500/20" />
                         </div>
+
+                        <div className="space-y-4 flex-1">
+                            {stats.recentActivity.length > 0 ? (
+                                stats.recentActivity.map((activity, idx) => (
+                                    <motion.div
+                                        key={idx}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.1 }}
+                                        className="p-5 rounded-3xl bg-white/[0.02] border border-white/[0.03] hover:border-white/[0.08] hover:bg-white/[0.04] transition-all duration-300 group/item flex items-center gap-5"
+                                    >
+                                        <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-[11px] font-black text-slate-500 group-hover/item:text-white group-hover/item:border-blue-500/30 transition-all shrink-0">
+                                            {activity.user_name?.[0]?.toUpperCase() || 'W'}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-[12px] font-black text-slate-200 uppercase tracking-widest truncate">{activity.user_name || 'Anonymous'}</p>
+                                            <p className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter mt-1">
+                                                <span className="text-emerald-500/50 mr-2">●</span>
+                                                HANDSHAKE VERIFIED - {new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                        </div>
+                                        <div className="opacity-0 group-hover/item:opacity-100 transition-opacity">
+                                            <Clock className="w-4 h-4 text-amber-500/50" />
+                                        </div>
+                                    </motion.div>
+                                ))
+                            ) : (
+                                Array.from({ length: 4 }).map((_, i) => (
+                                    <div key={i} className="h-16 rounded-2xl bg-white/[0.01] border border-white/[0.02] animate-pulse" />
+                                ))
+                            )}
+                        </div>
+                        
                         <button 
                             onClick={() => navigate('/admin/registrations')}
-                            className="text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1"
+                            className="mt-8 py-4 w-full bg-white/[0.02] border border-white/5 rounded-2xl text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] hover:text-white hover:bg-white/[0.05] hover:border-blue-500/30 transition-all group flex items-center justify-center gap-3"
                         >
-                            View All
-                            <ArrowUpRight className="w-4 h-4" />
+                            View Comprehensive Feed
+                            <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                         </button>
-                    </div>
-                    <div className="space-y-4">
-                        {stats.recentActivity.length > 0 ? (
-                            stats.recentActivity.map((activity, idx) => (
-                                <motion.div
-                                    key={idx}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: idx * 0.1 }}
-                                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-700/50 transition-colors"
-                                >
-                                    <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-semibold text-sm shrink-0 border border-blue-500/20">
-                                        {activity.user_name?.[0]?.toUpperCase() || 'U'}
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-slate-100 truncate">
-                                            {activity.user_name || 'Anonymous'}
-                                        </p>
-                                        <p className="text-xs text-slate-400 truncate">
-                                            {activity.event_details?.title || 'Event'}
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        {activity.is_used || activity.status === 'ATTENDED' ? (
-                                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                                        ) : (
-                                            <Clock className="w-4 h-4 text-amber-600" />
-                                        )}
-                                    </div>
-                                </motion.div>
-                            ))
-                        ) : (
-                            <div className="text-center py-8 text-slate-400">
-                                <Activity className="w-12 h-12 mx-auto mb-3 opacity-20" />
-                                <p className="text-sm">No recent activity</p>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
-                <h3 className="text-lg font-semibold text-slate-100 mb-4">Quick Actions</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <button
-                        onClick={() => navigate('/admin/events')}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-700 hover:border-blue-500/50 hover:bg-blue-500/10 transition-all group"
-                    >
-                        <div className="p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
-                            <Calendar className="w-5 h-5 text-blue-400" />
-                        </div>
-                        <div className="text-left">
-                            <p className="font-medium text-slate-100">Manage Events</p>
-                            <p className="text-sm text-slate-400">Create and edit events</p>
-                        </div>
-                    </button>
-                    <button
-                        onClick={() => navigate('/admin/registrations')}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-700 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group"
-                    >
-                        <div className="p-3 bg-violet-500/10 rounded-lg group-hover:bg-violet-500/20 transition-colors">
-                            <Users className="w-5 h-5 text-violet-400" />
-                        </div>
-                        <div className="text-left">
-                            <p className="font-medium text-slate-900">View Registrations</p>
-                            <p className="text-sm text-slate-500">Check participant data</p>
-                        </div>
-                    </button>
-                    <button
-                        onClick={() => navigate('/admin/scanner')}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-700 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all group"
-                    >
-                        <div className="p-3 bg-emerald-500/10 rounded-lg group-hover:bg-emerald-500/20 transition-colors">
-                            <Activity className="w-5 h-5 text-emerald-400" />
-                        </div>
-                        <div className="text-left">
-                            <p className="font-medium text-slate-900">QR Scanner</p>
-                            <p className="text-sm text-slate-500">Verify attendees</p>
-                        </div>
-                    </button>
+            {/* Quick Tactical Links */}
+            <div className="relative group p-1.5 bg-white/[0.01] border border-white/[0.03] rounded-[3rem]">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5">
+                    {[
+                        { to: '/admin/events', label: 'Manage Events', sub: 'Create and edit events', icon: Calendar, color: 'blue' },
+                        { to: '/admin/registrations', label: 'View Registrations', sub: 'Check participant data', icon: Users, color: 'violet' },
+                        { to: '/admin/scanner', label: 'QR Scanner', sub: 'Verify attendees', icon: Activity, color: 'emerald' }
+                    ].map((btn, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => navigate(btn.to)}
+                            className="flex items-center gap-6 p-8 rounded-[2.5rem] bg-black/40 border border-white/[0.03] hover:border-white/10 hover:bg-white/[0.02] transition-all group"
+                        >
+                            <div className={`p-4 bg-white/[0.03] rounded-2xl group-hover:scale-110 transition-all duration-500`}>
+                                <btn.icon className="w-6 h-6 text-slate-500 group-hover:text-white transition-colors" />
+                            </div>
+                            <div className="text-left">
+                                <p className="font-black text-slate-200 uppercase tracking-widest mb-1">{btn.label}</p>
+                                <p className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">{btn.sub}</p>
+                            </div>
+                        </button>
+                    ))}
                 </div>
             </div>
         </div>
