@@ -69,9 +69,9 @@ const AdminDashboard = () => {
             trend: 'up',
             icon: Users,
             color: 'blue',
-            bgColor: 'bg-blue-50',
-            iconColor: 'text-blue-600',
-            borderColor: 'border-blue-200'
+            bgColor: 'bg-blue-500/10',
+            iconColor: 'text-blue-400',
+            borderColor: 'border-blue-500/20'
         },
         {
             title: 'Active Events',
@@ -80,9 +80,9 @@ const AdminDashboard = () => {
             trend: 'up',
             icon: Calendar,
             color: 'violet',
-            bgColor: 'bg-violet-50',
-            iconColor: 'text-violet-600',
-            borderColor: 'border-violet-200'
+            bgColor: 'bg-violet-500/10',
+            iconColor: 'text-violet-400',
+            borderColor: 'border-violet-500/20'
         },
         {
             title: 'Attendance Rate',
@@ -91,9 +91,9 @@ const AdminDashboard = () => {
             trend: 'up',
             icon: Activity,
             color: 'emerald',
-            bgColor: 'bg-emerald-50',
-            iconColor: 'text-emerald-600',
-            borderColor: 'border-emerald-200'
+            bgColor: 'bg-emerald-500/10',
+            iconColor: 'text-emerald-400',
+            borderColor: 'border-emerald-500/20'
         },
         {
             title: 'Conversion Rate',
@@ -102,16 +102,16 @@ const AdminDashboard = () => {
             trend: 'down',
             icon: BarChart3,
             color: 'amber',
-            bgColor: 'bg-amber-50',
-            iconColor: 'text-amber-600',
-            borderColor: 'border-amber-200'
+            bgColor: 'bg-amber-500/10',
+            iconColor: 'text-amber-400',
+            borderColor: 'border-amber-500/20'
         }
     ];
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-96">
-                <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
             </div>
         );
     }
@@ -121,8 +121,8 @@ const AdminDashboard = () => {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
-                    <p className="text-sm text-slate-500 mt-1">Welcome back, {user?.name || 'Admin'}</p>
+                    <h1 className="text-2xl font-semibold text-slate-100">Dashboard</h1>
+                    <p className="text-sm text-slate-400 mt-1">Welcome back, {user?.name || 'Admin'}</p>
                 </div>
                 <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
@@ -138,7 +138,7 @@ const AdminDashboard = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.1 }}
-                        className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300"
+                        className="bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-slate-600 transition-all duration-300"
                     >
                         <div className="flex items-start justify-between mb-4">
                             <div className={`p-3 ${stat.bgColor} rounded-lg`}>
@@ -156,8 +156,8 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                         <div>
-                            <p className="text-sm text-slate-600 mb-1">{stat.title}</p>
-                            <p className="text-3xl font-semibold text-slate-900">{stat.value}</p>
+                            <p className="text-sm text-slate-400 mb-1">{stat.title}</p>
+                            <p className="text-3xl font-semibold text-slate-100">{stat.value}</p>
                         </div>
                     </motion.div>
                 ))}
@@ -166,13 +166,13 @@ const AdminDashboard = () => {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Activity Chart */}
-                <div className="bg-white rounded-xl border border-slate-200 p-6">
+                <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h3 className="text-lg font-semibold text-slate-900">Registration Trends</h3>
-                            <p className="text-sm text-slate-500 mt-1">Last 7 days</p>
+                            <h3 className="text-lg font-semibold text-slate-100">Registration Trends</h3>
+                            <p className="text-sm text-slate-400 mt-1">Last 7 days</p>
                         </div>
-                        <button className="text-sm text-slate-600 hover:text-slate-900 font-medium">
+                        <button className="text-sm text-slate-400 hover:text-slate-100 font-medium">
                             View All
                         </button>
                     </div>
@@ -183,9 +183,9 @@ const AdminDashboard = () => {
                                     initial={{ height: 0 }}
                                     animate={{ height: `${height}%` }}
                                     transition={{ delay: idx * 0.1, duration: 0.5 }}
-                                    className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg hover:from-blue-700 hover:to-blue-500 transition-all cursor-pointer"
+                                    className="w-full bg-gradient-to-t from-blue-600 to-blue-500 rounded-t-lg hover:from-blue-500 hover:to-blue-400 transition-all cursor-pointer"
                                 />
-                                <span className="text-xs text-slate-500 font-medium">
+                                <span className="text-xs text-slate-400 font-medium">
                                     {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][idx]}
                                 </span>
                             </div>
@@ -194,15 +194,15 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Recent Activity */}
-                <div className="bg-white rounded-xl border border-slate-200 p-6">
+                <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h3 className="text-lg font-semibold text-slate-900">Recent Activity</h3>
-                            <p className="text-sm text-slate-500 mt-1">Latest registrations</p>
+                            <h3 className="text-lg font-semibold text-slate-100">Recent Activity</h3>
+                            <p className="text-sm text-slate-400 mt-1">Latest registrations</p>
                         </div>
                         <button 
                             onClick={() => navigate('/admin/registrations')}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                            className="text-sm text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1"
                         >
                             View All
                             <ArrowUpRight className="w-4 h-4" />
@@ -216,16 +216,16 @@ const AdminDashboard = () => {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors"
+                                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-700/50 transition-colors"
                                 >
-                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-sm shrink-0">
+                                    <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-semibold text-sm shrink-0 border border-blue-500/20">
                                         {activity.user_name?.[0]?.toUpperCase() || 'U'}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-slate-900 truncate">
+                                        <p className="text-sm font-medium text-slate-100 truncate">
                                             {activity.user_name || 'Anonymous'}
                                         </p>
-                                        <p className="text-xs text-slate-500 truncate">
+                                        <p className="text-xs text-slate-400 truncate">
                                             {activity.event_details?.title || 'Event'}
                                         </p>
                                     </div>
@@ -239,7 +239,7 @@ const AdminDashboard = () => {
                                 </motion.div>
                             ))
                         ) : (
-                            <div className="text-center py-8 text-slate-500">
+                            <div className="text-center py-8 text-slate-400">
                                 <Activity className="w-12 h-12 mx-auto mb-3 opacity-20" />
                                 <p className="text-sm">No recent activity</p>
                             </div>
@@ -249,27 +249,27 @@ const AdminDashboard = () => {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
+            <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <button
                         onClick={() => navigate('/admin/events')}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-700 hover:border-blue-500/50 hover:bg-blue-500/10 transition-all group"
                     >
-                        <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
-                            <Calendar className="w-5 h-5 text-blue-600" />
+                        <div className="p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                            <Calendar className="w-5 h-5 text-blue-400" />
                         </div>
                         <div className="text-left">
-                            <p className="font-medium text-slate-900">Manage Events</p>
-                            <p className="text-sm text-slate-500">Create and edit events</p>
+                            <p className="font-medium text-slate-100">Manage Events</p>
+                            <p className="text-sm text-slate-400">Create and edit events</p>
                         </div>
                     </button>
                     <button
                         onClick={() => navigate('/admin/registrations')}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-200 hover:border-violet-300 hover:bg-violet-50 transition-all group"
+                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-700 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all group"
                     >
-                        <div className="p-3 bg-violet-100 rounded-lg group-hover:bg-violet-200 transition-colors">
-                            <Users className="w-5 h-5 text-violet-600" />
+                        <div className="p-3 bg-violet-500/10 rounded-lg group-hover:bg-violet-500/20 transition-colors">
+                            <Users className="w-5 h-5 text-violet-400" />
                         </div>
                         <div className="text-left">
                             <p className="font-medium text-slate-900">View Registrations</p>
@@ -278,10 +278,10 @@ const AdminDashboard = () => {
                     </button>
                     <button
                         onClick={() => navigate('/admin/scanner')}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50 transition-all group"
+                        className="flex items-center gap-4 p-4 rounded-lg border border-slate-700 hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all group"
                     >
-                        <div className="p-3 bg-emerald-100 rounded-lg group-hover:bg-emerald-200 transition-colors">
-                            <Activity className="w-5 h-5 text-emerald-600" />
+                        <div className="p-3 bg-emerald-500/10 rounded-lg group-hover:bg-emerald-500/20 transition-colors">
+                            <Activity className="w-5 h-5 text-emerald-400" />
                         </div>
                         <div className="text-left">
                             <p className="font-medium text-slate-900">QR Scanner</p>

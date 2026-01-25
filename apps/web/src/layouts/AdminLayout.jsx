@@ -72,10 +72,11 @@ const AdminLayout = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 flex overflow-hidden font-inter selection:bg-blue-100 selection:text-blue-900 relative">
-            {/* Subtle Background Pattern */}
+        <div className="min-h-screen bg-slate-950 text-slate-50 flex overflow-hidden font-inter selection:bg-blue-500/30 selection:text-white relative">
+            {/* Dark Background Pattern */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(203_213_225_/_0.15)_1px,transparent_0)] bg-[size:24px_24px]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(148_163_184_/_0.05)_1px,transparent_0)] bg-[size:24px_24px]" />
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-950/20 via-transparent to-violet-950/20" />
             </div>
             
             <AdminSidebar 
@@ -93,7 +94,7 @@ const AdminLayout = () => {
                     onSearchClick={() => setIsCommandPaletteOpen(true)}
                 />
 
-                <main className="flex-1 overflow-y-auto relative bg-slate-50">
+                <main className="flex-1 overflow-y-auto relative">
                     <Suspense fallback={<PageLoader />}>
                         <div className="p-6 md:p-8 lg:p-10 min-h-full max-w-[1600px] mx-auto">
                             <AnimatePresence mode="wait">
@@ -112,19 +113,19 @@ const AdminLayout = () => {
                     </Suspense>
                 </main>
                 
-                <footer className="h-14 border-t border-slate-200 flex items-center justify-between px-8 text-[11px] text-slate-500 bg-white/80 backdrop-blur-sm">
+                <footer className="h-14 border-t border-slate-800 flex items-center justify-between px-8 text-[11px] text-slate-400 bg-slate-900/50 backdrop-blur-sm">
                     <div className="flex items-center gap-6">
                         <span className="font-medium">
-                            Astra <span className="text-slate-400">v2.5.0</span>
+                            Astra <span className="text-slate-600">v2.5.0</span>
                         </span>
-                        <div className="h-3 w-px bg-slate-200" />
-                        <span className="text-slate-400">© 2026 KMCT IETM</span>
+                        <div className="h-3 w-px bg-slate-800" />
+                        <span className="text-slate-500">© 2026 KMCT IETM</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-medium ${
                             isSystemOnline 
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                            : 'bg-rose-50 text-rose-700 border border-rose-200'
+                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
+                            : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                         }`}>
                             <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-500' : 'bg-rose-500'}`} />
                             <span>{isSystemOnline ? 'All systems operational' : 'System offline'}</span>
