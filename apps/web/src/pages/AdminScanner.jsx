@@ -8,11 +8,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const AdminScanner = () => {
     const { user, token } = useAuth();
     const navigate = useNavigate();
-    const [scanResult, setScanResult] = useState(null); // { status: 'success' | 'error', data: ... }
+    const [scanResult, setScanResult] = useState(null); 
     const [isScanning, setIsScanning] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    
-    // Recent scans log
     const [scanHistory, setScanHistory] = useState([]);
 
     useEffect(() => {
@@ -30,7 +28,6 @@ const AdminScanner = () => {
         setIsScanning(false);
         setIsLoading(true);
 
-        // Parse Token
         let tokenToVerify = code;
         if (code.includes('/verify/')) {
              tokenToVerify = code.split('/verify/')[1].replace('/', '');
@@ -50,18 +47,12 @@ const AdminScanner = () => {
             };
 
             setScanResult(result);
-            setScanHistory(prev => [result, ...prev].slice(0, 10)); // Keep last 10
-            
-            // Auto close success after 3 seconds for rapid scanning
-            if (data.valid) {
-                // setTimeout(resetScan, 3000);
-            }
-
+            setScanHistory(prev => [result, ...prev].slice(0, 10));
         } catch (err) {
             console.error("Verification failed", err);
             setScanResult({ 
                 status: 'error', 
-                data: { message: "Network Uplink Failed" },
+                data: { message: "Uplink Failure" },
                 timestamp: new Date()
             });
         } finally {
@@ -75,111 +66,106 @@ const AdminScanner = () => {
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-64px)] bg-black overflow-hidden relative">
-            {/* Background Effects */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-primary/5 to-transparent" />
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-            </div>
-
-            {/* Header */}
-            <div className="relative z-10 px-6 py-4 border-b border-white/10 bg-black/80 backdrop-blur-md flex justify-between items-center">
-                <div>
-                     <h1 className="text-xl font-black text-white tracking-wider uppercase flex items-center gap-2 font-display">
-                         <Scan className="text-primary w-5 h-5 animate-pulse" />
-                         Security_Terminal_V1
-                    </h1>
+        <div className="flex flex-col h-[calc(100vh-140px)] bg-[#050505] rounded-[2.5rem] border border-white/5 overflow-hidden relative font-inter">
+            {/* Mission Header */}
+            <div className="relative z-20 px-10 py-6 border-b border-white/5 bg-[#050505]/60 backdrop-blur-xl flex justify-between items-center">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500">Node Verification</span>
+                    </div>
+                    <h1 className="text-2xl font-black text-white tracking-tighter uppercase">Pass Scanner V0.1</h1>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-mono text-primary/80 bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
-                    <span className="w-2 h-2 bg-primary rounded-full animate-ping" />
-                    LIVE UPLINK
+                <div className="flex items-center gap-4">
+                    <div className="px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-[10px] font-black text-blue-500 tracking-widest uppercase">
+                        Live Stream Active
+                    </div>
                 </div>
             </div>
 
-            <div className="flex-1 flex flex-col md:flex-row h-full overflow-hidden relative z-10">
-                {/* Scanner Section */}
-                <div className="flex-1 relative flex flex-col items-center justify-center p-6 border-r border-white/10 bg-[#050505]">
+            <div className="flex-1 flex flex-col lg:flex-row h-full overflow-hidden relative z-10">
+                {/* Scanner Core */}
+                <div className="flex-1 relative flex flex-col items-center justify-center p-12 bg-gradient-to-br from-blue-500/[0.02] to-transparent">
                     
-                    {/* Scanner Frame */}
-                    <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden border-2 border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] group">
-                        
-                        {/* Corner Accents */}
-                        <div className="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-primary z-20 rounded-tl-xl" />
-                        <div className="absolute top-0 right-0 w-16 h-16 border-t-4 border-r-4 border-primary z-20 rounded-tr-xl" />
-                        <div className="absolute bottom-0 left-0 w-16 h-16 border-b-4 border-l-4 border-primary z-20 rounded-bl-xl" />
-                        <div className="absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 border-primary z-20 rounded-br-xl" />
+                    <div className="relative w-full max-w-lg aspect-square rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl group">
+                        {/* Corner Visuals */}
+                        <div className="absolute top-8 left-8 w-12 h-12 border-t-[3px] border-l-[3px] border-blue-500 z-20 rounded-tl-xl opacity-60" />
+                        <div className="absolute top-8 right-8 w-12 h-12 border-t-[3px] border-r-[3px] border-blue-500 z-20 rounded-tr-xl opacity-60" />
+                        <div className="absolute bottom-8 left-8 w-12 h-12 border-b-[3px] border-l-[3px] border-blue-500 z-20 rounded-bl-xl opacity-60" />
+                        <div className="absolute bottom-8 right-8 w-12 h-12 border-b-[3px] border-r-[3px] border-blue-500 z-20 rounded-br-xl opacity-60" />
 
                         {isScanning && !scanResult && (
-                            <>
+                            <div className="w-full h-full relative">
                                 <Scanner 
                                     onScan={handleScan}
                                     components={{ audio: false, finder: false }}
                                     styles={{ container: { width: '100%', height: '100%' } }}
                                 />
-                                {/* Scanning Laser Animation */}
-                                <div className="absolute top-0 left-0 w-full h-1 bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.8)] z-30 animate-[scan_2s_linear_infinite]" />
-                                <div className="absolute inset-0 bg-primary/5 z-10 animate-pulse" />
-                            </>
-                        )}
-
-                        {/* Loading State */}
-                        {isLoading && (
-                            <div className="absolute inset-0 bg-black/90 z-40 flex flex-col items-center justify-center">
-                                <Loader2 className="w-16 h-16 text-primary animate-spin mb-4" />
-                                <p className="text-primary font-mono tracking-widest text-sm animate-pulse">DECRYPTING PROTOCOL...</p>
+                                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-blue-500/20 to-transparent z-10 animate-scan pointer-events-none" />
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] z-10 pointer-events-none" />
                             </div>
                         )}
 
-                        {/* Result Overlay */}
+                        {isLoading && (
+                            <div className="absolute inset-0 bg-[#050505]/95 z-40 flex flex-col items-center justify-center space-y-4">
+                                <Loader2 className="w-12 h-12 text-blue-500 animate-spin" strokeWidth={3} />
+                                <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.5em] animate-pulse">Decrypting Identity...</p>
+                            </div>
+                        )}
+
                         <AnimatePresence>
                             {scanResult && (
                                 <motion.div 
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    className="absolute inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-8 text-center"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="absolute inset-0 z-50 bg-[#050505]/98 backdrop-blur-2xl flex flex-col items-center justify-center p-12 text-center"
                                 >
                                     {scanResult.status === 'success' ? (
-                                        <>
-                                            <div className="w-24 h-24 rounded-full bg-green-500/20 border-4 border-green-500 flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(34,197,94,0.3)]">
-                                                <CheckCircle className="w-12 h-12 text-green-500" />
+                                        <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="w-full space-y-8">
+                                            <div className="w-24 h-24 rounded-[2rem] bg-emerald-500/10 border-2 border-emerald-500/30 flex items-center justify-center mx-auto shadow-[0_0_50px_rgba(16,185,129,0.1)]">
+                                                <CheckCircle className="w-12 h-12 text-emerald-500" strokeWidth={2.5} />
                                             </div>
-                                            <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-2">Access Granted</h2>
-                                            <p className="text-green-400 font-mono text-sm mb-6 uppercase tracking-widest">Identity Verified</p>
+                                            <div className="space-y-2">
+                                                <h2 className="text-4xl font-black text-white uppercase tracking-tighter">ACCESS GRANTED</h2>
+                                                <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Credentials Validated</p>
+                                            </div>
                                             
-                                            <div className="bg-white/5 rounded-xl p-4 w-full border border-white/10 mb-6 space-y-2">
-                                                <div className="text-sm">
-                                                    <span className="text-gray-500 block text-xs uppercase mb-1">Pass Holder</span>
-                                                    <span className="text-white font-bold text-lg">{scanResult.data.registrant.user_details.full_name || scanResult.data.registrant.user_details.email}</span>
+                                            <div className="bg-white/[0.03] rounded-[2rem] p-8 border border-white/5 space-y-6 text-left shadow-inner">
+                                                <div className="space-y-1">
+                                                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest block">Personnel Identity</span>
+                                                    <span className="text-xl font-black text-white uppercase tracking-tight">{scanResult.data.registrant.user_details.full_name || 'Classified User'}</span>
                                                 </div>
-                                                <div className="text-sm">
-                                                    <span className="text-gray-500 block text-xs uppercase mb-1">Event Protocol</span>
-                                                    <span className="text-primary font-mono">{scanResult.data.registrant.event_details.title}</span>
+                                                <div className="space-y-1">
+                                                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest block">Mission Sector</span>
+                                                    <span className="text-lg font-black text-blue-500 uppercase tracking-tight">{scanResult.data.registrant.event_details.title}</span>
                                                 </div>
                                                 {scanResult.data.registrant.team_name && (
-                                                    <div className="text-sm pt-2 border-t border-white/10 mt-2">
-                                                        <span className="text-gray-500 block text-xs uppercase mb-1">Team Unit</span>
-                                                        <span className="text-purple-400 font-bold">{scanResult.data.registrant.team_name}</span>
+                                                    <div className="pt-4 border-t border-white/5">
+                                                        <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest block">Squad Designation</span>
+                                                        <span className="text-base font-black text-purple-500 uppercase tracking-tight">{scanResult.data.registrant.team_name}</span>
                                                     </div>
                                                 )}
                                             </div>
-                                        </>
+                                        </motion.div>
                                     ) : (
-                                        <>
-                                            <div className="w-24 h-24 rounded-full bg-red-500/20 border-4 border-red-500 flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(239,68,68,0.3)]">
-                                                <XCircle className="w-12 h-12 text-red-500" />
+                                        <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="w-full space-y-8">
+                                            <div className="w-24 h-24 rounded-[2rem] bg-rose-500/10 border-2 border-rose-500/30 flex items-center justify-center mx-auto shadow-[0_0_50px_rgba(244,63,94,0.1)]">
+                                                <XCircle className="w-12 h-12 text-rose-500" strokeWidth={2.5} />
                                             </div>
-                                            <h2 className="text-3xl font-black text-white uppercase tracking-tighter mb-2">Access Denied</h2>
-                                            <p className="text-red-400 font-mono text-sm mb-6 uppercase tracking-widest">{scanResult.data.message || "Invalid Token"}</p>
-                                        </>
+                                            <div className="space-y-2">
+                                                <h2 className="text-4xl font-black text-white uppercase tracking-tighter">ACCESS DENIED</h2>
+                                                <p className="text-[10px] font-black text-rose-500 uppercase tracking-[0.4em]">{scanResult.data.message || "Invalid Protocol"}</p>
+                                            </div>
+                                        </motion.div>
                                     )}
 
                                     <button 
                                         onClick={resetScan}
-                                        className="w-full py-4 bg-white text-black font-black uppercase tracking-wider rounded-xl hover:scale-105 transition-transform flex items-center justify-center gap-2"
+                                        className="mt-10 w-full h-16 bg-blue-600 text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-blue-500 transition-all flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(37,99,235,0.2)]"
                                     >
-                                        <Scan className="w-5 h-5" />
-                                        Scan Next Target
+                                        <Scan size={18} strokeWidth={3} />
+                                        Initialize Next Scan
                                     </button>
                                 </motion.div>
                             )}
@@ -187,43 +173,45 @@ const AdminScanner = () => {
                     </div>
                 </div>
 
-                {/* Sidebar Log - Hidden on mobile if needed, or stacked */}
-                <div className="w-full md:w-96 bg-[#0A0A0A] border-l border-white/10 flex flex-col z-20">
-                     <div className="p-4 border-b border-white/10 bg-white/5">
-                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <Clock className="w-3 h-3" />
-                            Activity Log
+                {/* Telemetry Log */}
+                <div className="w-full lg:w-96 bg-[#050505] border-l border-white/5 flex flex-col">
+                    <div className="p-8 border-b border-white/5 bg-white/[0.01]">
+                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] flex items-center gap-3">
+                            <Clock size={14} className="text-blue-500" />
+                            Session Telemetry
                         </h3>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
                         {scanHistory.length === 0 ? (
-                            <div className="text-center py-10 opacity-30">
-                                <Zap className="w-12 h-12 mx-auto mb-2" />
-                                <p className="text-xs font-mono uppercase">System Idle</p>
+                            <div className="h-full flex flex-col items-center justify-center opacity-20 py-20">
+                                <Zap size={40} className="mb-4" />
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em]">Terminal Idle</p>
                             </div>
                         ) : (
                             scanHistory.map((scan) => (
-                                <div key={scan.id} className={`p-4 rounded-xl border ${scan.status === 'success' ? 'bg-green-500/5 border-green-500/20' : 'bg-red-500/5 border-red-500/20'} flex items-start gap-4 animate-in fade-in slide-in-from-right duration-300`}>
-                                   <div className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${scan.status === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
-                                   <div className="flex-1 min-w-0">
-                                       <div className="flex justify-between items-start mb-1">
-                                            <p className={`text-sm font-bold ${scan.status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
-                                                {scan.status === 'success' ? 'VERIFIED' : 'REJECTED'}
-                                            </p>
-                                            <span className="text-[10px] text-gray-600 font-mono">
-                                                {scan.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}
-                                            </span>
-                                       </div>
-                                       {scan.status === 'success' ? (
-                                           <div className="text-xs text-gray-400 space-y-0.5">
-                                               <p className="truncate text-white">{scan.data.registrant.user_details.full_name}</p>
-                                               <p className="opacity-50 truncate">{scan.data.registrant.event_details.title}</p>
-                                           </div>
-                                       ) : (
-                                           <p className="text-xs text-gray-500">{scan.data.message}</p>
-                                       )}
+                                <motion.div 
+                                    initial={{ x: 20, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    key={scan.id} 
+                                    className={`p-5 rounded-2xl border ${scan.status === 'success' ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-rose-500/5 border-rose-500/10'} space-y-3`}
+                                >
+                                   <div className="flex justify-between items-center">
+                                       <span className={`text-[10px] font-black uppercase tracking-widest ${scan.status === 'success' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                           {scan.status === 'success' ? 'Uplink Verified' : 'Block Encountered'}
+                                       </span>
+                                       <span className="text-[9px] font-black text-slate-700 font-mono">
+                                           {scan.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}
+                                       </span>
                                    </div>
-                                </div>
+                                   {scan.status === 'success' ? (
+                                       <div className="space-y-1">
+                                           <p className="text-xs font-bold text-white uppercase truncate">{scan.data.registrant.user_details.full_name}</p>
+                                           <p className="text-[10px] font-bold text-slate-600 uppercase truncate tracking-tight">{scan.data.registrant.event_details.title}</p>
+                                       </div>
+                                   ) : (
+                                       <p className="text-[10px] font-bold text-rose-500/50 uppercase tracking-widest">{scan.data.message}</p>
+                                   )}
+                                </motion.div>
                             ))
                         )}
                     </div>
