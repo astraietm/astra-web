@@ -14,16 +14,25 @@ django.setup()
 from events.models import Event
 
 def add_event():
-    title = "HAWKINS LAB – Cyber Mystery Event"
+    new_title = "HAWKINS LAB"
+    old_title = "HAWKINS LAB – Cyber Mystery Event"
     
-    # Check if event already exists to avoid duplicates
-    if Event.objects.filter(title=title).exists():
-        print(f"Event '{title}' already exists. Skipping creation.")
+    # Check for old title and update if it exists
+    existing_old = Event.objects.filter(title=old_title).first()
+    if existing_old:
+        existing_old.title = new_title
+        existing_old.save()
+        print(f"Updated existing event title from '{old_title}' to '{new_title}'")
+        return
+
+    # Check if new title already exists
+    if Event.objects.filter(title=new_title).exists():
+        print(f"Event '{new_title}' already exists. Skipping creation.")
         return
 
     # Create the event
     event = Event.objects.create(
-        title=title,
+        title=new_title,
         description="Hawkins Lab is a Stranger Things–themed, story-driven cybersecurity mystery event where teams progress through multiple levels by solving clues, analyzing patterns, and completing computer-based challenges.",
         # Set a default date 14 days from now, can be changed in Admin
         event_date=timezone.now() + timezone.timedelta(days=14),

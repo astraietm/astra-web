@@ -16,7 +16,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered, registrationData }) => {
 
   const [eventData, setEventData] = useState({
     id: null,
-    title: 'Hawkins Lab',
+    title: 'HAWKINS LAB',
     requires_payment: true,
     payment_amount: 100,
     is_team_event: true,
