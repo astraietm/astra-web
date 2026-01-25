@@ -91,10 +91,9 @@ const Ticket = React.forwardRef(({ registration, event: rawEvent }, ref) => {
                         className="w-24 h-24"
                     />
                 </div>
-                <div className="text-center">
-                    <div className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-2">Scan to Verify</div>
-                    <img src="/logo.png" alt="" className="h-4 opacity-50 mx-auto" onError={(e) => e.target.style.display='none'} />
-                    <span className="text-[10px] font-bold text-white/20 uppercase tracking-[0.2em]">ASTRA 2026</span>
+                <div className="text-center opacity-60">
+                    <div className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1">Scan to Verify</div>
+                    <span className="text-[10px] font-black text-white uppercase tracking-[0.25em]">ASTRA // 2026</span>
                 </div>
             </div>
         </div>
@@ -109,35 +108,42 @@ const TicketDownload = ({ registration, event, className }) => {
     const downloadTicket = async () => {
         if (!ticketRef.current) return;
         
+        const passId = registration.token?.slice(0, 8).toUpperCase() || 'TEMP';
+
         try {
             setDownloading(true);
             
-            // Wait a tiny bit for any layout/images to stabilize
-            await new Promise(r => setTimeout(r, 100));
+            // Wait for DOM to be fully ready and styles to calculate
+            await new Promise(r => setTimeout(r, 200));
 
             const dataUrl = await toPng(ticketRef.current, {
                 cacheBust: true,
-                pixelRatio: 2,
-                // FIX: Filter out external stylesheets that trigger CORS/SecurityError
+                pixelRatio: 3, // Even higher quality for professional look
+                style: {
+                    transform: 'scale(1)', // Ensure no weird transforms are inherited
+                },
                 filter: (node) => {
+                    // Filter out external stylesheets that trigger CORS/SecurityError
                     if (node.tagName === 'LINK' && node.rel === 'stylesheet') {
-                        // Keep only internal or relative stylesheets
                         return node.href.includes(window.location.origin);
+                    }
+                    // Filter out non-existent or failing images that might crash the renderer
+                    if (node.tagName === 'IMG' && !node.complete && node.src) {
+                         return false;
                     }
                     return true;
                 },
-                // Skip the fancy font embedding for external sheets to avoid the SecurityError
-                skipFonts: true, 
+                skipFonts: true, // Google fonts are problematic with html-to-image
             });
             
             const link = document.createElement('a');
-            link.download = `ASTRA_Ticket_${event?.title?.replace(/\s+/g, '_')}.png`;
+            link.download = `ASTRA_Pass_${event?.title?.replace(/\s+/g, '_')}_${passId}.png`;
             link.href = dataUrl;
             link.click();
         } catch (err) {
             console.error('Failed to generate ticket:', err);
-            // Fallback for Safari/Mobile or restricted environments
-            alert('Ticket generation failed. Please try again or take a screenshot.');
+            // Alert user with a more helpful message
+            alert('Pass generation encountered an error. This usually happens on some mobile browsers or restricted networks. Please take a screenshot of your pass instead.');
         } finally {
             setDownloading(false);
         }
