@@ -111,17 +111,33 @@ const TicketDownload = ({ registration, event, className }) => {
         
         try {
             setDownloading(true);
+            
+            // Wait a tiny bit for any layout/images to stabilize
+            await new Promise(r => setTimeout(r, 100));
+
             const dataUrl = await toPng(ticketRef.current, {
                 cacheBust: true,
-                pixelRatio: 2, // High quality
+                pixelRatio: 2,
+                // FIX: Filter out external stylesheets that trigger CORS/SecurityError
+                filter: (node) => {
+                    if (node.tagName === 'LINK' && node.rel === 'stylesheet') {
+                        // Keep only internal or relative stylesheets
+                        return node.href.includes(window.location.origin);
+                    }
+                    return true;
+                },
+                // Skip the fancy font embedding for external sheets to avoid the SecurityError
+                skipFonts: true, 
             });
             
             const link = document.createElement('a');
-            link.download = `${event?.title?.replace(/\s+/g, '_')}_Ticket.png`;
+            link.download = `ASTRA_Ticket_${event?.title?.replace(/\s+/g, '_')}.png`;
             link.href = dataUrl;
             link.click();
         } catch (err) {
             console.error('Failed to generate ticket:', err);
+            // Fallback for Safari/Mobile or restricted environments
+            alert('Ticket generation failed. Please try again or take a screenshot.');
         } finally {
             setDownloading(false);
         }

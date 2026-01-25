@@ -1,98 +1,97 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, ArrowUpRight, Clock, ShieldCheck, Terminal } from 'lucide-react';
+import { Calendar, ArrowUpRight, Clock, ShieldCheck, Terminal, MapPin } from 'lucide-react';
 import { getOptimizedImageUrl } from '../../utils/helpers';
 
 const EventModule = ({ event, index }) => {
     const navigate = useNavigate();
     const isCompleted = new Date(event.date) < new Date();
-    const isHawkins = event.image?.includes('hawkins') || event.title?.includes('Hawkins');
     
-    // Fix: Use a verified Deep Red Circuitry image to match the color scheme
-    const rawImage = isHawkins 
-        ? 'https://images.unsplash.com/photo-1555617766-c94804975da3?auto=format&fit=crop&q=80&w=800'
-        : (event.image || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800');
-
+    // Fallback images based on theme
+    const rawImage = event.image || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800';
     const displayImage = getOptimizedImageUrl(rawImage, 'grid');
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ delay: index * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
             onClick={() => navigate(`/events/${event.id}`)}
-            className="group relative w-full h-[400px] sm:h-[480px] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-black border border-white/10 cursor-pointer shadow-2xl shadow-black/50 active:scale-[0.98] transition-all duration-300"
+            className="group relative w-full h-[450px] sm:h-[520px] rounded-[2.5rem] overflow-hidden bg-[#050505] border border-white/5 cursor-pointer flex flex-col transition-all duration-500 hover:border-blue-500/30 hover:shadow-[0_20px_50px_-15px_rgba(59,130,246,0.15)]"
         >
-            {/* Background Image with Cinematic Zoom */}
-            <div className="absolute inset-0 w-full h-full overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-cyan-950/90 via-black/60 to-transparent z-10 opacity-90" />
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay z-20 pointer-events-none" />
-                
+            {/* Visual Container */}
+            <div className="relative h-[60%] w-full overflow-hidden">
+                {/* Image with zoom effect */}
                 <img 
                     src={displayImage} 
                     alt={event.title}
-                    className="w-full h-full object-cover transition-transform duration-1000 ease-out will-change-transform group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-1000 ease-[0.19,1,0.22,1] group-hover:scale-110"
                 />
-            </div>
-
-            {/* Top Floating Badge */}
-            <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
-                <div className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full backdrop-blur-xl border flex items-center gap-2 ${
-                    isCompleted 
-                    ? 'bg-zinc-900/50 border-zinc-800 text-zinc-400' 
-                    : 'bg-white/10 border-white/20 text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]'
-                }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-zinc-500' : 'bg-cyan-500 animate-pulse'}`} />
-                    <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase">
-                        {isCompleted ? 'Archived' : 'Live Event'}
-                    </span>
-                </div>
-            </div>
-
-            {/* Content Container - Bottom Aligned */}
-            <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 z-20 flex flex-col justify-end h-full">
                 
-                {/* Decorative Line (animates width) */}
-                <div className="w-12 h-1 bg-cyan-500 rounded-full mb-4 sm:mb-6 group-hover:w-20 transition-all duration-500" />
-
-                {/* Metadata */}
-                <div className="space-y-2 sm:space-y-4 transform lg:translate-y-4 lg:group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="flex items-center gap-4 text-xs font-mono tracking-wider text-zinc-400">
-                        <div className="flex items-center gap-2">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>{new Date(event.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
-                        </div>
-                        <div className="w-1 h-1 rounded-full bg-zinc-600" />
-                        <div className="flex items-center gap-2">
-                             {event.id === 995 || event.id === 996 ? <Terminal className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
-                            <span>{event.category || 'Event'}</span>
-                        </div>
+                {/* Sophisticated Gradient Mask */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/20 to-transparent" />
+                
+                {/* Floating Meta Tag */}
+                <div className="absolute top-6 left-6 z-20">
+                    <div className="px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
+                        <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' : 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse'}`} />
+                        <span className="text-[10px] font-black tracking-widest uppercase text-white/80">
+                            {isCompleted ? 'Archived' : 'Active Access'}
+                        </span>
                     </div>
+                </div>
 
-                    <h3 className="text-3xl sm:text-4xl font-bold text-white leading-[0.9] tracking-tight group-hover:text-cyan-500 transition-colors duration-300">
-                        {event.title}
-                    </h3>
-                    
-                    <div className="overflow-hidden">
-                        <p className="text-zinc-400 text-sm leading-relaxed max-w-[95%] sm:max-w-[90%] lg:opacity-0 lg:group-hover:opacity-100 lg:translate-y-4 lg:group-hover:translate-y-0 transition-all duration-500 delay-100">
-                            {event.description || "Authorized personnel only. Access classified event data."}
-                        </p>
-                    </div>
-
-                    {/* Action Row */}
-                    <div className="pt-4 sm:pt-6 flex items-center justify-between border-t border-white/5 mt-2 sm:mt-4 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-500 delay-200">
-                        <div className="flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest">
-                            <ShieldCheck className="w-4 h-4 text-cyan-500" />
-                            <span>Secure Entry</span>
-                        </div>
-                        <div className="p-2 sm:p-3 rounded-full bg-white text-black group-hover:bg-cyan-500 group-hover:text-white transition-colors duration-300">
-                            <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                        </div>
+                {/* Date Badge Overlay */}
+                <div className="absolute bottom-6 right-6 z-20">
+                    <div className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white text-black shadow-2xl transition-transform duration-500 group-hover:-translate-y-2">
+                        <span className="text-xs font-black leading-none uppercase">{new Date(event.date).toLocaleDateString(undefined, { month: 'short' })}</span>
+                        <span className="text-xl font-bold leading-none mt-1">{new Date(event.date).getDate()}</span>
                     </div>
                 </div>
             </div>
+
+            {/* Content Container */}
+            <div className="relative flex-1 p-8 pt-2 flex flex-col">
+                {/* Category & Status */}
+                <div className="flex items-center gap-3 mb-4">
+                    <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-widest text-blue-400">
+                        {event.category || 'Classified'}
+                    </span>
+                    <div className="flex items-center gap-1.5 text-[10px] text-gray-500 font-bold uppercase tracking-wider">
+                         <Clock className="w-3 h-3 text-blue-500" />
+                         {event.id === 995 || event.id === 996 ? 'System Lab' : (event.time || '10:00 AM')}
+                    </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4 leading-tight tracking-tight group-hover:text-blue-400 transition-colors duration-300">
+                    {event.title}
+                </h3>
+                
+                {/* Description - Clamped */}
+                <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 mb-auto opacity-80 group-hover:opacity-100 transition-opacity">
+                    {event.description || "System authentication required. Encrypted event parameters detected."}
+                </p>
+
+                {/* Bottom Row */}
+                <div className="pt-6 flex items-center justify-between border-t border-white/5">
+                    <div className="flex items-center gap-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                        <div className="flex items-center gap-2">
+                            <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                            <span>{event.venue || 'Campus HQ'}</span>
+                        </div>
+                    </div>
+                    
+                    <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500">
+                        <ArrowUpRight className="w-5 h-5" />
+                    </div>
+                </div>
+            </div>
+
+            {/* Subtle bottom accent line */}
+            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-500/0 to-transparent group-hover:via-blue-500/50 transition-all duration-1000" />
         </motion.div>
     );
 };
