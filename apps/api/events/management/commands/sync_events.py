@@ -14,21 +14,21 @@ class Command(BaseCommand):
             {
                 "id": 1,
                 "title": "HAWKINS LAB",
-                "description": "A Stranger Things–themed cyber mystery event where teams solve clues, analyze patterns, and complete computer-based tasks to progress through an immersive storyline.",
-                "venue": "Computer Lab 1",
+                "description": "Lost Login: A Stranger Things–themed cyber mystery event where teams solve clues, analyze patterns, and complete tasks to progress through an immersive storyline.",
+                "venue": "BCA lab",
                 "category": "Cyber Mystery",
-                "requires_payment": True,
-                "payment_amount": 100.00,
-                "registration_limit": 20,
+                "requires_payment": False,
+                "payment_amount": 0.00,
+                "registration_limit": 24,
                 "is_team_event": True,
-                "event_date": timezone.make_aware(datetime(2026, 2, 1, 10, 0)),
-                "prize": "₹1000 + Merit Certificates",
+                "event_date": timezone.make_aware(datetime(2026, 2, 13, 10, 0)),
+                "prize": "Merit Certificates",
                 "time": "10:00 AM",
                 "duration": "2 Hours",
                 "content_blocks": [
                     {
                         "title": "Mission Briefing",
-                        "content": "ENTER THE UPSIDE DOWN AND STOP VECNA! This event is task-based and story-driven, inspired by cybersecurity concepts such as data accuracy, signal analysis, social engineering, and authentication, presented in a safe, fun, and interactive simulation.",
+                        "content": "LOST LOGIN - ENTER THE UPSIDE DOWN! This event is task-based and story-driven, inspired by cybersecurity concepts such as data accuracy, signal analysis, social engineering, and authentication, presented in a safe, fun, and interactive simulation.",
                     },
                     {
                         "title": "Levels Breakdown",
@@ -43,10 +43,10 @@ class Command(BaseCommand):
                     {
                         "title": "Operational Rules",
                         "list": [
-                            "Team Size: 2-4 members per squad.",
+                            "Team Size: 4 members per squad.",
+                            "Capacity: Restricted to 6 Teams only.",
                             "Sequential Protocol: 5 Levels - 5 PCs. Levels must be completed in order.",
                             "PC Order: Teams must strictly follow the assigned hardware sequence.",
-                            "Integrity: Skipping levels or sharing clues is strictly prohibited.",
                             "System Use: Only provided systems/terminals may be used for the mission.",
                             "No team changes are permitted once the countdown begins."
                         ]
@@ -57,11 +57,10 @@ class Command(BaseCommand):
                     }
                 ],
                 "coordinators": [
-                    {"name": "Dustin Henderson", "role": "Field Tech"},
-                    {"name": "Mike Wheeler", "role": "Operations"}
+                    {"name": "Anamika", "role": "Lead Coordinator"}
                 ],
                 "image": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2070",
-                "is_registration_open": False
+                "is_registration_open": True
             },
             {
                 "id": 995,
