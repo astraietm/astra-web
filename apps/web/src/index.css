@@ -251,3 +251,13 @@
     height: 0;
   }
 }
+
+/* Custom Event Animations */
+@keyframes scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(1000%); opacity: 0; }
+}
+
+.animate-scan {
+  animation: scan 4s linear infinite;
+}
