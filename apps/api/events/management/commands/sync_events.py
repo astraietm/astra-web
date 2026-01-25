@@ -76,6 +76,14 @@ class Command(BaseCommand):
         ]
 
         for event_data in events_to_sync:
+            # Map time/duration for sync
+            if event_data['id'] == 995:
+                event_data['time'] = "11:00 AM"
+                event_data['duration'] = "1.5 Hours"
+            elif event_data['id'] == 996:
+                event_data['time'] = "02:00 PM"
+                event_data['duration'] = "1 Hour"
+
             event, created = Event.objects.update_or_create(
                 id=event_data['id'],
                 defaults={
@@ -93,7 +101,9 @@ class Command(BaseCommand):
                     "registration_end": event_data['event_date'],
                     "prize": event_data.get('prize', ''),
                     "content_blocks": event_data.get('content_blocks', []),
-                    "coordinators": event_data.get('coordinators', [])
+                    "coordinators": event_data.get('coordinators', []),
+                    "time": event_data.get('time', ''),
+                    "duration": event_data.get('duration', '')
                 }
             )
             if created:

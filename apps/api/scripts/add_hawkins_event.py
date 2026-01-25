@@ -72,6 +72,8 @@ def add_event():
         requires_payment=True,
         payment_amount=100.00,
         prize="₹1000 + Merit Certificates",
+        time="10:00 AM",
+        duration="2 Hours",
         content_blocks=content_blocks,
         coordinators=coordinators
     )

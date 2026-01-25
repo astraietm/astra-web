@@ -10,6 +10,8 @@ class Event(models.Model):
     venue = models.CharField(max_length=255)
     image = models.URLField(blank=True)
     category = models.CharField(max_length=50)
+    time = models.CharField(max_length=100, blank=True, help_text="e.g. 11:00 AM")
+    duration = models.CharField(max_length=100, blank=True, help_text="e.g. 2 Hours")
     
     # Registration Logic
     registration_start = models.DateTimeField(default=timezone.now)
