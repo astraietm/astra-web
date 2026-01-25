@@ -13,6 +13,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (!user) {
+            setRegistrations([]);
             navigate('/');
             return; // Don't run fetch if redirecting
         }

@@ -79,9 +79,21 @@ const EventDetail = () => {
                 setRegistrationData(registration);
             }
         })
-        .catch(err => console.error("Failed to check registration", err));
+        .catch(err => {
+            console.error("Failed to check registration", err);
+            setIsRegistered(false);
+            setRegistrationData(null);
+        });
     }
   }, [token, id]);
+
+  // Security: Immediate state wipe on logout
+  useEffect(() => {
+    if (!token || !user) {
+        setIsRegistered(false);
+        setRegistrationData(null);
+    }
+  }, [token, user]);
 
   useEffect(() => {
     if (!event) return;
