@@ -178,7 +178,7 @@ class CreatePaymentOrderView(APIView):
             event=event,
             team_name=team_name,
             team_members=team_members,
-            status='REGISTERED'  # Will be confirmed after payment
+            status='PENDING'  # Will be confirmed after payment
         )
         
         # Create Razorpay order

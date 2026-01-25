@@ -125,10 +125,24 @@ const useRazorpayPayment = () => {
             };
 
             const razorpay = new window.Razorpay(options);
+            
+            razorpay.on('payment.failed', function (response) {
+                console.error('Payment failed:', response.error);
+                onFailure(response.error.description || 'Payment failed. Please try again.');
+            });
+
             razorpay.open();
 
         } catch (error) {
-            onFailure('Payment initialization failed: ' + error.message);
+            console.error('Payment Error:', error);
+            const isBrave = (navigator.brave && await navigator.brave.isBrave()) || false;
+            let errorMsg = 'Payment initialization failed: ' + error.message;
+            if (isBrave) {
+                errorMsg = 'Payment blocked by browser. Please disable Brave Shields for this site to complete registration.';
+            } else if (error.message.includes('fetch')) {
+                errorMsg = 'Network error during payment setup. Check your internet or disable Adblockers.';
+            }
+            onFailure(errorMsg);
         }
     };
 

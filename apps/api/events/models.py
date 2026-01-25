@@ -40,6 +40,7 @@ class Event(models.Model):
 
 class Registration(models.Model):
     STATUS_CHOICES = (
+        ('PENDING', 'Pending'),
         ('REGISTERED', 'Registered'),
         ('ATTENDED', 'Attended'),
         ('CANCELLED', 'Cancelled'),
@@ -56,7 +57,7 @@ class Registration(models.Model):
     team_members = models.TextField(blank=True, help_text="Comma separated names or JSON")
 
     # Status fields
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='REGISTERED')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     is_used = models.BooleanField(default=False) # Deprecated but kept for backward compat
 
     def save(self, *args, **kwargs):

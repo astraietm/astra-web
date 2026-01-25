@@ -121,8 +121,12 @@ const EventDetail = () => {
   }, [event]);
 
   const handleRegister = () => {
+    if (registering) return;
+    
     requireLogin({
         run: async (freshToken) => {
+            if (isRegistered || registering) return;
+            
             if (isRegistered) {
                 toast.info("You are already registered.");
                 return;
