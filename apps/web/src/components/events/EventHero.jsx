@@ -66,8 +66,8 @@ const EventHero = () => {
                     <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
                         Zero
                     </span>
-                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-700 ml-4 md:ml-6 italic lowercase font-light opacity-90">
-                        day
+                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-700 ml-4 md:ml-6 uppercase font-bold opacity-90">
+                        Day
                     </span>
                 </motion.h1>
 

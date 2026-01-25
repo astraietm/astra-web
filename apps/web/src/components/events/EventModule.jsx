@@ -7,10 +7,11 @@ import { getOptimizedImageUrl } from '../../utils/helpers';
 const EventModule = ({ event, index }) => {
     const navigate = useNavigate();
     const isCompleted = new Date(event.date) < new Date();
-    const isHawkins = false; // Standardize to blue theme
+    const isHawkins = event.title?.toLowerCase().includes('hawkins');
+    const premiumImage = 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800';
     
-    // Fallback images based on theme
-    const rawImage = event.image || 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800';
+    // Force premium image for Hawkins to fix the "buggy image" issue
+    const rawImage = isHawkins ? premiumImage : (event.image || premiumImage);
 
     const displayImage = getOptimizedImageUrl(rawImage, 'grid');
 

@@ -18,7 +18,7 @@ def add_event():
     old_title = "HAWKINS LAB – Cyber Mystery Event"
     premium_image = "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2070"
     
-    # 1. Clean up potential conflicts
+    # 1. Force Clean up of any previous Hawkins records to fix image/title bugs
     Event.objects.filter(title__icontains="Hawkins").delete()
 
     # 2. Modern Content Definition
