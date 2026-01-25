@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Users, Plus, Trash2, CreditCard, Loader2, CheckCircle, AlertCircle, Shield } from 'lucide-react';
 import RazorpayPayment from '../payment/RazorpayPayment';
+import TicketDownload from './TicketDownload';
 
 const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) => {
     const [teamName, setTeamName] = useState('');
@@ -185,12 +186,11 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) =>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
-                                    <button
-                                        onClick={downloadQR}
+                                    <TicketDownload 
+                                        registration={registrationData}
+                                        event={event}
                                         className="flex items-center justify-center gap-2 py-4 bg-white text-black hover:bg-red-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-xl"
-                                    >
-                                        <CreditCard className="w-4 h-4" /> Download Pass
-                                    </button>
+                                    />
                                     <button
                                         onClick={resetAndClose}
                                         className="py-4 bg-white/5 border border-white/10 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 text-xs font-black uppercase tracking-widest transition-all"
