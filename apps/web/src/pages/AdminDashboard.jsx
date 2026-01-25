@@ -17,7 +17,8 @@ import {
     TrendingUp,
     CreditCard,
     MoreHorizontal,
-    Settings
+    Settings,
+    Loader2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
