@@ -40,5 +40,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def get_qr_code(self, obj):
         if obj.token:
-            return generate_qr_code(obj.token)
+            # Determine color theme: Hawkins (Red) vs Standard (Blue)
+            title_lower = obj.event.title.lower()
+            is_hawkins = "hawkins" in title_lower or obj.event.id == 1
+            color = "#ef4444" if is_hawkins else "#3b82f6"
+            return generate_qr_code(obj.token, color=color)
         return None

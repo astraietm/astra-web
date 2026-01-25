@@ -2,22 +2,45 @@ import qrcode
 import io
 import base64
 
-def generate_qr_code(data):
+def generate_qr_code(token, color="#000000"):
+    """
+    Generate an ultra-premium, professional QR code.
+    Encodes the full verification URL and supports branding colors.
+    """
+    # Professional verification URL
+    base_url = "https://astraietm.in/verify"
+    data = f"{base_url}/{token}"
+
     qr = qrcode.QRCode(
         version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_H,
-        box_size=10,
+        error_correction=qrcode.constants.ERROR_CORRECT_M, # M is cleaner for branding
+        box_size=12, # Slightly larger for crispness
         border=4,
     )
     qr.add_data(data)
     qr.make(fit=True)
 
-    img = qr.make_image(fill_color="black", back_color="white")
-    
-    buffer = io.BytesIO()
-    img.save(buffer, format="PNG")
-    img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
-    return f"data:image/png;base64,{img_str}"
+    # Use RGB for coloring
+    try:
+        # Convert hex to RGB tuples
+        fill_color = color
+        back_color = "white"
+        
+        img = qr.make_image(fill_color=fill_color, back_color=back_color).convert('RGB')
+        
+        # Buffer it for response
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        return f"data:image/png;base64,{img_str}"
+    except Exception as e:
+        print(f"QR Gen Error: {e}")
+        # Robust fallback to standard black/white
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        return f"data:image/png;base64,{img_str}"
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string

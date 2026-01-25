@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Users, Plus, Trash2, CreditCard, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, Users, Plus, Trash2, CreditCard, Loader2, CheckCircle, AlertCircle, Shield } from 'lucide-react';
 import RazorpayPayment from '../payment/RazorpayPayment';
 
 const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) => {
@@ -147,42 +147,55 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) =>
                         {/* Success State */}
                         {status === 'success' && registrationData ? (
                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="text-center py-8"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="text-center py-4"
                             >
-                                <div className="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 relative">
-                                    <div className="absolute inset-0 border border-green-500/30 rounded-full animate-ping" />
-                                    <CheckCircle className="w-12 h-12 text-green-500" />
-                                </div>
-                                <h3 className="text-2xl font-bold text-white mb-2">
-                                    {initialData ? 'Access Granted' : 'Payment Successful!'}
-                                </h3>
-                                <p className="text-zinc-400 mb-8">
-                                    {initialData ? 'Authorized Personnel Ticket' : 'Your team has been registered for Hawkins Lab'}
-                                </p>
-
-                                {/* QR Code */}
-                                <div className="bg-white p-6 rounded-2xl border-4 border-green-500/20 shadow-inner mb-8 mx-auto inline-block">
-                                    <img
-                                        src={registrationData.qr_code}
-                                        alt="Team QR Code"
-                                        className="w-48 h-48 object-contain"
-                                    />
+                                <div className="space-y-2 mb-10">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 mb-4">
+                                        <Shield className="w-3 h-3 text-red-500" />
+                                        <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Authentication Verified</span>
+                                    </div>
+                                    <h3 className="text-4xl font-black text-white tracking-tighter uppercase italic leading-none">
+                                        Access Granted
+                                    </h3>
+                                    <p className="text-zinc-500 text-sm font-medium">Authorized Personnel Registry ID: AX-{registrationData.token?.slice(0, 8).toUpperCase()}</p>
                                 </div>
 
-                                <div className="space-y-3">
+                                {/* QR Code Display - Premium Styled */}
+                                <div className="relative group mb-10 inline-block">
+                                    {/* Scan Glow */}
+                                    <div className="absolute inset-0 bg-red-600/20 blur-[60px] animate-pulse" />
+                                    
+                                    <div className="relative p-2 bg-white rounded-[2.5rem] shadow-2xl border-4 border-red-950/20 backdrop-blur-3xl overflow-hidden hover:scale-105 transition-transform duration-500">
+                                        {/* Scanner Line Animation */}
+                                        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent animate-scan z-20" />
+                                        
+                                        <img
+                                            src={registrationData.qr_code}
+                                            alt="Team QR Code"
+                                            className="w-48 h-48 relative z-10"
+                                        />
+                                    </div>
+
+                                    {/* ID Snippet */}
+                                    <div className="mt-6 text-[10px] font-mono text-zinc-600 uppercase font-bold tracking-[0.3em]">
+                                        Scan to initiate protocol
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
                                     <button
                                         onClick={downloadQR}
-                                        className="w-full flex items-center justify-center gap-2 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition-all"
+                                        className="flex items-center justify-center gap-2 py-4 bg-white text-black hover:bg-red-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-xl"
                                     >
-                                        <CreditCard className="w-5 h-5" /> Download Team Ticket
+                                        <CreditCard className="w-4 h-4" /> Download Pass
                                     </button>
                                     <button
                                         onClick={resetAndClose}
-                                        className="w-full py-4 bg-white/5 border border-white/10 rounded-xl text-white hover:bg-white/10 transition-all"
+                                        className="py-4 bg-white/5 border border-white/10 rounded-2xl text-zinc-400 hover:text-white hover:bg-white/10 text-xs font-black uppercase tracking-widest transition-all"
                                     >
-                                        Close
+                                        Return to Intel
                                     </button>
                                 </div>
                             </motion.div>
