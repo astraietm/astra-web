@@ -125,22 +125,24 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                                                 : 'text-slate-500 hover:text-slate-200 hover:bg-white/[0.03] border border-transparent'}
                                         `}
                                     >
-                                        <div className={`relative z-10 transition-all duration-300 ${isCollapsed ? 'mx-auto' : ''}`}>
-                                            <item.icon size={isCollapsed ? 24 : 20} strokeWidth={isActive ? 2.5 : 2} className="group-hover:scale-110 transition-transform duration-300" />
-                                        </div>
+                                        {({ isActive }) => (
+                                            <>
+                                                <div className={`relative z-10 transition-all duration-300 ${isCollapsed ? 'mx-auto' : ''}`}>
+                                                    <item.icon size={isCollapsed ? 24 : 20} strokeWidth={isActive ? 2.5 : 2} className="group-hover:scale-110 transition-transform duration-300" />
+                                                </div>
 
-                                        {!isCollapsed && (
-                                            <span className="font-bold text-[13.5px] tracking-tight relative z-10">
-                                                {item.label}
-                                            </span>
+                                                {!isCollapsed && (
+                                                    <span className="font-bold text-[13.5px] tracking-tight relative z-10">
+                                                        {item.label}
+                                                    </span>
+                                                )}
+
+                                                {/* Active State Aesthetic Glow */}
+                                                {isActive && (
+                                                    <div className="absolute left-[-4px] top-1/4 bottom-1/4 w-[3px] bg-blue-500 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.8)] z-20" />
+                                                )}
+                                            </>
                                         )}
-
-                                        {/* Active State Aesthetic */}
-                                        <NavLink to={item.to} end={item.end} className={({ isActive }) => 
-                                            isActive 
-                                            ? "absolute left-[-4px] top-1/4 bottom-1/4 w-[3px] bg-blue-500 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.8)]" 
-                                            : "hidden"
-                                        } />
                                     </NavLink>
                                 ))}
                             </div>
