@@ -7,7 +7,61 @@ class Command(BaseCommand):
     help = 'Sync events from frontend data to backend database'
 
     def handle(self, *args, **options):
+        # 1. Cleanup legacy duplicates (anything with Hawkins in title that isn't ID 1)
+        Event.objects.filter(title__icontains="Hawkins").exclude(id=1).delete()
+
         events_to_sync = [
+            {
+                "id": 1,
+                "title": "HAWKINS LAB",
+                "description": "A Stranger Things–themed cyber mystery event where teams solve clues, analyze patterns, and complete computer-based tasks to progress through an immersive storyline.",
+                "venue": "Computer Lab 1",
+                "category": "Cyber Mystery",
+                "requires_payment": True,
+                "payment_amount": 100.00,
+                "registration_limit": 20,
+                "is_team_event": True,
+                "event_date": timezone.make_aware(datetime(2026, 2, 1, 10, 0)),
+                "prize": "₹1000 + Merit Certificates",
+                "time": "10:00 AM",
+                "duration": "2 Hours",
+                "content_blocks": [
+                    {
+                        "title": "Mission Briefing",
+                        "content": "ENTER THE UPSIDE DOWN AND STOP VECNA! This event is task-based and story-driven, inspired by cybersecurity concepts such as data accuracy, signal analysis, social engineering, and authentication, presented in a safe, fun, and interactive simulation.",
+                    },
+                    {
+                        "title": "Levels Breakdown",
+                        "items": [
+                            {"title": "Level 1 – Gaming", "content": "Initial contact. Test your focus and reflexes in the digital void."},
+                            {"title": "Level 2 – Speed Typing", "content": "Critical data entry. Extract credentials under high-pressure constraints."},
+                            {"title": "Level 3 – Analysis & Decoding", "content": "Cognitive override. Analyze signals and solve cryptic patterns to unlock the breach."},
+                            {"title": "Level 4 – Digital Stalking", "content": "Network tracing. Track an anomaly's footprint across the Hawkins infrastructure."},
+                            {"title": "Level 5 – Brute Force", "content": "The final approach. Execute a system override to seal the gate and stop Vecna."}
+                        ]
+                    },
+                    {
+                        "title": "Operational Rules",
+                        "list": [
+                            "Team Size: 2-4 members per squad.",
+                            "Sequential Protocol: 5 Levels - 5 PCs. Levels must be completed in order.",
+                            "PC Order: Teams must strictly follow the assigned hardware sequence.",
+                            "Integrity: Skipping levels or sharing clues is strictly prohibited.",
+                            "System Use: Only provided systems/terminals may be used for the mission.",
+                            "No team changes are permitted once the countdown begins."
+                        ]
+                    },
+                    {
+                        "title": "Mission Outcome",
+                        "content": "Fastest team to successfully navigate all 5 levels and execute the final override wins. No advanced technical knowledge is required—all students are authorized to participate."
+                    }
+                ],
+                "coordinators": [
+                    {"name": "Dustin Henderson", "role": "Field Tech"},
+                    {"name": "Mike Wheeler", "role": "Operations"}
+                ],
+                "image": "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=2070"
+            },
             {
                 "id": 995,
                 "title": "Shadow Login",

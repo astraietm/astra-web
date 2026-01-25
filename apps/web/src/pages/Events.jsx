@@ -17,7 +17,7 @@ const Events = () => {
         const mappedEvents = response.data.map(event => ({
           ...event,
           date: event.event_date,
-          image: event.id === 1 ? '/hawkins-cover.png' : (event.image || null)
+          image: event.image || null
         }));
         
         mappedEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
