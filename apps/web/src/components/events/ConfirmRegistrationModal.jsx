@@ -1,19 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import { X, Loader2, User } from 'lucide-react';
+import { X, Loader2, User, Mail, Phone } from 'lucide-react';
+import axios from 'axios';
 
-const ConfirmRegistrationModal = ({ isOpen, onClose, onConfirm, eventName, userName, isLoading }) => {
-    const [editableName, setEditableName] = useState(userName || '');
+const ConfirmRegistrationModal = ({ isOpen, onClose, onConfirm, eventName, token, isLoading }) => {
+    const [formData, setFormData] = useState({
+        full_name: '',
+        email: '',
+        phone_number: ''
+    });
+    const [fetchingProfile, setFetchingProfile] = useState(false);
 
-    // Update when userName prop changes
+    // Fetch user profile when modal opens
     useEffect(() => {
-        setEditableName(userName || '');
-    }, [userName]);
+        if (isOpen && token) {
+            fetchUserProfile();
+        }
+    }, [isOpen, token]);
+
+    const fetchUserProfile = async () => {
+        try {
+            setFetchingProfile(true);
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_URL}/auth/me/`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            setFormData({
+                full_name: response.data.full_name || '',
+                email: response.data.email || '',
+                phone_number: response.data.phone_number || ''
+            });
+        } catch (error) {
+            console.error('Failed to fetch profile:', error);
+        } finally {
+            setFetchingProfile(false);
+        }
+    };
 
     if (!isOpen) return null;
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onConfirm(editableName);
+        onConfirm(formData);
+    };
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
     };
 
     return (
@@ -40,62 +75,106 @@ const ConfirmRegistrationModal = ({ isOpen, onClose, onConfirm, eventName, userN
 
                 {/* Content */}
                 <div className="p-6">
-                    <form onSubmit={handleSubmit} className="space-y-5">
-
-                        {/* Event Name Display */}
-                        <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                            <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">
-                                Event
-                            </p>
-                            <p className="text-white font-bold">
-                                {eventName}
-                            </p>
+                    {fetchingProfile ? (
+                        <div className="flex items-center justify-center py-8">
+                            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                            <span className="ml-2 text-gray-400">Loading your details...</span>
                         </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-5">
 
-                        {/* Editable Name Field */}
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                                <User className="w-3.5 h-3.5" />
-                                Your Name
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                value={editableName}
-                                onChange={(e) => setEditableName(e.target.value)}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
-                                placeholder="Enter your full name"
-                            />
+                            {/* Event Name Display */}
+                            <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                                <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">
+                                    Event
+                                </p>
+                                <p className="text-white font-bold">
+                                    {eventName}
+                                </p>
+                            </div>
+
+                            {/* Editable Name Field */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                    <User className="w-3.5 h-3.5" />
+                                    Full Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="full_name"
+                                    required
+                                    value={formData.full_name}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+                                    placeholder="Enter your full name"
+                                />
+                            </div>
+
+                            {/* Email Field (Read-only) */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                    <Mail className="w-3.5 h-3.5" />
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    readOnly
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-gray-400 cursor-not-allowed"
+                                />
+                                <p className="text-xs text-gray-500 ml-1">
+                                    Email from your Google account
+                                </p>
+                            </div>
+
+                            {/* Phone Number Field */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                                    <Phone className="w-3.5 h-3.5" />
+                                    Phone Number
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="phone_number"
+                                    required
+                                    value={formData.phone_number}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
+                                    placeholder="e.g. +91 98765 43210"
+                                />
+                            </div>
+
                             <p className="text-xs text-gray-500 ml-1">
-                                This name will appear on your ticket
+                                These details will appear on your ticket
                             </p>
-                        </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex gap-3 pt-2">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="flex-1 py-3 bg-white/5 border border-white/10 text-white font-semibold rounded-xl hover:bg-white/10 transition-all"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={isLoading || !editableName.trim()}
-                                className="flex-[2] py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                            >
-                                {isLoading ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                        Registering...
-                                    </>
-                                ) : (
-                                    'Confirm Registration'
-                                )}
-                            </button>
-                        </div>
-                    </form>
+                            {/* Action Buttons */}
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="flex-1 py-3 bg-white/5 border border-white/10 text-white font-semibold rounded-xl hover:bg-white/10 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isLoading || !formData.full_name.trim() || !formData.phone_number.trim()}
+                                    className="flex-[2] py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            Registering...
+                                        </>
+                                    ) : (
+                                        'Confirm Registration'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    )}
                 </div>
             </div>
         </div>

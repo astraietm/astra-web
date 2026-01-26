@@ -174,7 +174,7 @@ const EventDetail = () => {
     };
 
     // Handle confirmed registration with edited name
-    const handleConfirmedRegistration = async (editedName) => {
+    const handleConfirmedRegistration = async (formData) => {
         try {
             setRegistering(true);
             const activeToken = token;
@@ -183,7 +183,8 @@ const EventDetail = () => {
                 `${import.meta.env.VITE_API_URL}/register/`,
                 {
                     event: id,
-                    full_name: editedName  // Send the edited name
+                    full_name: formData.full_name,
+                    phone_number: formData.phone_number
                 },
                 { headers: { Authorization: `Bearer ${activeToken}` } }
             );
@@ -516,7 +517,7 @@ const EventDetail = () => {
                 onClose={() => setIsConfirmModalOpen(false)}
                 onConfirm={handleConfirmedRegistration}
                 eventName={event?.title}
-                userName={user?.name || user?.full_name || user?.email?.split('@')[0] || ''}
+                token={token}
                 isLoading={registering}
             />
         </div>

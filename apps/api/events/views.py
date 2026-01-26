@@ -25,10 +25,20 @@ class RegistrationCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated] # Protected
 
     def perform_create(self, serializer):
-        # Update user's full_name if provided in request
+        # Update user's full_name and phone_number if provided in request
         full_name = self.request.data.get('full_name')
+        phone_number = self.request.data.get('phone_number')
+        
+        updated = False
         if full_name and full_name.strip():
             self.request.user.full_name = full_name.strip()
+            updated = True
+            
+        if phone_number and phone_number.strip():
+            self.request.user.phone_number = phone_number.strip()
+            updated = True
+            
+        if updated:
             self.request.user.save()
         
         # Automatically set user from JWT
