@@ -25,9 +25,10 @@ class RegistrationCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated] # Protected
 
     def perform_create(self, serializer):
-        # Update user's full_name and phone_number if provided in request
+        # Update user's profile if provided in request
         full_name = self.request.data.get('full_name')
         phone_number = self.request.data.get('phone_number')
+        college = self.request.data.get('college')
         
         updated = False
         if full_name and full_name.strip():
@@ -36,6 +37,10 @@ class RegistrationCreateView(generics.CreateAPIView):
             
         if phone_number and phone_number.strip():
             self.request.user.phone_number = phone_number.strip()
+            updated = True
+            
+        if college and college.strip():
+            self.request.user.college = college.strip()
             updated = True
             
         if updated:

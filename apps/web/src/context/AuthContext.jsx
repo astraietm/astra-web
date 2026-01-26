@@ -17,30 +17,47 @@ export const AuthProvider = ({ children }) => {
 
     // Init: Check for existing token
     useEffect(() => {
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                // Check expiry
-                if (decoded.exp * 1000 < Date.now()) {
+        const initAuth = async () => {
+            if (token) {
+                try {
+                    const decoded = jwtDecode(token);
+                    // Check expiry
+                    if (decoded.exp * 1000 < Date.now()) {
+                        logout();
+                    } else {
+                        // First, set basic info from token to avoid flicker
+                        setUser({
+                            email: decoded.email,
+                            name: decoded.full_name,
+                            avatar: decoded.avatar,
+                            role: decoded.role,
+                            is_staff: decoded.is_staff || false,
+                            phone_number: decoded.phone_number || '',
+                            college: decoded.college || '',
+                            usn: decoded.usn || ''
+                        });
+
+                        // Then fetch fresh profile from API to get latest phone/college
+                        try {
+                            const res = await axios.get(`${import.meta.env.VITE_API_URL}/auth/me/`, {
+                                headers: { Authorization: `Bearer ${token}` }
+                            });
+                            setUser({
+                                ...res.data,
+                                name: res.data.full_name // Normalize name
+                            });
+                        } catch (err) {
+                            console.error("Failed to fetch fresh profile:", err);
+                            if (err.response?.status === 401) logout();
+                        }
+                    }
+                } catch (e) {
                     logout();
-                } else {
-                    // Populate user from token claims
-                    setUser({
-                        email: decoded.email,
-                        name: decoded.full_name,
-                        avatar: decoded.avatar,
-                        role: decoded.role,
-                        is_staff: decoded.is_staff || false,
-                        phone_number: decoded.phone_number || '',
-                        college: decoded.college || '',
-                        usn: decoded.usn || ''
-                    });
                 }
-            } catch (e) {
-                logout();
             }
-        }
-        setLoading(false);
+            setLoading(false);
+        };
+        initAuth();
     }, [token]);
 
     const handleServerLogin = (serverResponse) => {
