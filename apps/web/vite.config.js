@@ -9,7 +9,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: ['three', 'react', 'react-dom', '@react-three/fiber', '@react-three/drei'],
+    dedupe: ['react', 'react-dom'],
   },
   build: {
     sourcemap: false,
@@ -19,7 +19,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
           'vendor-anim': ['framer-motion', 'gsap', '@gsap/react'],
           'vendor-utils': ['lucide-react', 'clsx', 'tailwind-merge', 'axios', 'lenis'],
         }
