@@ -25,6 +25,12 @@ class RegistrationCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated] # Protected
 
     def perform_create(self, serializer):
+        # Update user's full_name if provided in request
+        full_name = self.request.data.get('full_name')
+        if full_name and full_name.strip():
+            self.request.user.full_name = full_name.strip()
+            self.request.user.save()
+        
         # Automatically set user from JWT
         instance = serializer.save(user=self.request.user)
         # Send registration email with ticket
