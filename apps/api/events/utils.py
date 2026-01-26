@@ -57,25 +57,39 @@ def send_email_thread(email):
         email.send()
         print(f"Email sent successfully to {email.to}", flush=True)
     except Exception as e:
+        import traceback
         print(f"CRITICAL ERROR sending email: {str(e)}", file=sys.stderr, flush=True)
+        print(f"Full traceback: {traceback.format_exc()}", file=sys.stderr, flush=True)
 
 def send_registration_email(registration):
     """
     Sends a confirmation email with QR code ticket to the registered user.
     Uses existing QR code generation from serializer.
     """
-    user = registration.user
-    event = registration.event
-    
-    # 1. Generate QR Code using existing utility
-    qr_code_base64 = generate_qr_code(registration.token, color="#000000")
-    
-    # Convert base64 data URL to bytes for email attachment
-    import base64
-    import re
-    # Extract base64 data from data URL (format: data:image/png;base64,...)
-    base64_data = re.sub('^data:image/.+;base64,', '', qr_code_base64)
-    qr_image_bytes = base64.b64decode(base64_data)
+    try:
+        print(f"[EMAIL] Starting email generation for registration {registration.id}", flush=True)
+        user = registration.user
+        event = registration.event
+        print(f"[EMAIL] User: {user.email}, Event: {event.title}", flush=True)
+        
+        # 1. Generate QR Code using existing utility
+        print(f"[EMAIL] Generating QR code...", flush=True)
+        qr_code_base64 = generate_qr_code(registration.token, color="#000000")
+        print(f"[EMAIL] QR code generated successfully", flush=True)
+        
+        # Convert base64 data URL to bytes for email attachment
+        import base64
+        import re
+        # Extract base64 data from data URL (format: data:image/png;base64,...)
+        base64_data = re.sub('^data:image/.+;base64,', '', qr_code_base64)
+        qr_image_bytes = base64.b64decode(base64_data)
+        print(f"[EMAIL] QR code converted to bytes ({len(qr_image_bytes)} bytes)", flush=True)
+    except Exception as e:
+        import traceback
+        print(f"[EMAIL] ERROR in QR generation: {str(e)}", file=sys.stderr, flush=True)
+        print(f"[EMAIL] Traceback: {traceback.format_exc()}", file=sys.stderr, flush=True)
+        return False
+
     
     # 2. Prepare Email Content
     subject = f"🎟️ Your Ticket for {event.title} - ASTRA IETM"
@@ -200,6 +214,7 @@ def send_registration_email(registration):
     text_content = strip_tags(html_content)
     
     # 3. Create Email Message
+    print(f"[EMAIL] Creating email message...", flush=True)
     email = EmailMultiAlternatives(
         subject,
         text_content,
@@ -207,22 +222,33 @@ def send_registration_email(registration):
         [user.email],
     )
     email.attach_alternative(html_content, "text/html")
+    print(f"[EMAIL] Email message created with HTML content", flush=True)
     
     # 4. Attach QR Code (both inline for email body and as downloadable attachment)
-    # Inline for email body display
-    qr_inline = MIMEImage(qr_image_bytes)
-    qr_inline.add_header('Content-ID', '<qr_ticket>')
-    qr_inline.add_header('Content-Disposition', 'inline', filename='qr_code.png')
-    email.attach(qr_inline)
-    
-    # Also attach as separate downloadable file
-    email.attach(
-        f'ASTRA_Ticket_{event.title.replace(" ", "_")}_{registration.token[:8]}.png',
-        qr_image_bytes,
-        'image/png'
-    )
+    try:
+        # Inline for email body display
+        print(f"[EMAIL] Attaching QR code inline...", flush=True)
+        qr_inline = MIMEImage(qr_image_bytes)
+        qr_inline.add_header('Content-ID', '<qr_ticket>')
+        qr_inline.add_header('Content-Disposition', 'inline', filename='qr_code.png')
+        email.attach(qr_inline)
+        
+        # Also attach as separate downloadable file
+        print(f"[EMAIL] Attaching QR code as file...", flush=True)
+        email.attach(
+            f'ASTRA_Ticket_{event.title.replace(" ", "_")}_{registration.token[:8]}.png',
+            qr_image_bytes,
+            'image/png'
+        )
+        print(f"[EMAIL] Attachments added successfully", flush=True)
+    except Exception as e:
+        import traceback
+        print(f"[EMAIL] ERROR attaching files: {str(e)}", file=sys.stderr, flush=True)
+        print(f"[EMAIL] Traceback: {traceback.format_exc()}", file=sys.stderr, flush=True)
+        return False
     
     # 5. Send in Background Thread
+    print(f"[EMAIL] Spawning background thread for sending...", flush=True)
     EmailThread = threading.Thread(target=send_email_thread, args=(email,))
     EmailThread.start()
     

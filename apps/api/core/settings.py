@@ -165,14 +165,20 @@ if not DEBUG:
     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 # Email Configuration
+# Using SendGrid (works on Render free plan) or Zoho (requires paid Render plan)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST2', 'smtp.zoho.com')  # Using Zoho Mail
+
+# SendGrid Configuration (recommended for Render)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.sendgrid.net')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
 EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False') == 'True'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER2', 'contact@astraietm.in')  # Using Zoho
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL2', 'ASTRA Events <contact@astraietm.in>')  # Using Zoho
+
+# For SendGrid: EMAIL_HOST_USER should be 'apikey' and EMAIL_HOST_PASSWORD should be your SendGrid API key
+# For Zoho: Use EMAIL_HOST_USER2 and your Zoho password
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'apikey')  # 'apikey' for SendGrid
+EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', os.environ.get('EMAIL_HOST_PASSWORD', ''))
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL2', 'ASTRA Events <contact@astraietm.in>')
 
 # Razorpay Configuration
 RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
