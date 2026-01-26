@@ -17,17 +17,17 @@ const CompleteProfileModal = () => {
     });
     const [submitting, setSubmitting] = useState(false);
 
-    // Sync formData with user object when it becomes available or modal opens
+    // Sync formData with user object when modal opens
     useEffect(() => {
         if (user && isProfileModalOpen) {
-            setFormData(prev => ({
-                full_name: prev.full_name || user.name || user.full_name || user.email?.split('@')[0] || '',
-                phone_number: prev.phone_number || user.phone_number || '',
-                college: prev.college || user.college || '',
-                usn: prev.usn || user.usn || ''
-            }));
+            setFormData({
+                full_name: user.name || user.full_name || user.email?.split('@')[0] || '',
+                phone_number: user.phone_number || '',
+                college: user.college || '',
+                usn: user.usn || ''
+            });
         }
-    }, [user, isProfileModalOpen]);
+    }, [isProfileModalOpen, user]);
 
     if (!isProfileModalOpen) return null;
 
@@ -102,9 +102,13 @@ const CompleteProfileModal = () => {
                             <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-5 border border-white/5 shadow-[0_0_20px_rgba(59,130,246,0.1)]">
                                 <User className="w-7 h-7 text-blue-400" />
                             </div>
-                            <h2 className="font-space text-2xl font-bold text-white mb-2 tracking-tight">Complete Profile</h2>
+                            <h2 className="font-space text-2xl font-bold text-white mb-2 tracking-tight">
+                                {pendingAction ? 'Complete Profile' : 'Edit Profile'}
+                            </h2>
                             <p className="font-light text-gray-400 text-sm leading-relaxed max-w-[80%] mx-auto">
-                                Finalize your registration by providing your contact and academic details.
+                                {pendingAction
+                                    ? 'Finalize your registration by providing your contact and academic details.'
+                                    : 'Update your contact and academic details below.'}
                             </p>
                         </div>
 

@@ -12,9 +12,9 @@ const Navbar = () => {
     const [isLoggingOut, setIsLoggingOut] = useState(false); // Logout animation state
     const location = useLocation();
     const navigate = useNavigate();
-    const { user, logout, setIsLoginModalOpen } = useAuth();
+    const { user, logout, setIsLoginModalOpen, setIsProfileModalOpen } = useAuth();
     const profileRef = useRef(null);
-    
+
     // NEW: Active Tab State to decouple animation from route/scroll
     const [activeTab, setActiveTab] = useState(location.pathname);
 
@@ -29,7 +29,7 @@ const Navbar = () => {
     useEffect(() => {
         setImageError(false);
     }, [user?.avatar]);
-    
+
     // NEW: Sync activeTab with location (handles back button/refresh)
     useEffect(() => {
         setActiveTab(location.pathname);
@@ -108,30 +108,30 @@ const Navbar = () => {
                     {/* 2. Navigation Links (Center) */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1">
                         <LayoutGroup id="navbar-links">
-                        {navLinks.map((link) => {
-                            // NEW: Use activeTab instead of location.pathname
-                            const isActive = activeTab === link.path;
-                            return (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    onClick={() => setActiveTab(link.path)}
-                                    className="relative px-5 py-2 group"
-                                >
-                                    {isActive && (
-                                        <motion.div
-                                            layoutId="nav-pill"
-                                            className="absolute inset-0 bg-white/10 rounded-full"
-                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                            style={{ originY: "0px" }} // Anchor Y to prevent vertical jumping
-                                        />
-                                    )}
-                                    <span className={`relative z-10 text-sm font-medium tracking-wide transition-colors duration-200 ${isActive ? 'text-white font-bold' : 'text-gray-300 group-hover:text-white'}`}>
-                                        {link.name}
-                                    </span>
-                                </Link>
-                            );
-                        })}
+                            {navLinks.map((link) => {
+                                // NEW: Use activeTab instead of location.pathname
+                                const isActive = activeTab === link.path;
+                                return (
+                                    <Link
+                                        key={link.name}
+                                        to={link.path}
+                                        onClick={() => setActiveTab(link.path)}
+                                        className="relative px-5 py-2 group"
+                                    >
+                                        {isActive && (
+                                            <motion.div
+                                                layoutId="nav-pill"
+                                                className="absolute inset-0 bg-white/10 rounded-full"
+                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                                style={{ originY: "0px" }} // Anchor Y to prevent vertical jumping
+                                            />
+                                        )}
+                                        <span className={`relative z-10 text-sm font-medium tracking-wide transition-colors duration-200 ${isActive ? 'text-white font-bold' : 'text-gray-300 group-hover:text-white'}`}>
+                                            {link.name}
+                                        </span>
+                                    </Link>
+                                );
+                            })}
                         </LayoutGroup>
                     </div>
 
@@ -139,7 +139,7 @@ const Navbar = () => {
                     <div className="relative" ref={profileRef}>
                         {user ? (
                             <div className="relative">
-                                <button 
+                                <button
                                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                                     className="flex items-center gap-3 pl-4 pr-1.5 py-1.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 rounded-full transition-all group"
                                 >
@@ -148,9 +148,9 @@ const Navbar = () => {
                                     </span>
                                     {user.avatar && !imageError ? (
                                         <div className="w-9 h-9 rounded-full border border-white/20 overflow-hidden relative shadow-inner">
-                                            <img 
-                                                src={user.avatar} 
-                                                alt="Profile" 
+                                            <img
+                                                src={user.avatar}
+                                                alt="Profile"
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                 onError={() => setImageError(true)}
                                             />
@@ -174,21 +174,35 @@ const Navbar = () => {
                                             className="absolute top-16 right-0 w-60 bg-[#0A0F1C]/80 backdrop-blur-3xl border border-white/10 ring-1 ring-white/5 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden p-2 z-50 origin-top-right"
                                         >
                                             <div className="space-y-1">
-                                                <Link 
-                                                    to="/my-registrations" 
+                                                <Link
+                                                    to="/my-registrations"
                                                     onClick={() => setIsProfileOpen(false)}
                                                     className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden"
                                                 >
-                                                     <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                                     <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
                                                         <Ticket className="w-4 h-4" />
                                                     </div>
                                                     <span className="relative z-10">My Tickets</span>
                                                 </Link>
 
+                                                <button
+                                                    onClick={() => {
+                                                        setIsProfileOpen(false);
+                                                        setIsProfileModalOpen(true);
+                                                    }}
+                                                    className="w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden text-left"
+                                                >
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
+                                                        <User className="w-4 h-4" />
+                                                    </div>
+                                                    <span className="relative z-10">Edit Profile</span>
+                                                </button>
+
                                                 {user && user.is_staff && (
-                                                    <Link 
-                                                        to="/admin" 
+                                                    <Link
+                                                        to="/admin"
                                                         onClick={() => setIsProfileOpen(false)}
                                                         className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden"
                                                     >
@@ -199,10 +213,10 @@ const Navbar = () => {
                                                         <span className="relative z-10">Admin Panel</span>
                                                     </Link>
                                                 )}
-                                                
+
                                                 <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-1"></div>
-                                                
-                                                <button 
+
+                                                <button
                                                     onClick={handleLogout}
                                                     disabled={isLoggingOut}
                                                     className="w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all group relative overflow-hidden text-left"
@@ -301,24 +315,34 @@ const Navbar = () => {
                                 {/* Mobile User Section */}
                                 {user ? (
                                     <>
-                                        <Link 
-                                            to="/my-registrations" 
+                                        <Link
+                                            to="/my-registrations"
                                             onClick={() => setIsOpen(false)}
                                             className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all"
                                         >
                                             <Ticket className="w-4 h-4 text-primary" /> My Tickets
                                         </Link>
 
+                                        <button
+                                            onClick={() => {
+                                                setIsOpen(false);
+                                                setIsProfileModalOpen(true);
+                                            }}
+                                            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all w-full text-left"
+                                        >
+                                            <User className="w-4 h-4 text-primary" /> Edit Profile
+                                        </button>
+
                                         {user && user.is_staff && (
-                                            <Link 
-                                                to="/admin" 
+                                            <Link
+                                                to="/admin"
                                                 onClick={() => setIsOpen(false)}
                                                 className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all"
                                             >
                                                 <Shield className="w-4 h-4 text-primary" /> Admin Panel
                                             </Link>
                                         )}
-                                        <button 
+                                        <button
                                             onClick={handleLogout}
                                             disabled={isLoggingOut}
                                             className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all w-full text-left"
