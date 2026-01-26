@@ -36,7 +36,7 @@ const AdminLayout = () => {
         const checkSystem = async () => {
             try {
                 const API_URL = import.meta.env.VITE_API_URL;
-                await fetch(`${API_URL}/heartbeat/`); 
+                await fetch(`${API_URL}/heartbeat/`);
                 setIsSystemOnline(true);
             } catch (err) {
                 setIsSystemOnline(false);
@@ -66,7 +66,7 @@ const AdminLayout = () => {
 
     // Don't render anything until auth is verified
     if (loading) return null;
-    
+
     // Redirect non-admin users immediately
     if (!user || !user.is_staff) {
         return null;
@@ -79,24 +79,24 @@ const AdminLayout = () => {
                 <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" />
                 <div className="absolute bottom-[-5%] left-[-10%] w-[35%] h-[45%] bg-indigo-600/10 rounded-full blur-[100px]" />
                 <div className="absolute top-[20%] left-[10%] w-[20%] h-[20%] bg-violet-600/5 rounded-full blur-[80px]" />
-                
+
                 {/* Micro-Dot Grid */}
                 <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] [background-size:32px_32px] opacity-30" />
-                
+
                 <NoiseOverlay opacity={0.15} />
             </div>
-            
-            <AdminSidebar 
-                isCollapsed={isCollapsed} 
-                setIsCollapsed={setIsCollapsed} 
+
+            <AdminSidebar
+                isCollapsed={isCollapsed}
+                setIsCollapsed={setIsCollapsed}
                 isMobileOpen={isMobileOpen}
                 setIsMobileOpen={setIsMobileOpen}
             />
 
-            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500 ease-[0.19,1,0.22,1] relative z-10 ${isCollapsed ? 'lg:ml-[88px]' : 'lg:ml-[300px]'} ml-0`}>
-                <AdminHeader 
-                    title={getPageTitle()} 
-                    onMenuClick={() => setIsMobileOpen(true)} 
+            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] relative z-10 ${isCollapsed ? 'lg:ml-[88px]' : 'lg:ml-[300px]'} ml-0`}>
+                <AdminHeader
+                    title={getPageTitle()}
+                    onMenuClick={() => setIsMobileOpen(true)}
                     isSystemOnline={isSystemOnline}
                     onSearchClick={() => setIsCommandPaletteOpen(true)}
                 />
@@ -119,7 +119,7 @@ const AdminLayout = () => {
                         </div>
                     </Suspense>
                 </main>
-                
+
                 <footer className="h-16 border-t border-white/[0.04] flex items-center justify-between px-10 text-[10px] uppercase font-bold tracking-[0.2em] text-slate-500 bg-black/40 backdrop-blur-xl">
                     <div className="flex items-center gap-8">
                         <span className="flex items-center gap-2">

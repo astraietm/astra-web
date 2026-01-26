@@ -9,7 +9,7 @@ const EventModule = ({ event, index }) => {
     const isCompleted = new Date(event.date) < new Date();
     const isHawkins = event.title?.toLowerCase().includes('hawkins');
     const premiumImage = 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?auto=format&fit=crop&q=80&w=800';
-    
+
     // Force premium image for Hawkins to fix the "buggy image" issue
     const rawImage = isHawkins ? premiumImage : (event.image || premiumImage);
 
@@ -30,15 +30,15 @@ const EventModule = ({ event, index }) => {
             {/* Visual Container */}
             <div className="relative h-[55%] w-full overflow-hidden">
                 {/* Image with zoom effect */}
-                <img 
-                    src={displayImage} 
+                <img
+                    src={displayImage}
                     alt={event.title}
-                    className="w-full h-full object-cover transition-transform duration-1000 ease-[0.19,1,0.22,1] group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
                 />
-                
+
                 {/* Sophisticated Gradient Mask */}
                 <div className={`absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent`} />
-                
+
                 {/* Scanner/Glitch Effect for Hawkins */}
                 {isHawkins && (
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/10 to-transparent h-1 w-full animate-scan pointer-events-none" />
@@ -47,11 +47,10 @@ const EventModule = ({ event, index }) => {
                 {/* Floating Meta Tag */}
                 <div className="absolute top-6 left-6 z-20">
                     <div className="px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
-                        <span className={`w-1.5 h-1.5 rounded-full ${
-                            isCompleted ? 'bg-gray-500' : 
-                            !event.is_registration_open ? 'bg-blue-400' : 
-                            `bg-${accentColor}-500 shadow-[0_0_8px_${accentHex}] animate-pulse`
-                        }`} />
+                        <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' :
+                                !event.is_registration_open ? 'bg-blue-400' :
+                                    `bg-${accentColor}-500 shadow-[0_0_8px_${accentHex}] animate-pulse`
+                            }`} />
                         <span className="text-[10px] font-black tracking-widest uppercase text-white/80">
                             {isCompleted ? 'Archived' : !event.is_registration_open ? 'Coming Soon' : 'Active Access'}
                         </span>
@@ -76,8 +75,8 @@ const EventModule = ({ event, index }) => {
                             {event.category || 'Classified'}
                         </span>
                         <div className="flex items-center gap-1.5 text-[10px] text-gray-500 font-bold uppercase tracking-wider">
-                             <Clock className={`w-3 h-3 text-${accentColor}-500`} />
-                             {event.time || '10:00 AM'}
+                            <Clock className={`w-3 h-3 text-${accentColor}-500`} />
+                            {event.time || '10:00 AM'}
                         </div>
                     </div>
 
@@ -85,7 +84,7 @@ const EventModule = ({ event, index }) => {
                     <h3 className={`text-2xl sm:text-3xl font-bold text-white mb-4 leading-tight tracking-tight group-hover:text-${accentColor}-400 transition-colors duration-300 line-clamp-2`}>
                         {event.title}
                     </h3>
-                    
+
                     {/* Description - Clamped */}
                     <p className="text-gray-500 text-sm leading-relaxed line-clamp-2 opacity-80 group-hover:opacity-100 transition-opacity">
                         {event.description || "System authentication required. Encrypted parameters detected."}
@@ -96,11 +95,11 @@ const EventModule = ({ event, index }) => {
                 <div className="pt-6 flex items-center justify-between border-t border-white/5">
                     <div className="flex items-center gap-4 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
                         <div className="flex items-center gap-2">
-                             {isHawkins ? <Zap className="w-3.5 h-3.5 text-red-500" /> : <MapPin className="w-3.5 h-3.5 text-blue-500" />}
+                            {isHawkins ? <Zap className="w-3.5 h-3.5 text-red-500" /> : <MapPin className="w-3.5 h-3.5 text-blue-500" />}
                             <span>{event.venue || 'Campus HQ'}</span>
                         </div>
                     </div>
-                    
+
                     <div className={`w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500`}>
                         <ArrowUpRight className="w-5 h-5" />
                     </div>
