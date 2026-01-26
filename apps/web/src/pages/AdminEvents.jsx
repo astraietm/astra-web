@@ -528,7 +528,7 @@ const Switch = ({ checked, onChange }) => (
     <button
         type="button"
         onClick={onChange}
-        className={`w-16 h-9 rounded-full relative transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] border ${checked ? 'bg-blue-600 border-blue-500/50 shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'bg-white/[0.05] border-white/10'}`}
+        className={`w-16 h-9 rounded-full relative transition-all duration-500 [transition-timing-function:cubic-bezier(0.19,1,0.22,1)] border ${checked ? 'bg-blue-600 border-blue-500/50 shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'bg-white/[0.05] border-white/10'}`}
     >
         <motion.div
             animate={{ x: checked ? 28 : 4 }}

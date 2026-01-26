@@ -33,7 +33,7 @@ const EventModule = ({ event, index }) => {
                 <img
                     src={displayImage}
                     alt={event.title}
-                    className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-1000 [transition-timing-function:cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110"
                 />
 
                 {/* Sophisticated Gradient Mask */}
@@ -48,8 +48,8 @@ const EventModule = ({ event, index }) => {
                 <div className="absolute top-6 left-6 z-20">
                     <div className="px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
                         <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' :
-                                !event.is_registration_open ? 'bg-blue-400' :
-                                    `bg-${accentColor}-500 shadow-[0_0_8px_${accentHex}] animate-pulse`
+                            !event.is_registration_open ? 'bg-blue-400' :
+                                `bg-${accentColor}-500 shadow-[0_0_8px_${accentHex}] animate-pulse`
                             }`} />
                         <span className="text-[10px] font-black tracking-widest uppercase text-white/80">
                             {isCompleted ? 'Archived' : !event.is_registration_open ? 'Coming Soon' : 'Active Access'}

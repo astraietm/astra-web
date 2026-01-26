@@ -93,7 +93,7 @@ const AdminLayout = () => {
                 setIsMobileOpen={setIsMobileOpen}
             />
 
-            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] relative z-10 ${isCollapsed ? 'lg:ml-[88px]' : 'lg:ml-[300px]'} ml-0`}>
+            <div className={`flex-1 flex flex-col min-w-0 transition-all duration-500 [transition-timing-function:cubic-bezier(0.19,1,0.22,1)] relative z-10 ${isCollapsed ? 'lg:ml-[88px]' : 'lg:ml-[300px]'} ml-0`}>
                 <AdminHeader
                     title={getPageTitle()}
                     onMenuClick={() => setIsMobileOpen(true)}

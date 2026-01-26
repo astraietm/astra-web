@@ -9,6 +9,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ['three', 'react', 'react-dom', '@react-three/fiber', '@react-three/drei'],
   },
   build: {
     sourcemap: false,
