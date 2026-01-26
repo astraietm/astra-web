@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -24,7 +24,6 @@ const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const TermsAndConditions = React.lazy(() => import('./pages/TermsAndConditions'));
 const RefundPolicy = React.lazy(() => import('./pages/RefundPolicy'));
 const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
-
 const ShippingPolicy = React.lazy(() => import('./pages/ShippingPolicy'));
 
 // Admin Lazy Loading
@@ -55,6 +54,16 @@ function AnalyticsTracker() {
   return null;
 }
 
+// Minimal Loading Fallback
+const PageLoader = () => (
+  <div className="min-h-[60vh] w-full flex items-center justify-center">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-12 h-12 border-2 border-cyan-500/20 border-t-cyan-500 rounded-full animate-spin"></div>
+      <p className="text-cyan-500 font-mono text-xs uppercase tracking-widest animate-pulse">Loading Asset...</p>
+    </div>
+  </div>
+);
+
 function App() {
   return (
     <ErrorBoundary>
@@ -64,45 +73,44 @@ function App() {
           <Analytics />
           <SpeedInsights />
 
-          {/* <CustomCursor /> */}
           <ScrollToTop />
-          <LoginModal /> {/* Global Login Modal */}
-          <CompleteProfileModal /> {/* Global Complete Profile Modal */}
-          <SmoothScroll>
-            <Routes>
-              {/* NEW ADMIN CONSOLE LAYOUT */}
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="registrations" element={<AdminRegistrations />} />
-                <Route path="events" element={<AdminEvents />} />
-                <Route path="gallery" element={<AdminGallery />} />
-                <Route path="scanner" element={<AdminScanner />} />
-  
-                <Route path="notifications" element={<AdminNotifications />} />
-                <Route path="logs" element={<AdminLogs />} />
-                <Route path="settings" element={<AdminSettings />} />
-              </Route>
-  
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<Home />} />
-                <Route path="events" element={<Events />} />
-                <Route path="events/:id" element={<EventDetail />} />
-                <Route path="register/:id" element={<Register />} />
-                <Route path="my-registrations" element={<Dashboard />} />
-                <Route path="gallery" element={<Gallery />} />
-                <Route path="about" element={<About />} />
-  
-                <Route path="contact" element={<Contact />} />
-                <Route path="terms" element={<TermsAndConditions />} />
-                <Route path="refund-policy" element={<RefundPolicy />} />
-                <Route path="shipping-policy" element={<ShippingPolicy />} />
-                <Route path="privacy" element={<PrivacyPolicy />} />
-  
-                {/* 404 Catch-all */}
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
-          </SmoothScroll>
+          <LoginModal />
+          <CompleteProfileModal />
+
+          <Suspense fallback={<PageLoader />}>
+            <SmoothScroll>
+              <Routes>
+                {/* ADMIN ROUTES */}
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="registrations" element={<AdminRegistrations />} />
+                  <Route path="events" element={<AdminEvents />} />
+                  <Route path="gallery" element={<AdminGallery />} />
+                  <Route path="scanner" element={<AdminScanner />} />
+                  <Route path="notifications" element={<AdminNotifications />} />
+                  <Route path="logs" element={<AdminLogs />} />
+                  <Route path="settings" element={<AdminSettings />} />
+                </Route>
+
+                {/* PUBLIC ROUTES */}
+                <Route path="/" element={<MainLayout />}>
+                  <Route index element={<Home />} />
+                  <Route path="events" element={<Events />} />
+                  <Route path="events/:id" element={<EventDetail />} />
+                  <Route path="register/:id" element={<Register />} />
+                  <Route path="my-registrations" element={<Dashboard />} />
+                  <Route path="gallery" element={<Gallery />} />
+                  <Route path="about" element={<About />} />
+                  <Route path="contact" element={<Contact />} />
+                  <Route path="terms" element={<TermsAndConditions />} />
+                  <Route path="refund-policy" element={<RefundPolicy />} />
+                  <Route path="shipping-policy" element={<ShippingPolicy />} />
+                  <Route path="privacy" element={<PrivacyPolicy />} />
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+              </Routes>
+            </SmoothScroll>
+          </Suspense>
         </Router>
       </ToastProvider>
     </ErrorBoundary>

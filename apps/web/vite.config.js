@@ -13,13 +13,17 @@ export default defineConfig({
   build: {
     sourcemap: false,
     target: 'esnext',
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui': ['lucide-react', 'clsx', 'tailwind-merge']
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+          'vendor-anim': ['framer-motion', 'gsap', '@gsap/react'],
+          'vendor-utils': ['lucide-react', 'clsx', 'tailwind-merge', 'axios', 'lenis'],
         }
       }
-    }
+    },
+    chunkSizeWarningLimit: 1000,
   },
 })
