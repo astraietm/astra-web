@@ -27,8 +27,8 @@ class RegistrationCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         # Automatically set user from JWT
         instance = serializer.save(user=self.request.user)
-        # Email disabled per user request
-        # send_registration_email(instance)
+        # Send registration email with ticket
+        send_registration_email(instance)
 
     def create(self, request, *args, **kwargs):
         event_id = request.data.get('event')
@@ -258,6 +258,9 @@ class VerifyPaymentView(APIView):
                 registration = payment.registration
                 registration.status = 'REGISTERED'
                 registration.save()
+                
+                # Send registration email with ticket
+                send_registration_email(registration)
                 
                 # Return registration data with QR code
                 serializer = RegistrationSerializer(registration)
