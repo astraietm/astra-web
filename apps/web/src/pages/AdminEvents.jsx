@@ -3,15 +3,15 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { 
-    Plus, 
-    Edit2, 
-    Trash2, 
-    Calendar, 
-    Clock, 
-    Users, 
-    ToggleLeft, 
-    ToggleRight, 
+import {
+    Plus,
+    Edit2,
+    Trash2,
+    Calendar,
+    Clock,
+    Users,
+    ToggleLeft,
+    ToggleRight,
     ArrowLeft,
     Save,
     X,
@@ -26,7 +26,8 @@ import {
     Target,
     Database,
     ChevronRight,
-    SearchX
+    SearchX,
+    Loader2
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
@@ -41,7 +42,7 @@ const AdminEvents = () => {
 
     // Modal / Slide-over state
     const [showForm, setShowForm] = useState(false);
-    
+
     // Search / Filter
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -82,7 +83,7 @@ const AdminEvents = () => {
             const response = await axios.get(`${API_URL}/operations/events/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            const sorted = response.data.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+            const sorted = response.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             setEvents(sorted);
         } catch (error) {
             console.error('Error fetching events:', error);
@@ -165,8 +166,8 @@ const AdminEvents = () => {
         }));
     };
 
-    const filteredEvents = events.filter(ev => 
-        ev.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const filteredEvents = events.filter(ev =>
+        ev.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         ev.category.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -174,7 +175,7 @@ const AdminEvents = () => {
         <div className="space-y-12">
             {/* Mission Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 relative">
-                 <div className="space-y-4">
+                <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-px w-12 bg-blue-500" />
                         <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Protocol Registry</span>
@@ -187,19 +188,19 @@ const AdminEvents = () => {
                         </p>
                     </div>
                 </div>
-                
+
                 <div className="flex gap-4">
                     <div className="relative group hidden lg:block">
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 group-focus-within:text-blue-500 transition-colors z-10" />
-                        <input 
-                            type="text" 
-                            placeholder="SEARCH OPERATION IDENTIFIER..." 
+                        <input
+                            type="text"
+                            placeholder="SEARCH OPERATION IDENTIFIER..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="h-16 bg-black/40 border border-white/[0.03] rounded-[2rem] py-4 pl-14 pr-6 w-80 text-[11px] font-black tracking-widest text-slate-300 placeholder:text-slate-700 focus:outline-none focus:border-blue-500/30 transition-all uppercase"
                         />
                     </div>
-                    <button 
+                    <button
                         onClick={handleCreate}
                         className="relative group overflow-hidden"
                     >
@@ -227,11 +228,11 @@ const AdminEvents = () => {
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
                         {filteredEvents.map((event) => (
-                            <EventCard 
-                                key={event.id} 
-                                event={event} 
-                                onEdit={handleEdit} 
-                                onDelete={handleDelete} 
+                            <EventCard
+                                key={event.id}
+                                event={event}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
                             />
                         ))}
                     </div>
@@ -242,7 +243,7 @@ const AdminEvents = () => {
             <AnimatePresence>
                 {showForm && (
                     <>
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -310,7 +311,7 @@ const AdminEvents = () => {
 
                                     {/* TEMPORAL PARAMETERS */}
                                     <div className="space-y-10">
-                                         <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-4">
                                             <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
                                                 <Clock size={18} />
                                             </div>
@@ -341,7 +342,7 @@ const AdminEvents = () => {
 
                                     {/* SECURITY & CREDITS */}
                                     <div className="space-y-10">
-                                         <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-4">
                                             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
                                                 <Shield size={18} />
                                             </div>
@@ -350,14 +351,14 @@ const AdminEvents = () => {
                                                 <p className="text-[9px] font-bold text-slate-600 uppercase mt-1">Access Control & Resource Tokens</p>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="flex items-center justify-between p-6 rounded-[2rem] bg-white/[0.01] border border-white/[0.04] hover:bg-white/[0.03] transition-colors">
                                                 <div className="space-y-1.5">
                                                     <p className="text-xs font-black text-white uppercase tracking-widest">Public Uplink</p>
                                                     <p className="text-[9px] text-slate-600 font-bold uppercase tracking-tight leading-none">Enable node registry access</p>
                                                 </div>
-                                                <Switch checked={formData.is_registration_open} onChange={() => setFormData(p => ({...p, is_registration_open: !p.is_registration_open}))} />
+                                                <Switch checked={formData.is_registration_open} onChange={() => setFormData(p => ({ ...p, is_registration_open: !p.is_registration_open }))} />
                                             </div>
 
                                             <div className="flex items-center justify-between p-6 rounded-[2rem] bg-white/[0.01] border border-white/[0.04] hover:bg-white/[0.03] transition-colors">
@@ -365,11 +366,11 @@ const AdminEvents = () => {
                                                     <p className="text-xs font-black text-white uppercase tracking-widest">Credit Lock</p>
                                                     <p className="text-[9px] text-slate-600 font-bold uppercase tracking-tight leading-none">Require resource tokens</p>
                                                 </div>
-                                                <Switch checked={formData.requires_payment} onChange={() => setFormData(p => ({...p, requires_payment: !p.requires_payment}))} />
+                                                <Switch checked={formData.requires_payment} onChange={() => setFormData(p => ({ ...p, requires_payment: !p.requires_payment }))} />
                                             </div>
 
                                             {formData.requires_payment && (
-                                                <motion.div initial={{ opacity:0, scale:0.95 }} animate={{ opacity:1, scale:1 }} className="col-span-2 p-8 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 space-y-4">
+                                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="col-span-2 p-8 rounded-[2rem] bg-blue-500/5 border border-blue-500/10 space-y-4">
                                                     <div className="flex items-center justify-between">
                                                         <label className="text-[10px] font-black text-blue-500 uppercase tracking-[0.2em]">Required Credits per Node</label>
                                                         <span className="text-[9px] font-bold text-slate-700 uppercase">CURRENCY_UNIT: INR</span>
@@ -383,11 +384,11 @@ const AdminEvents = () => {
                                                     <p className="text-xs font-black text-white uppercase tracking-widest">Squad Synchronization</p>
                                                     <p className="text-[9px] text-slate-600 font-bold uppercase tracking-tight leading-none">Enable multi-node team-based registry</p>
                                                 </div>
-                                                <Switch checked={formData.is_team_event} onChange={() => setFormData(p => ({...p, is_team_event: !p.is_team_event}))} />
+                                                <Switch checked={formData.is_team_event} onChange={() => setFormData(p => ({ ...p, is_team_event: !p.is_team_event }))} />
                                             </div>
 
                                             {formData.is_team_event && (
-                                                <motion.div initial={{ opacity:0, scale:0.95 }} animate={{ opacity:1, scale:1 }} className="col-span-2 p-8 rounded-[2.5rem] bg-purple-500/5 border border-purple-500/10 grid grid-cols-2 gap-8">
+                                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="col-span-2 p-8 rounded-[2.5rem] bg-purple-500/5 border border-purple-500/10 grid grid-cols-2 gap-8">
                                                     <div className="space-y-3">
                                                         <label className="text-[10px] font-black text-purple-500 uppercase tracking-widest ml-1">Min Squad Size</label>
                                                         <input type="number" name="team_size_min" value={formData.team_size_min} onChange={handleChange} className="w-full bg-black/40 border border-purple-500/20 rounded-2xl p-4 text-white font-black text-center" />
@@ -426,9 +427,9 @@ const AdminEvents = () => {
 const EventCard = ({ event, onEdit, onDelete }) => {
     const isPast = new Date(event.event_date) < new Date();
     const progress = Math.min(((event.registrations?.length || 0) / event.registration_limit) * 100, 100);
-    
+
     return (
-        <motion.div 
+        <motion.div
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -436,7 +437,7 @@ const EventCard = ({ event, onEdit, onDelete }) => {
         >
             {/* Ambient Background Glow */}
             <div className="absolute inset-0 bg-white/[0.01] border border-white/[0.05] rounded-[3rem] transition-all duration-700 group-hover:bg-white/[0.03] group-hover:border-white/[0.1] shadow-2xl z-0" />
-            
+
             <div className="relative z-10 p-10 flex flex-col h-full overflow-hidden">
                 {/* Visual Identity Layer */}
                 <div className="flex items-start justify-between mb-8">
@@ -446,9 +447,9 @@ const EventCard = ({ event, onEdit, onDelete }) => {
                             <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] group-hover:text-slate-400 transition-colors">{event.category}</span>
                         </div>
                     </div>
-                    
+
                     <div className="flex gap-2.5">
-                         <button onClick={() => onEdit(event)} className="w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-600 hover:text-blue-500 hover:bg-blue-500/10 hover:border-blue-500/30 transition-all active:scale-90">
+                        <button onClick={() => onEdit(event)} className="w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-600 hover:text-blue-500 hover:bg-blue-500/10 hover:border-blue-500/30 transition-all active:scale-90">
                             <Edit2 size={16} strokeWidth={3} />
                         </button>
                         <button onClick={() => onDelete(event.id)} className="w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-slate-600 hover:text-rose-500 hover:bg-rose-500/10 hover:border-rose-500/30 transition-all active:scale-90">
@@ -465,7 +466,7 @@ const EventCard = ({ event, onEdit, onDelete }) => {
                         </h3>
                         <div className="h-px w-0 bg-blue-500/40 group-hover:w-full transition-all duration-700 mt-4" />
                     </div>
-                    
+
                     <div className="flex flex-wrap items-center gap-3">
                         <div className="flex items-center gap-2.5 px-4 py-2 bg-white/[0.02] border border-white/5 rounded-2xl text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] group-hover:border-white/10 transition-colors">
                             <Calendar size={13} className="text-blue-500" />
@@ -493,8 +494,8 @@ const EventCard = ({ event, onEdit, onDelete }) => {
                             </div>
                         </div>
                         <div className="bg-white/[0.02] p-6 rounded-[2rem] border border-white/5 space-y-1.5 group-hover:bg-white/[0.04] transition-all flex flex-col justify-center">
-                             <span className="block text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none">Access Level</span>
-                             <span className="text-[13px] font-black text-blue-500 uppercase tracking-widest mt-1">LVL_0{Math.floor(Math.random()*4)+1}_SECURE</span>
+                            <span className="block text-[9px] font-black text-slate-700 uppercase tracking-widest leading-none">Access Level</span>
+                            <span className="text-[13px] font-black text-blue-500 uppercase tracking-widest mt-1">LVL_0{Math.floor(Math.random() * 4) + 1}_SECURE</span>
                         </div>
                     </div>
 
@@ -504,9 +505,9 @@ const EventCard = ({ event, onEdit, onDelete }) => {
                             <span className={progress > 80 ? 'text-rose-500' : 'text-blue-500'}>{Math.round(progress)}% SYNCHRONIZED</span>
                         </div>
                         <div className="h-2 w-full bg-white/[0.03] rounded-full overflow-hidden p-[1px] relative">
-                             {/* Pulsing Shadow behind progress */}
+                            {/* Pulsing Shadow behind progress */}
                             <div className="absolute inset-x-0 h-full bg-blue-500/10 blur-sm opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <motion.div 
+                            <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${progress}%` }}
                                 transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
@@ -516,7 +517,7 @@ const EventCard = ({ event, onEdit, onDelete }) => {
                     </div>
                 </div>
             </div>
-            
+
             {/* Card Accent Glow */}
             <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-blue-600/5 rounded-full blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
         </motion.div>
@@ -524,12 +525,12 @@ const EventCard = ({ event, onEdit, onDelete }) => {
 };
 
 const Switch = ({ checked, onChange }) => (
-    <button 
+    <button
         type="button"
         onClick={onChange}
         className={`w-16 h-9 rounded-full relative transition-all duration-500 ease-[0.19,1,0.22,1] border ${checked ? 'bg-blue-600 border-blue-500/50 shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'bg-white/[0.05] border-white/10'}`}
     >
-        <motion.div 
+        <motion.div
             animate={{ x: checked ? 28 : 4 }}
             className={`absolute top-1.5 w-6 h-6 bg-white rounded-full shadow-2xl`}
             transition={{ type: "spring", stiffness: 500, damping: 30 }}
