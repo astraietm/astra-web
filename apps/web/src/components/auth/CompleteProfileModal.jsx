@@ -8,20 +8,32 @@ import axios from 'axios';
 const CompleteProfileModal = () => {
     const { isProfileModalOpen, setIsProfileModalOpen, user, token, updateUser, pendingAction, setPendingAction } = useAuth();
     const toast = useToast();
-    
+
     const [formData, setFormData] = useState({
-        full_name: user?.name || '',
-        phone_number: user?.phone_number || '',
-        college: user?.college || '',
-        usn: user?.usn || ''
+        full_name: '',
+        phone_number: '',
+        college: '',
+        usn: ''
     });
     const [submitting, setSubmitting] = useState(false);
+
+    // Sync formData with user object when it becomes available or modal opens
+    useEffect(() => {
+        if (user && isProfileModalOpen) {
+            setFormData(prev => ({
+                full_name: prev.full_name || user.name || user.full_name || user.email?.split('@')[0] || '',
+                phone_number: prev.phone_number || user.phone_number || '',
+                college: prev.college || user.college || '',
+                usn: prev.usn || user.usn || ''
+            }));
+        }
+    }, [user, isProfileModalOpen]);
 
     if (!isProfileModalOpen) return null;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!formData.phone_number || !formData.college || !formData.full_name) {
             toast.error('Full Name, Phone number and College are required.');
             return;
@@ -68,7 +80,7 @@ const CompleteProfileModal = () => {
     return (
         <AnimatePresence>
             <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -76,7 +88,7 @@ const CompleteProfileModal = () => {
                     onClick={() => !submitting && setIsProfileModalOpen(false)}
                 />
 
-                <motion.div 
+                <motion.div
                     initial={{ scale: 0.95, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -101,11 +113,11 @@ const CompleteProfileModal = () => {
                             <div>
                                 <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">Full Name <span className="text-red-500">*</span></label>
                                 <div className="relative group">
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         required
                                         value={formData.full_name}
-                                        onChange={e => setFormData({...formData, full_name: e.target.value})}
+                                        onChange={e => setFormData({ ...formData, full_name: e.target.value })}
                                         className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all pl-11 text-sm placeholder:text-gray-600 focus:shadow-[0_0_20px_rgba(59,130,246,0.1)]"
                                         placeholder="Enter your full name"
                                     />
@@ -117,12 +129,12 @@ const CompleteProfileModal = () => {
                             <div>
                                 <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">College Name <span className="text-red-500">*</span></label>
                                 <div className="relative group">
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         required
                                         list="college-options"
                                         value={formData.college}
-                                        onChange={e => setFormData({...formData, college: e.target.value})}
+                                        onChange={e => setFormData({ ...formData, college: e.target.value })}
                                         className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all pl-11 text-sm placeholder:text-gray-600 focus:shadow-[0_0_20px_rgba(59,130,246,0.1)]"
                                         placeholder="Search or enter your college"
                                     />
@@ -141,10 +153,10 @@ const CompleteProfileModal = () => {
                             <div>
                                 <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5 ml-1">USN / Roll Number (Optional)</label>
                                 <div className="relative group">
-                                    <input 
-                                        type="text" 
+                                    <input
+                                        type="text"
                                         value={formData.usn}
-                                        onChange={e => setFormData({...formData, usn: e.target.value})}
+                                        onChange={e => setFormData({ ...formData, usn: e.target.value })}
                                         className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all pl-11 text-sm placeholder:text-gray-600 focus:shadow-[0_0_20px_rgba(59,130,246,0.1)]"
                                         placeholder="University Seat No."
                                     />
@@ -159,11 +171,11 @@ const CompleteProfileModal = () => {
                                     <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
                                         <span className="text-gray-500 text-sm font-mono border-r border-white/10 pr-2">+91</span>
                                     </div>
-                                    <input 
-                                        type="tel" 
+                                    <input
+                                        type="tel"
                                         required
-                                        value={formData.phone_number.replace(/^\+91\s?/, '')} 
-                                        onChange={e => setFormData({...formData, phone_number: '+91 ' + e.target.value})}
+                                        value={formData.phone_number.replace(/^\+91\s?/, '')}
+                                        onChange={e => setFormData({ ...formData, phone_number: '+91 ' + e.target.value })}
                                         className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all pl-[4.5rem] font-mono text-sm placeholder:text-gray-600 focus:shadow-[0_0_20px_rgba(59,130,246,0.1)]"
                                         placeholder="99999 99999"
                                         pattern="[0-9]{10}"
@@ -184,7 +196,7 @@ const CompleteProfileModal = () => {
                     </div>
 
                     {!submitting && (
-                        <button 
+                        <button
                             onClick={() => setIsProfileModalOpen(false)}
                             className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white transition-colors hover:bg-white/10 rounded-lg"
                         >
