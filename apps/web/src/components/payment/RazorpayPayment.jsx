@@ -1,8 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const useRazorpayPayment = () => {
     const { token, user, logout } = useAuth();
+    const userRef = useRef(user);
+
+    useEffect(() => {
+        userRef.current = user;
+    }, [user]);
 
     const loadRazorpayScript = () => {
         return new Promise((resolve) => {
@@ -17,7 +22,7 @@ const useRazorpayPayment = () => {
     const handlePayment = async ({ eventId, eventName, amount, teamName, teamMembers, onSuccess, onFailure, tokenOverride }) => {
         // Load Razorpay script
         const scriptLoaded = await loadRazorpayScript();
-        
+
         if (!scriptLoaded) {
             onFailure('Failed to load Razorpay SDK. Please check your internet connection.');
             return;
@@ -110,22 +115,22 @@ const useRazorpayPayment = () => {
                     }
                 },
                 prefill: {
-                    name: user?.full_name || user?.name || '',
-                    email: user?.email || '',
-                    contact: user?.phone_number || ''
+                    name: userRef.current?.full_name || userRef.current?.name || '',
+                    email: userRef.current?.email || '',
+                    contact: (userRef.current?.phone_number || '').replace(/\D/g, '').slice(-10)
                 },
                 theme: {
                     color: '#2563EB'
                 },
                 modal: {
-                    ondismiss: function() {
+                    ondismiss: function () {
                         onFailure('Payment cancelled by user');
                     }
                 }
             };
 
             const razorpay = new window.Razorpay(options);
-            
+
             razorpay.on('payment.failed', function (response) {
                 console.error('Payment failed:', response.error);
                 onFailure(response.error.description || 'Payment failed. Please try again.');
