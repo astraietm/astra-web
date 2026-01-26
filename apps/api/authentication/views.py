@@ -93,7 +93,10 @@ class GoogleLoginView(APIView):
             refresh['full_name'] = user.full_name
             refresh['avatar'] = user.avatar
             refresh['role'] = user.role
-            refresh['is_staff'] = user.is_staff # CRITICAL FOR ADMIN SCANNER
+            refresh['is_staff'] = user.is_staff
+            refresh['phone_number'] = user.phone_number
+            refresh['college'] = user.college
+            refresh['usn'] = user.usn
 
             return Response({
                 'refresh': str(refresh),
@@ -103,7 +106,10 @@ class GoogleLoginView(APIView):
                     'name': user.full_name,
                     'avatar': user.avatar,
                     'role': user.role,
-                    'is_staff': user.is_staff # Return to frontend
+                    'is_staff': user.is_staff,
+                    'phone_number': user.phone_number,
+                    'college': user.college,
+                    'usn': user.usn
                 }
             })
 

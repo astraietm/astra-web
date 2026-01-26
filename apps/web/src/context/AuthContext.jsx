@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-    const [pendingAction, setPendingAction] = useState(null); 
+    const [pendingAction, setPendingAction] = useState(null);
 
     // Init: Check for existing token
     useEffect(() => {
@@ -29,7 +29,11 @@ export const AuthProvider = ({ children }) => {
                         email: decoded.email,
                         name: decoded.full_name,
                         avatar: decoded.avatar,
-                        is_staff: decoded.is_staff || false
+                        role: decoded.role,
+                        is_staff: decoded.is_staff || false,
+                        phone_number: decoded.phone_number || '',
+                        college: decoded.college || '',
+                        usn: decoded.usn || ''
                     });
                 }
             } catch (e) {
@@ -98,10 +102,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ 
-            user, 
-            token, 
-            isLoginModalOpen, 
+        <AuthContext.Provider value={{
+            user,
+            token,
+            isLoginModalOpen,
             setIsLoginModalOpen,
             isProfileModalOpen,
             setIsProfileModalOpen,
@@ -110,8 +114,8 @@ export const AuthProvider = ({ children }) => {
                 if (updates.full_name && !updates.name) normalizedUpdates.name = updates.full_name;
                 if (updates.name && !updates.full_name) normalizedUpdates.full_name = updates.name;
                 setUser(prev => ({ ...prev, ...normalizedUpdates }));
-            }, 
-            handleServerLogin, 
+            },
+            handleServerLogin,
             logout,
             requireLogin,
             pendingAction,
