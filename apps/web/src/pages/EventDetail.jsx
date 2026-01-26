@@ -516,7 +516,7 @@ const EventDetail = () => {
                 onClose={() => setIsConfirmModalOpen(false)}
                 onConfirm={handleConfirmedRegistration}
                 eventName={event?.title}
-                userName={user?.full_name || user?.name || ''}
+                userName={user?.name || user?.full_name || user?.email?.split('@')[0] || ''}
                 isLoading={registering}
             />
         </div>
