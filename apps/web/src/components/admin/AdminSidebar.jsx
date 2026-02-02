@@ -17,26 +17,29 @@ import {
     ChevronRight,
     Activity,
     ArrowLeft,
-    Command
+    Command,
+    LogOut
 } from 'lucide-react';
 
 const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
 
     let sections = [
-        { group: "Operations", items: [
-            { to: "/admin", icon: LayoutDashboard, label: "Terminal", end: true },
-            { to: "/admin/events", icon: Calendar, label: "Event Registry" },
-            { to: "/admin/registrations", icon: Users, label: "Users & Access" },
+        { group: "Overview", items: [
+            { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
         ]},
-        { group: "Resources", items: [
-            { to: "/admin/gallery", icon: ImageIcon, label: "Media Assets" },
+        { group: "Management", items: [
+            { to: "/admin/events", icon: Calendar, label: "Events" },
+            { to: "/admin/registrations", icon: Users, label: "Registrations" },
         ]},
-        { group: "Infrastructure", items: [
-            { to: "/admin/scanner", icon: QrCode, label: "Access Scan" },
-            { to: "/admin/logs", icon: Activity, label: "System Logs" },
-            { to: "/admin/settings", icon: Settings, label: "OS Settings" },
+        { group: "Content", items: [
+            { to: "/admin/gallery", icon: ImageIcon, label: "Gallery" },
+        ]},
+        { group: "System", items: [
+            { to: "/admin/scanner", icon: QrCode, label: "QR Scanner" },
+            { to: "/admin/logs", icon: Activity, label: "Logs" },
+            { to: "/admin/settings", icon: Settings, label: "Settings" },
         ]}
     ];
 
@@ -48,6 +51,13 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
             ]}
         ];
     }
+
+    const handleLogout = () => {
+        if (window.confirm("Are you sure you want to logout?")) {
+            logout();
+            navigate('/');
+        }
+    };
 
     return (
         <>
@@ -91,9 +101,9 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                         {!isCollapsed && (
                             <div className="flex flex-col text-left">
                                 <span className="font-black text-white tracking-widest text-lg uppercase">
-                                    Astra<span className="text-blue-500">OS</span>
+                                    Astra<span className="text-blue-500">Admin</span>
                                 </span>
-                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] leading-none mt-0.5">Admin Interface</span>
+                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] leading-none mt-0.5">Control Panel</span>
                             </div>
                         )}
                     </button>
@@ -150,7 +160,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                     ))}
                 </div>
 
-                {/* Personnel Access Control */}
+                {/* User Section / Logout */}
                 <div className="p-6 border-t border-white/[0.04] bg-black/40 backdrop-blur-3xl relative z-10">
                     <button
                         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -161,40 +171,32 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                                 {user?.avatar ? (
                                     <img src={user.avatar} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="User" />
                                 ) : (
-                                    <span className="text-sm font-black text-blue-500">{user?.name?.[0]?.toUpperCase()}</span>
+                                    <span className="text-sm font-black text-blue-500">{user?.first_name?.[0]?.toUpperCase() || 'A'}</span>
                                 )}
                             </div>
                         </div>
                         
                         {!isCollapsed && (
                             <div className="flex-1 text-left overflow-hidden">
-                                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] leading-none mb-1.5">Authorized User</p>
-                                <p className="text-sm font-black text-slate-200 truncate leading-none">{user?.name || 'ROOT@ADMIN'}</p>
+                                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] leading-none mb-1.5">Logged In</p>
+                                <p className="text-sm font-black text-slate-200 truncate leading-none">{user?.first_name || 'Admin'}</p>
                             </div>
                         )}
                         {!isCollapsed && (
                             <div className="flex items-center gap-1 text-slate-600 group-hover:text-blue-500 transition-colors">
-                                <Command size={14} className="opacity-50" />
                                 <ChevronLeft size={16} />
                             </div>
                         )}
                     </button>
                     
                     {!isCollapsed && (
-                        <div className="mt-4 space-y-2">
-                             <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.2em] text-slate-700">
-                                <span>Clearance level</span>
-                                <span className="text-blue-500/80">LVL_05 ACTIVE</span>
-                             </div>
-                             <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                <motion.div 
-                                    className="h-full bg-gradient-to-r from-blue-600 to-indigo-500"
-                                    initial={{ width: 0 }}
-                                    animate={{ width: "92%" }}
-                                    transition={{ duration: 2.5, ease: "circOut" }}
-                                />
-                             </div>
-                        </div>
+                         <button 
+                            onClick={handleLogout}
+                            className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-500/10 text-rose-500 text-xs font-bold uppercase tracking-wider hover:bg-rose-500/20 transition-all"
+                         >
+                            <LogOut size={14} />
+                            Logout
+                         </button>
                     )}
                 </div>
             </motion.aside>

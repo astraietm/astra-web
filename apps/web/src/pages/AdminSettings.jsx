@@ -10,59 +10,45 @@ import {
     Bell, 
     Server, 
     Database, 
-    Moon, 
-    Sun, 
     Users, 
     Mail, 
     Trash2, 
     Shield, 
-    Cpu, 
-    Zap, 
-    Activity, 
-    ChevronRight, 
-    Plus, 
-    Key,
-    Monitor,
-    Network,
-    Terminal
+    Activity
 } from 'lucide-react';
 
 const Toggle = ({ enabled, onChange }) => (
     <button 
         onClick={() => onChange(!enabled)}
-        className={`w-14 h-8 flex items-center rounded-full p-1 transition-all duration-500 relative ${enabled ? 'bg-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.4)] border-blue-500/50' : 'bg-white/[0.05] border-white/10 border'}`}
+        className={`w-12 h-6 flex items-center rounded-full p-1 transition-all duration-300 relative ${enabled ? 'bg-blue-600' : 'bg-white/[0.1] border border-white/10'}`}
     >
-        <div className={`bg-white w-6 h-6 rounded-full shadow-2xl transform transition-all duration-500 flex items-center justify-center ${enabled ? 'translate-x-6' : 'translate-x-0'}`}>
-            <div className={`w-1 h-1 rounded-full ${enabled ? 'bg-blue-600' : 'bg-slate-300'}`} />
-        </div>
+        <div className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-all duration-300 ${enabled ? 'translate-x-6' : 'translate-x-0'}`} />
     </button>
 );
 
 const SettingSection = ({ icon: Icon, title, sub, children }) => (
-    <div className="bg-white/[0.01] border border-white/[0.03] rounded-[2.5rem] p-10 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[100px] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-        
-        <div className="flex items-center gap-6 mb-12 relative z-10">
-            <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-blue-500 shadow-inner group-hover:scale-110 transition-transform">
-                <Icon size={24} />
+    <div className="bg-[#0a0a0a] border border-white/[0.08] rounded-3xl p-8 relative overflow-hidden">
+        <div className="flex items-center gap-4 mb-8">
+            <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-blue-500">
+                <Icon size={20} />
             </div>
             <div className="flex flex-col">
-                <h3 className="text-xl font-black text-white uppercase tracking-widest">{title}</h3>
-                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] mt-1">{sub}</p>
+                <h3 className="text-lg font-bold text-white">{title}</h3>
+                <p className="text-xs font-medium text-slate-500">{sub}</p>
             </div>
         </div>
 
-        <div className="space-y-10 relative z-10">
+        <div className="space-y-8">
             {children}
         </div>
     </div>
 );
 
 const SettingItem = ({ label, description, rightElement }) => (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 group/item">
-        <div className="space-y-1.5 flex-1 pr-6">
-            <h4 className="text-sm font-black text-slate-200 uppercase tracking-tight group-hover/item:text-white transition-colors">{label}</h4>
-            <p className="text-[11px] font-bold text-slate-600 uppercase tracking-widest leading-relaxed max-w-xl group-hover/item:text-slate-500 transition-colors">{description}</p>
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="space-y-1 pr-6 flex-1">
+            <h4 className="text-sm font-bold text-slate-200">{label}</h4>
+            <p className="text-xs text-slate-500 leading-relaxed max-w-lg">{description}</p>
         </div>
         <div className="shrink-0">
             {rightElement}
@@ -168,19 +154,18 @@ const AdminSettings = () => {
     };
 
     return (
-        <div className="space-y-16 pb-20">
-            {/* Mission Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 relative">
+        <div className="space-y-12 pb-20">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                  <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-px w-12 bg-blue-500" />
-                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Environmental Registry</span>
+                        <span className="text-[10px] font-bold text-blue-500 uppercase tracking-[0.2em]">Configuration</span>
                     </div>
                     <div>
-                        <h1 className="text-6xl font-black text-white/5 uppercase tracking-tighter absolute -mt-4 pointer-events-none select-none">OS Config</h1>
-                        <h1 className="text-3xl font-black text-white uppercase tracking-wider relative z-10">System Parameters</h1>
-                        <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-2 max-w-md leading-relaxed">
-                            Fine-tuning global environmental variables for the Astra ecosystem.
+                        <h1 className="text-3xl font-bold text-white uppercase tracking-wider relative z-10">Settings</h1>
+                        <p className="text-sm font-medium text-slate-500 mt-2 max-w-md">
+                            Manage global system preferences, security, and access controls.
                         </p>
                     </div>
                 </div>
@@ -191,21 +176,20 @@ const AdminSettings = () => {
                         disabled={saving}
                         className="relative group overflow-hidden"
                     >
-                        <div className="absolute inset-0 bg-blue-600 rounded-2xl blur-lg opacity-20 group-hover:opacity-100 transition-opacity" />
-                        <div className="relative h-16 px-12 bg-blue-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-[2rem] flex items-center gap-3 group-active:scale-95 transition-transform shadow-2xl border border-white/10">
-                            <Save size={18} />
-                            {saving ? 'Synchronizing...' : 'Commit Local Delta'}
+                        <div className="relative h-12 px-8 bg-blue-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg items-center justify-center">
+                            <Save size={16} />
+                            {saving ? 'Saving...' : 'Save Changes'}
                         </div>
                     </button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                 {/* General Config */}
-                <SettingSection icon={Globe} title="Operational General" sub="Global Accessibility Parameters">
+                <SettingSection icon={Globe} title="General Settings" sub="Public visibility and access">
                     <SettingItem 
-                        label="Public Handshake" 
-                        description="Allow external network nodes to initialize new session registrations publicly."
+                        label="Public Registration" 
+                        description="Allow new users to register for events publicly."
                         rightElement={
                             <Toggle 
                                 enabled={settings.registrationOpen} 
@@ -213,10 +197,10 @@ const AdminSettings = () => {
                             />
                         }
                     />
-                    <div className="h-px w-full bg-white/[0.03]" />
+                    <div className="h-px w-full bg-white/[0.05]" />
                     <SettingItem 
-                        label="Maintenance Protocol" 
-                        description="Enforce terminal lockdown. Deny public access to all mission sectors. Root only."
+                        label="Maintenance Mode" 
+                        description="Disable public access to the platform. Admin access only."
                         rightElement={
                             <Toggle 
                                 enabled={settings.maintenanceMode} 
@@ -227,10 +211,10 @@ const AdminSettings = () => {
                 </SettingSection>
 
                 {/* Notifications */}
-                <SettingSection icon={Bell} title="Telemetry Alerts" sub="Communication & Dispatch Matrix">
+                <SettingSection icon={Bell} title="Notifications" sub="Email and system alerts">
                     <SettingItem 
-                        label="Unified Messaging" 
-                        description="Enable automated SMTP relay for mission-critical audit trails and password recovery."
+                        label="Email Notifications" 
+                        description="Enable automated emails for registrations and password resets."
                         rightElement={
                             <Toggle 
                                 enabled={settings.emailNotifications} 
@@ -238,21 +222,21 @@ const AdminSettings = () => {
                             />
                         }
                     />
-                    <div className="h-px w-full bg-white/[0.03]" />
+                    <div className="h-px w-full bg-white/[0.05]" />
                      <SettingItem 
-                        label="Real-time Webhooks" 
-                        description="Bridge core events to Slack intelligence sectors for real-time tactical monitoring."
+                        label="Slack Integration" 
+                        description="Connect webhook for real-time team notifications."
                         rightElement={
-                            <button className="text-[10px] font-black text-blue-500 uppercase tracking-widest hover:text-white transition-colors underline decoration-2 underline-offset-8">INIT_BRIDGE</button>
+                            <button className="text-xs font-bold text-blue-500 hover:text-white transition-colors">Configure</button>
                         }
                     />
                 </SettingSection>
 
                 {/* Security */}
-                <SettingSection icon={Lock} title="Cryptography" sub="Access Control & Security Shield">
+                <SettingSection icon={Lock} title="Security" sub="Authentication and session control">
                     <SettingItem 
-                        label="Multi-Factor Uplink" 
-                        description="Enforce secondary cryptographic verification for all root and administrative assets."
+                        label="Two-Factor Authentication" 
+                        description="Require 2FA for all administrative accounts."
                         rightElement={
                             <Toggle 
                                 enabled={settings.twoFactor} 
@@ -260,38 +244,38 @@ const AdminSettings = () => {
                             />
                         }
                     />
-                    <div className="h-px w-full bg-white/[0.03]" />
+                    <div className="h-px w-full bg-white/[0.05]" />
                     <SettingItem 
-                        label="Temporal Timeout" 
-                        description="Automatically terminate inactive sessions to prevent unauthorized node access."
+                        label="Session Timeout" 
+                        description="Automatically log out inactive users."
                         rightElement={
-                            <select className="bg-black/40 border border-white/[0.05] rounded-xl px-4 py-2 text-[10px] font-black text-slate-300 focus:outline-none focus:border-blue-500/30 uppercase tracking-widest">
-                                <option>15_MINUTES</option>
-                                <option>30_MINUTES</option>
-                                <option>01_HOUR_EXP</option>
-                                <option>04_HOURS_MAX</option>
+                            <select className="bg-black/40 border border-white/[0.1] rounded-lg px-3 py-2 text-xs font-medium text-slate-300 focus:outline-none focus:border-blue-500/50">
+                                <option>15 Minutes</option>
+                                <option>30 Minutes</option>
+                                <option>1 Hour</option>
+                                <option>4 Hours</option>
                             </select>
                         }
                     />
                 </SettingSection>
 
                 {/* Database */}
-                <SettingSection icon={Server} title="Memory Buffer" sub="Data Retention & Integrity Ops">
+                <SettingSection icon={Server} title="System" sub="Cache and data management">
                     <SettingItem 
-                        label="Volatile Cache Purge" 
-                        description="Force refresh the global state by purging all temporary memory buffers."
+                        label="Clear Cache" 
+                        description="Purge application cache to force fresh data reload."
                         rightElement={
-                            <button className="px-6 py-2.5 bg-white/[0.02] border border-white/10 rounded-xl text-[9px] font-black text-slate-400 uppercase tracking-widest hover:text-white transition-all">TERMINATE_CACHE</button>
+                            <button className="px-4 py-2 bg-white/[0.05] border border-white/10 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">Clear Now</button>
                         }
                     />
-                    <div className="h-px w-full bg-white/[0.03]" />
+                    <div className="h-px w-full bg-white/[0.05]" />
                     <SettingItem 
-                        label="Neural Storage Stats" 
-                        description="Retrieve real-time telemetry from the primary intelligence database node."
+                        label="Database Latency" 
+                        description="Current response time from primary node."
                         rightElement={
-                            <div className="flex items-center gap-3">
-                                <Activity size={16} className="text-emerald-500" />
-                                <span className="text-[10px] font-black text-emerald-500 uppercase">Latency: 0.12ms</span>
+                            <div className="flex items-center gap-2">
+                                <Activity size={14} className="text-emerald-500" />
+                                <span className="text-xs font-bold text-emerald-500">12ms</span>
                             </div>
                         }
                     />
@@ -299,80 +283,75 @@ const AdminSettings = () => {
 
                 {/* Team Access */}
                 <div className="xl:col-span-2">
-                    <SettingSection icon={Users} title="Personnel Access List" sub="Operational Team Management">
-                        <div className="space-y-10">
+                    <SettingSection icon={Users} title="Team Management" sub="Manage admin and volunteer access">
+                        <div className="space-y-8">
                             {/* Add New Personnel */}
-                            <div className="flex flex-col md:flex-row gap-4 items-end bg-white/[0.01] p-8 rounded-[2rem] border border-white/[0.03] group/input shadow-inner">
-                                <div className="flex-1 space-y-3 w-full">
-                                    <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">New Node Email Identifier</label>
+                            <div className="flex flex-col md:flex-row gap-4 items-end bg-white/[0.02] p-6 rounded-2xl border border-white/[0.05]">
+                                <div className="flex-1 space-y-2 w-full">
+                                    <label className="text-xs font-bold text-slate-500 ml-1">Email Address</label>
                                     <div className="relative">
-                                        <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600 w-4 h-4" />
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 w-4 h-4" />
                                         <input 
                                             type="email" 
-                                            placeholder="PERSONNEL@NETWORK.UPLINK" 
+                                            placeholder="user@example.com" 
                                             value={newMemberEmail}
                                             onChange={(e) => setNewMemberEmail(e.target.value)}
-                                            className="w-full bg-black/60 border border-white/[0.04] rounded-2xl py-4 pl-14 pr-6 text-[11px] font-black text-slate-200 focus:outline-none focus:border-blue-500/30 transition-all uppercase placeholder:text-slate-800"
+                                            className="w-full bg-black/40 border border-white/[0.1] rounded-xl py-3 pl-10 pr-4 text-sm font-medium text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-600"
                                         />
                                     </div>
                                 </div>
-                                <div className="w-full md:w-48 space-y-3">
-                                     <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Access Tier</label>
+                                <div className="w-full md:w-48 space-y-2">
+                                     <label className="text-xs font-bold text-slate-500 ml-1">Role</label>
                                      <select 
                                         value={newMemberRole}
                                         onChange={(e) => setNewMemberRole(e.target.value)}
-                                        className="w-full bg-black/60 border border-white/[0.04] rounded-2xl py-4 px-6 text-[11px] font-black text-slate-200 focus:outline-none focus:border-blue-500/30 transition-all uppercase appearance-none cursor-pointer"
+                                        className="w-full bg-black/40 border border-white/[0.1] rounded-xl py-3 px-4 text-sm font-medium text-white focus:outline-none focus:border-blue-500/50 transition-all appearance-none cursor-pointer"
                                      >
-                                         <option value="VOLUNTEER">VOLUNTEER_LVL_1</option>
-                                         <option value="ADMIN">ADMIN_ROOT_TIER</option>
+                                         <option value="VOLUNTEER">Volunteer</option>
+                                         <option value="ADMIN">Admin</option>
                                      </select>
                                 </div>
                                 <button 
                                     onClick={handleAddMember}
                                     disabled={!newMemberEmail}
-                                    className="h-14 px-10 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-blue-500 transition-all disabled:opacity-30 disabled:grayscale mb-0.5"
+                                    className="h-11 px-6 bg-blue-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    Authorize
+                                    Add Member
                                 </button>
                             </div>
 
                             {/* Personnel List */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {teamMembers.length === 0 ? (
-                                    <div className="col-span-full py-20 flex flex-col items-center gap-4 opacity-20 border border-dashed border-white/5 rounded-[2rem]">
-                                        <History size={40} />
-                                        <span className="text-[10px] font-black uppercase tracking-[0.4em]">No Personnel Synced</span>
+                                    <div className="col-span-full py-12 flex flex-col items-center gap-3 opacity-40 border border-dashed border-white/10 rounded-2xl">
+                                        <Users size={32} />
+                                        <span className="text-xs font-medium uppercase tracking-wider">No team members found</span>
                                     </div>
                                 ) : (
                                     teamMembers.map((member) => (
-                                        <motion.div 
+                                        <div 
                                             key={member.id} 
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            className="flex justify-between items-center bg-white/[0.01] p-6 rounded-[2rem] border border-white/[0.03] hover:border-white/[0.1] hover:bg-white/[0.02] transition-all group/card"
+                                            className="flex justify-between items-center bg-white/[0.02] p-4 rounded-xl border border-white/[0.05] hover:border-white/[0.1] transition-all"
                                         >
-                                            <div className="flex items-center gap-5">
-                                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xs font-black shadow-inner border transition-all group-hover/card:scale-110 ${member.role === 'ADMIN' ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold shadow-inner ${member.role === 'ADMIN' ? 'bg-indigo-500/10 text-indigo-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
                                                     {member.role[0]}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <p className="text-[13px] font-black text-slate-200 uppercase tracking-tight truncate max-w-[140px] md:max-w-xs">{member.email}</p>
-                                                    <div className="flex items-center gap-2 mt-1">
-                                                        <span className={`text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-full ${member.role === 'ADMIN' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-                                                            {member.role}
-                                                        </span>
-                                                        <span className="text-[8px] font-bold text-slate-700 uppercase">ID: NODE_{member.id}</span>
-                                                    </div>
+                                                    <p className="text-sm font-bold text-white truncate max-w-[150px] md:max-w-xs">{member.email}</p>
+                                                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full w-fit mt-1 ${member.role === 'ADMIN' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                                                        {member.role}
+                                                    </span>
                                                 </div>
                                             </div>
                                             <button 
                                                 onClick={() => handleDeleteMember(member.id)}
-                                                className="w-10 h-10 rounded-xl bg-rose-500/5 border border-rose-500/10 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all active:scale-90"
-                                                title="Revoke Access"
+                                                className="p-2 rounded-lg text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-all"
+                                                title="Remove Member"
                                             >
                                                 <Trash2 size={16} />
                                             </button>
-                                        </motion.div>
+                                        </div>
                                     ))
                                 )}
                             </div>

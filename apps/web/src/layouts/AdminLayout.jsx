@@ -21,7 +21,7 @@ const AdminLayout = () => {
     // Get page title from route
     const getPageTitle = () => {
         const path = location.pathname.split('/').pop();
-        if (!path || path === 'admin') return 'COMMAND CENTER';
+        if (!path || path === 'admin') return 'DASHBOARD';
         return path.toUpperCase().replace(/-/g, ' ');
     };
 
@@ -124,7 +124,7 @@ const AdminLayout = () => {
                     <div className="flex items-center gap-8">
                         <span className="flex items-center gap-2">
                             <Shield className="w-3 h-3 text-blue-500" />
-                            Astra Command <span className="text-white/20">|</span> <span className="text-white/40">v2.6.0</span>
+                            Astra Admin <span className="text-white/20">|</span> <span className="text-white/40">v2.6.0</span>
                         </span>
                         <div className="h-4 w-px bg-white/5 hidden sm:block" />
                         <span className="hidden sm:block text-white/20">© 2026 KMCT IETM</span>
@@ -133,7 +133,7 @@ const AdminLayout = () => {
                         <div className={`flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.02] border border-white/[0.05] shadow-inner transition-colors duration-500`}>
                             <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'}`} />
                             <span className={`text-[9px] font-bold ${isSystemOnline ? 'text-emerald-500/80' : 'text-red-500/80'}`}>
-                                {isSystemOnline ? 'OS_CORE_ONLINE' : 'OS_CORE_DISCONNECTED'}
+                                {isSystemOnline ? 'SYSTEM ONLINE' : 'DISCONNECTED'}
                             </span>
                         </div>
                     </div>

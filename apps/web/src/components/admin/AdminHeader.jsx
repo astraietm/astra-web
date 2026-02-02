@@ -42,20 +42,20 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline, onSearchClick }) => {
                         <div className="h-px w-8 bg-blue-500/20" />
                     </div>
                     <h2 className="text-white font-black text-xl uppercase tracking-widest leading-none">
-                        {title || "Astra Terminal"}
+                        {title || "Astra Admin"}
                     </h2>
                 </div>
 
                 <div className="h-10 w-px bg-white/[0.04] mx-2 hidden md:block" />
 
-                {/* Tactical Status */}
+                {/* Status */}
                 <div className={`hidden md:flex items-center gap-3 px-4 py-2 rounded-xl bg-white/[0.02] border border-white/[0.05] transition-all duration-500`}>
                     <div className="relative">
                         <div className={`w-2 h-2 rounded-full ${isSystemOnline ? 'bg-emerald-500' : 'bg-red-500'}`} />
                         <div className={`absolute inset-0 w-2 h-2 rounded-full ${isSystemOnline ? 'bg-emerald-500' : 'bg-red-500'} blur-sm animate-ping opacity-40`} />
                     </div>
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isSystemOnline ? 'text-emerald-500/80' : 'text-red-500/80'}`}>
-                        {isSystemOnline ? 'SYNC_ACTIVE' : 'SYNC_LOST'}
+                        {isSystemOnline ? 'ONLINE' : 'OFFLINE'}
                     </span>
                 </div>
             </div>
@@ -67,7 +67,7 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline, onSearchClick }) => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-blue-500 transition-colors z-10" />
                     <input 
                         type="text" 
-                        placeholder="SEARCH CORE ARCHIVE... (CTRL+K)"
+                        placeholder="SEARCH... (CTRL+K)"
                         onClick={onSearchClick}
                         readOnly
                         className="bg-white/[0.02] border border-white/[0.06] rounded-2xl py-3 pl-12 pr-28 text-[11px] font-black w-80 transition-all focus:outline-none focus:ring-1 focus:ring-blue-500/30 focus:bg-white/[0.04] placeholder:text-slate-700 hover:bg-white/[0.04] hover:border-white/[0.1] cursor-pointer text-slate-300 uppercase tracking-widest"
@@ -91,12 +91,12 @@ const AdminHeader = ({ title, onMenuClick, isSystemOnline, onSearchClick }) => {
                     <button className="flex items-center gap-4 pl-2 pr-5 py-2 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] hover:border-white/[0.1] transition-all group">
                         <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600/20 to-indigo-600/20 p-[1px] border border-white/10 group-hover:border-blue-500/30 transition-colors">
                             <div className="w-full h-full rounded-[10px] bg-black flex items-center justify-center overflow-hidden">
-                                <Zap className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                                <User className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
                             </div>
                         </div>
                         <div className="hidden md:block text-left">
-                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Security Node</p>
-                            <p className="text-[12px] font-black text-slate-300 uppercase leading-none tracking-tight">Root_Auth</p>
+                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Access Profile</p>
+                            <p className="text-[12px] font-black text-slate-300 uppercase leading-none tracking-tight">{user?.first_name || 'Admin'}</p>
                         </div>
                     </button>
                 </div>
