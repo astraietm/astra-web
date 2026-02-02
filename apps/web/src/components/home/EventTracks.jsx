@@ -19,7 +19,7 @@ export function EventTracks() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-        const CACHE_KEY = 'astra_events_v1';
+        const CACHE_KEY = 'astra_events_v2';
         let hasCachedData = false;
 
         // 1. Try Cache

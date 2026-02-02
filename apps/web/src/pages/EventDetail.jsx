@@ -35,7 +35,7 @@ const EventDetail = () => {
 
     useEffect(() => {
         const fetchEvent = async () => {
-            const CACHE_KEY = 'astra_events_v1';
+            const CACHE_KEY = 'astra_events_v2';
             let hasCachedData = false;
 
             // Helper to Map Event Data safely
