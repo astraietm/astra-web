@@ -12,6 +12,25 @@ const Events = () => {
 
   useEffect(() => {
     const fetchEvents = async () => {
+      const CACHE_KEY = 'astra_events_v1';
+      let hasCachedData = false;
+
+      // 1. Try to load from cache first for instant render
+      try {
+        const cached = sessionStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setEvents(parsed);
+            setLoading(false);
+            hasCachedData = true;
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to load events from cache", e);
+      }
+
+      // 2. Fetch fresh data from API
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/`);
         const mappedEvents = response.data.map(event => ({
@@ -29,9 +48,15 @@ const Events = () => {
         allEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
         setEvents(allEvents);
 
+        // 3. Update cache
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify(allEvents));
+
       } catch (error) {
         console.error("Failed to fetch events:", error);
-        setEvents(eventsData);
+        // Only fall back to hardcoded data if we didn't have cached data
+        if (!hasCachedData) {
+            setEvents(eventsData);
+        }
       } finally {
         setLoading(false);
       }

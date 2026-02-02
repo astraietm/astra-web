@@ -19,23 +19,54 @@ export function EventTracks() {
 
   useEffect(() => {
     const fetchEvents = async () => {
+        const CACHE_KEY = 'astra_events_v1';
+        let hasCachedData = false;
+
+        // 1. Try Cache
+        try {
+            const cached = sessionStorage.getItem(CACHE_KEY);
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    setEvents(parsed.slice(0, 4));
+                    setLoading(false);
+                    hasCachedData = true;
+                }
+            }
+        } catch (e) {
+            console.warn("EventTracks cache invalid", e);
+        }
+
+        // 2. Fetch Fresh
         try {
             const response = await axios.get(`${API_URL}/events/`);
-            const apiEvents = response.data;
+            
+            // Map to standardize structure (consistent with Events.jsx)
+            const apiEvents = response.data.map(event => ({
+                ...event,
+                date: event.event_date,
+                image: event.image || null
+            }));
 
             // Merge with local events
             const apiIds = new Set(apiEvents.map(e => e.id));
             const localEvents = eventsData.filter(e => !apiIds.has(e.id));
             const allEvents = [...apiEvents, ...localEvents];
             
-            // Sort by date descending (Newest/Upcoming first)
+            // Sort by date descending
             allEvents.sort((a, b) => new Date(b.date || b.event_date) - new Date(a.date || a.event_date));
 
-            setEvents(allEvents.slice(0, 4)); 
+            setEvents(allEvents.slice(0, 4));
+            
+            // Update shared cache
+            sessionStorage.setItem(CACHE_KEY, JSON.stringify(allEvents));
+
         } catch (error) {
             console.error("Failed to fetch events for tracks:", error);
-             // Fallback to local eventsData
-            setEvents(eventsData.slice(0, 4));
+            // Fallback to local eventsData if no cache
+            if (!hasCachedData) {
+                setEvents(eventsData.slice(0, 4));
+            }
         } finally {
             setLoading(false);
         }

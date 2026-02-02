@@ -12,41 +12,62 @@ const FeaturedEvents = () => {
 
     useEffect(() => {
         const fetchEvents = async () => {
+            const CACHE_KEY = 'astra_featured_events_v1';
+            let hasCachedData = false;
+
+            try {
+                const cached = sessionStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        setFeaturedEvents(parsed);
+                        setLoading(false);
+                        hasCachedData = true;
+                    }
+                }
+            } catch (e) {
+                // ignore
+            }
+
             try {
                 const response = await axios.get(`${API_URL}/events/`);
-                setFeaturedEvents(response.data.slice(0, 3));
+                const topEvents = response.data.slice(0, 3);
+                setFeaturedEvents(topEvents);
+                sessionStorage.setItem(CACHE_KEY, JSON.stringify(topEvents));
             } catch (error) {
                 console.error("Failed to fetch events:", error);
-                 // Fallback Mock Events
-                setFeaturedEvents([
-                    {
-                        id: 991,
-                        title: "Cyber Security Workshop",
-                        description: "Deep dive into ethical hacking, penetration testing, and zero-trust architecture.",
-                        date: "2025-02-10",
-                        venue: "Main Auditorium",
-                        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
-                        category: "Workshop"
-                    },
-                    {
-                        id: 992,
-                        title: "AI & ML Hackathon",
-                        description: "24-hour hackathon challenging you to build innovative AI solutions.",
-                        date: "2025-02-15",
-                        venue: "Tech Lab 3",
-                        image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800",
-                        category: "Hackathon"
-                    },
-                    {
-                        id: 993,
-                        title: "Web3 Summit",
-                        description: "Explore the future of the decentralized web. Topics: DeFi, NFTs, and DAO governance.",
-                        date: "2025-02-18",
-                        venue: "Virtual Hall",
-                        image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=800",
-                        category: "Summit"
-                    }
-                ]);
+                 // Fallback Mock Events if no cache
+                 if (!hasCachedData) {
+                    setFeaturedEvents([
+                        {
+                            id: 991,
+                            title: "Cyber Security Workshop",
+                            description: "Deep dive into ethical hacking, penetration testing, and zero-trust architecture.",
+                            date: "2025-02-10",
+                            venue: "Main Auditorium",
+                            image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800",
+                            category: "Workshop"
+                        },
+                        {
+                            id: 992,
+                            title: "AI & ML Hackathon",
+                            description: "24-hour hackathon challenging you to build innovative AI solutions.",
+                            date: "2025-02-15",
+                            venue: "Tech Lab 3",
+                            image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800",
+                            category: "Hackathon"
+                        },
+                        {
+                            id: 993,
+                            title: "Web3 Summit",
+                            description: "Explore the future of the decentralized web. Topics: DeFi, NFTs, and DAO governance.",
+                            date: "2025-02-18",
+                            venue: "Virtual Hall",
+                            image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=800",
+                            category: "Summit"
+                        }
+                    ]);
+                 }
             } finally {
                 setLoading(false);
             }

@@ -65,6 +65,20 @@ const PageLoader = () => (
 );
 
 function App() {
+  React.useEffect(() => {
+    // Warm up the backend to mitigate Render cold starts
+    const warmUpBackend = async () => {
+      try {
+        if (import.meta.env.VITE_API_URL) {
+           await fetch(`${import.meta.env.VITE_API_URL}/events/`);
+        }
+      } catch (e) {
+        // Silent failure is fine for warm-up
+      }
+    };
+    warmUpBackend();
+  }, []);
+
   return (
     <ErrorBoundary>
       <ToastProvider>

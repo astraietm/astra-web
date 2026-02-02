@@ -33,33 +33,57 @@ const EventDetail = () => {
 
     const handlePayment = useRazorpayPayment();
 
-    // ... (useEffect fetches remain same) ...
     useEffect(() => {
         const fetchEvent = async () => {
+            const CACHE_KEY = 'astra_events_v1';
+            let hasCachedData = false;
+
+            // Helper to Map Event Data safely
+            const mapEventData = (data) => ({
+                ...data,
+                date: data.event_date || data.date,
+                is_paid: data.requires_payment !== undefined ? data.requires_payment : data.is_paid,
+                fee: data.payment_amount ? `₹${data.payment_amount}` : data.fee,
+                is_registration_open: data.is_registration_open !== undefined ? data.is_registration_open : true,
+                is_team_event: data.is_team_event,
+                registration_start: data.registration_start,
+                registration_end: data.registration_end,
+                registration_limit: data.registration_limit,
+            });
+
+            // 1. Try Cache
+            try {
+                const cached = sessionStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    const events = JSON.parse(cached);
+                    const cachedEvent = events.find(e => e.id === parseInt(id));
+                    if (cachedEvent) {
+                        setEvent(mapEventData(cachedEvent));
+                        setLoading(false);
+                        hasCachedData = true;
+                    }
+                }
+            } catch (e) {
+                console.warn("Detail cache lookup failed", e);
+            }
+
+            // 2. Fetch Fresh
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/${id}/`);
-                const mappedEvent = {
-                    ...response.data,
-                    date: response.data.event_date,
-                    // Map backend fields to frontend names used in local data
-                    is_paid: response.data.requires_payment,
-                    fee: response.data.payment_amount ? `₹${response.data.payment_amount}` : response.data.fee,
-                    is_registration_open: response.data.is_registration_open !== undefined ? response.data.is_registration_open : true,
-                    is_team_event: response.data.is_team_event,
-                    registration_start: response.data.registration_start,
-                    registration_end: response.data.registration_end,
-                    registration_limit: response.data.registration_limit,
-                };
+                const mappedEvent = mapEventData(response.data);
                 setEvent(mappedEvent);
             } catch (error) {
                 console.error('Failed to fetch event from backend:', error);
-                // Fallback to local data
-                const localEvent = eventsData.find(e => e.id === parseInt(id));
-                if (localEvent) {
-                    setEvent(localEvent);
-                    toast.info('Event data loaded locally. Registration requires backend sync.');
-                } else {
-                    toast.error('Event not found in database or local storage');
+
+                // Fallback to local data only if cache failed
+                if (!hasCachedData) {
+                    const localEvent = eventsData.find(e => e.id === parseInt(id));
+                    if (localEvent) {
+                        setEvent(localEvent);
+                        toast.info('Event data loaded locally. Registration requires backend sync.');
+                    } else {
+                        toast.error('Event not found in database or local storage');
+                    }
                 }
             } finally {
                 setLoading(false);
