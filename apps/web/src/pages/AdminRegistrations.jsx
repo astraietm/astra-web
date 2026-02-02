@@ -11,7 +11,9 @@ import {
     ChevronRight,
     SearchX,
     Filter,
-    RefreshCw
+    Filter,
+    RefreshCw,
+    Trash2
 } from 'lucide-react';
 
 const AdminRegistrations = () => {
@@ -39,6 +41,24 @@ const AdminRegistrations = () => {
         } catch (error) {
             console.error('Error fetching registrations:', error);
             setLoading(false);
+        }
+    };
+
+    const handleClearAll = async () => {
+        if (!window.confirm("ARE YOU SURE? This will DELETE ALL REGISTRATIONS from the database. This action cannot be undone.")) return;
+        
+        setLoading(true);
+        try {
+            await axios.delete(`${API_URL}/admin-registrations/clear/`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setRegistrations([]);
+            setLoading(false);
+            alert("All registrations have been cleared.");
+        } catch (error) {
+            console.error('Error clearing registrations:', error);
+            setLoading(false);
+            alert("Failed to clear registrations.");
         }
     };
 
@@ -93,6 +113,13 @@ const AdminRegistrations = () => {
                     </div>
                 </div>
                 <div className="flex gap-4">
+                    <button 
+                        onClick={handleClearAll}
+                        className="px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-red-500/20 transition-all flex items-center gap-2"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Clear All
+                    </button>
                     <button 
                         onClick={fetchRegistrations}
                         className="px-6 py-3 bg-white/[0.05] border border-white/[0.1] text-slate-300 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-white/[0.1] transition-all flex items-center gap-2"

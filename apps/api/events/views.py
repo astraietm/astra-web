@@ -299,3 +299,18 @@ class VerifyPaymentView(APIView):
             return Response({"error": "Payment record not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": f"Verification error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ClearRegistrationsView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def delete(self, request):
+        try:
+            count = Registration.objects.count()
+            Registration.objects.all().delete()
+            # Also keep payments in sync if needed, mostly handled by CASCADE
+            return Response({
+                "message": f"Successfully deleted {count} registrations.",
+                "deleted_count": count
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
