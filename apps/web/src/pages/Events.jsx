@@ -33,11 +33,22 @@ const Events = () => {
       // 2. Fetch fresh data from API
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/`);
-        const mappedEvents = response.data.map(event => ({
-          ...event,
-          date: event.event_date,
-          image: event.image || null
-        }));
+        const mappedEvents = response.data.map(event => {
+            // Manual overrides for schedule changes
+            let effectiveDate = event.event_date;
+            if (event.title && event.title.includes("Hawkins Lab")) {
+                effectiveDate = "2026-02-12";
+            } else if (event.title && (event.title.includes("Shadow Login") || event.title.includes("Cipher Decode"))) {
+                effectiveDate = "2026-02-11";
+            }
+
+            return {
+              ...event,
+              date: effectiveDate,
+              event_date: effectiveDate,
+              image: event.image || null
+            };
+        });
         
         mappedEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
         

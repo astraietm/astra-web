@@ -7,22 +7,15 @@ import {
     ArrowLeft, 
     Upload, 
     Trash2, 
-    Shield, 
     Image as ImageIcon, 
     Loader2, 
     Edit2, 
     X, 
-    Check, 
-    Database, 
-    AlertTriangle,
     Plus,
     Maximize2,
-    Filter,
     Search,
-    ChevronRight,
     Zap,
-    Cpu,
-    Target
+    Cpu
 } from 'lucide-react';
 import { getOptimizedImageUrl } from '../utils/helpers';
 
@@ -56,7 +49,7 @@ const AdminGallery = () => {
             });
             setItems(response.data);
         } catch (err) {
-            setError('Failed to fetch intelligence visuals.');
+            setError('Failed to fetch gallery items.');
         } finally {
             setLoading(false);
         }
@@ -82,134 +75,127 @@ const AdminGallery = () => {
             setNewImage({ title: '', category: 'EVENT', image: null, description: '' });
             fetchGallery();
         } catch (err) {
-            alert('Upload failed. Access denied.');
+            alert('Upload failed. Please try again.');
         } finally {
             setUploading(false);
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('WARNING: Confirm visual asset decommissioning?')) return;
+        if (!window.confirm('Are you sure you want to delete this image?')) return;
         try {
             await axios.delete(`${API_URL}/gallery/${id}/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             fetchGallery();
         } catch (err) {
-            alert('Decommission failed.');
+            alert('Delete failed.');
         }
     };
 
     return (
-        <div className="space-y-16 pb-20">
-            {/* Tactical Header */}
+        <div className="space-y-12 pb-20">
+            {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 relative">
                  <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-px w-12 bg-blue-500" />
-                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em]">Visual Intelligence Archive</span>
+                        <span className="text-[10px] font-bold text-blue-500 uppercase tracking-[0.2em]">Media</span>
                     </div>
                     <div>
-                        <h1 className="text-6xl font-black text-white/5 uppercase tracking-tighter absolute -mt-4 pointer-events-none select-none">Asset Matrix</h1>
-                        <h1 className="text-3xl font-black text-white uppercase tracking-wider relative z-10">Gallery Protocol</h1>
-                        <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-2 max-w-md leading-relaxed">
-                            Organizing high-fidelity telemetry captures and mission visuals.
+                        <h1 className="text-3xl font-bold text-white uppercase tracking-wider relative z-10">Gallery</h1>
+                        <p className="text-sm font-medium text-slate-500 mt-2 max-w-md">
+                            Manage event photos, promotional assets, and gallery content.
                         </p>
                     </div>
                 </div>
                 
                 <div className="flex items-center gap-6">
                     <div className="relative group hidden lg:block">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 group-focus-within:text-blue-500 transition-colors z-10" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-blue-500 transition-colors z-10" />
                         <input 
                             type="text" 
-                            placeholder="SEARCH VISUAL IDENTIFIER..." 
-                            className="h-16 bg-black/40 border border-white/[0.03] rounded-[2rem] py-4 pl-14 pr-6 w-80 text-[11px] font-black tracking-widest text-slate-300 placeholder:text-slate-700 focus:outline-none focus:border-blue-500/30 transition-all uppercase"
+                            placeholder="Search images..." 
+                            className="h-12 bg-white/[0.03] border border-white/[0.05] rounded-xl pl-10 pr-6 w-64 text-sm font-medium text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 transition-all"
                         />
                     </div>
                     <button 
                         onClick={() => setShowUploadModal(true)}
                         className="relative group overflow-hidden"
                     >
-                        <div className="absolute inset-0 bg-blue-600 rounded-[2rem] blur-lg opacity-20 group-hover:opacity-100 transition-opacity duration-500" />
-                        <div className="relative h-16 px-10 bg-blue-600 rounded-[2rem] flex items-center gap-3 group-active:scale-95 transition-transform text-white text-[11px] font-black uppercase tracking-[0.2em] border border-white/10 shadow-2xl">
-                            <Plus size={20} strokeWidth={3} />
-                            Ingest Asset
+                        <div className="relative h-12 px-6 bg-blue-600 rounded-xl flex items-center gap-2 text-white text-xs font-bold uppercase tracking-wider hover:bg-blue-500 transition-all shadow-lg">
+                            <Plus size={16} strokeWidth={3} />
+                            Upload Image
                         </div>
                     </button>
                 </div>
             </div>
 
-            {/* Tactical Grid */}
+            {/* Grid */}
             <div className="relative">
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-40 gap-6">
+                    <div className="flex flex-col items-center justify-center py-40 gap-4">
                         <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
-                        <p className="text-[10px] font-black text-blue-500 uppercase tracking-[0.4em] animate-pulse">Syncing Visual Matrix...</p>
+                        <p className="text-xs font-bold text-blue-500 uppercase tracking-widest">Loading Media...</p>
                     </div>
                 ) : items.length === 0 ? (
-                    <div className="py-20 flex flex-col items-center justify-center opacity-10 gap-6 border border-dashed border-white/5 rounded-[3rem]">
-                        <ImageIcon size={60} strokeWidth={1} />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em]">No Assets Logged</span>
+                    <div className="py-20 flex flex-col items-center justify-center opacity-30 gap-6 border border-dashed border-white/10 rounded-3xl">
+                        <ImageIcon size={48} strokeWidth={1} />
+                        <span className="text-xs font-bold uppercase tracking-widest">No images found</span>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {items.map((item, idx) => (
                             <motion.div 
                                 key={item.id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.05 }}
-                                className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white/[0.02] border border-white/[0.05] hover:border-blue-500/30 transition-all duration-700 hover:shadow-[0_40px_80px_rgba(0,0,0,0.6)]"
+                                className="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-[#0a0a0a] border border-white/[0.08] hover:border-white/[0.2] transition-all"
                             >
                                 <img 
                                     src={getOptimizedImageUrl(item.image)} 
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0 opacity-40 group-hover:opacity-100" 
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 group-hover:opacity-100" 
                                     alt={item.title}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
                                 
-                                <div className="absolute inset-0 p-8 flex flex-col justify-between z-10">
-                                    <div className="flex justify-between items-start opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-4 group-hover:translate-y-0">
-                                        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-black text-white uppercase tracking-widest">
+                                <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
+                                    <div className="flex justify-between items-start opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-2 group-hover:translate-y-0">
+                                        <div className="px-3 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider">
                                             {item.category}
                                         </div>
                                         <button 
                                             onClick={() => handleDelete(item.id)}
-                                            className="w-10 h-10 rounded-xl bg-rose-500/20 backdrop-blur-md border border-rose-500/30 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all active:scale-90"
+                                            className="w-8 h-8 rounded-lg bg-rose-500/20 backdrop-blur-md border border-rose-500/30 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all"
                                         >
-                                            <Trash2 size={16} />
+                                            <Trash2 size={14} />
                                         </button>
                                     </div>
 
-                                    <div className="space-y-4 translate-y-8 group-hover:translate-y-0 transition-all duration-700">
-                                        <div className="space-y-1">
-                                            <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">{item.title}</h3>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-2 flex items-center gap-2">
-                                                <div className="w-1 h-1 rounded-full bg-blue-500" />
-                                                ID: VIS_NODE_{item.id}
+                                    <div className="space-y-3 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-white leading-tight">{item.title}</h3>
+                                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider mt-1">
+                                                ID: {item.id}
                                             </p>
                                         </div>
                                         <button 
                                             onClick={() => setSelectedImage(item)}
-                                            className="w-full h-14 bg-white/[0.05] backdrop-blur-md border border-white/10 rounded-2xl flex items-center justify-center gap-3 text-white text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                                            className="w-full h-10 bg-white/[0.1] backdrop-blur-md border border-white/10 rounded-lg flex items-center justify-center gap-2 text-white text-[10px] font-bold uppercase tracking-wider hover:bg-white/20 transition-all"
                                         >
-                                            <Maximize2 size={14} />
-                                            Analyze Asset
+                                            <Maximize2 size={12} />
+                                            View Details
                                         </button>
                                     </div>
                                 </div>
-
-                                {/* HUD Overlay Decoration */}
-                                <div className="absolute top-4 left-4 w-4 h-[1px] bg-white/20 group-hover:bg-blue-500/60 transition-colors" />
-                                <div className="absolute top-4 left-4 w-[1px] h-4 bg-white/20 group-hover:bg-blue-500/60 transition-colors" />
                             </motion.div>
                         ))}
                     </div>
                 )}
             </div>
 
-            {/* Ingest Modal */}
+            {/* Upload Modal */}
             <AnimatePresence>
                 {showUploadModal && (
                     <>
@@ -218,93 +204,89 @@ const AdminGallery = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowUploadModal(false)}
-                            className="fixed inset-0 bg-black/90 backdrop-blur-2xl z-[101]"
+                            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[101]"
                         />
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="fixed inset-0 m-auto w-full max-w-xl h-fit bg-[#020202] border border-white/[0.08] rounded-[3rem] p-12 shadow-2xl z-[102] overflow-hidden"
+                            className="fixed inset-0 m-auto w-full max-w-lg h-fit bg-[#0a0a0a] border border-white/[0.1] rounded-3xl p-8 shadow-2xl z-[102] overflow-hidden"
                         >
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[80px] pointer-events-none" />
-                            
-                            <div className="flex items-center justify-between mb-12 relative z-10">
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(37,99,235,1)] animate-pulse" />
-                                        <span className="text-[9px] font-black uppercase tracking-[0.5em] text-blue-500">Asset Ingestion</span>
-                                    </div>
-                                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter">New Registry</h2>
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h2 className="text-2xl font-bold text-white">Upload Media</h2>
+                                    <p className="text-sm text-slate-500">Add new images to the gallery</p>
                                 </div>
-                                <button onClick={() => setShowUploadModal(false)} className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-slate-500 hover:text-white transition-all">
+                                <button onClick={() => setShowUploadModal(false)} className="p-2 rounded-lg hover:bg-white/10 text-slate-500 hover:text-white transition-all">
                                     <X size={20} />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleUpload} className="space-y-8 relative z-10">
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Asset Header</label>
+                            <form onSubmit={handleUpload} className="space-y-6">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Title</label>
                                     <input 
                                         required 
                                         type="text" 
                                         value={newImage.title}
                                         onChange={(e) => setNewImage({...newImage, title: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/[0.08] rounded-2xl p-5 text-white font-black uppercase tracking-widest text-[11px] focus:border-blue-500/30 transition-all placeholder:text-slate-800"
-                                        placeholder="E.G. CHAMPIONS_CUP_2026"
+                                        className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-3 text-sm font-medium text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-600"
+                                        placeholder="Event Title..."
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-6">
-                                     <div className="space-y-3">
-                                        <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Classification</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                     <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
                                         <select 
                                             value={newImage.category}
                                             onChange={(e) => setNewImage({...newImage, category: e.target.value})}
-                                            className="w-full bg-black/40 border border-white/[0.08] rounded-2xl p-5 text-[11px] font-black text-white uppercase tracking-widest focus:outline-none focus:border-blue-500/30 transition-all cursor-pointer appearance-none"
+                                            className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-3 text-sm font-medium text-white focus:outline-none focus:border-blue-500/50 transition-all cursor-pointer"
                                         >
-                                            <option value="EVENT">EVENT_NODE</option>
-                                            <option value="TECHNICAL">TECHNICAL</option>
-                                            <option value="WINNERS">WINNERS_ARCHIVE</option>
-                                            <option value="PROMO">PROMOTIONAL</option>
+                                            <option value="EVENT">Event</option>
+                                            <option value="TECHNICAL">Technical</option>
+                                            <option value="WINNERS">Winners</option>
+                                            <option value="PROMO">Promotional</option>
                                         </select>
                                     </div>
-                                    <div className="space-y-3">
-                                        <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Source Node</label>
-                                        <div className="relative group/file">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Image File</label>
+                                        <div className="relative group">
                                             <input 
                                                 required 
                                                 type="file" 
                                                 onChange={(e) => setNewImage({...newImage, image: e.target.files[0]})}
                                                 className="absolute inset-0 opacity-0 cursor-pointer z-10"
                                             />
-                                            <div className="w-full bg-black/40 border border-dashed border-white/10 rounded-2xl p-5 flex items-center justify-center gap-3 text-slate-600 group-hover/file:border-blue-500/30 group-hover/file:text-blue-500 transition-all">
-                                                <Upload size={18} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">{newImage.image ? newImage.image.name.substring(0, 15) + '...' : 'Upload File'}</span>
+                                            <div className="w-full bg-white/[0.03] border border-dashed border-white/10 rounded-xl p-3 flex items-center justify-center gap-2 text-slate-500 group-hover:text-blue-500 group-hover:border-blue-500/30 transition-all">
+                                                <Upload size={16} />
+                                                <span className="text-xs font-bold truncate max-w-[100px]">{newImage.image ? newImage.image.name : 'Choose File'}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-1">Asset Briefing</label>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</label>
                                     <textarea 
-                                        rows="4"
+                                        rows="3"
                                         value={newImage.description}
                                         onChange={(e) => setNewImage({...newImage, description: e.target.value})}
-                                        className="w-full bg-black/40 border border-white/[0.08] rounded-2xl p-5 text-slate-400 font-bold uppercase tracking-widest text-[11px] focus:border-blue-500/30 focus:outline-none transition-all placeholder:text-slate-800 resize-none"
-                                        placeholder="ADDITIONAL SYSTEM DATA..."
+                                        className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-3 text-sm font-medium text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-slate-600 resize-none"
+                                        placeholder="Optional description..."
                                     ></textarea>
                                 </div>
 
                                 <button 
                                     disabled={uploading}
-                                    className="w-full h-20 relative group mt-4"
+                                    className="w-full h-12 bg-blue-600 rounded-xl text-white text-xs font-bold uppercase tracking-wider hover:bg-blue-500 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
-                                    <div className="absolute inset-0 bg-blue-600 rounded-3xl blur-xl opacity-20 group-hover:opacity-100 transition-opacity duration-500" />
-                                    <div className="relative h-full w-full bg-blue-600 text-white text-[11px] font-black uppercase tracking-[0.4em] rounded-3xl flex items-center justify-center gap-4 transition-all group-active:scale-95 border border-white/10 overflow-hidden disabled:opacity-50 disabled:grayscale">
-                                        <Zap size={20} className="fill-white animate-pulse" />
-                                        {uploading ? 'INGESTING...' : 'Commit to Matrix'}
-                                    </div>
+                                    {uploading ? (
+                                        <>
+                                            <Loader2 size={16} className="animate-spin" />
+                                            Uploading...
+                                        </>
+                                    ) : 'Upload Image'}
                                 </button>
                             </form>
                         </motion.div>
@@ -312,7 +294,7 @@ const AdminGallery = () => {
                 )}
             </AnimatePresence>
 
-            {/* Asset Analyzer Modal */}
+            {/* Details Modal */}
             <AnimatePresence>
                 {selectedImage && (
                     <>
@@ -321,74 +303,61 @@ const AdminGallery = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSelectedImage(null)}
-                            className="fixed inset-0 bg-black/95 backdrop-blur-3xl z-[101]"
+                            className="fixed inset-0 bg-black/90 backdrop-blur-xl z-[101]"
                         />
                         <motion.div 
-                            initial={{ opacity: 0, scale: 0.9 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className="fixed inset-10 bg-black/40 border border-white/10 rounded-[4rem] overflow-hidden z-[102] flex flex-col md:flex-row shadow-[0_0_100px_rgba(0,0,0,1)]"
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="fixed inset-4 md:inset-10 bg-[#0a0a0a] border border-white/[0.1] rounded-3xl overflow-hidden z-[102] flex flex-col md:flex-row shadow-2xl"
                         >
-                            <div className="flex-[2] bg-black flex items-center justify-center p-10 relative overflow-hidden">
-                                <div className="absolute inset-0 z-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+                            <div className="flex-1 bg-black flex items-center justify-center p-8 relative">
                                 <img 
                                     src={getOptimizedImageUrl(selectedImage.image)} 
-                                    className="max-w-full max-h-full object-contain relative z-10 rounded-2xl shadow-2xl" 
+                                    className="max-w-full max-h-full object-contain rounded-xl shadow-2xl" 
                                     alt={selectedImage.title} 
                                 />
-                                {/* Overlay Corners */}
-                                <div className="absolute top-10 left-10 w-20 h-20 border-t-2 border-l-2 border-blue-600/40 rounded-tl-3xl z-20" />
-                                <div className="absolute bottom-10 right-10 w-20 h-20 border-b-2 border-r-2 border-blue-600/40 rounded-br-3xl z-20" />
                             </div>
-                            <div className="flex-1 bg-[#020202] border-l border-white/10 p-16 space-y-12">
-                                <div className="space-y-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
-                                            <Cpu size={18} />
+                            <div className="w-full md:w-[400px] bg-[#0a0a0a] border-l border-white/[0.08] p-8 flex flex-col">
+                                <div className="flex justify-between items-start mb-8">
+                                    <div>
+                                        <div className="px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] font-bold text-blue-500 uppercase tracking-widest inline-block mb-3">
+                                            {selectedImage.category}
                                         </div>
-                                        <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.5em]">Asset_Analysis_Report</span>
+                                        <h2 className="text-2xl font-bold text-white leading-tight">{selectedImage.title}</h2>
                                     </div>
-                                    <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">{selectedImage.title}</h2>
-                                    <div className="flex gap-4">
-                                        <span className="px-4 py-2 bg-white/[0.03] border border-white/10 rounded-xl text-[10px] font-black text-slate-400 uppercase tracking-widest">{selectedImage.category}</span>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-6">
-                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-px bg-white/10" />
-                                        <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Telemetry Synopsis</h3>
-                                    </div>
-                                    <p className="text-slate-400 font-bold uppercase tracking-widest text-[11px] leading-relaxed">
-                                        {selectedImage.description || "NO ADDITIONAL TELEMETRY LOGGED FOR THIS ASSET NODE."}
-                                    </p>
-                                </div>
-
-                                <div className="mt-auto pt-12 border-t border-white/[0.04] space-y-6">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-white/[0.02] p-6 rounded-3xl border border-white/5 space-y-1">
-                                            <span className="text-[8px] font-black text-slate-700 uppercase tracking-widest block">Node_ID</span>
-                                            <span className="text-sm font-black text-white font-mono uppercase">VIS_{selectedImage.id}</span>
-                                        </div>
-                                        <div className="bg-white/[0.02] p-6 rounded-3xl border border-white/5 space-y-1">
-                                            <span className="text-[8px] font-black text-slate-700 uppercase tracking-widest block">Status</span>
-                                            <span className="text-sm font-black text-emerald-500 uppercase">SYNCHRONIZED</span>
-                                        </div>
-                                    </div>
-                                    <button 
-                                        onClick={() => setSelectedImage(null)}
-                                        className="w-full h-20 bg-white/[0.03] border border-white/[0.08] rounded-3xl text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] hover:text-white hover:bg-white/[0.05] transition-all"
-                                    >
-                                        TERMINATE_ANALYSIS
+                                    <button onClick={() => setSelectedImage(null)} className="p-2 -mr-2 text-slate-500 hover:text-white transition-colors">
+                                        <X size={24} />
                                     </button>
                                 </div>
+
+                                <div className="space-y-6 flex-1">
+                                    <div className="space-y-2">
+                                        <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Description</h3>
+                                        <p className="text-sm font-medium text-slate-300 leading-relaxed">
+                                            {selectedImage.description || "No description provided."}
+                                        </p>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/[0.05]">
+                                        <div>
+                                            <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">ID</span>
+                                            <span className="text-sm font-medium text-white">{selectedImage.id}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">Date</span>
+                                            <span className="text-sm font-medium text-white">{new Date().toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button 
+                                    onClick={() => setSelectedImage(null)}
+                                    className="mt-8 w-full py-3 rounded-xl border border-white/[0.1] text-xs font-bold text-slate-400 hover:text-white hover:bg-white/[0.05] transition-all uppercase tracking-wider"
+                                >
+                                    Close Viewer
+                                </button>
                             </div>
-                            <button 
-                                onClick={() => setSelectedImage(null)}
-                                className="absolute top-10 right-10 w-16 h-16 rounded-full bg-black/60 backdrop-blur-3xl border border-white/10 flex items-center justify-center text-white hover:scale-110 transition-transform active:scale-95 z-[110]"
-                            >
-                                <X size={32} />
-                            </button>
                         </motion.div>
                     </>
                 )}

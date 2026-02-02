@@ -71,7 +71,7 @@ export function HeroSection() {
         >
              <div className="flex items-center gap-2 text-gray-300">
                 <Calendar className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs sm:text-sm font-semibold tracking-wider font-mono">FEB 12, 13</span>
+                <span className="text-xs sm:text-sm font-semibold tracking-wider font-mono">FEB 11 / 12</span>
              </div>
              <div className="w-px h-4 bg-white/10"></div>
              <div className="flex items-center gap-2 text-gray-300">
