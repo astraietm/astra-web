@@ -18,14 +18,20 @@ const EventModule = ({ event, index }) => {
     const accentColor = isHawkins ? 'red' : 'blue';
     const accentHex = isHawkins ? '#ef4444' : '#3b82f6';
 
+    // Force Hawkins Lab Checks
+    if (isHawkins) {
+         // Override status for Hawkins Lab
+         event.is_registration_open = false; 
+    }
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-            onClick={() => navigate(`/events/${event.id}`)}
-            className={`group relative w-full h-[450px] sm:h-[530px] rounded-[2.5rem] overflow-hidden bg-[#050505] border border-white/5 cursor-pointer flex flex-col transition-all duration-500 hover:border-${accentColor}-500/30 hover:shadow-[0_20px_50px_-15px_rgba(${isHawkins ? '239,68,68' : '59,130,246'},0.15)]`}
+            onClick={() => !isHawkins && navigate(`/events/${event.id}`)}
+            className={`group relative w-full h-[450px] sm:h-[530px] rounded-[2.5rem] overflow-hidden bg-[#050505] border border-white/5 ${!isHawkins ? 'cursor-pointer' : 'cursor-default'} flex flex-col transition-all duration-500 hover:border-${accentColor}-500/30 hover:shadow-[0_20px_50px_-15px_rgba(${isHawkins ? '239,68,68' : '59,130,246'},0.15)]`}
         >
             {/* Visual Container */}
             <div className="relative h-[55%] w-full overflow-hidden">
@@ -48,11 +54,11 @@ const EventModule = ({ event, index }) => {
                 <div className="absolute top-6 left-6 z-20">
                     <div className="px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
                         <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' :
-                            !event.is_registration_open ? 'bg-blue-400' :
+                            !event.is_registration_open || isHawkins ? 'bg-amber-400' : 
                                 `bg-${accentColor}-500 shadow-[0_0_8px_${accentHex}] animate-pulse`
                             }`} />
                         <span className="text-[10px] font-black tracking-widest uppercase text-white/80">
-                            {isCompleted ? 'Archived' : !event.is_registration_open ? 'Coming Soon' : 'Active Access'}
+                            {isCompleted ? 'Archived' : (!event.is_registration_open || isHawkins) ? 'Coming Soon' : 'Active Access'}
                         </span>
                     </div>
                 </div>
@@ -60,8 +66,8 @@ const EventModule = ({ event, index }) => {
                 {/* Date Badge Overlay */}
                 <div className="absolute bottom-6 right-6 z-20">
                     <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white text-black shadow-2xl transition-transform duration-500 group-hover:-translate-y-2`}>
-                        <span className="text-xs font-black leading-none uppercase">{new Date(event.date).toLocaleDateString(undefined, { month: 'short' })}</span>
-                        <span className="text-xl font-bold leading-none mt-1">{new Date(event.date).getDate()}</span>
+                        <span className="text-xs font-black leading-none uppercase">{isHawkins ? 'FEB' : new Date(event.date).toLocaleDateString(undefined, { month: 'short' })}</span>
+                        <span className="text-xl font-bold leading-none mt-1">{isHawkins ? '12' : new Date(event.date).getDate()}</span>
                     </div>
                 </div>
             </div>
