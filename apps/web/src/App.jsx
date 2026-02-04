@@ -66,17 +66,26 @@ const PageLoader = () => (
 
 function App() {
   React.useEffect(() => {
-    // Warm up the backend to mitigate Render cold starts
-    const warmUpBackend = async () => {
+    // Warm up and Keep Alive logic for Render cold starts
+    const pingBackend = async () => {
       try {
-        if (import.meta.env.VITE_API_URL) {
-           await fetch(`${import.meta.env.VITE_API_URL}/events/`);
+        const API_URL = import.meta.env.VITE_API_URL;
+        if (API_URL) {
+           // We use the health endpoint for a lightweight check
+           await fetch(`${API_URL}/health/`);
         }
       } catch (e) {
-        // Silent failure is fine for warm-up
+        // Silent failure is fine
       }
     };
-    warmUpBackend();
+
+    // Initial warm up call
+    pingBackend();
+
+    // Keep-alive interval: Ping every 5 minutes to prevent spindown (Render timeout is 15m)
+    const interval = setInterval(pingBackend, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   return (
