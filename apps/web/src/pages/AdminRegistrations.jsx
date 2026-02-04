@@ -11,7 +11,6 @@ import {
     ChevronRight,
     SearchX,
     Filter,
-    Filter,
     RefreshCw,
     Trash2
 } from 'lucide-react';
