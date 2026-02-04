@@ -3,8 +3,6 @@ import { HeroSection } from '../components/home/HeroSection';
 import AboutSection from '../components/home/AboutSection';
 import GalleryMarquee from '../components/home/GalleryMarquee';
 
-import { EventTracks } from '../components/home/EventTracks';
-import { HomeCTA } from '../components/home/HomeCTA';
 import CyberBackground from '../components/common/CyberBackground';
 
 const Home = () => {
@@ -15,9 +13,7 @@ const Home = () => {
       <main className="relative z-10">
         <HeroSection />
         <AboutSection />
-        <EventTracks />
         <GalleryMarquee />
-        <HomeCTA />
       </main>
     </div>
   );
