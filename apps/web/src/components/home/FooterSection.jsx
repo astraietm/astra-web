@@ -5,8 +5,7 @@ import {
   Phone, 
   Mail, 
   Instagram, 
-  Github, 
-  Shield 
+  Github 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -82,8 +81,8 @@ export function FooterSection() {
             <div className="flex items-center gap-4 opacity-80 hover:opacity-100 transition-opacity">
                 {/* Logo Placeholder */}
                 <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                      <Shield className="w-6 h-6 text-cyan-500" />
+                   <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                      <img src="/vite.svg" alt="Astra Logo" className="w-6 h-6 object-contain" />
                    </div>
                    <div>
                       <h4 className="text-white font-bold tracking-tight text-lg">ASTRA</h4>

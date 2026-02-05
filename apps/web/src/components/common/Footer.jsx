@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Github, Instagram, ArrowRight, ChevronDown, Mail } from 'lucide-react';
+import { Github, Instagram, ArrowRight, ChevronDown, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -17,8 +17,8 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="lg:w-1/3">
                         <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
-                            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 group-hover:border-white/20 transition-all duration-300">
-                                <Shield className="w-5 h-5 text-white" />
+                            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 group-hover:border-white/20 transition-all duration-300 overflow-hidden">
+                                <img src="/vite.svg" alt="Astra Logo" className="w-5 h-5 object-contain" />
                             </div>
                             <span className="text-xl font-bold tracking-tight text-white">ASTRA</span>
                         </Link>
