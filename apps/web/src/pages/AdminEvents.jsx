@@ -94,15 +94,15 @@ const AdminEvents = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) return;
+        if (!window.confirm('CRITICAL_ACTION: PERMANENTLY_DELETE_EVENT_NODE? This procedure is irreversible.')) return;
         try {
             await axios.delete(`${API_URL}/operations/events/${id}/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            toast.success("Event deleted successfully.");
+            toast.success("Event node decommissioned successfully.");
             fetchEvents();
         } catch (error) {
-            toast.error("Failed to delete event.");
+            toast.error("Failed to terminate event node.");
         }
     };
 
@@ -143,18 +143,18 @@ const AdminEvents = () => {
                 await axios.put(`${API_URL}/operations/events/${currentEventId}/`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                toast.success("Event updated successfully.");
+                toast.success("Operational parameters updated.");
             } else {
                 await axios.post(`${API_URL}/operations/events/`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                toast.success("Event created successfully.");
+                toast.success("New operational node initialized.");
             }
             setShowForm(false);
             fetchEvents();
         } catch (error) {
             console.error('Save error:', error);
-            toast.error("Failed to save event. Please check your inputs.");
+            toast.error("Protocol failure: Unable to synchronize changes.");
         }
     };
 
@@ -172,63 +172,66 @@ const AdminEvents = () => {
     );
 
     return (
-        <div className="space-y-12">
+        <div className="space-y-12 pb-20">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 relative">
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-10 relative">
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                        <div className="h-px w-12 bg-blue-500" />
-                        <span className="text-[10px] font-bold text-blue-500 uppercase tracking-[0.2em]">Administration</span>
+                        <div className="h-px w-8 bg-blue-500/40" />
+                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.5em]">Command_Center</span>
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-white uppercase tracking-wider relative z-10">Events Management</h1>
-                        <p className="text-sm text-slate-400 mt-2 max-w-md leading-relaxed">
-                            Create and manage <span className="text-white font-medium">{filteredEvents.length}</span> active events.
+                        <h1 className="text-2xl font-black text-white uppercase tracking-[0.1em]">Event_Lifecycle_Manager</h1>
+                        <p className="text-[11px] text-slate-500 mt-2 font-mono uppercase tracking-tight">
+                            Active_Operations: <span className="text-blue-500">{events.length}</span> // Filtered: <span className="text-white">{filteredEvents.length}</span>
                         </p>
                     </div>
                 </div>
 
-                <div className="flex gap-4">
-                    <div className="relative group hidden lg:block">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-blue-500 transition-colors z-10" />
+                <div className="flex flex-wrap gap-4 w-full xl:w-auto">
+                    <div className="relative group flex-1 xl:flex-none xl:min-w-[400px]">
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 group-focus-within:text-blue-500 transition-colors z-10" />
                         <input
                             type="text"
-                            placeholder="Search events..."
+                            placeholder="SCAN_OPERATIONS..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="h-12 bg-white/[0.05] border border-white/[0.1] rounded-xl py-4 pl-12 pr-6 w-80 text-sm font-medium text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-blue-500/50 transition-all"
+                            className="h-14 w-full bg-white/[0.01] border border-white/[0.05] rounded-[1.25rem] pl-14 pr-6 text-xs font-black text-white placeholder:text-slate-800 focus:outline-none focus:bg-white/[0.03] focus:border-white/[0.1] transition-all uppercase tracking-widest"
                         />
                     </div>
                     <button
                         onClick={handleCreate}
-                        className="relative group overflow-hidden"
+                        className="h-14 px-8 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-[1.25rem] flex items-center gap-3 hover:bg-blue-500 transition-all shadow-[0_12px_24px_rgba(37,99,235,0.3)] hover:-translate-y-0.5"
                     >
-                        <div className="relative h-12 px-8 bg-blue-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl flex items-center gap-3 hover:bg-blue-500 transition-all shadow-lg">
-                            <Plus size={18} strokeWidth={2.5} />
-                            Create Event
-                        </div>
+                        <Plus size={16} strokeWidth={3} />
+                        INITIALIZE_NODE
                     </button>
                 </div>
             </div>
 
             {/* Grid */}
-            <div className="relative">
+            <div className="relative z-0">
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-40 gap-6">
-                        <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
-                        <p className="text-sm font-medium text-slate-500">Loading events...</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <div key={i} className="h-80 bg-white/[0.02] border border-white/[0.05] rounded-[2.5rem] animate-pulse" />
+                        ))}
                     </div>
                 ) : filteredEvents.length === 0 ? (
-                    <div className="py-40 flex flex-col items-center justify-center opacity-40 gap-4">
-                        <SearchX className="w-16 h-16 text-slate-600 stroke-1" />
-                        <div className="text-sm font-medium text-slate-500">No events found matching your criteria</div>
+                    <div className="py-40 flex flex-col items-center justify-center opacity-20 gap-8">
+                        <SearchX className="w-20 h-20 text-slate-600" strokeWidth={1} />
+                        <div className="space-y-2 text-center">
+                            <p className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Zero_Nodes_Detected</p>
+                            <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Awaiting sector population or expansion of query parameters</p>
+                        </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-                        {filteredEvents.map((event) => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+                        {filteredEvents.map((event, idx) => (
                             <EventCard
                                 key={event.id}
                                 event={event}
+                                index={idx}
                                 onEdit={handleEdit}
                                 onDelete={handleDelete}
                             />
@@ -237,7 +240,7 @@ const AdminEvents = () => {
                 )}
             </div>
 
-            {/* Form */}
+            {/* Form Slide-over */}
             <AnimatePresence>
                 {showForm && (
                     <>
@@ -246,132 +249,143 @@ const AdminEvents = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowForm(false)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+                            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[1000]"
                         />
                         <motion.div
                             initial={{ x: '100%', opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: '100%', opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-[#0a0a0a] border-l border-white/[0.1] shadow-2xl z-[101] overflow-hidden flex flex-col"
+                            transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                            className="fixed right-0 top-0 bottom-0 w-full max-w-3xl bg-[#030303] border-l border-white/[0.05] shadow-[0_0_100px_rgba(37,99,235,0.1)] z-[1001] overflow-hidden flex flex-col"
                         >
-                            <div className="p-8 border-b border-white/[0.1] flex items-center justify-between relative z-10 bg-[#0a0a0a]">
-                                <div className="space-y-1">
-                                    <h2 className="text-2xl font-bold text-white tracking-tight">
-                                        {isEditing ? 'Edit Event' : 'Create New Event'}
+                            <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-blue-600/[0.03] to-transparent pointer-events-none" />
+                            
+                            <div className="p-10 border-b border-white/[0.05] flex items-center justify-between relative z-10">
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                                        <span className="text-[8px] font-black text-blue-500 uppercase tracking-[0.5em]">Protocol_Config</span>
+                                    </div>
+                                    <h2 className="text-2xl font-black text-white uppercase tracking-[0.1em]">
+                                        {isEditing ? 'RECONFIGURE_NODE' : 'INITIALIZE_SEQUENCE'}
                                     </h2>
-                                    <p className="text-sm text-slate-400">Configure event details and settings</p>
                                 </div>
-                                <button onClick={() => setShowForm(false)} className="w-10 h-10 rounded-full bg-white/[0.05] flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/[0.1] transition-all">
+                                <button onClick={() => setShowForm(false)} className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/[0.08] transition-all">
                                     <X size={20} />
                                 </button>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-8 space-y-10 relative z-10 custom-scrollbar">
-                                <form id="eventForm" onSubmit={handleSubmit} className="space-y-12 pb-10">
+                            <div className="flex-1 overflow-y-auto p-10 space-y-12 relative z-10 custom-scrollbar">
+                                <form id="eventForm" onSubmit={handleSubmit} className="space-y-16 pb-20">
                                     
-                                    {/* Basic Info */}
-                                    <div className="space-y-6">
-                                        <div className="flex items-center gap-3 text-slate-300 pb-2 border-b border-white/[0.05]">
-                                            <Database size={18} />
-                                            <h3 className="text-sm font-bold uppercase tracking-wider">Basic Information</h3>
+                                    {/* CORE DATA */}
+                                    <div className="space-y-8">
+                                        <div className="flex items-center gap-4 text-slate-600">
+                                            <Database size={14} className="text-blue-500" />
+                                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Core_Data_Parameters</h3>
+                                            <div className="h-px flex-1 bg-white/[0.03]" />
                                         </div>
-                                        <div className="grid grid-cols-1 gap-6">
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide ml-1">Event Title</label>
-                                                <input required name="title" value={formData.title} onChange={handleChange} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-white font-medium focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all placeholder:text-slate-600" placeholder="e.g. Annual Tech Summit" />
+                                        <div className="grid grid-cols-1 gap-8">
+                                            <div className="space-y-3">
+                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Title_Signature</label>
+                                                <input required name="title" value={formData.title} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-sm font-black text-white focus:border-blue-500/30 focus:bg-white/[0.02] focus:outline-none transition-all placeholder:text-slate-900 uppercase tracking-widest" placeholder="NODE_IDENTIFIER..." />
                                             </div>
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide ml-1">Description</label>
-                                                <textarea required name="description" value={formData.description} onChange={handleChange} rows={4} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-slate-200 font-normal focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all placeholder:text-slate-600 leading-relaxed" placeholder="Enter full event description..." />
+                                            <div className="space-y-3">
+                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Objective_Description</label>
+                                                <textarea required name="description" value={formData.description} onChange={handleChange} rows={5} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-slate-400 font-medium text-xs focus:border-blue-500/30 focus:bg-white/[0.02] focus:outline-none transition-all placeholder:text-slate-900 leading-relaxed" placeholder="DEFINE_OBJECTIVES..." />
                                             </div>
-                                            <div className="grid grid-cols-2 gap-6">
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wide ml-1">Category</label>
-                                                    <input required name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-white text-sm focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all" placeholder="e.g. Workshop" />
+                                            <div className="grid grid-cols-2 gap-8">
+                                                <div className="space-y-3">
+                                                    <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Classification</label>
+                                                    <input required name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-xs font-black text-white focus:border-blue-500/30 uppercase tracking-widest" placeholder="WORKSHOP..." />
                                                 </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wide ml-1">Venue</label>
-                                                    <input required name="venue" value={formData.venue} onChange={handleChange} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-white text-sm focus:border-blue-500/50 focus:bg-white/[0.05] focus:outline-none transition-all" placeholder="e.g. Main Auditorium" />
+                                                <div className="space-y-3">
+                                                    <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Sector_Location</label>
+                                                    <input required name="venue" value={formData.venue} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-xs font-black text-white focus:border-blue-500/30 uppercase tracking-widest" placeholder="AUDITORIUM_01..." />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Schedule */}
-                                    <div className="space-y-6">
-                                        <div className="flex items-center gap-3 text-slate-300 pb-2 border-b border-white/[0.05]">
-                                            <Clock size={18} />
-                                            <h3 className="text-sm font-bold uppercase tracking-wider">Schedule & Capacity</h3>
+                                    {/* TEMPORAL ARCS */}
+                                    <div className="space-y-8">
+                                        <div className="flex items-center gap-4 text-slate-600">
+                                            <Clock size={14} className="text-pink-500" />
+                                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Temporal_Registry</h3>
+                                            <div className="h-px flex-1 bg-white/[0.03]" />
                                         </div>
-                                        <div className="grid grid-cols-2 gap-6">
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide ml-1">Event Date & Time</label>
-                                                <input required type="datetime-local" name="event_date" value={formData.event_date} onChange={handleChange} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-white text-sm focus:border-blue-500/50 focus:bg-white/[0.05] outline-none" />
+                                        <div className="grid grid-cols-2 gap-8">
+                                            <div className="space-y-3">
+                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Event_Timestamp</label>
+                                                <input required type="datetime-local" name="event_date" value={formData.event_date} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-white text-xs font-mono focus:border-blue-500/30 outline-none" />
                                             </div>
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide ml-1">Max Capacity</label>
-                                                <input required type="number" name="registration_limit" value={formData.registration_limit} onChange={handleChange} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-white text-sm focus:border-blue-500/50 focus:bg-white/[0.05]" />
+                                            <div className="space-y-3">
+                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Capacity_Limit</label>
+                                                <input required type="number" name="registration_limit" value={formData.registration_limit} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-white text-xs font-mono focus:border-blue-500/30" />
                                             </div>
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide ml-1">Registration Opens</label>
-                                                <input required type="datetime-local" name="registration_start" value={formData.registration_start} onChange={handleChange} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-white text-sm focus:border-blue-500/50 focus:bg-white/[0.05] outline-none" />
+                                            <div className="space-y-3">
+                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Registry_Open</label>
+                                                <input required type="datetime-local" name="registration_start" value={formData.registration_start} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-white text-xs font-mono focus:border-blue-500/30 outline-none" />
                                             </div>
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide ml-1">Registration Closes</label>
-                                                <input required type="datetime-local" name="registration_end" value={formData.registration_end} onChange={handleChange} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 text-white text-sm focus:border-blue-500/50 focus:bg-white/[0.05] outline-none" />
+                                            <div className="space-y-3">
+                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Registry_Final</label>
+                                                <input required type="datetime-local" name="registration_end" value={formData.registration_end} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-white text-xs font-mono focus:border-blue-500/30 outline-none" />
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Settings */}
-                                    <div className="space-y-6">
-                                        <div className="flex items-center gap-3 text-slate-300 pb-2 border-b border-white/[0.05]">
-                                            <Shield size={18} />
-                                            <h3 className="text-sm font-bold uppercase tracking-wider">Access & Permissions</h3>
+                                    {/* SECURITY & ACCESS */}
+                                    <div className="space-y-8">
+                                        <div className="flex items-center gap-4 text-slate-600">
+                                            <Shield size={14} className="text-emerald-500" />
+                                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Node_Security_Protocol</h3>
+                                            <div className="h-px flex-1 bg-white/[0.03]" />
                                         </div>
 
                                         <div className="grid grid-cols-1 gap-4">
-                                            <div className="flex items-center justify-between p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                                            <div className="flex items-center justify-between p-6 rounded-[1.5rem] bg-white/[0.01] border border-white/[0.05] hover:bg-white/[0.02] transition-colors group/row">
                                                 <div className="space-y-1">
-                                                    <p className="text-sm font-bold text-white">Registration Status</p>
-                                                    <p className="text-xs text-slate-500">Allow users to register for this event</p>
+                                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Registry_Enabled</p>
+                                                    <p className="text-[8px] text-slate-700 font-mono uppercase tracking-tight">Allows Identity Nodes to associate with this Operational Node</p>
                                                 </div>
                                                 <Switch checked={formData.is_registration_open} onChange={() => setFormData(p => ({ ...p, is_registration_open: !p.is_registration_open }))} />
                                             </div>
 
-                                            <div className="flex items-center justify-between p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                                            <div className="flex items-center justify-between p-6 rounded-[1.5rem] bg-white/[0.01] border border-white/[0.05] hover:bg-white/[0.02] transition-colors">
                                                 <div className="space-y-1">
-                                                    <p className="text-sm font-bold text-white">Paid Event</p>
-                                                    <p className="text-xs text-slate-500">Require payment for registration</p>
+                                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Resource_Exchange_Required</p>
+                                                    <p className="text-[8px] text-slate-700 font-mono uppercase tracking-tight">Registration requires credit authorization</p>
                                                 </div>
                                                 <Switch checked={formData.requires_payment} onChange={() => setFormData(p => ({ ...p, requires_payment: !p.requires_payment }))} />
                                             </div>
 
                                             {formData.requires_payment && (
-                                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="p-6 rounded-xl bg-blue-500/5 border border-blue-500/10 space-y-3">
-                                                    <label className="text-xs font-bold text-blue-400 uppercase tracking-wide">Fee Amount (INR)</label>
-                                                    <input type="number" name="payment_amount" value={formData.payment_amount} onChange={handleChange} className="w-full bg-black/40 border border-blue-500/20 rounded-lg p-3 text-xl font-bold text-white focus:border-blue-500/40 outline-none" />
+                                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-8 rounded-[1.5rem] bg-blue-500/[0.02] border border-blue-500/10 space-y-4">
+                                                    <label className="text-[9px] font-black text-blue-500 uppercase tracking-[0.3em]">Resource_Amount (INR)</label>
+                                                    <div className="flex items-baseline gap-3">
+                                                        <span className="text-xl font-black text-blue-500">₹</span>
+                                                        <input type="number" name="payment_amount" value={formData.payment_amount} onChange={handleChange} className="w-full bg-transparent border-none text-3xl font-black text-white focus:outline-none placeholder:text-slate-900" placeholder="0.00" />
+                                                    </div>
                                                 </motion.div>
                                             )}
 
-                                            <div className="flex items-center justify-between p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors">
+                                            <div className="flex items-center justify-between p-6 rounded-[1.5rem] bg-white/[0.01] border border-white/[0.05] hover:bg-white/[0.02] transition-colors">
                                                 <div className="space-y-1">
-                                                    <p className="text-sm font-bold text-white">Team Event</p>
-                                                    <p className="text-xs text-slate-500">Enable team-based registration capabilities</p>
+                                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Multi_Link_Operation</p>
+                                                    <p className="text-[8px] text-slate-700 font-mono uppercase tracking-tight">Enable tactical unit clustering (Teams)</p>
                                                 </div>
                                                 <Switch checked={formData.is_team_event} onChange={() => setFormData(p => ({ ...p, is_team_event: !p.is_team_event }))} />
                                             </div>
 
                                             {formData.is_team_event && (
-                                                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="p-6 rounded-xl bg-purple-500/5 border border-purple-500/10 grid grid-cols-2 gap-6">
-                                                    <div className="space-y-2">
-                                                        <label className="text-xs font-bold text-purple-400 uppercase tracking-wide">Min Size</label>
-                                                        <input type="number" name="team_size_min" value={formData.team_size_min} onChange={handleChange} className="w-full bg-black/40 border border-purple-500/20 rounded-lg p-3 text-white text-center" />
+                                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-8 rounded-[1.5rem] bg-purple-500/[0.02] border border-purple-500/10 grid grid-cols-2 gap-8">
+                                                    <div className="space-y-4">
+                                                        <label className="text-[9px] font-black text-purple-500 uppercase tracking-[0.3em]">Min_Unit_Size</label>
+                                                        <input type="number" name="team_size_min" value={formData.team_size_min} onChange={handleChange} className="w-full bg-white/[0.02] border border-purple-500/10 rounded-xl p-4 text-white text-center font-black" />
                                                     </div>
-                                                    <div className="space-y-2">
-                                                        <label className="text-xs font-bold text-purple-400 uppercase tracking-wide">Max Size</label>
-                                                        <input type="number" name="team_size_max" value={formData.team_size_max} onChange={handleChange} className="w-full bg-black/40 border border-purple-500/20 rounded-lg p-3 text-white text-center" />
+                                                    <div className="space-y-4">
+                                                        <label className="text-[9px] font-black text-purple-500 uppercase tracking-[0.3em]">Max_Unit_Size</label>
+                                                        <input type="number" name="team_size_max" value={formData.team_size_max} onChange={handleChange} className="w-full bg-white/[0.02] border border-purple-500/10 rounded-xl p-4 text-white text-center font-black" />
                                                     </div>
                                                 </motion.div>
                                             )}
@@ -380,13 +394,13 @@ const AdminEvents = () => {
                                 </form>
                             </div>
 
-                            <div className="p-8 border-t border-white/[0.1] bg-[#0a0a0a] flex gap-4 relative z-10">
-                                <button type="button" onClick={() => setShowForm(false)} className="px-8 py-4 rounded-xl bg-white/[0.05] text-xs font-bold text-slate-300 uppercase tracking-wider hover:bg-white/[0.1] transition-all">
-                                    Cancel
+                            <div className="p-10 border-t border-white/[0.05] bg-black flex gap-6 relative z-10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
+                                <button type="button" onClick={() => setShowForm(false)} className="px-10 py-5 rounded-2xl bg-white/[0.03] text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] hover:bg-white/[0.08] hover:text-white transition-all">
+                                    ABORT_SEQUENCE
                                 </button>
-                                <button type="submit" form="eventForm" className="flex-1 px-8 py-4 bg-blue-600 rounded-xl text-xs font-bold text-white uppercase tracking-wider hover:bg-blue-500 transition-all shadow-lg flex items-center justify-center gap-2">
-                                    <Save size={18} />
-                                    {isEditing ? 'Save Changes' : 'Create Event'}
+                                <button type="submit" form="eventForm" className="flex-1 px-10 py-5 bg-blue-600 rounded-2xl text-[9px] font-black text-white uppercase tracking-[0.3em] hover:bg-blue-500 transition-all shadow-[0_12px_30px_rgba(37,99,235,0.4)] flex items-center justify-center gap-3">
+                                    <Save size={16} />
+                                    {isEditing ? 'UPDATE_GRID_DATA' : 'COMMIT_NEW_NODE'}
                                 </button>
                             </div>
                         </motion.div>
@@ -397,78 +411,111 @@ const AdminEvents = () => {
     );
 };
 
-const EventCard = ({ event, onEdit, onDelete }) => {
+const EventCard = ({ event, onEdit, onDelete, index }) => {
     const isPast = new Date(event.event_date) < new Date();
     const progress = Math.min(((event.registrations?.length || 0) / event.registration_limit) * 100, 100);
 
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="group relative flex flex-col bg-[#0a0a0a] border border-white/[0.08] rounded-3xl overflow-hidden hover:border-white/[0.2] transition-all duration-300"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+            className="group relative flex flex-col bg-white/[0.01] border border-white/[0.03] rounded-[2.5rem] overflow-hidden hover:border-blue-500/20 hover:bg-white/[0.02] transition-all duration-700"
         >
-            <div className="p-8 flex flex-col h-full z-10">
-                {/* Header */}
-                <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                        <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${event.is_registration_open ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}`}>
-                            {event.is_registration_open ? 'Active' : 'Closed'}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+            
+            <div className="p-10 flex flex-col h-full relative z-10">
+                {/* Header Section */}
+                <div className="flex items-start justify-between mb-10">
+                    <div className="flex flex-col gap-3">
+                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-[0.3em] border ${event.is_registration_open ? 'bg-emerald-500/[0.03] text-emerald-500 border-emerald-500/10' : 'bg-rose-500/[0.03] text-rose-500 border-rose-500/10'}`}>
+                            <div className={`w-1 h-1 rounded-full ${event.is_registration_open ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                            {event.is_registration_open ? 'OPS_OPEN' : 'OPS_LOCKED'}
                         </div>
-                        <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">{event.category}</span>
+                        <span className="text-[9px] font-black text-blue-500/40 uppercase tracking-[0.4em] px-1">{event.category}</span>
                     </div>
 
-                    <div className="flex gap-2">
-                        <button onClick={() => onEdit(event)} className="p-2 rounded-lg bg-white/[0.03] text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 transition-all">
-                            <Edit2 size={16} />
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <button onClick={() => onEdit(event)} className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.05] text-slate-500 hover:text-white hover:bg-blue-600 transition-all flex items-center justify-center">
+                            <Edit2 size={14} />
                         </button>
-                        <button onClick={() => onDelete(event.id)} className="p-2 rounded-lg bg-white/[0.03] text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all">
-                            <Trash2 size={16} />
+                        <button onClick={() => onDelete(event.id)} className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.05] text-slate-500 hover:text-white hover:bg-rose-600 transition-all flex items-center justify-center">
+                            <Trash2 size={14} />
                         </button>
                     </div>
                 </div>
 
-                {/* Content */}
-                <div className="space-y-4 flex-1">
-                    <h3 className="text-2xl font-bold text-white leading-tight group-hover:text-blue-400 transition-colors">
+                {/* Content Section */}
+                <div className="space-y-6 flex-1">
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight leading-tight group-hover:text-blue-500 transition-colors duration-500">
                         {event.title}
                     </h3>
 
-                    <div className="flex flex-col gap-2 text-sm text-slate-400">
-                        <div className="flex items-center gap-2">
-                            <Calendar size={14} className="text-blue-500" />
-                            {new Date(event.event_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3 text-slate-400 group-hover:text-slate-300 transition-colors">
+                            <div className="w-7 h-7 rounded-lg bg-white/[0.03] border border-white/[0.05] flex items-center justify-center">
+                                <Calendar size={12} className="text-blue-500/60" />
+                            </div>
+                            <span className="text-[10px] font-mono font-black uppercase tracking-tight">
+                                {new Date(event.event_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()}
+                            </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <MapPin size={14} className="text-pink-500" />
-                            {event.venue}
+                        <div className="flex items-center gap-3 text-slate-400 group-hover:text-slate-300 transition-colors">
+                            <div className="w-7 h-7 rounded-lg bg-white/[0.03] border border-white/[0.05] flex items-center justify-center">
+                                <MapPin size={12} className="text-pink-500/60" />
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{event.venue}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Footer / Stats */}
-                <div className="mt-8 pt-6 border-t border-white/[0.05] space-y-4">
+                {/* Registry Analytics */}
+                <div className="mt-12 pt-8 border-t border-white/[0.05] space-y-5">
                     <div className="flex items-end justify-between">
-                        <div>
-                            <span className="text-xs font-medium text-slate-500 block mb-1">Registrations</span>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-xl font-bold text-white">{event.registrations?.length || '0'}</span>
-                                <span className="text-xs text-slate-600 font-medium">/ {event.registration_limit}</span>
+                        <div className="space-y-1">
+                            <span className="text-[8px] font-black text-slate-600 uppercase tracking-[0.4em]">REGISTRY_LOAD</span>
+                            <div className="flex items-baseline gap-2">
+                                <span className="text-2xl font-black text-white tabular-nums tracking-tighter">{event.registrations?.length || '0'}</span>
+                                <span className="text-[10px] text-slate-800 font-mono">/ {event.registration_limit}</span>
                             </div>
                         </div>
-                        <div className={`px-3 py-1 rounded-lg text-xs font-bold ${progress >= 100 ? 'bg-rose-500/10 text-rose-500' : 'bg-blue-500/10 text-blue-500'}`}>
-                            {Math.round(progress)}% Full
+                        <div className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest ${progress >= 100 ? 'bg-rose-500/10 text-rose-500' : 'bg-blue-600/10 text-blue-500'}`}>
+                            {Math.round(progress)}%_UTILIZED
                         </div>
                     </div>
                     
-                    <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-white/[0.02] border border-white/[0.05] rounded-full overflow-hidden p-[2px]">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progress}%` }}
-                            className={`h-full rounded-full ${progress >= 100 ? 'bg-rose-500' : 'bg-blue-500'}`}
-                        />
+                            transition={{ duration: 1.5, ease: "circOut" }}
+                            className={`h-full rounded-full relative ${progress >= 100 ? 'bg-rose-500' : 'bg-blue-600'}`}
+                        >
+                            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] animate-[shimmer_2s_infinite]" />
+                        </motion.div>
                     </div>
                 </div>
+            </div>
+            
+            {/* Action Bar */}
+            <div className="px-10 py-5 bg-white/[0.01] border-t border-white/[0.03] flex items-center justify-between group-hover:bg-white/[0.03] transition-colors duration-500">
+                <div className="flex items-center gap-4">
+                    <div className="flex -space-x-3">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="w-7 h-7 rounded-full bg-slate-900 border-2 border-[#030303] flex items-center justify-center overflow-hidden">
+                                <Users size={12} className="text-slate-700" />
+                            </div>
+                        ))}
+                    </div>
+                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">+ {event.registrations?.length || 0} LINKED_NODES</span>
+                </div>
+                <button 
+                  onClick={() => onEdit(event)}
+                  className="p-2 text-slate-800 hover:text-blue-500 hover:translate-x-1 transition-all"
+                >
+                    <ChevronRight size={18} />
+                </button>
             </div>
         </motion.div>
     );
@@ -478,12 +525,16 @@ const Switch = ({ checked, onChange }) => (
     <button
         type="button"
         onClick={onChange}
-        className={`w-12 h-7 rounded-full relative transition-all duration-300 border ${checked ? 'bg-blue-600 border-blue-500' : 'bg-white/[0.05] border-white/10'}`}
+        className={`w-14 h-8 rounded-[1rem] relative transition-all duration-500 border-2 ${checked ? 'bg-blue-600/20 border-blue-500/40' : 'bg-white/[0.02] border-white/[0.1]'}`}
     >
         <motion.div
-            animate={{ x: checked ? 20 : 2 }}
-            className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm`}
-            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            animate={{ 
+                x: checked ? 26 : 4,
+                scale: checked ? 1.1 : 1,
+                backgroundColor: checked ? '#3b82f6' : '#334155'
+            }}
+            className={`absolute top-1.5 w-4 h-4 rounded-full shadow-lg`}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
         />
     </button>
 );
