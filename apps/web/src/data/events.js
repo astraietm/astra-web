@@ -256,7 +256,7 @@ const eventsData = [
         event_date: "2026-02-12",
         time: "03:00 PM",
         venue: "Mech Lab",
-        image: "https://images.unsplash.com/photo-1541560052-5e3028e05d03?auto=format&fit=crop&q=80&w=2070",
+        image: "https://images.unsplash.com/photo-1478720568477-152d0b3d0f0c?auto=format&fit=crop&q=80&w=2070",
         duration: "2 Hours",
         is_registration_open: true,
         is_paid: true,

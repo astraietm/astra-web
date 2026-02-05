@@ -90,10 +90,20 @@ const Events = () => {
     <div className="bg-[#020202] min-h-screen text-foreground font-sans selection:bg-blue-500/30 overflow-x-hidden">
       
       {/* Cinematic Background Scene */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-900/5 rounded-full blur-[100px]" />
-          <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-20 mix-blend-soft-light" />
+      <div className="fixed inset-0 z-0 pointer-events-none bg-black">
+          {/* Base Gradient */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#0f172a,transparent_70%)]" />
+
+          {/* Cyberpunk Grid */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-50" />
+
+          {/* Ambient Glow Orbs */}
+          <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[120px] mix-blend-screen animate-pulse duration-700" />
+          <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[120px] mix-blend-screen" />
+          <div className="absolute bottom-[-10%] right-[20%] w-[600px] h-[600px] bg-cyan-900/10 rounded-full blur-[100px]" />
+          
+          {/* Aesthetic Noise */}
+          <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.15] mix-blend-overlay" />
       </div>
 
       <main className="relative z-10">
