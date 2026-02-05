@@ -126,6 +126,7 @@ class Command(BaseCommand):
                     {"name": "Jenna", "role": "Security Specialist"},
                     {"name": "Anjal", "role": "Cryptography Lead"}
                 ]
+            }
         ]
 
         # Add new events for syncing
