@@ -37,8 +37,8 @@ const EventModule = ({ event, index }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-            onClick={() => !isHawkins && navigate(`/events/${event.id}`)}
-            className={`group relative w-full h-[450px] sm:h-[530px] rounded-[2rem] overflow-hidden bg-white/[0.02] backdrop-blur-md border border-white/10 ${!isHawkins ? 'cursor-pointer' : 'cursor-default'} flex flex-col transition-all duration-500 hover:border-${accentColor}-500/40 hover:bg-white/[0.04] hover:shadow-[0_0_40px_-10px_rgba(${isHawkins ? '239,68,68' : '59,130,246'},0.3)]`}
+            onClick={() => navigate(`/events/${event.id}`)}
+            className={`group relative w-full h-[450px] sm:h-[530px] rounded-[2rem] overflow-hidden bg-white/[0.02] backdrop-blur-md border border-white/10 cursor-pointer flex flex-col transition-all duration-500 hover:border-${accentColor}-500/40 hover:bg-white/[0.04] hover:shadow-[0_0_40px_-10px_rgba(${isHawkins ? '239,68,68' : '59,130,246'},0.3)]`}
         >
             {/* Visual Container */}
             <div className="relative h-[55%] w-full overflow-hidden">

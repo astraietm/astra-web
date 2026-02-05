@@ -196,10 +196,13 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                     initial={{ scale: 0.9, opacity: 0, y: 30 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                    className="relative w-full max-w-xl bg-[#050505] border border-white/10 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden"
+                    className="relative w-full max-w-xl bg-black/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-[0_0_80px_-20px_rgba(59,130,246,0.2)] overflow-hidden"
                 >
+                    {/* Background Texture for Modal */}
+                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] mix-blend-overlay pointer-events-none" />
+                    
                     {/* Top Aesthetic Bar */}
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-80" />
                     
                     <div className="p-8 md:p-10 max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent pr-2">
                         {/* Header */}

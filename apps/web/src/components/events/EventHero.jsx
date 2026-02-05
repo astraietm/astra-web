@@ -15,29 +15,31 @@ const EventHero = () => {
         <section ref={containerRef} className="relative min-h-[75vh] w-full flex flex-col items-center justify-center overflow-hidden bg-black pb-20">
             
             {/* Cinematic Background Elements */}
-            <div className="absolute inset-0 z-0">
-                {/* Gradient Beams */}
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse" />
-                <div className="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-purple-600/10 rounded-full blur-[100px]" />
+            <div className="absolute inset-0 z-0 bg-black">
+                {/* Base Gradient */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#0f172a,transparent_70%)]" />
+
+                {/* Cyberpunk Grid */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-50" />
                 
-                {/* Technical Grid Overlay */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] opacity-20 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-                
-                {/* Floating Tech Icons Decor */}
+                {/* Floating Tech Icons Decor - Kept as they add value here */}
                 <motion.div 
-                    animate={{ y: [0, -20, 0], opacity: [0.1, 0.2, 0.1] }}
+                    animate={{ y: [0, -20, 0], opacity: [0.1, 0.4, 0.1] }}
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                     className="absolute top-1/4 left-1/4"
                 >
                     <Cpu className="w-12 h-12 text-blue-500/20" />
                 </motion.div>
                 <motion.div 
-                    animate={{ y: [0, 20, 0], opacity: [0.1, 0.2, 0.1] }}
+                    animate={{ y: [0, 20, 0], opacity: [0.1, 0.4, 0.1] }}
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                     className="absolute bottom-1/4 right-1/3"
                 >
                     <Layers className="w-10 h-10 text-blue-400/20" />
                 </motion.div>
+                
+                {/* Aesthetic Noise */}
+                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.15] mix-blend-overlay" />
             </div>
 
             {/* --- HERO CONTENT --- */}
