@@ -488,6 +488,51 @@ const EventDetail = () => {
                                 </div>
                             )}
 
+                            {/* Live Capacity Tracker */}
+                            {event.max_participation > 0 && (
+                                <div className="bg-white/5 rounded-[2rem] p-6 mb-6 border border-white/5 relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                        <Users className="w-16 h-16 text-blue-500 transform rotate-12 translate-x-4 -translate-y-4" />
+                                    </div>
+                                    
+                                    <div className="flex justify-between items-end mb-3 relative z-10">
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="text-[10px] uppercase font-black tracking-widest text-gray-500">Live Capacity</span>
+                                                {(event.registration_count || 0) > (event.max_participation * 0.8) && (
+                                                    <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-[8px] font-bold text-red-500 uppercase tracking-wider animate-pulse">
+                                                        Filling Fast
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="text-2xl font-black text-white tabular-nums">
+                                                {event.registration_count || 0} <span className="text-gray-600 text-sm">/ {event.max_participation}</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-xl font-bold text-blue-400 tabular-nums">
+                                                {Math.max(0, event.max_participation - (event.registration_count || 0))}
+                                            </div>
+                                            <div className="text-[8px] font-bold uppercase tracking-widest text-gray-600">Spots Left</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Progress Bar */}
+                                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden relative z-10">
+                                        <motion.div 
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${Math.min(100, ((event.registration_count || 0) / event.max_participation) * 100)}%` }}
+                                            transition={{ duration: 1.5, ease: "easeOut" }}
+                                            className={`h-full rounded-full ${
+                                                ((event.registration_count || 0) / event.max_participation) > 0.9 
+                                                ? 'bg-red-500' 
+                                                : 'bg-gradient-to-r from-blue-600 to-blue-400'
+                                            }`} 
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Primary Action Button */}
                             <div className="space-y-4">
                                 <button

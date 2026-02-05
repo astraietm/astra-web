@@ -359,7 +359,7 @@ const eventsData = [
         date: "2026-02-12T13:30:00",
         event_date: "2026-02-12",
         time: "01:30 PM",
-        venue: "Recreation Room",
+        venue: "8 Ball Pool Court",
         image: "https://images.unsplash.com/photo-1588661803738-4e8913346d0d?auto=format&fit=crop&q=80&w=2066",
         duration: "nil",
         is_registration_open: true,
