@@ -33,7 +33,14 @@ const ConfirmRegistrationModal = ({ isOpen, onClose, onConfirm, eventName, event
     useEffect(() => {
         if (isOpen && token) {
             fetchUserProfile();
+            document.body.style.overflow = 'hidden';
+        } else if (isOpen) {
+             document.body.style.overflow = 'hidden';
         }
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
     }, [isOpen, token]);
 
     // Handle initial state for fields
