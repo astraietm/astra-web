@@ -141,7 +141,7 @@ const ConfirmRegistrationModal = ({ isOpen, onClose, onConfirm, eventName, event
                                 {isIntraCollege && (
                                     <div className="mt-2 text-[10px] font-bold uppercase tracking-widest text-yellow-500 flex items-center gap-2">
                                         <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse" />
-                                        Campus Exclusive Event
+                                        Exclusively for KMCT IETM Students
                                     </div>
                                 )}
                             </div>

@@ -235,9 +235,16 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                                 >
                                     {/* Academic Info Section */}
                                     <div className="space-y-4">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <Building className="w-4 h-4 text-gray-500" />
-                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Team Origin</span>
+                                        <div className="flex justify-between items-end mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <Building className="w-4 h-4 text-gray-500" />
+                                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Team Origin</span>
+                                            </div>
+                                            {isIntraCollege && (
+                                                <span className="text-[10px] font-bold text-yellow-500 uppercase tracking-widest">
+                                                    Exclusively for KMCT IETM Students
+                                                </span>
+                                            )}
                                         </div>
                                         
                                         <div className="relative group">
