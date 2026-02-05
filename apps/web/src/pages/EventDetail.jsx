@@ -83,7 +83,11 @@ const EventDetail = () => {
                         venue: localData.venue || fetchedData.venue,
                         time: localData.time || fetchedData.time,
                         image: localData.image || fetchedData.image,
-                        fee: localData.fee || fetchedData.fee
+                        fee: localData.fee || fetchedData.fee,
+                        // Force team config from local if present
+                        is_team_event: localData.is_team_event !== undefined ? localData.is_team_event : fetchedData.is_team_event,
+                        team_size_min: localData.team_size_min || fetchedData.team_size_min,
+                        team_size_max: localData.team_size_max || fetchedData.team_size_max
                     };
                 }
 
