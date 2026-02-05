@@ -42,11 +42,22 @@ const Events = () => {
                 effectiveDate = "2026-02-11";
             }
 
+            // MERGE: Augment backend data with local rich content (Images, Descriptions)
+            const localEvent = eventsData.find(e => e.id === event.id);
+            const richEvent = localEvent ? {
+                ...event,
+                image: localEvent.image || event.image,
+                description: localEvent.description || event.description,
+                category: localEvent.category || event.category,
+                time: localEvent.time || event.time,
+                venue: localEvent.venue || event.venue
+            } : event;
+
             return {
-              ...event,
+              ...richEvent,
               date: effectiveDate,
               event_date: effectiveDate,
-              image: event.image || null
+              image: richEvent.image || null
             };
         });
         
