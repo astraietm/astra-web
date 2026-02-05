@@ -70,7 +70,24 @@ const EventDetail = () => {
             // 2. Fetch Fresh
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/events/${id}/`);
-                const mappedEvent = mapEventData(response.data);
+                let fetchedData = response.data;
+
+                // MERGE: Augment backend data with local rich content
+                const localData = eventsData.find(e => e.id === parseInt(id));
+                if (localData) {
+                    fetchedData = {
+                        ...fetchedData,
+                        description: localData.long_description || localData.description || fetchedData.description,
+                        content_blocks: localData.content_blocks || [],
+                        coordinators: localData.coordinators || fetchedData.coordinators || [],
+                        venue: localData.venue || fetchedData.venue,
+                        time: localData.time || fetchedData.time,
+                        image: localData.image || fetchedData.image,
+                        fee: localData.fee || fetchedData.fee
+                    };
+                }
+
+                const mappedEvent = mapEventData(fetchedData);
                 setEvent(mappedEvent);
             } catch (error) {
                 console.error('Failed to fetch event from backend:', error);
