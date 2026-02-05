@@ -4,7 +4,7 @@ import { FooterSection } from '../components/home/FooterSection';
 import NoiseOverlay from '../components/common/NoiseOverlay';
 import BackgroundOrbs from '../components/common/BackgroundOrbs';
 import TerminalBackground from '../components/common/TerminalBackground';
-import SystemStatus from '../components/common/SystemStatus';
+
 import TerminalOverlay from '../components/common/TerminalOverlay';
 import { Outlet } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -41,7 +41,7 @@ const MainLayout = () => {
       </main>
       
       <FooterSection />
-      <SystemStatus onClick={() => setShowTerminal(true)} />
+
 
       <AnimatePresence>
         {showTerminal && <TerminalOverlay onClose={() => setShowTerminal(false)} />}
