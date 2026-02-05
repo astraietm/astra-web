@@ -37,7 +37,7 @@ const TermsAndConditions = () => {
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-900/5 rounded-full blur-[120px]" />
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-900/5 rounded-full blur-[120px]" />
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03]" />
+                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03]" />
             </div>
 
             <div className="container mx-auto px-4 relative z-10 max-w-4xl">

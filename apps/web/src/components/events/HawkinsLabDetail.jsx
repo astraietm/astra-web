@@ -90,7 +90,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered, registrationData }) => {
             </motion.div>
             
             {/* Fine Grain */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.04] mix-blend-overlay relative z-10" />
+            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.04] mix-blend-overlay relative z-10" />
         </div>
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-8 lg:px-12 pt-24 pb-12">
@@ -328,7 +328,7 @@ const HawkinsLabDetail = ({ onRegister, isRegistered, registrationData }) => {
                 className="relative rounded-[2.5rem] overflow-hidden border border-red-900/20 bg-[#080202]/90 backdrop-blur-md"
             >
                 <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 via-transparent to-red-900/20 opacity-50" />
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.05] mix-blend-overlay" />
+                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.05] mix-blend-overlay" />
                 
                 <div className="relative p-8 sm:p-16 flex flex-col md:flex-row items-center justify-between gap-12">
                     <div className="space-y-6 max-w-2xl text-center md:text-left">

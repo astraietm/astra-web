@@ -9,7 +9,7 @@ const Footer = () => {
         <footer className="relative bg-[#050505] border-t border-white/5 pt-20 pb-10 overflow-hidden font-sans">
 
             {/* Premium background noise */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
+            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03] mix-blend-overlay pointer-events-none" />
 
             <div className="container mx-auto px-6 md:px-8 relative z-10">
                 <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 mb-16">

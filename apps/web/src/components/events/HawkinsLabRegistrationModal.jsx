@@ -127,7 +127,7 @@ const HawkinsLabRegistrationModal = ({ isOpen, onClose, event, initialData }) =>
                 >
                     {/* Background Effects */}
                     <div className="absolute inset-0 bg-gradient-to-br from-red-950/20 via-transparent to-red-900/10 pointer-events-none" />
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay" />
+                    <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03] mix-blend-overlay" />
 
                     {/* Content */}
                     <div className="relative z-10 p-8">

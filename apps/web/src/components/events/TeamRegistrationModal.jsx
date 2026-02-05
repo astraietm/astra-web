@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Users, User, Shield, CheckCircle, ArrowRight, 
-  CreditCard, Sparkles, ChevronRight, Edit3, Lock, Building, BookOpen, GraduationCap 
+  CreditCard, Sparkles, ChevronRight, Edit3, Lock, Building, BookOpen, GraduationCap, Phone
 } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import axios from 'axios';
