@@ -41,8 +41,17 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
     const [academicDetails, setAcademicDetails] = useState({
         college: '',
         department: '',
-        year_of_study: ''
+        year_of_study: '',
+        full_name: user?.name || '', // Initialize with user's name
+        phone_number: ''
     });
+
+    // Update full_name if user data loads later
+    useEffect(() => {
+        if (user) {
+            setAcademicDetails(prev => ({ ...prev, full_name: user.name || '' }));
+        }
+    }, [user]);
 
     useEffect(() => {
         if (isOpen) {
@@ -122,7 +131,9 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
         const extraData = {
             college: academicDetails.college,
             department: academicDetails.department,
-            year_of_study: academicDetails.year_of_study
+            year_of_study: academicDetails.year_of_study,
+            full_name: academicDetails.full_name,
+            phone_number: academicDetails.phone_number
         };
 
         try {
@@ -233,6 +244,41 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                                     onSubmit={nextStep} 
                                     className="space-y-8"
                                 >
+                                    {/* Leader Contact Info Section */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center gap-2">
+                                                <User className="w-4 h-4 text-gray-500" />
+                                                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Team Leader Name</label>
+                                            </div>
+                                            <div className="relative group">
+                                                <input
+                                                    type="text"
+                                                    value={academicDetails.full_name}
+                                                    onChange={(e) => setAcademicDetails({ ...academicDetails, full_name: e.target.value })}
+                                                    placeholder="Enter full name"
+                                                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <div className="flex items-center gap-2">
+                                                <Phone className="w-4 h-4 text-gray-500" />
+                                                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Phone Number</label>
+                                            </div>
+                                            <div className="relative group">
+                                                <input
+                                                    type="tel"
+                                                    value={academicDetails.phone_number}
+                                                    onChange={(e) => setAcademicDetails({ ...academicDetails, phone_number: e.target.value })}
+                                                    placeholder="Enter phone number"
+                                                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500/50 focus:bg-white/[0.05] transition-all"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     {/* Academic Info Section */}
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-end mb-2">
