@@ -63,12 +63,12 @@ const EventHero = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
-                    className="text-6xl md:text-8xl lg:text-[9rem] font-bold text-white mb-8 tracking-tighter leading-[0.85] font-outfit"
+                    className="text-5xl xs:text-6xl md:text-8xl lg:text-[9rem] font-black text-white mb-8 tracking-tighter leading-[0.9] font-outfit will-change-transform"
                 >
-                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
+                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40 uppercase">
                         Zero
                     </span>
-                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-blue-400 to-blue-700 ml-4 md:ml-6 uppercase font-bold opacity-90">
+                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-cyan-400 to-blue-600 ml-3 md:ml-6 uppercase font-black opacity-90">
                         Day
                     </span>
                 </motion.h1>
@@ -78,10 +78,9 @@ const EventHero = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
-                    className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed font-normal mb-14 px-4"
+                    className="text-xs sm:text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium mb-14 px-6 uppercase tracking-wider opacity-80"
                 >
-                    Experience the nexus of engineering excellence. A curated collection of workshops, 
-                    hackathons, and high-impact seminars for the next generation of global tech leaders.
+                    Tactical deployment of engineering excellence. A curated collection of high-fidelity simulations for the next generation of security operators.
                 </motion.p>
 
                 {/* Luxury Search & Filter Bar */}
@@ -89,26 +88,29 @@ const EventHero = () => {
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
-                    className="relative max-w-xl mx-auto flex items-center gap-3 p-1.5 bg-white/[0.03] border border-white/10 rounded-2xl backdrop-blur-2xl shadow-2xl group focus-within:border-blue-500/30 transition-all duration-500"
+                    className="relative max-w-xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-2 sm:p-1.5 bg-white/[0.02] border border-white/10 rounded-2xl md:rounded-3xl backdrop-blur-3xl shadow-2xl group focus-within:border-cyan-500/30 transition-all duration-700"
                 >
-                    <div className="flex-1 flex items-center pl-4 gap-3">
-                        <Search className="w-4 h-4 text-gray-500 group-focus-within:text-blue-400 transition-colors" />
+                    <div className="flex-1 flex items-center pl-4 gap-3 py-2 sm:py-0">
+                        <Search size={16} className="text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
                         <input 
                             type="text" 
-                            placeholder="Explore classified sessions..."
-                            className="bg-transparent border-none outline-none text-white text-sm w-full placeholder:text-gray-600 font-medium"
+                            placeholder="QUERY SYSTEM MODULES..."
+                            className="bg-transparent border-none outline-none text-white text-[10px] sm:text-sm w-full placeholder:text-slate-600 font-bold uppercase tracking-widest"
                         />
                     </div>
                     
-                    <button className="flex items-center gap-2 px-4 py-2.5 bg-white/[0.05] hover:bg-white/10 rounded-xl border border-white/5 text-xs font-bold text-white transition-all">
-                        <Filter className="w-3.5 h-3.5 text-blue-400" />
-                        <span>Sort</span>
-                    </button>
-                    
-                    <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all">
-                        Search
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 bg-white/[0.03] hover:bg-white/10 rounded-xl border border-white/5 text-[9px] font-black text-white uppercase tracking-widest transition-all active:scale-95">
+                            <Filter size={14} className="text-cyan-400" />
+                            <span>Filter</span>
+                        </button>
+                        
+                        <button className="flex-1 sm:flex-none px-6 py-3 sm:py-2.5 bg-cyan-400 text-black rounded-xl text-[9px] font-black uppercase tracking-widest shadow-[0_20px_40px_-10px_rgba(34,211,238,0.3)] hover:scale-[1.03] active:scale-95 transition-all">
+                            Execute_Query
+                        </button>
+                    </div>
                 </motion.div>
+
 
             </motion.div>
 

@@ -307,10 +307,10 @@ const EventDetail = () => {
                 {/* --- PRE-HERO SPACE --- */}
                 <div className="h-32" />
 
-                <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:grid lg:grid-cols-12 gap-16 items-start">
+                <div className="max-w-7xl mx-auto px-6 lg:px-12 flex flex-col lg:grid lg:grid-cols-12 gap-10 md:gap-16 items-start">
 
                     {/* LEFT SIDE: Content */}
-                    <div className="lg:col-span-7 space-y-20 pt-10">
+                    <div className="lg:col-span-7 space-y-12 md:space-y-20 pt-10 w-full order-2 lg:order-1">
 
                         {/* Massive Title Section */}
                         <div className="space-y-8 relative">
@@ -319,8 +319,8 @@ const EventDetail = () => {
                                 animate={{ opacity: 1, x: 0 }}
                                 className="flex items-center gap-4"
                             >
-                                <div className="h-[1px] w-12 bg-blue-500" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500">
+                                <div className="h-[1px] w-12 bg-cyan-400" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-cyan-400">
                                     {event.category || 'Classified Session'}
                                 </span>
                             </motion.div>
@@ -329,7 +329,7 @@ const EventDetail = () => {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
-                                className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.85] font-outfit"
+                                className="text-4xl xs:text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-[0.9] font-outfit uppercase will-change-transform"
                             >
                                 <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/30">
                                     {event.title}
@@ -340,28 +340,28 @@ const EventDetail = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 1, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
-                                className="text-lg md:text-xl text-gray-400 leading-relaxed font-light max-w-2xl"
+                                className="text-base md:text-xl text-slate-400 leading-relaxed font-medium max-w-2xl uppercase tracking-wide opacity-80"
                             >
                                 {event.description || event.short_description}
                             </motion.p>
                         </div>
 
                         {/* Structured Content Blocks */}
-                        <div className="space-y-12">
+                        <div className="space-y-8 md:space-y-12">
                             {event.content_blocks && event.content_blocks.map((block, index) => (
                                 <motion.div
                                     key={index}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: true, margin: "-10%" }}
                                     transition={{ duration: 0.8, delay: index * 0.1 }}
-                                    className="bg-white/[0.02] backdrop-blur-3xl border border-white/5 rounded-[2.5rem] p-8 md:p-12 hover:border-white/10 transition-all group"
+                                    className="bg-white/[0.02] backdrop-blur-3xl border border-white/5 rounded-[2rem] md:rounded-[2.5rem] p-8 md:p-12 hover:border-cyan-500/20 transition-all group will-change-transform"
                                 >
                                     <div className="flex items-center gap-4 mb-8">
-                                        <div className="p-2.5 rounded-xl bg-blue-600/10 border border-blue-500/20">
-                                            <Target className="w-5 h-5 text-blue-500" />
+                                        <div className="p-2.5 rounded-xl bg-cyan-400/10 border border-cyan-400/20 group-hover:bg-cyan-400/20 transition-colors">
+                                            <Target size={20} className="text-cyan-400" />
                                         </div>
-                                        <h3 className="text-2xl font-bold tracking-tight text-white group-hover:text-blue-400 transition-colors">
+                                        <h3 className="text-xl md:text-2xl font-black tracking-tight text-white group-hover:text-cyan-400 transition-colors uppercase">
                                             {block.title}
                                         </h3>
                                     </div>
@@ -370,10 +370,10 @@ const EventDetail = () => {
                                         <ul className="grid gap-6">
                                             {block.list.map((item, idx) => (
                                                 <li key={idx} className="flex items-start gap-4">
-                                                    <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-black text-blue-500 shrink-0 mt-0.5 border border-white/5">
+                                                    <div className="w-5 h-5 rounded bg-white/5 flex items-center justify-center text-[9px] font-black text-cyan-400 shrink-0 mt-0.5 border border-white/5 uppercase">
                                                         {idx + 1}
                                                     </div>
-                                                    <span className="text-gray-400 font-light leading-relaxed">{item}</span>
+                                                    <span className="text-slate-400 font-medium leading-relaxed text-sm md:text-base">{item}</span>
                                                 </li>
                                             ))}
                                         </ul>
@@ -382,16 +382,16 @@ const EventDetail = () => {
                                     {block.items && (
                                         <div className="grid md:grid-cols-2 gap-6">
                                             {block.items.map((item, idx) => (
-                                                <div key={idx} className="bg-black/40 p-6 rounded-3xl border border-white/5 hover:bg-black/60 transition-all">
-                                                    <h4 className="text-white font-bold mb-3 tracking-tight">{item.title}</h4>
-                                                    <p className="text-gray-500 text-sm leading-relaxed">{item.content}</p>
+                                                <div key={idx} className="bg-black/40 p-6 rounded-2xl md:rounded-3xl border border-white/5 hover:border-cyan-500/10 transition-all">
+                                                    <h4 className="text-white font-black mb-3 tracking-tight uppercase text-sm">{item.title}</h4>
+                                                    <p className="text-slate-500 text-[11px] md:text-xs leading-relaxed font-bold uppercase tracking-wider">{item.content}</p>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
 
                                     {block.content && (
-                                        <p className="text-gray-400 leading-relaxed font-light text-lg">
+                                        <p className="text-slate-400 leading-relaxed font-medium text-sm md:text-lg">
                                             {block.content}
                                         </p>
                                     )}
@@ -404,20 +404,20 @@ const EventDetail = () => {
                             <div className="space-y-8 pb-20">
                                 <div className="flex items-center gap-4">
                                     <div className="h-px flex-1 bg-white/5" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">Operational Personnel</span>
+                                    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-600">Command_Units</span>
                                     <div className="h-px flex-1 bg-white/5" />
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     {event.coordinators.map((c, i) => (
-                                        <div key={i} className="flex items-center gap-5 p-5 bg-white/[0.02] border border-white/5 rounded-3xl group hover:bg-white/[0.04] transition-all">
-                                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-purple-600 p-px">
-                                                <div className="w-full h-full bg-[#050505] rounded-[15px] flex items-center justify-center text-xl font-bold">
+                                        <div key={i} className="flex items-center gap-5 p-5 bg-white/[0.02] border border-white/5 rounded-2xl md:rounded-3xl group hover:border-cyan-500/20 transition-all">
+                                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-600 p-px">
+                                                <div className="w-full h-full bg-[#020202] rounded-[11px] md:rounded-[15px] flex items-center justify-center text-xl font-black">
                                                     {c.name.charAt(0)}
                                                 </div>
                                             </div>
                                             <div>
-                                                <div className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">Coordinator</div>
-                                                <div className="text-white font-bold tracking-tight">{c.name}</div>
+                                                <div className="text-[8px] font-black text-cyan-400 uppercase tracking-widest mb-1">OPERATOR</div>
+                                                <div className="text-white font-black tracking-tight uppercase text-sm">{c.name}</div>
                                             </div>
                                         </div>
                                     ))}
@@ -428,42 +428,42 @@ const EventDetail = () => {
                     </div>
 
                     {/* RIGHT SIDE: Action Panel */}
-                    <div className="lg:col-span-5 w-full sticky top-12 pb-12">
+                    <div className="lg:col-span-5 w-full sticky top-32 pb-12 order-1 lg:order-2">
 
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="relative bg-[#050505] border border-white/10 rounded-[3rem] p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] overflow-hidden"
+                            className="relative bg-[#050505] border border-white/10 rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-10 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] overflow-hidden"
                         >
                             {/* Decorative Background Beams */}
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 blur-[60px]" />
-                            <div className="absolute bottom-0 left-0 w-32 h-32 bg-purple-900/10 blur-[60px]" />
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-600/5 blur-[60px]" />
+                            <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-900/5 blur-[60px]" />
 
                             {/* Metadata Wall */}
-                            <div className="space-y-8 mb-12">
+                            <div className="space-y-8 mb-10 md:mb-12">
                                 <div className="flex justify-between items-center">
-                                    <div className="px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center gap-2">
-                                        <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' : 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)] animate-pulse'}`} />
-                                        <span className="text-[10px] font-black uppercase text-blue-400 tracking-widest leading-none">
-                                            {isCompleted ? 'Expired' : 'Live Status'}
+                                    <div className="px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center gap-2">
+                                        <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' : 'bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.8)] animate-pulse'}`} />
+                                        <span className="text-[9px] font-black uppercase text-cyan-400 tracking-[0.2em] leading-none">
+                                            {isCompleted ? 'Expired' : 'Live_Status'}
                                         </span>
                                     </div>
-                                    {event.fee && <div className="text-2xl font-bold text-white font-space uppercase tracking-tighter">{event.fee}</div>}
+                                    {event.fee && <div className="text-2xl font-black text-white font-space uppercase tracking-tighter">{event.fee}</div>}
                                 </div>
 
                                 <div className="grid gap-6 pt-4">
                                     {[
-                                        { icon: Calendar, label: "Event Date", value: new Date(event.date).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' }) },
-                                        { icon: Clock, label: "Temporal Slot", value: `${event.time} (${event.duration || '2 Hours'})` },
-                                        { icon: MapPin, label: "Physical Venue", value: event.venue || 'Campus HQ' },
+                                        { icon: Calendar, label: "Temporal Origin", value: new Date(event.date).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' }) },
+                                        { icon: Clock, label: "Execution Window", value: `${event.time} (${event.duration || '2 Hours'})` },
+                                        { icon: MapPin, label: "Deployment Zone", value: event.venue || 'Campus HQ' },
                                     ].map((item, idx) => (
                                         <div key={idx} className="flex items-center gap-5 group">
-                                            <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center group-hover:bg-blue-600/10 group-hover:border-blue-500/20 transition-all">
-                                                <item.icon className="w-5 h-5 text-gray-500 group-hover:text-blue-500 transition-colors" />
+                                            <div className="w-11 h-11 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center group-hover:bg-cyan-400/10 group-hover:border-cyan-400/20 transition-all">
+                                                <item.icon size={20} className="text-slate-500 group-hover:text-cyan-400 transition-colors" />
                                             </div>
                                             <div>
-                                                <div className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-600 mb-1">{item.label}</div>
-                                                <div className="text-sm font-bold text-gray-200 tracking-tight">{item.value}</div>
+                                                <div className="text-[8px] font-black uppercase tracking-[0.2em] text-slate-600 mb-1">{item.label}</div>
+                                                <div className="text-[13px] md:text-sm font-black text-slate-200 tracking-tight uppercase">{item.value}</div>
                                             </div>
                                         </div>
                                     ))}
@@ -472,16 +472,21 @@ const EventDetail = () => {
 
                             {/* Countdown or Status Indicator */}
                             {!isCompleted && timeLeft && (
-                                <div className="bg-white/5 rounded-[2rem] p-6 mb-10 border border-white/5">
+                                <div className="bg-white/[0.03] rounded-[2rem] p-6 mb-8 border border-white/5 backdrop-blur-3xl">
                                     <div className="flex justify-between items-center mb-4">
-                                        <span className="text-[10px] uppercase font-black tracking-widest text-gray-500">Time Until Pulse</span>
-                                        <Timer className="w-3.5 h-3.5 text-blue-500" />
+                                        <span className="text-[9px] uppercase font-black tracking-[0.3em] text-cyan-400/50">Time_To_Pulse</span>
+                                        <Timer size={14} className="text-cyan-400" />
                                     </div>
                                     <div className="flex justify-between px-2">
-                                        {Object.entries(timeLeft).map(([unit, val]) => (
-                                            <div key={unit} className="text-center">
-                                                <div className="text-2xl font-black text-white leading-none mb-1 tabular-nums">{val}</div>
-                                                <div className="text-[8px] font-bold uppercase tracking-widest text-gray-600">{unit}</div>
+                                        {[
+                                            { label: 'days', value: timeLeft.days },
+                                            { label: 'hours', value: timeLeft.hours },
+                                            { label: 'mins', value: timeLeft.minutes },
+                                            { label: 'secs', value: timeLeft.seconds }
+                                        ].map((item) => (
+                                            <div key={item.label} className="text-center">
+                                                <div className="text-2xl font-black text-white leading-none mb-1 tabular-nums italic tracking-tighter">{item.value.toString().padStart(2, '0')}</div>
+                                                <div className="text-[8px] font-black uppercase tracking-widest text-slate-600">{item.label}</div>
                                             </div>
                                         ))}
                                     </div>
@@ -492,41 +497,41 @@ const EventDetail = () => {
                             {event.max_participation > 0 && (
                                 <div className="bg-white/5 rounded-[2rem] p-6 mb-6 border border-white/5 relative overflow-hidden group">
                                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                        <Users className="w-16 h-16 text-blue-500 transform rotate-12 translate-x-4 -translate-y-4" />
+                                        <Users className="w-16 h-16 text-cyan-400 transform rotate-12 translate-x-4 -translate-y-4" />
                                     </div>
                                     
                                     <div className="flex justify-between items-end mb-3 relative z-10">
                                         <div>
                                             <div className="flex items-center gap-2 mb-1">
-                                                <span className="text-[10px] uppercase font-black tracking-widest text-gray-500">Live Capacity</span>
+                                                <span className="text-[9px] uppercase font-black tracking-widest text-slate-600">Active_Slots</span>
                                                 {(event.registration_count || 0) > (event.max_participation * 0.8) && (
-                                                    <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-[8px] font-bold text-red-500 uppercase tracking-wider animate-pulse">
-                                                        Filling Fast
+                                                    <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-[8px] font-black text-red-500 uppercase tracking-wider animate-pulse">
+                                                        CRITICAL_LOAD
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="text-2xl font-black text-white tabular-nums">
-                                                {event.registration_count || 0} <span className="text-gray-600 text-sm">/ {event.max_participation}</span>
+                                            <div className="text-2xl font-black text-white tabular-nums italic">
+                                                {event.registration_count || 0} <span className="text-slate-600 text-sm">/ {event.max_participation}</span>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-xl font-bold text-blue-400 tabular-nums">
+                                            <div className="text-xl font-black text-cyan-400 tabular-nums italic">
                                                 {Math.max(0, event.max_participation - (event.registration_count || 0))}
                                             </div>
-                                            <div className="text-[8px] font-bold uppercase tracking-widest text-gray-600">Spots Left</div>
+                                            <div className="text-[8px] font-black uppercase tracking-widest text-slate-600">Available</div>
                                         </div>
                                     </div>
 
                                     {/* Progress Bar */}
-                                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden relative z-10">
+                                    <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden relative z-10">
                                         <motion.div 
                                             initial={{ width: 0 }}
                                             animate={{ width: `${Math.min(100, ((event.registration_count || 0) / event.max_participation) * 100)}%` }}
-                                            transition={{ duration: 1.5, ease: "easeOut" }}
+                                            transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
                                             className={`h-full rounded-full ${
                                                 ((event.registration_count || 0) / event.max_participation) > 0.9 
                                                 ? 'bg-red-500' 
-                                                : 'bg-gradient-to-r from-blue-600 to-blue-400'
+                                                : 'bg-gradient-to-r from-cyan-600 to-blue-400'
                                             }`} 
                                         />
                                     </div>
@@ -538,24 +543,24 @@ const EventDetail = () => {
                                 <button
                                     onClick={handleRegister}
                                     disabled={isCompleted || isLocked || isRegistered || registering}
-                                    className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all duration-500 relative overflow-hidden group
+                                    className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.3em] text-[10px] transition-all duration-700 relative overflow-hidden group
                                 ${isRegistered
-                                            ? 'bg-blue-600/10 text-blue-500 border border-blue-500/20'
-                                            : 'bg-white text-black hover:bg-blue-500 hover:text-white hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] active:scale-[0.98]'
-                                        } disabled:opacity-50 disabled:scale-100 shadow-2xl`}
+                                            ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
+                                            : 'bg-white text-black hover:bg-cyan-400 hover:text-black hover:shadow-[0_20px_40px_-10px_rgba(34,211,238,0.3)] active:scale-[0.98]'
+                                        } disabled:opacity-30 disabled:scale-100 shadow-2xl will-change-transform`}
                                 >
                                     <span className="relative z-10 flex items-center justify-center gap-3">
                                         {registering ? (
-                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            <Loader2 size={16} className="animate-spin" />
                                         ) : isRegistered ? (
-                                            <CheckCircle2 className="w-4 h-4" />
+                                            <CheckCircle2 size={16} />
                                         ) : (
-                                            <CreditCard className="w-4 h-4" />
+                                            <CreditCard size={16} />
                                         )}
-                                        {registering ? 'Processing' :
-                                            isRegistered ? 'Access Granted' :
-                                                isCompleted ? 'Entry Terminated' :
-                                                    isLocked ? 'Coming Soon' : 'Secure Ticket'}
+                                        {registering ? 'Processing_Auth...' :
+                                            isRegistered ? 'Verified_Access' :
+                                                isCompleted ? 'Transmission_End' :
+                                                    isLocked ? 'Pending_Sync' : 'Initialize_Access'}
                                     </span>
                                 </button>
 
@@ -563,27 +568,29 @@ const EventDetail = () => {
                                     <TicketDownload
                                         registration={registrationData}
                                         event={event}
-                                        className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl transition-all text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3"
+                                        className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl transition-all text-[9px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 active:scale-95"
                                     />
                                 )}
 
-                                <button className="w-full py-4 text-gray-600 hover:text-gray-400 transition-colors text-[9px] font-bold uppercase tracking-[0.25em]">
-                                    Request Event Support
+                                <button className="w-full py-4 text-slate-700 hover:text-slate-400 transition-colors text-[8px] font-black uppercase tracking-[0.4em]">
+                                    Request_Command_Support
                                 </button>
                             </div>
 
+
                             {/* Achievement / Highlight badges in footer of card */}
                             <div className="mt-12 pt-8 border-t border-white/5 grid grid-cols-2 gap-4">
-                                <div className="flex items-center gap-2 opacity-50">
-                                    <Award className="w-3.5 h-3.5" />
-                                    <span className="text-[8px] font-bold uppercase tracking-widest">Digital Merit</span>
+                                <div className="flex items-center gap-2 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
+                                    <Award size={14} />
+                                    <span className="text-[8px] font-black uppercase tracking-widest leading-none mt-0.5">Tactical_Merit</span>
                                 </div>
-                                <div className="flex items-center gap-2 opacity-50">
-                                    <Target className="w-3.5 h-3.5" />
-                                    <span className="text-[8px] font-bold uppercase tracking-widest">High Impact</span>
+                                <div className="flex items-center gap-2 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-default">
+                                    <Target size={14} />
+                                    <span className="text-[8px] font-black uppercase tracking-widest leading-none mt-0.5">High_Value</span>
                                 </div>
                             </div>
                         </motion.div>
+
 
                         {/* Prize Pool Spotlight (If any) */}
                         {event.prize && (

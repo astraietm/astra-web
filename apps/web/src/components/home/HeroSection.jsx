@@ -21,33 +21,24 @@ export function HeroSection() {
         />
       </div>
 
-
-
-
-
-
-
-      <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-5xl mx-auto w-full mt-16 sm:mt-0">
+      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl mx-auto w-full mt-12 sm:mt-0">
         
         {/* Main Title - "MAGNATHON" style */}
         <motion.h1
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="font-space font-bold text-6xl sm:text-7xl md:text-8xl lg:text-[7rem] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-400 drop-shadow-2xl uppercase mb-[-10px] sm:mb-[-15px] relative z-20"
+            transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+            className="font-space font-black text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-400 drop-shadow-2xl uppercase mb-[-8px] sm:mb-[-15px] relative z-20 will-change-transform"
         >
             ASTRA
         </motion.h1>
 
         {/* Large Gradient Number - "2026" style */}
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-space font-bold text-[3.5rem] xs:text-[4rem] sm:text-[6rem] md:text-[7rem] lg:text-[9.5rem] leading-[0.8] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-cyan-400 to-blue-600 relative z-10 whitespace-nowrap"
-            style={{
-                WebkitTextStroke: '0px',
-            }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
+            className="font-space font-black text-[3rem] xs:text-[4rem] sm:text-[6rem] md:text-[8rem] lg:text-[10rem] leading-[0.85] sm:leading-[0.8] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-cyan-400 to-blue-600 relative z-10 whitespace-nowrap will-change-transform"
         >
             ZERO DAY
         </motion.div>
@@ -57,9 +48,9 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="font-sans text-xs sm:text-sm md:text-base font-bold text-white tracking-[0.1em] uppercase mt-8 mb-10 text-center"
+            className="font-sans text-[10px] sm:text-sm md:text-base font-bold text-white tracking-[0.2em] uppercase mt-10 mb-10 text-center max-w-[280px] sm:max-w-none"
         >
-            A 2-DAY <span className="text-cyan-400">CYBERSECURITY</span> EVENT.
+            A 2-DAY <span className="text-cyan-400">CYBERSECURITY</span> CONVERGENCE.
         </motion.p>
 
         {/* Date & Venue Pill */}
@@ -67,39 +58,39 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="inline-flex items-center gap-3 sm:gap-6 px-6 py-3 bg-[#030303]/80 border border-white/10 rounded-full mb-12 backdrop-blur-md"
+            className="inline-flex flex-col sm:flex-row items-center gap-4 sm:gap-6 px-6 py-4 sm:py-3 bg-[#030303]/60 border border-white/10 rounded-[2rem] sm:rounded-full mb-12 backdrop-blur-md w-full sm:w-auto"
         >
-             <div className="flex items-center gap-2 text-gray-300">
+             <div className="flex items-center gap-2.5 text-gray-300">
                 <Calendar className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs sm:text-sm font-semibold tracking-wider font-mono">FEB 11 / 12</span>
+                <span className="text-[11px] sm:text-sm font-black tracking-widest font-mono">FEB 11 / 12</span>
              </div>
-             <div className="w-px h-4 bg-white/10"></div>
-             <div className="flex items-center gap-2 text-gray-300">
+             <div className="hidden sm:block w-px h-4 bg-white/10"></div>
+             <div className="flex items-center gap-2.5 text-gray-300">
                 <MapPin className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs sm:text-sm font-semibold tracking-wider font-mono">KMCT IETM</span>
+                <span className="text-[11px] sm:text-sm font-black tracking-widest font-mono uppercase">KMCT IETM</span>
              </div>
         </motion.div>
 
-        {/* CTA Button - "JOIN THE FUTURE" style */}
+        {/* CTA Button */}
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
+            className="w-full sm:w-auto px-4 sm:px-0"
         >
             <Link 
                 to="/events" 
-                className="group relative inline-flex items-center justify-center px-10 py-4 bg-cyan-400 text-black font-extrabold text-base tracking-wider rounded-full overflow-hidden transition-transform duration-300 hover:scale-105 shadow-[0_0_40px_rgba(34,211,238,0.6)]"
+                className="group relative inline-flex items-center justify-center w-full sm:w-auto px-10 py-4.5 bg-cyan-400 text-black font-black text-sm tracking-[0.2em] rounded-full overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-[0_20px_40px_rgba(34,211,238,0.3)] will-change-transform"
             >
-                <span className="relative z-10">REGISTER NOW</span>
+                <span className="relative z-10">INITIATE REGISTRATION</span>
+                <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
             </Link>
         </motion.div>
         
-        
       </div>
       
-
-      
-      <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black via-black/80 to-transparent z-20 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-background via-background/80 to-transparent z-20 pointer-events-none"></div>
     </section>
   );
 }
+

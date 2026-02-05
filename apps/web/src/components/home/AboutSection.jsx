@@ -22,58 +22,62 @@ const AboutSection = () => {
                     {/* Left Column: Text Content */}
                     <div>
                         <FadeInUp>
-                            <h4 className="text-cyan-400 font-bold tracking-widest text-sm uppercase mb-4">
-                                About the Event
+                            <h4 className="text-cyan-400 font-black tracking-[0.3em] text-[10px] uppercase mb-6 flex items-center gap-3">
+                                <div className="w-8 h-px bg-cyan-400/30" />
+                                OPERATIONAL_OVERVIEW
                             </h4>
                             
-                            <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight mb-8 tracking-tighter">
-                                2 DAYS OF <br />
-                                PURE <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">INNOVATION</span>.
+                            <h2 className="text-4xl md:text-7xl font-black text-white leading-[1.1] mb-10 tracking-tighter uppercase will-change-transform">
+                                48 HOURS OF <br />
+                                UNFILTERED <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">INTEL</span>.
                             </h2>
                             
-                            <div className="space-y-6 text-gray-400 text-lg leading-relaxed max-w-xl">
+                            <div className="space-y-6 text-gray-400 text-base md:text-lg leading-relaxed max-w-xl font-medium">
                                 <p>
-                                    Zero Day is a flagship cybersecurity event by ASTRA – the Cybersecurity Association of KMCT IETM. It brings together students to explore real-world security concepts through hands-on learning, challenges, and interactive sessions. Designed for both beginners and enthusiasts, the event aims to build a strong cybersecurity mindset and practical skills.
+                                    ZERO DAY is the definitive cybersecurity assembly by ASTRA – the KMCT IETM Security Guild. We bridge the gap between abstract theory and operational reality through high-fidelity simulations, hardware hacking, and tactical workshops.
                                 </p>
                             </div>
                         </FadeInUp>
                     </div>
 
                     {/* Right Column: Visual Card */}
-                    <motion.div style={{ y }} className="relative lg:h-[600px] flex items-center justify-center">
+                    <motion.div style={{ y }} className="relative min-h-[400px] lg:h-[600px] flex items-center justify-center mt-12 lg:mt-0 will-change-transform">
                         
                         {/* Background Year Text */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12rem] md:text-[18rem] font-bold text-white/[0.02] select-none pointer-events-none z-0">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10rem] md:text-[18rem] font-black text-white/[0.01] select-none pointer-events-none z-0 tracking-tighter">
                             2025
                         </div>
 
                         {/* Glass Card */}
-                        <div className="relative z-10 w-full max-w-md aspect-square bg-gradient-to-br from-white/5 to-white/[0.01] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 md:p-12 flex flex-col justify-between overflow-hidden group hover:border-cyan-500/30 transition-colors duration-500">
+                        <div className="relative z-10 w-full max-w-[340px] sm:max-w-md aspect-square bg-white/[0.02] backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 md:p-12 flex flex-col justify-between overflow-hidden group hover:border-cyan-500/30 transition-all duration-700 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5)]">
                             
                             {/* Inner Glow */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/20 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none"></div>
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none group-hover:bg-cyan-500/20 transition-colors" />
 
                             {/* Icon */}
-                            <div className="w-16 h-16 rounded-2xl bg-cyan-500 text-black flex items-center justify-center shadow-[0_0_40px_-10px_rgba(6,182,212,0.5)] group-hover:scale-110 transition-transform duration-500">
-                                <Zap className="w-8 h-8 fill-black" />
+                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-cyan-400 text-black flex items-center justify-center shadow-[0_20px_40px_-5px_rgba(34,211,238,0.3)] group-hover:scale-110 group-hover:rotate-[10deg] transition-all duration-700">
+                                <Zap className="w-7 h-7 md:w-8 md:h-8 fill-black" />
                             </div>
 
                             {/* Content */}
                             <div>
-                                <h3 className="text-3xl font-bold text-white mb-3">FLAGSHIP EVENT</h3>
-                                <p className="text-gray-400 leading-relaxed">
-                                    Organized by the Astra Team, bringing legacy and future tech together in a 48-hour marathon of code and creativity.
+                                <h3 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight uppercase">NODE_DOMINANCE</h3>
+                                <p className="text-sm md:text-base text-gray-400 font-medium leading-relaxed uppercase tracking-wider opacity-80 group-hover:opacity-100 transition-opacity">
+                                    Engineered by ASTRA Command. 48 hours of tactical execution, security frameworks, and network dominance.
                                 </p>
                             </div>
 
-                            {/* Decorative Corner */}
-                            <div className="absolute bottom-0 right-0 p-8 opacity-20">
-                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M40 40V0L0 40H40Z" fill="white"/>
-                                </svg>
+                            {/* Corner Tech Decor */}
+                            <div className="absolute bottom-6 right-6 opacity-20 group-hover:opacity-40 transition-opacity">
+                               <div className="flex gap-1.5">
+                                    {[0,1,2].map(i => (
+                                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-white" />
+                                    ))}
+                               </div>
                             </div>
                         </div>
                     </motion.div>
+
 
                 </div>
             </div>

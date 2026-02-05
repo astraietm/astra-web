@@ -163,74 +163,74 @@ const Navbar = () => {
                                 </button>
 
                                 {/* Premium Dropdown */}
-                                <AnimatePresence>
-                                    {isProfileOpen && (
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.9, y: 10, filter: "blur(8px)" }}
-                                            animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
-                                            exit={{ opacity: 0, scale: 0.95, y: 10, filter: "blur(8px)" }}
-                                            transition={{ type: "spring", stiffness: 350, damping: 25 }}
-                                            style={{ willChange: "transform, opacity, filter" }}
-                                            className="absolute top-16 right-0 w-60 bg-[#0A0F1C]/80 backdrop-blur-3xl border border-white/10 ring-1 ring-white/5 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden p-2 z-50 origin-top-right"
-                                        >
-                                            <div className="space-y-1">
-                                                <Link
-                                                    to="/my-registrations"
-                                                    onClick={() => setIsProfileOpen(false)}
-                                                    className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden"
-                                                >
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                    <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
-                                                        <Ticket className="w-4 h-4" />
-                                                    </div>
-                                                    <span className="relative z-10">My Tickets</span>
-                                                </Link>
+                                 <AnimatePresence>
+                                     {isProfileOpen && (
+                                         <motion.div
+                                             initial={{ opacity: 0, scale: 0.9, y: 10, filter: "blur(8px)" }}
+                                             animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+                                             exit={{ opacity: 0, scale: 0.95, y: 10, filter: "blur(8px)" }}
+                                             transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                                             style={{ willChange: "transform, opacity, filter" }}
+                                             className="absolute top-16 right-0 w-60 bg-[#0A0F1C]/80 backdrop-blur-3xl border border-white/10 ring-1 ring-white/5 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden p-2 z-50 origin-top-right will-change-transform"
+                                         >
+                                             <div className="space-y-1">
+                                                 <Link
+                                                     to="/my-registrations"
+                                                     onClick={() => setIsProfileOpen(false)}
+                                                     className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden"
+                                                 >
+                                                     <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                     <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
+                                                         <Ticket className="w-4 h-4" />
+                                                     </div>
+                                                     <span className="relative z-10">My Tickets</span>
+                                                 </Link>
 
-                                                <button
-                                                    onClick={() => {
-                                                        setIsProfileOpen(false);
-                                                        setIsProfileModalOpen(true);
-                                                    }}
-                                                    className="w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden text-left"
-                                                >
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                    <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
-                                                        <User className="w-4 h-4" />
-                                                    </div>
-                                                    <span className="relative z-10">Edit Profile</span>
-                                                </button>
+                                                 <button
+                                                     onClick={() => {
+                                                         setIsProfileOpen(false);
+                                                         setIsProfileModalOpen(true);
+                                                     }}
+                                                     className="w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden text-left"
+                                                 >
+                                                     <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                     <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
+                                                         <User className="w-4 h-4" />
+                                                     </div>
+                                                     <span className="relative z-10">Edit Profile</span>
+                                                 </button>
 
-                                                {user && user.is_staff && (
-                                                    <Link
-                                                        to="/admin"
-                                                        onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden"
-                                                    >
-                                                        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                        <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
-                                                            <Shield className="w-4 h-4" />
-                                                        </div>
-                                                        <span className="relative z-10">Admin Panel</span>
-                                                    </Link>
-                                                )}
+                                                 {user && user.is_staff && (
+                                                     <Link
+                                                         to="/admin"
+                                                         onClick={() => setIsProfileOpen(false)}
+                                                         className="flex items-center gap-3 px-3 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all group relative overflow-hidden"
+                                                     >
+                                                         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                         <div className="p-2 rounded-lg bg-white/5 group-hover:bg-primary group-hover:text-black transition-colors relative z-10">
+                                                             <Shield className="w-4 h-4" />
+                                                         </div>
+                                                         <span className="relative z-10">Admin Panel</span>
+                                                     </Link>
+                                                 )}
 
-                                                <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-1"></div>
+                                                 <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-1"></div>
 
-                                                <button
-                                                    onClick={handleLogout}
-                                                    disabled={isLoggingOut}
-                                                    className="w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all group relative overflow-hidden text-left"
-                                                >
-                                                    <div className="p-2 rounded-lg bg-red-500/10 text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors relative z-10">
-                                                        {isLoggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
-                                                    </div>
-                                                    <span className="relative z-10">
-                                                        {isLoggingOut ? 'Disconnecting...' : 'Sign Out'}
-                                                    </span>
-                                                </button>
-                                            </div>
-                                        </motion.div>
-                                    )}
+                                                 <button
+                                                     onClick={handleLogout}
+                                                     disabled={isLoggingOut}
+                                                     className="w-full flex items-center gap-3 px-3 py-3 text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all group relative overflow-hidden text-left"
+                                                 >
+                                                     <div className="p-2 rounded-lg bg-red-500/10 text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors relative z-10">
+                                                         {isLoggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
+                                                     </div>
+                                                     <span className="relative z-10">
+                                                         {isLoggingOut ? 'Disconnecting...' : 'Sign Out'}
+                                                     </span>
+                                                 </button>
+                                             </div>
+                                         </motion.div>
+                                     )}
                                 </AnimatePresence>
                             </div>
                         ) : (
@@ -262,7 +262,7 @@ const Navbar = () => {
 
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 transition-colors active:scale-95"
+                            className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-white hover:bg-white/10 transition-colors active:scale-95 will-change-transform"
                         >
                             {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </button>
@@ -276,7 +276,7 @@ const Navbar = () => {
                                 exit={{ opacity: 0, scale: 0.95, y: -20, filter: "blur(8px)" }}
                                 transition={{ type: "spring", stiffness: 300, damping: 28 }}
                                 style={{ willChange: "transform, opacity, filter" }}
-                                className="absolute top-[64px] left-0 right-0 bg-[#0A0F1C]/80 backdrop-blur-3xl backdrop-saturate-150 border border-white/10 rounded-3xl p-2 shadow-2xl overflow-hidden z-40 flex flex-col gap-1"
+                                className="absolute top-[64px] left-0 right-0 bg-[#0A0F1C]/80 backdrop-blur-3xl backdrop-saturate-150 border border-white/10 rounded-3xl p-2 shadow-2xl overflow-hidden z-40 flex flex-col gap-1 will-change-transform"
                             >
                                 {user && (
                                     <div className="flex items-center gap-3 px-4 py-3 bg-white/5 mx-2 mt-2 rounded-2xl border border-white/5">
@@ -296,11 +296,12 @@ const Navbar = () => {
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: i * 0.05 }}
+                                        className="will-change-transform"
                                     >
                                         <Link
                                             to={link.path}
                                             onClick={() => setIsOpen(false)}
-                                            className="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all group"
+                                            className="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all group active:bg-white/10"
                                         >
                                             <span>{link.name}</span>
                                             {location.pathname === link.path && (
@@ -314,11 +315,11 @@ const Navbar = () => {
 
                                 {/* Mobile User Section */}
                                 {user ? (
-                                    <>
+                                    <div className="space-y-1">
                                         <Link
                                             to="/my-registrations"
                                             onClick={() => setIsOpen(false)}
-                                            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all"
+                                            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all group active:bg-white/10"
                                         >
                                             <Ticket className="w-4 h-4 text-primary" /> My Tickets
                                         </Link>
@@ -328,7 +329,7 @@ const Navbar = () => {
                                                 setIsOpen(false);
                                                 setIsProfileModalOpen(true);
                                             }}
-                                            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all w-full text-left"
+                                            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all w-full text-left group active:bg-white/10"
                                         >
                                             <User className="w-4 h-4 text-primary" /> Edit Profile
                                         </button>
@@ -337,7 +338,7 @@ const Navbar = () => {
                                             <Link
                                                 to="/admin"
                                                 onClick={() => setIsOpen(false)}
-                                                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all"
+                                                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all group active:bg-white/10"
                                             >
                                                 <Shield className="w-4 h-4 text-primary" /> Admin Panel
                                             </Link>
@@ -345,26 +346,27 @@ const Navbar = () => {
                                         <button
                                             onClick={handleLogout}
                                             disabled={isLoggingOut}
-                                            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all w-full text-left"
+                                            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all w-full text-left active:bg-red-500/20"
                                         >
                                             {isLoggingOut ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogOut className="w-4 h-4" />}
                                             <span>{isLoggingOut ? 'Disconnecting...' : 'Sign Out'}</span>
                                         </button>
-                                    </>
+                                    </div>
                                 ) : (
                                     <button
                                         onClick={handleLoginClick}
-                                        className="flex items-center justify-center gap-2 w-full py-4 bg-white/5 border border-white/10 text-white rounded-2xl text-sm font-bold uppercase tracking-wider hover:bg-white/10 transition-all my-1"
+                                        className="flex items-center justify-center gap-2 w-full py-4 bg-white/5 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all my-1 active:scale-[0.98]"
                                     >
-                                        <User className="w-4 h-4 text-cyan-400" /> Login
+                                        <User className="w-4 h-4 text-cyan-400" /> AUTHORIZE ACCESS
                                     </button>
                                 )}
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
-                {isOpen && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 pointer-events-auto" onClick={() => setIsOpen(false)} />}
+                {isOpen && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 pointer-events-auto" onClick={() => setIsOpen(false)} />}
             </nav>
+
         </>
     );
 };

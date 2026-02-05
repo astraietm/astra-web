@@ -35,92 +35,94 @@ const EventModule = ({ event, index }) => {
         <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ delay: index * 0.05, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
             onClick={() => navigate(`/events/${event.id}`)}
-            className={`group relative w-full h-[450px] sm:h-[530px] rounded-[2rem] overflow-hidden bg-white/[0.02] backdrop-blur-md border border-white/10 cursor-pointer flex flex-col transition-all duration-500 hover:border-${accentColor}-500/40 hover:bg-white/[0.04] hover:shadow-[0_0_40px_-10px_rgba(${isHawkins ? '239,68,68' : '59,130,246'},0.3)]`}
+            className={`group relative w-full h-[400px] xs:h-[450px] sm:h-[530px] rounded-[2rem] overflow-hidden bg-white/[0.02] backdrop-blur-3xl border border-white/10 cursor-pointer flex flex-col transition-all duration-700 hover:border-${accentColor}-500/40 hover:bg-white/[0.04] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5)] will-change-transform`}
         >
             {/* Visual Container */}
-            <div className="relative h-[55%] w-full overflow-hidden">
+            <div className="relative h-[50%] xs:h-[55%] w-full overflow-hidden shrink-0">
                 {/* Image with zoom effect */}
                 <img
                     src={imgError ? premiumImage : displayImage}
                     onError={() => setImgError(true)}
                     alt={event.title}
-                    className="w-full h-full object-cover transition-transform duration-700 [transition-timing-function:cubic-bezier(0.25,1,0.5,1)] group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                    className="w-full h-full object-cover transition-transform duration-1000 [transition-timing-function:cubic-bezier(0.19,1,0.22,1)] group-hover:scale-110 opacity-60 group-hover:opacity-100 will-change-transform"
+                    loading="lazy"
                 />
 
                 {/* Sophisticated Gradient Mask */}
-                <div className={`absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent`} />
+                <div className={`absolute inset-0 bg-gradient-to-t from-[#020202] via-[#020202]/50 to-transparent`} />
 
                 {/* Scanner/Glitch Effect for Hawkins */}
                 {isHawkins && (
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/10 to-transparent h-1 w-full animate-scan pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-red-500/20 to-transparent h-[2px] w-full animate-scan pointer-events-none" />
                 )}
 
                 {/* Floating Meta Tag */}
-                <div className="absolute top-6 left-6 z-20">
+                <div className="absolute top-5 left-5 md:top-6 md:left-6 z-20">
                     <div className="px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
                         <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' :
                             !event.is_registration_open ? 'bg-amber-400' : 
-                                `bg-${accentColor}-500 shadow-[0_0_8px_${accentHex}] animate-pulse`
+                                `bg-${accentColor}-500 shadow-[0_0_10px_rgba(${isHawkins ? '239,68,68' : '59,130,246'},0.8)] animate-pulse`
                             }`} />
-                        <span className="text-[10px] font-black tracking-widest uppercase text-white/80">
-                            {isCompleted ? 'Archived' : !event.is_registration_open ? 'Coming Soon' : 'Active Access'}
+                        <span className="text-[9px] font-black tracking-[0.2em] uppercase text-white/80">
+                            {isCompleted ? 'Archived' : !event.is_registration_open ? 'Access_Pending' : 'Active_Link'}
                         </span>
                     </div>
                 </div>
 
                 {/* Date Badge Overlay */}
-                <div className="absolute bottom-6 right-6 z-20">
-                    <div className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl bg-white text-black shadow-2xl transition-transform duration-500 group-hover:-translate-y-2`}>
-                        <span className="text-xs font-black leading-none uppercase">{isHawkins ? 'FEB' : new Date(event.date).toLocaleDateString(undefined, { month: 'short' })}</span>
-                        <span className="text-xl font-bold leading-none mt-1">{isHawkins ? '12' : new Date(event.date).getDate()}</span>
+                <div className="absolute bottom-5 right-5 md:bottom-6 md:right-6 z-20">
+                    <div className={`flex flex-col items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white text-black shadow-2xl transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-cyan-500/20`}>
+                        <span className="text-[10px] font-black leading-none uppercase">{isHawkins ? 'FEB' : new Date(event.date).toLocaleDateString(undefined, { month: 'short' })}</span>
+                        <span className="text-xl md:text-2xl font-black leading-none mt-1">{isHawkins ? '12' : new Date(event.date).getDate()}</span>
                     </div>
                 </div>
             </div>
 
             {/* Content Container - Glassy Overlay */}
-            <div className="relative flex-1 p-8 pt-6 flex flex-col justify-between bg-gradient-to-b from-[#050505] to-[#050505]/95">
-                <div>
+            <div className="relative flex-1 p-6 md:p-8 flex flex-col justify-between bg-gradient-to-b from-[#020202] to-black">
+                <div className="min-w-0">
                     {/* Category & Status */}
-                    <div className="flex items-center gap-3 mb-5">
-                        <span className={`px-2.5 py-1 rounded-md bg-${accentColor}-500/10 border border-${accentColor}-500/20 text-[10px] font-bold uppercase tracking-widest text-${accentColor}-400`}>
+                    <div className="flex items-center gap-3 mb-4">
+                        <span className={`px-2.5 py-1 rounded-lg bg-${accentColor}-500/10 border border-${accentColor}-500/20 text-[9px] font-black uppercase tracking-[0.2em] text-${accentColor}-400`}>
                             {event.category || 'Classified'}
                         </span>
-                        <div className="flex items-center gap-2 text-[10px] text-gray-500 font-bold uppercase tracking-wider">
-                            <Clock className={`w-3 h-3 text-gray-600`} />
+                        <div className="flex items-center gap-2 text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">
+                            <Clock size={12} className="text-slate-700" />
                             {event.time || '10:00 AM'}
                         </div>
                     </div>
 
                     {/* Title */}
-                    <h3 className={`text-3xl font-bold text-white mb-3 leading-none tracking-tight group-hover:text-${accentColor}-400 transition-colors duration-300`}>
+                    <h3 className="text-2xl md:text-3xl font-black text-white mb-3 leading-[1.1] tracking-tight group-hover:text-cyan-400 transition-colors duration-500 truncate">
                         {event.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 mix-blend-plus-lighter opacity-80 group-hover:opacity-100 transition-opacity">
+                    <p className="text-slate-400 text-xs md:text-sm leading-relaxed line-clamp-2 md:line-clamp-3 opacity-70 group-hover:opacity-100 transition-opacity duration-500">
                         {event.description || "System authentication required. Encrypted parameters detected."}
                     </p>
                 </div>
 
                 {/* Bottom Row */}
-                <div className="pt-6 flex items-center justify-between border-t border-white/5">
-                    <div className="flex items-center gap-2 text-[11px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-white transition-colors">
-                        {isHawkins ? <Zap className="w-4 h-4 text-red-500" /> : <MapPin className="w-4 h-4 text-blue-500" />}
-                        <span>{event.venue || 'Campus HQ'}</span>
+                <div className="pt-6 flex items-center justify-between border-t border-white/[0.05]">
+                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-500 truncate pr-4">
+                        {isHawkins ? <Zap size={14} className="text-red-500" /> : <MapPin size={14} className="text-blue-500" />}
+                        <span className="truncate">{event.venue || 'Campus_HQ'}</span>
                     </div>
 
-                    <div className={`w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-${accentColor}-500 group-hover:text-white group-hover:border-${accentColor}-400 group-hover:scale-110 group-hover:shadow-[0_0_15px_rgba(${isHawkins ? '239,68,68' : '59,130,246'},0.5)] transition-all duration-300`}>
-                        <ArrowUpRight className="w-5 h-5 transition-transform group-hover:rotate-45" />
+                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black group-hover:border-white group-hover:scale-110 transition-all duration-700 shrink-0`}>
+                        <ArrowUpRight size={20} className="transition-transform duration-700 group-hover:rotate-45" />
                     </div>
                 </div>
             </div>
 
             {/* Subtle bottom accent line */}
-            <div className={`absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-${accentColor}-500/0 to-transparent group-hover:via-${accentColor}-500/50 transition-all duration-1000`} />
+            <div className={`absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-${accentColor}-500/0 to-transparent group-hover:via-cyan-500/50 transition-all duration-1000`} />
         </motion.div>
+
     );
 };
 
