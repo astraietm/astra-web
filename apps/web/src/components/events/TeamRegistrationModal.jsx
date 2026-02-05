@@ -12,7 +12,7 @@ import useRazorpayPayment from '../payment/RazorpayPayment';
 const OPEN_EVENTS = [995, 996]; // Shadow Login, Cipher Decode
 
 const DEPARTMENTS = [
-    'CSE', 'ECE', 'EEE', 'ME', 'CE', 'AIDS', 'AIML', 'BME', 'Other'
+    'CSE A', 'CSE B', 'Cyber Security', 'AI/DS', 'BBA', 'BCA A', 'BCA B', 'BCA', 'MCA', 'MBA', 'Diploma CSE', 'Diploma AIML', 'Other'
 ];
 
 const YEARS = [
