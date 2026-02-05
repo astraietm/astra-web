@@ -5,17 +5,15 @@ import {
   Phone, 
   Mail, 
   Instagram, 
-  Linkedin, 
-  Twitter, 
+  Github, 
   Shield 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const socialLinks = [
   { icon: Mail, href: "mailto:astra@kmct.ac.in", label: "Email" },
+  { icon: Github, href: "https://github.com/astraietm", label: "Github" },
   { icon: Instagram, href: "https://instagram.com/astra.ietm", label: "Instagram" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
 ];
 
 export function FooterSection() {
@@ -33,9 +31,7 @@ export function FooterSection() {
               LETS <br />
               <span className="text-cyan-500">CONNECT</span>
             </h2>
-            <p className="text-gray-400 text-lg md:text-xl max-w-lg leading-relaxed">
-              Have a question or want to sponsor? Reach out to us and let's build something incredible together.
-            </p>
+
           </div>
 
           {/* Right Side: Contact & Location */}
