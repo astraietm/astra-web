@@ -55,6 +55,9 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
 
     useEffect(() => {
         if (isOpen) {
+            // Lock body scroll
+            document.body.style.overflow = 'hidden';
+            
             setStep(1);
             setTeamName('');
             setMembers(Array(minMembers).fill(''));
@@ -72,6 +75,11 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                 department: user?.department || '',
                 year_of_study: user?.year_of_study || ''
             });
+
+            return () => {
+                // Unlock body scroll on cleanup/close
+                document.body.style.overflow = 'unset';
+            };
         }
     }, [isOpen, minMembers, isIntraCollege, user]);
 
