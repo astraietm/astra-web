@@ -201,7 +201,7 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                     {/* Top Aesthetic Bar */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50" />
                     
-                    <div className="p-8 md:p-10 max-h-[90vh] overflow-y-auto no-scrollbar">
+                    <div className="p-8 md:p-10 max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent pr-2">
                         {/* Header */}
                         <div className="flex justify-between items-start mb-8">
                             <div>
@@ -399,7 +399,7 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                                                             value={member}
                                                             onChange={e => handleMemberChange(index, e.target.value)}
                                                             className="w-full bg-[#0A0A0A]/80 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 transition-all pl-12 placeholder:text-gray-700"
-                                                            placeholder={`Combatant ${index + 2} Details`}
+                                                            placeholder="Team Member Name"
                                                         />
                                                         <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
                                                     </div>
