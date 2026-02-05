@@ -19,10 +19,10 @@ const EventModule = ({ event, index }) => {
     const accentHex = isHawkins ? '#ef4444' : '#3b82f6';
 
     // Force Hawkins Lab Checks
-    if (isHawkins) {
-         // Override status for Hawkins Lab
-         event.is_registration_open = false; 
-    }
+    // if (isHawkins) {
+    //      // Override status for Hawkins Lab
+    //      event.is_registration_open = false; 
+    // }
 
     return (
         <motion.div
@@ -54,11 +54,11 @@ const EventModule = ({ event, index }) => {
                 <div className="absolute top-6 left-6 z-20">
                     <div className="px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
                         <span className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-gray-500' :
-                            !event.is_registration_open || isHawkins ? 'bg-amber-400' : 
+                            !event.is_registration_open ? 'bg-amber-400' : 
                                 `bg-${accentColor}-500 shadow-[0_0_8px_${accentHex}] animate-pulse`
                             }`} />
                         <span className="text-[10px] font-black tracking-widest uppercase text-white/80">
-                            {isCompleted ? 'Archived' : (!event.is_registration_open || isHawkins) ? 'Coming Soon' : 'Active Access'}
+                            {isCompleted ? 'Archived' : !event.is_registration_open ? 'Coming Soon' : 'Active Access'}
                         </span>
                     </div>
                 </div>
