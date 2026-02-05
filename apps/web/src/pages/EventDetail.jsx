@@ -164,60 +164,64 @@ const EventDetail = () => {
                     return;
                 }
 
-                // Check for Paid Event
-                if (event.is_paid) {
-                    setRegistering(true);
-                    try {
-                        await handlePayment({
-                            eventId: event.id,
-                            eventName: event.title,
-                            amount: parseInt(event.fee.replace(/\D/g, '')),
-                            tokenOverride: freshToken,
-                            onSuccess: (registration) => {
-                                setIsRegistered(true);
-                                setRegistrationData(registration);
-                                setRegistering(false);
-                                toast.success(`Payment Successful! Registered for ${event.title}.`);
-                            },
-                            onFailure: (error) => {
-                                setRegistering(false);
-                                toast.error(error);
-                            }
-                        });
-                    } catch (err) {
-                        setRegistering(false);
-                        toast.error("Failed to initialize payment");
-                    }
-                    return;
-                }
-
-                // Free Event - Show confirmation modal
+                // For Individual Events (Paid or Free), open confirmation modal to collect details
                 setIsConfirmModalOpen(true);
             }
         });
     };
 
-    // Handle confirmed registration with edited name
+    // Handle confirmed registration (Individual)
     const handleConfirmedRegistration = async (formData) => {
         try {
             setRegistering(true);
             const activeToken = token;
 
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/register/`,
-                {
-                    event: id,
-                    full_name: formData.full_name,
-                    phone_number: formData.phone_number
-                },
-                { headers: { Authorization: `Bearer ${activeToken}` } }
-            );
-            setIsRegistered(true);
-            setIsConfirmModalOpen(false);
-            toast.success('Registration Successful! Access Granted.');
+            // Prepare extra data
+            const extraData = {
+                college: formData.college,
+                department: formData.department,
+                year_of_study: formData.year_of_study,
+                full_name: formData.full_name,
+                phone_number: formData.phone_number
+            };
+
+            if (event.is_paid) {
+                // Handle Payment Flow
+                await handlePayment({
+                    eventId: event.id,
+                    eventName: event.title,
+                    amount: parseInt(event.fee.replace(/\D/g, '') || '0'),
+                    tokenOverride: activeToken,
+                    ...extraData, // Pass college, dept, year, phone to Razorpay handler
+                    onSuccess: (registration) => {
+                        setIsRegistered(true);
+                        setRegistrationData(registration);
+                        setIsConfirmModalOpen(false);
+                        setRegistering(false);
+                        toast.success(`Payment Successful! Registered for ${event.title}.`);
+                    },
+                    onFailure: (error) => {
+                        setRegistering(false);
+                        toast.error(error);
+                    }
+                });
+            } else {
+                // Free Event Flow
+                const response = await axios.post(
+                    `${import.meta.env.VITE_API_URL}/register/`,
+                    {
+                        event: id,
+                        ...extraData
+                    },
+                    { headers: { Authorization: `Bearer ${activeToken}` } }
+                );
+                setIsRegistered(true);
+                setIsConfirmModalOpen(false);
+                setRegistering(false);
+                toast.success('Registration Successful! Access Granted.');
+            }
         } catch (err) {
             toast.error(err.response?.data?.error || 'Registration failed.');
-        } finally {
             setRegistering(false);
         }
     };
@@ -541,6 +545,7 @@ const EventDetail = () => {
                 onClose={() => setIsConfirmModalOpen(false)}
                 onConfirm={handleConfirmedRegistration}
                 eventName={event?.title}
+                eventId={id}
                 token={token}
                 isLoading={registering}
             />

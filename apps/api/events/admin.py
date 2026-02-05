@@ -9,9 +9,9 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ('is_registration_open', 'category', 'requires_payment')
 
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'is_used', 'timestamp')
+    list_display = ('get_user_email', 'get_user_name', 'get_phone_number', 'get_event_title', 'is_used', 'timestamp')
     list_filter = ('event__title', 'is_used', 'timestamp')
-    search_fields = ('user__email', 'user__full_name', 'token', 'event__title')
+    search_fields = ('user__email', 'user__full_name', 'phone_number', 'user__phone_number', 'token', 'event__title')
     actions = ['export_as_csv', 'resend_confirmation_email']
 
     def resend_confirmation_email(self, request, queryset):
@@ -30,6 +30,11 @@ class RegistrationAdmin(admin.ModelAdmin):
     def get_user_name(self, obj):
         return obj.user.full_name
     get_user_name.short_description = 'Name'
+    
+    def get_phone_number(self, obj):
+        # Return registration specific phone number, or fallback to user profile
+        return obj.phone_number or getattr(obj.user, 'phone_number', '-')
+    get_phone_number.short_description = 'Phone Number'
 
     def get_event_title(self, obj):
         return obj.event.title
@@ -38,7 +43,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     def export_as_csv(self, request, queryset):
         meta = self.model._meta
         # Custom CSV export to handle ForeignKeys nicely
-        field_names = ['User Email', 'User Name', 'Event', 'Token', 'Is Used', 'Timestamp']
+        field_names = ['User Email', 'User Name', 'Phone Number', 'Event', 'Token', 'Is Used', 'Timestamp']
         
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format('registrations')
@@ -49,6 +54,7 @@ class RegistrationAdmin(admin.ModelAdmin):
             writer.writerow([
                 obj.user.email,
                 obj.user.full_name,
+                obj.phone_number or getattr(obj.user, 'phone_number', '-'),
                 obj.event.title,
                 obj.token,
                 obj.is_used,

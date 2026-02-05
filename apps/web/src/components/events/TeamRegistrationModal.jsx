@@ -2,18 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Users, User, Shield, CheckCircle, ArrowRight, 
-  CreditCard, Sparkles, ChevronRight, Edit3, Lock 
+  CreditCard, Sparkles, ChevronRight, Edit3, Lock, Building, BookOpen, GraduationCap 
 } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import useRazorpayPayment from '../payment/RazorpayPayment';
 
+const OPEN_EVENTS = [995, 996]; // Shadow Login, Cipher Decode
+
+const DEPARTMENTS = [
+    'CSE', 'ECE', 'EEE', 'ME', 'CE', 'AIDS', 'AIML', 'BME', 'Other'
+];
+
+const YEARS = [
+    '1st Year', '2nd Year', '3rd Year', '4th Year', 'Other'
+];
+
 const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
     const { token, user } = useAuth();
     const toast = useToast();
     const handlePayment = useRazorpayPayment();
     
+    // Check if event is Intra-College or Open
+    const isIntraCollege = !OPEN_EVENTS.includes(parseInt(event?.id));
+
     const [step, setStep] = useState(1); // 1: Details, 2: Preview/Payment
     const [submitting, setSubmitting] = useState(false);
     
@@ -23,14 +36,35 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
     
     const [teamName, setTeamName] = useState('');
     const [members, setMembers] = useState(Array(minMembers).fill(''));
+    
+    // New fields
+    const [academicDetails, setAcademicDetails] = useState({
+        college: '',
+        department: '',
+        year_of_study: ''
+    });
 
     useEffect(() => {
         if (isOpen) {
             setStep(1);
             setTeamName('');
             setMembers(Array(minMembers).fill(''));
+            
+            // Initializing academic details based on User Profile + Event Type
+            let initialCollege = '';
+            if (isIntraCollege) {
+                initialCollege = 'KMCT Institute of Emerging Technology and Management';
+            } else if (user?.college) {
+                initialCollege = user.college;
+            }
+            
+            setAcademicDetails({
+                college: initialCollege,
+                department: user?.department || '',
+                year_of_study: user?.year_of_study || ''
+            });
         }
-    }, [isOpen, minMembers]);
+    }, [isOpen, minMembers, isIntraCollege, user]);
 
     if (!isOpen) return null;
 
@@ -55,10 +89,22 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
 
     const nextStep = (e) => {
         e.preventDefault();
+        
+        // Validate academic details
+         if (!academicDetails.college.trim()) {
+            toast.error("College name is required");
+            return;
+        }
+        if (isIntraCollege && (!academicDetails.department || !academicDetails.year_of_study)) {
+            toast.error("Please select your Department and Year");
+            return;
+        }
+
         if (!teamName.trim()) {
             toast.error("Team Name is required");
             return;
         }
+
         // Validate required members
         const requiredMembersFilled = members.slice(0, minMembers).every(m => m.trim() !== '');
         if (!requiredMembersFilled) {
@@ -71,6 +117,13 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
     const handleRegistration = async () => {
         const validMembers = members.filter(m => m.trim() !== '');
         setSubmitting(true);
+        
+        // Prepare extra data
+        const extraData = {
+            college: academicDetails.college,
+            department: academicDetails.department,
+            year_of_study: academicDetails.year_of_study
+        };
 
         try {
             if (event.is_paid) {
@@ -80,6 +133,7 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                     amount: event.payment_amount || parseInt(event.fee?.replace(/\D/g, '') || '0'),
                     teamName: teamName,
                     teamMembers: JSON.stringify(validMembers),
+                    ...extraData, // Spread extra fields into options for handlePayment (which sends to backend)
                     onSuccess: (registration) => {
                         toast.success("Payment Successful! Team Registered.");
                         onSuccess(registration);
@@ -94,7 +148,8 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                 const payload = {
                     event: event.id,
                     team_name: teamName,
-                    team_members: JSON.stringify(validMembers)
+                    team_members: JSON.stringify(validMembers),
+                    ...extraData
                 };
 
                 await axios.post(
@@ -137,11 +192,11 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                     
                     <div className="p-8 md:p-10 max-h-[90vh] overflow-y-auto no-scrollbar">
                         {/* Header */}
-                        <div className="flex justify-between items-start mb-10">
+                        <div className="flex justify-between items-start mb-8">
                             <div>
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-4">
                                     <Sparkles className="w-3 h-3 text-blue-400" />
-                                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Premium Registration</span>
+                                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest leading-none mt-0.5">Premium Registration</span>
                                 </div>
                                 <h2 className="text-3xl md:text-4xl font-space font-bold text-white tracking-tighter leading-none">
                                     {step === 1 ? 'Build Your Squad' : 'Final Review'}
@@ -159,7 +214,7 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                         </div>
 
                         {/* Step Indicator */}
-                        <div className="flex gap-2 mb-10">
+                        <div className="flex gap-2 mb-8">
                             {[1, 2].map(i => (
                                 <div 
                                     key={i} 
@@ -178,8 +233,59 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                                     onSubmit={nextStep} 
                                     className="space-y-8"
                                 >
+                                    {/* Academic Info Section */}
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <Building className="w-4 h-4 text-gray-500" />
+                                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Team Origin</span>
+                                        </div>
+                                        
+                                        <div className="relative group">
+                                            <div className="absolute inset-0 bg-blue-500/5 rounded-2xl blur-xl group-focus-within:bg-blue-500/10 transition-all" />
+                                            <input 
+                                                type="text" 
+                                                required
+                                                readOnly={isIntraCollege}
+                                                value={academicDetails.college}
+                                                onChange={e => setAcademicDetails({...academicDetails, college: e.target.value})}
+                                                className={`relative w-full bg-[#0A0A0A]/80 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-blue-500/50 transition-all pl-12 placeholder:text-gray-700 ${isIntraCollege ? 'opacity-70 cursor-not-allowed bg-white/[0.02]' : ''}`}
+                                                placeholder="College Name"
+                                            />
+                                            <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
+                                        </div>
+
+                                        {isIntraCollege && (
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="relative group">
+                                                    <select
+                                                       required
+                                                       value={academicDetails.department}
+                                                       onChange={e => setAcademicDetails({...academicDetails, department: e.target.value})} 
+                                                       className="w-full bg-[#0A0A0A]/80 border border-white/5 rounded-2xl px-4 py-4 text-white focus:outline-none focus:border-blue-500/50 transition-all appearance-none pl-12 cursor-pointer"
+                                                    >
+                                                        <option value="" className="bg-[#0A0A0A]">Select Dept</option>
+                                                        {DEPARTMENTS.map(d => <option key={d} value={d} className="bg-[#0A0A0A]">{d}</option>)}
+                                                    </select>
+                                                     <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 transition-colors" />
+                                                </div>
+                                                <div className="relative group">
+                                                    <select
+                                                       required
+                                                       value={academicDetails.year_of_study}
+                                                       onChange={e => setAcademicDetails({...academicDetails, year_of_study: e.target.value})} 
+                                                       className="w-full bg-[#0A0A0A]/80 border border-white/5 rounded-2xl px-4 py-4 text-white focus:outline-none focus:border-blue-500/50 transition-all appearance-none pl-12 cursor-pointer"
+                                                    >
+                                                        <option value="" className="bg-[#0A0A0A]">Select Year</option>
+                                                        {YEARS.map(y => <option key={y} value={y} className="bg-[#0A0A0A]">{y}</option>)}
+                                                    </select>
+                                                    <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 transition-colors" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
                                     {/* Team Name */}
-                                    <div className="space-y-3">
+                                    <div className="space-y-3 pt-4 border-t border-white/5">
                                         <div className="flex justify-between items-end">
                                             <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Team Identity</label>
                                             <span className="text-[10px] text-red-500/70 font-medium">Required</span>
@@ -297,6 +403,13 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                                             </button>
                                         </div>
                                         <div className="p-8 space-y-6">
+                                            <div className="flex justify-between items-start">
+                                                 <span className="text-gray-500 text-sm">Institution</span>
+                                                 <div className="text-right">
+                                                     <div className="text-white font-bold">{academicDetails.college}</div>
+                                                     {academicDetails.department && <div className="text-gray-400 text-xs mt-1">{academicDetails.department} - {academicDetails.year_of_study}</div>}
+                                                 </div>
+                                            </div>
                                             <div className="flex justify-between items-center">
                                                 <span className="text-gray-500 text-sm">Team Name</span>
                                                 <span className="text-white font-bold">{teamName}</span>
@@ -304,7 +417,7 @@ const TeamRegistrationModal = ({ isOpen, onClose, event, onSuccess }) => {
                                             <div className="flex justify-between items-start">
                                                 <span className="text-gray-500 text-sm">Members</span>
                                                 <div className="text-right">
-                                                    <div className="text-white font-medium text-sm">{user?.name} (Lead)</div>
+                                                    <div className="text-white font-medium text-sm">{user?.full_name || user?.name} (Lead)</div>
                                                     {validMembersList.map((m, i) => (
                                                         <div key={i} className="text-gray-400 text-xs mt-1">{m}</div>
                                                     ))}

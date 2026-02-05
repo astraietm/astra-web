@@ -19,7 +19,7 @@ const useRazorpayPayment = () => {
         });
     };
 
-    const handlePayment = async ({ eventId, eventName, amount, teamName, teamMembers, onSuccess, onFailure, tokenOverride }) => {
+    const handlePayment = async ({ eventId, eventName, amount, teamName, teamMembers, onSuccess, onFailure, tokenOverride, ...rest }) => {
         // Load Razorpay script
         const scriptLoaded = await loadRazorpayScript();
 
@@ -45,7 +45,11 @@ const useRazorpayPayment = () => {
                 body: JSON.stringify({
                     event_id: eventId,
                     team_name: teamName || '',
-                    team_members: teamMembers || ''
+                    team_members: teamMembers || '',
+                    college: rest.college || '',
+                    department: rest.department || '',
+                    year_of_study: rest.year_of_study || '',
+                    phone_number: rest.phone_number || ''
                 })
             });
 

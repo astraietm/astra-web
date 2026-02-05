@@ -194,11 +194,20 @@ class CreatePaymentOrderView(APIView):
             return Response({"error": "Event is fully booked."}, status=status.HTTP_400_BAD_REQUEST)
         
         # Create registration (pending payment)
+        phone_number = request.data.get('phone_number', '')
+        college = request.data.get('college', '')
+        department = request.data.get('department', '')
+        year_of_study = request.data.get('year_of_study', '')
+        
         registration = Registration.objects.create(
             user=request.user,
             event=event,
             team_name=team_name,
             team_members=team_members,
+            phone_number=phone_number,
+            college=college,
+            department=department,
+            year_of_study=year_of_study,
             status='PENDING'  # Will be confirmed after payment
         )
         
