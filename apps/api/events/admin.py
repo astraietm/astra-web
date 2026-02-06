@@ -9,8 +9,8 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ('is_registration_open', 'category', 'requires_payment')
 
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ('get_user_email', 'get_user_name', 'get_phone_number', 'get_event_title', 'is_used', 'timestamp')
-    list_filter = ('event__title', 'is_used', 'timestamp')
+    list_display = ('get_user_email', 'get_user_name', 'get_phone_number', 'get_event_title', 'status', 'is_used', 'timestamp')
+    list_filter = ('event__title', 'status', 'is_used', 'timestamp')
     search_fields = ('user__email', 'user__full_name', 'phone_number', 'user__phone_number', 'token', 'event__title')
     actions = ['export_as_csv', 'resend_confirmation_email']
 
