@@ -143,6 +143,19 @@ const GalleryGrid = () => {
       return filteredItems.slice(0, visibleCount);
   }, [filteredItems, visibleCount]);
 
+  // Fallback Data (Mock for when API is empty/unreachable)
+  const fallbackItems = [
+    { id: 'f1', src: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80', category: 'workshops', title: 'Cyber Defense Workshop' },
+    { id: 'f2', src: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80', category: 'ctf', title: 'Capture The Flag 2024' },
+    { id: 'f3', src: 'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=800&q=80', category: 'hackathons', title: 'Midnight Hackathon' },
+    { id: 'f4', src: 'https://images.unsplash.com/photo-1563206767-5b1d9727cb15?auto=format&fit=crop&w=800&q=80', category: 'seminars', title: 'Network Security Talk' },
+    { id: 'f5', src: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80', category: 'workshops', title: 'Global Threat Analysis' },
+    { id: 'f6', src: 'https://images.unsplash.com/photo-1558494949-efdeb6bf80d1?auto=format&fit=crop&w=800&q=80', category: 'ctf', title: 'Hardware Hacking' },
+    { id: 'f7', src: 'https://images.unsplash.com/photo-1504384308090-c54be38550dd?auto=format&fit=crop&w=800&q=80', category: 'seminars', title: 'Data Center Tour' },
+    { id: 'f8', src: 'https://images.unsplash.com/photo-1597589827318-da833d87d60e?auto=format&fit=crop&w=800&q=80', category: 'hackathons', title: 'Server Infrastructure' },
+    { id: 'f9', src: 'https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=80', category: 'workshops', title: 'Neon Coding Session' },
+  ];
+
   const fetchGalleryItems = useCallback(async () => {
     try {
         const response = await axios.get(`${API_URL}/gallery/`);
@@ -152,10 +165,17 @@ const GalleryGrid = () => {
             category: item.category,
             title: item.title,
         }));
-        setItems(mappedItems);
+        
+        if (mappedItems.length > 0) {
+            setItems(mappedItems);
+        } else {
+            console.warn('API returned empty list, using fallback data.');
+            setItems(fallbackItems);
+        }
         setLoading(false);
     } catch (error) {
-        console.error('Error fetching gallery:', error);
+        console.error('Error fetching gallery, using fallback:', error);
+        setItems(fallbackItems);
         setLoading(false);
     }
   }, [API_URL]);
