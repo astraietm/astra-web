@@ -22,7 +22,6 @@ const AdminRegistrations = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filterEvent, setFilterEvent] = useState('all');
     const [filterStatus, setFilterStatus] = useState('all');
-    const [copyingToken, setCopyingToken] = useState(null);
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -64,6 +63,9 @@ const AdminRegistrations = () => {
         const matchesSearch =
             reg.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            reg.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            reg.year_of_study?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            reg.college?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.token?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesEvent = filterEvent === 'all' || reg.event_details.title === filterEvent;
         const isAccessed = reg.is_used || reg.status === 'ATTENDED';
@@ -77,13 +79,15 @@ const AdminRegistrations = () => {
     const uniqueEvents = ['all', ...new Set(registrations.map(r => r.event_details.title))];
 
     const exportToCSV = () => {
-        const headers = ['Name', 'Email', 'Event', 'Registration Date', 'Token', 'Status'];
+        const headers = ['Name', 'Email', 'Event', 'Department', 'Year/Class', 'College', 'Registration Date', 'Status'];
         const csvData = filteredData.map(reg => [
             reg.user_name,
             reg.user_email,
             reg.event_details.title,
+            reg.department || 'N/A',
+            reg.year_of_study || 'N/A',
+            reg.college || 'N/A',
             new Date(reg.timestamp).toLocaleString(),
-            reg.token,
             (reg.is_used || reg.status === 'ATTENDED') ? 'Attended' : 'Registered'
         ]);
         const csvContent = [headers, ...csvData].map(e => e.join(',')).join('\n');
@@ -94,11 +98,6 @@ const AdminRegistrations = () => {
         link.click();
     };
 
-    const handleCopyToken = (t) => {
-        navigator.clipboard.writeText(t);
-        setCopyingToken(t);
-        setTimeout(() => setCopyingToken(null), 2000);
-    };
 
     return (
         <div className="space-y-10 pb-10">
@@ -190,7 +189,7 @@ const AdminRegistrations = () => {
                             <tr className="border-b border-white/[0.03] bg-white/[0.01]">
                                 <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Identity_Node</th>
                                 <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Operational_Node</th>
-                                <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Security_Token</th>
+                                <th className="px-8 py-6 text-[9px] font-black text-slate-500 uppercase tracking-[0.3em]">Academic_Affiliation</th>
                                 <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Registry_Timestamp</th>
                                 <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Validation_State</th>
                                 <th className="px-8 py-6 text-right text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Utilities</th>
@@ -222,18 +221,33 @@ const AdminRegistrations = () => {
                                                     <p className="text-[9px] text-slate-500 font-mono lower-case opacity-60 truncate leading-none">{reg.user_email}</p>
 
                                                     {reg.team_name && (
-                                                        <div className="mt-3 space-y-2">
-                                                            <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded-md bg-blue-500/5 border border-blue-500/10">
-                                                                <Users size={8} className="text-blue-500" />
-                                                                <span className="text-[8px] font-black text-blue-500 uppercase tracking-widest">{reg.team_name}</span>
+                                                        <div className="mt-4 space-y-3">
+                                                            {/* Team Name Badge */}
+                                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                                                                <Users size={10} className="text-blue-500" />
+                                                                <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.15em]">{reg.team_name}</span>
                                                             </div>
+
+                                                            {/* Team Members Grid */}
                                                             {reg.team_members && (
-                                                                <div className="flex flex-wrap gap-1.5 pl-1">
-                                                                    {(typeof reg.team_members === 'string' ? reg.team_members.split(',') : reg.team_members).map((member, i) => (
-                                                                        <span key={i} className="text-[7px] font-black text-slate-600 bg-white/[0.02] px-1.5 py-0.5 rounded border border-white/[0.03] uppercase tracking-tighter">
-                                                                            {member.trim()}
-                                                                        </span>
-                                                                    ))}
+                                                                <div className="flex flex-wrap gap-1.5 pl-0.5">
+                                                                    {(() => {
+                                                                        let members = [];
+                                                                        try {
+                                                                            // Handle JSON string or Array
+                                                                            members = typeof reg.team_members === 'string'
+                                                                                ? (reg.team_members.startsWith('[') ? JSON.parse(reg.team_members) : reg.team_members.split(','))
+                                                                                : reg.team_members;
+                                                                        } catch (e) {
+                                                                            members = reg.team_members.split(',');
+                                                                        }
+
+                                                                        return (Array.isArray(members) ? members : [members]).map((member, i) => (
+                                                                            <span key={i} className="inline-flex items-center px-2.5 py-1 rounded-md bg-white/[0.05] border border-white/[0.1] text-[10px] font-black text-white hover:bg-white/[0.1] hover:border-white/20 transition-all uppercase tracking-tight">
+                                                                                {typeof member === 'string' ? member.trim().replace(/^["']|["']$/g, '') : member}
+                                                                            </span>
+                                                                        ));
+                                                                    })()}
                                                                 </div>
                                                             )}
                                                         </div>
@@ -242,28 +256,31 @@ const AdminRegistrations = () => {
                                             </div>
                                         </td>
                                         <td className="px-8 py-5">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{reg.event_details.title}</span>
-                                                <span className="text-[8px] font-black text-blue-500/40 uppercase tracking-[0.2em] mt-1">NODE_ASSIGNED</span>
+                                            <div className="flex flex-col gap-1">
+                                                <span className="text-[11px] font-black text-white uppercase tracking-widest">{reg.event_details.title}</span>
+                                                <span className="text-[8px] font-black text-blue-400 uppercase tracking-[0.2em] opacity-80">NODE_ASSIGNED</span>
                                             </div>
                                         </td>
                                         <td className="px-8 py-5">
-                                            <button
-                                                onClick={() => handleCopyToken(reg.token)}
-                                                className="group/token relative flex flex-col items-start cursor-pointer transition-opacity active:opacity-60"
-                                            >
-                                                <code className="text-[10px] font-mono text-slate-500 group-hover/token:text-blue-400 transition-colors">
-                                                    {reg.token.substring(0, 8)}...{reg.token.substring(reg.token.length - 4)}
-                                                </code>
-                                                <span className="text-[7px] font-black text-slate-800 uppercase tracking-widest mt-0.5 group-hover/token:text-blue-500/40 transition-colors">
-                                                    {copyingToken === reg.token ? 'COPIED_TO_CLIPBOARD' : 'CLICK_TO_CLONE'}
-                                                </span>
-                                            </button>
+                                            <div className="flex flex-col gap-1.5 min-w-[140px]">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-1 h-1 rounded-full bg-blue-500/60" />
+                                                    <span className="text-[10px] font-black text-white uppercase tracking-tight">{reg.department || 'GEN_DEPT'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 pl-3">
+                                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{reg.year_of_study || 'CLASS_UNA'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 pl-3">
+                                                    <span className="text-[8px] font-mono text-slate-500 uppercase tracking-tighter opacity-60 truncate max-w-[120px]">
+                                                        {reg.college || 'PRIMARY_HUB'}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td className="px-8 py-5">
-                                            <div className="flex flex-col">
-                                                <p className="text-[10px] font-mono text-slate-400 font-black">{new Date(reg.timestamp).toLocaleDateString([], { year: 'numeric', month: 'short', day: '2-digit' })}</p>
-                                                <p className="text-[9px] font-mono text-slate-700 uppercase">{new Date(reg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}_UTC</p>
+                                            <div className="flex flex-col gap-1">
+                                                <p className="text-[10px] font-mono text-slate-300 font-bold">{new Date(reg.timestamp).toLocaleDateString([], { year: 'numeric', month: 'short', day: '2-digit' })}</p>
+                                                <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">{new Date(reg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}_UTC</p>
                                             </div>
                                         </td>
                                         <td className="px-8 py-5">
