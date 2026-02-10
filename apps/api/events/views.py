@@ -9,12 +9,12 @@ from .utils import send_registration_email
 from django.db.models import Q
 
 class EventListView(generics.ListAPIView):
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().prefetch_related('registrations')
     serializer_class = EventSerializer
     permission_classes = [permissions.AllowAny] # Public
 
 class EventDetailView(generics.RetrieveAPIView):
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().prefetch_related('registrations')
     serializer_class = EventSerializer
     permission_classes = [permissions.AllowAny] # Public details
 
@@ -127,7 +127,7 @@ class AdminRegistrationsView(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser] # Restrict to staff/admins
 
 class AdminEventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all().order_by('-created_at')
+    queryset = Event.objects.all().prefetch_related('registrations').order_by('-created_at')
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAdminUser]
 

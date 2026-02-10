@@ -14,7 +14,6 @@ import {
     History,
     ChevronRight,
     ArrowUpRight,
-    Broadcast,
     Target,
     Activity,
     Radio,
@@ -146,7 +145,7 @@ const AdminNotifications = () => {
                         
                         <div className="flex items-center gap-6 mb-12 relative z-10">
                             <div className="w-16 h-16 rounded-2xl bg-blue-600/5 border border-blue-600/10 flex items-center justify-center text-blue-500 shadow-[0_0_30px_rgba(37,99,235,0.1)] group-hover:scale-105 transition-transform duration-700">
-                                <Broadcast size={24} strokeWidth={2.5} />
+                                <Radio size={24} strokeWidth={2.5} />
                             </div>
                             <div className="flex flex-col gap-1">
                                 <h3 className="text-xl font-black text-white uppercase tracking-tight">Synthesize_Signal</h3>
