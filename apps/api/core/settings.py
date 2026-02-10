@@ -101,24 +101,38 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS & CSRF Configuration
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
-# Clean up and ensure defaults
-CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS if origin.strip()]
+CORS_ALLOW_ALL_ORIGINS = True  # Hammer approach for production blockers
+CORS_ALLOW_CREDENTIALS = True
 
-TRUSTED_ORIGINS = [
+# CSRF Trusted Origins (Required for Django 4.0+)
+CSRF_TRUSTED_ORIGINS = [
     "https://astraietm.in",
     "https://www.astraietm.in",
     "https://api.astraietm.in",
     "http://localhost:3000",
     "http://localhost:5173",
 ]
-CORS_ALLOWED_ORIGINS.extend(TRUSTED_ORIGINS)
-CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS))
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 
-# CSRF Trusted Origins (Required for Django 4.0+)
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
 
 # Logging
 LOGGING = {
