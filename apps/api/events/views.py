@@ -9,12 +9,12 @@ from .utils import send_registration_email
 from django.db.models import Q
 
 class EventListView(generics.ListAPIView):
-    queryset = Event.objects.all().prefetch_related('registrations')
+    queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = [permissions.AllowAny] # Public
 
 class EventDetailView(generics.RetrieveAPIView):
-    queryset = Event.objects.all().prefetch_related('registrations')
+    queryset = Event.objects.all()
     serializer_class = EventSerializer
     permission_classes = [permissions.AllowAny] # Public details
 
@@ -127,7 +127,7 @@ class AdminRegistrationsView(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser] # Restrict to staff/admins
 
 class AdminEventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all().prefetch_related('registrations').order_by('-created_at')
+    queryset = Event.objects.all().order_by('-created_at')
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAdminUser]
 
@@ -155,7 +155,7 @@ class CreatePaymentOrderView(APIView):
             event = Event.objects.get(id=event_id)
         except Event.DoesNotExist:
             return Response(
-                {"error": f"Event with ID {event_id} was not found."}, 
+                {"error": f"Event with ID {event_id} was not found in the database. Please ensure the event is created in the admin panel."}, 
                 status=status.HTTP_404_NOT_FOUND
             )
         
@@ -163,16 +163,22 @@ class CreatePaymentOrderView(APIView):
         if not event.requires_payment:
             return Response({"error": "This event does not require payment."}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Check if already registered and SUCCESSFUL
+        # Check if already registered
         existing_reg = Registration.objects.filter(user=request.user, event=event).first()
         if existing_reg:
-            if existing_reg.status == 'REGISTERED' or existing_reg.status == 'ATTENDED':
+            # If payment exists and is SUCCESS, then it's a real duplicate
+            if hasattr(existing_reg, 'payment') and existing_reg.payment.status == 'SUCCESS':
                 return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
             
-            # If it was PENDING, we will ignore it and create a fresh process.
-            # We don't delete it here to avoid race conditions, we just won't show it to the user.
+            # If it's a free event, existence of registration is enough
+            if not event.requires_payment:
+                return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Otherwise, it's a failed/abandoned payment attempt.
+            # Clean it up so we can create a fresh order.
+            existing_reg.delete()
         
-        # Validate registration rules
+        # Validate registration rules (same as RegistrationCreateView)
         if not event.is_registration_open:
             return Response({"error": "Registration is currently closed."}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -183,55 +189,74 @@ class CreatePaymentOrderView(APIView):
         if now > event.registration_end:
             return Response({"error": "Registration deadline has passed."}, status=status.HTTP_400_BAD_REQUEST)
         
-        current_count = event.registrations.filter(status='REGISTERED').count()
+        current_count = event.registrations.count()
         if current_count >= event.registration_limit:
             return Response({"error": "Event is fully booked."}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Capture registration details for notes
+        # Create registration (pending payment)
         phone_number = request.data.get('phone_number', '')
         college = request.data.get('college', '')
         department = request.data.get('department', '')
         year_of_study = request.data.get('year_of_study', '')
         
+        registration = Registration.objects.create(
+            user=request.user,
+            event=event,
+            team_name=team_name,
+            team_members=team_members,
+            phone_number=phone_number,
+            college=college,
+            department=department,
+            year_of_study=year_of_study,
+            status='PENDING'  # Will be confirmed after payment
+        )
+        
         # Create Razorpay order
         try:
             client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
             
+            # Amount in paise (multiply by 100)
             amount_in_paise = int(float(event.payment_amount) * 100)
             
-            # Store data in notes (v2 - no registration id yet)
             order_data = {
                 'amount': amount_in_paise,
                 'currency': 'INR',
-                'receipt': f'user_{request.user.id}_ev_{event.id}_{int(timezone.now().timestamp())}',
+                'receipt': f'reg_{registration.id}',
                 'notes': {
-                    'event_id': str(event.id),
-                    'user_id': str(request.user.id),
-                    'team_name': team_name[:100], # Limit length for safety
-                    'team_members': team_members[:200], # Limit length for safety
-                    'phone_number': phone_number,
-                    'college': college,
-                    'department': department,
-                    'year_of_study': year_of_study
+                    'event_id': event.id,
+                    'event_name': event.title,
+                    'user_email': request.user.email,
+                    'registration_id': registration.id
                 }
             }
             
             razorpay_order = client.order.create(data=order_data)
             
-            # Return order details. No Registration/Payment record created yet.
+            # Create payment record
+            payment = Payment.objects.create(
+                registration=registration,
+                razorpay_order_id=razorpay_order['id'],
+                amount=event.payment_amount,
+                currency='INR',
+                status='PENDING'
+            )
+            
             return Response({
                 'order_id': razorpay_order['id'],
                 'amount': amount_in_paise,
                 'currency': 'INR',
                 'key_id': settings.RAZORPAY_KEY_ID,
+                'registration_id': registration.id,
                 'event_name': event.title
             }, status=status.HTTP_201_CREATED)
             
         except Exception as e:
+            # Delete registration if order creation fails
+            registration.delete()
             return Response({"error": f"Failed to create payment order: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class VerifyPaymentView(APIView):
-    """Verify Razorpay payment signature and create registration record"""
+    """Verify Razorpay payment signature"""
     permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
@@ -243,95 +268,46 @@ class VerifyPaymentView(APIView):
             return Response({"error": "Missing payment details."}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            # First, check if this order was already processed
-            if Payment.objects.filter(razorpay_order_id=razorpay_order_id, status='SUCCESS').exists():
-                reg = Payment.objects.get(razorpay_order_id=razorpay_order_id).registration
-                return Response({
-                    'success': True,
-                    'message': 'Payment already verified.',
-                    'registration': RegistrationSerializer(reg).data
-                }, status=status.HTTP_200_OK)
-
-            # Verify signature locally
+            payment = Payment.objects.get(razorpay_order_id=razorpay_order_id)
+            
+            # Verify signature
             generated_signature = hmac.new(
                 settings.RAZORPAY_KEY_SECRET.encode(),
                 f"{razorpay_order_id}|{razorpay_payment_id}".encode(),
                 hashlib.sha256
             ).hexdigest()
             
-            if generated_signature != razorpay_signature:
+            if generated_signature == razorpay_signature:
+                # Payment successful
+                payment.razorpay_payment_id = razorpay_payment_id
+                payment.razorpay_signature = razorpay_signature
+                payment.status = 'SUCCESS'
+                payment.save()
+                
+                # Update registration status
+                registration = payment.registration
+                registration.status = 'REGISTERED'
+                registration.save()
+                
+                # Send registration email with ticket
+                send_registration_email(registration)
+                
+                # Return registration data with QR code
+                serializer = RegistrationSerializer(registration)
+                return Response({
+                    'success': True,
+                    'message': 'Payment verified successfully!',
+                    'registration': serializer.data
+                }, status=status.HTTP_200_OK)
+            else:
+                payment.status = 'FAILED'
+                payment.save()
                 return Response({"error": "Payment verification failed. Invalid signature."}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Fetch order details from Razorpay to get metadata (notes)
-            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-            order = client.order.fetch(razorpay_order_id)
-            notes = order.get('notes', {})
-            
-            event_id = notes.get('event_id')
-            user_id = notes.get('user_id')
-            
-            if not event_id or not user_id:
-                return Response({"error": "Could not retrieve registration metadata from payment order."}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Verify it's the right user
-            if str(request.user.id) != str(user_id):
-                 return Response({"error": "Unauthorized payment verification."}, status=status.HTTP_403_FORBIDDEN)
-
-            event = get_object_or_404(Event, id=event_id)
-            
-            # Start Transaction to create Registration and Payment
-            from django.db import transaction
-            with transaction.atomic():
-                # Double check registration limit within transaction
-                if event.registrations.filter(status='REGISTERED').count() >= event.registration_limit:
-                     return Response({"error": "Event is fully booked. Refund will be processed."}, status=status.HTTP_400_BAD_REQUEST)
-
-                # Check if registration already exists (e.g. from previous attempt or concurrent)
-                registration, created = Registration.objects.get_or_create(
-                    user=request.user,
-                    event=event,
-                    defaults={
-                        'team_name': notes.get('team_name', ''),
-                        'team_members': notes.get('team_members', ''),
-                        'phone_number': notes.get('phone_number', ''),
-                        'college': notes.get('college', ''),
-                        'department': notes.get('department', ''),
-                        'year_of_study': notes.get('year_of_study', ''),
-                        'status': 'REGISTERED'
-                    }
-                )
                 
-                if not created:
-                    registration.status = 'REGISTERED'
-                    registration.save()
-
-                # Create or update payment record
-                payment, _ = Payment.objects.get_or_create(
-                    razorpay_order_id=razorpay_order_id,
-                    defaults={
-                        'registration': registration,
-                        'amount': float(order['amount']) / 100,
-                        'currency': order['currency'],
-                        'status': 'SUCCESS',
-                        'razorpay_payment_id': razorpay_payment_id,
-                        'razorpay_signature': razorpay_signature
-                    }
-                )
-            
-            # Send registration email with ticket
-            send_registration_email(registration)
-            
-            # Return registration data
-            serializer = RegistrationSerializer(registration)
-            return Response({
-                'success': True,
-                'message': 'Payment verified successfully!',
-                'registration': serializer.data
-            }, status=status.HTTP_200_OK)
-                
+        except Payment.DoesNotExist:
+            return Response({"error": "Payment record not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": f"Verification error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class ClearRegistrationsView(APIView):
     permission_classes = [permissions.IsAdminUser]

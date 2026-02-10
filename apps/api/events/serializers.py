@@ -3,25 +3,9 @@ from .models import Registration, Event, Payment
 from .utils import generate_qr_code
 
 class EventSerializer(serializers.ModelSerializer):
-    registrations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    registration_count = serializers.SerializerMethodField()
-
     class Meta:
         model = Event
-        fields = [
-            'id', 'title', 'description', 'event_date', 'venue', 'image', 
-            'category', 'registration_start', 'registration_end', 
-            'registration_limit', 'max_participation', 'is_registration_open', 'is_team_event', 
-            'team_size_min', 'team_size_max', 'requires_payment', 
-            'payment_amount', 'content_blocks', 'coordinators', 'prize', 
-            'created_at', 'registrations', 'registration_count'
-        ]
-    
-    max_participation = serializers.ReadOnlyField(source='registration_limit')
-
-    def get_registration_count(self, obj):
-        # Count all registrations except cancelled ones for internal metrics
-        return obj.registrations.exclude(status='CANCELLED').count()
+        fields = '__all__'
 
     def validate(self, data):
         """

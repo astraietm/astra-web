@@ -259,7 +259,7 @@ const AdminEvents = () => {
                             className="fixed right-0 top-0 bottom-0 w-full max-w-3xl bg-[#030303] border-l border-white/[0.05] shadow-[0_0_100px_rgba(37,99,235,0.1)] z-[1001] overflow-hidden flex flex-col"
                         >
                             <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-blue-600/[0.03] to-transparent pointer-events-none" />
-
+                            
                             <div className="p-10 border-b border-white/[0.05] flex items-center justify-between relative z-10">
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3">
@@ -277,7 +277,7 @@ const AdminEvents = () => {
 
                             <div className="flex-1 overflow-y-auto p-10 space-y-12 relative z-10 custom-scrollbar">
                                 <form id="eventForm" onSubmit={handleSubmit} className="space-y-16 pb-20">
-
+                                    
                                     {/* CORE DATA */}
                                     <div className="space-y-8">
                                         <div className="flex items-center gap-4 text-slate-600">
@@ -421,10 +421,10 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-            className="group relative flex flex-col bg-[#050505]/40 backdrop-blur-3xl border border-white/[0.05] rounded-[2.5rem] overflow-hidden hover:border-blue-500/30 hover:bg-[#080808]/60 transition-all duration-700"
+            className="group relative flex flex-col bg-white/[0.01] border border-white/[0.03] rounded-[2.5rem] overflow-hidden hover:border-blue-500/20 hover:bg-white/[0.02] transition-all duration-700"
         >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
+            
             <div className="p-10 flex flex-col h-full relative z-10">
                 {/* Header Section */}
                 <div className="flex items-start justify-between mb-10">
@@ -433,7 +433,7 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                             <div className={`w-1 h-1 rounded-full ${event.is_registration_open ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
                             {event.is_registration_open ? 'OPS_OPEN' : 'OPS_LOCKED'}
                         </div>
-                        <span className="text-[9px] font-black text-blue-400 uppercase tracking-[0.4em] px-1">{event.category}</span>
+                        <span className="text-[9px] font-black text-blue-500/40 uppercase tracking-[0.4em] px-1">{event.category}</span>
                     </div>
 
                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -457,7 +457,7 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                             <div className="w-7 h-7 rounded-lg bg-white/[0.03] border border-white/[0.05] flex items-center justify-center">
                                 <Calendar size={12} className="text-blue-500/60" />
                             </div>
-                            <span className="text-[10px] font-mono font-black text-slate-300 uppercase tracking-tight">
+                            <span className="text-[10px] font-mono font-black uppercase tracking-tight">
                                 {new Date(event.event_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()}
                             </span>
                         </div>
@@ -465,7 +465,7 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                             <div className="w-7 h-7 rounded-lg bg-white/[0.03] border border-white/[0.05] flex items-center justify-center">
                                 <MapPin size={12} className="text-pink-500/60" />
                             </div>
-                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">{event.venue}</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{event.venue}</span>
                         </div>
                     </div>
                 </div>
@@ -474,18 +474,18 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                 <div className="mt-12 pt-8 border-t border-white/[0.05] space-y-5">
                     <div className="flex items-end justify-between">
                         <div className="space-y-1">
-                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em]">REGISTRY_LOAD</span>
+                            <span className="text-[8px] font-black text-slate-600 uppercase tracking-[0.4em]">REGISTRY_LOAD</span>
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl font-black text-white tabular-nums tracking-tighter">{event.registrations?.length || '0'}</span>
-                                <span className="text-[10px] text-slate-500 font-mono">/ {event.registration_limit}</span>
+                                <span className="text-[10px] text-slate-800 font-mono">/ {event.registration_limit}</span>
                             </div>
                         </div>
                         <div className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest ${progress >= 100 ? 'bg-rose-500/10 text-rose-500' : 'bg-blue-600/10 text-blue-500'}`}>
                             {Math.round(progress)}%_UTILIZED
                         </div>
                     </div>
-
-                    <div className="h-1.5 w-full bg-white/[0.05] border border-white/[0.1] rounded-full overflow-hidden p-[2px]">
+                    
+                    <div className="h-1.5 w-full bg-white/[0.02] border border-white/[0.05] rounded-full overflow-hidden p-[2px]">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progress}%` }}
@@ -497,7 +497,7 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                     </div>
                 </div>
             </div>
-
+            
             {/* Action Bar */}
             <div className="px-10 py-5 bg-white/[0.01] border-t border-white/[0.03] flex items-center justify-between group-hover:bg-white/[0.03] transition-colors duration-500">
                 <div className="flex items-center gap-4">
@@ -508,11 +508,11 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                             </div>
                         ))}
                     </div>
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">+ {event.registrations?.length || 0} LINKED_NODES</span>
+                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">+ {event.registrations?.length || 0} LINKED_NODES</span>
                 </div>
-                <button
-                    onClick={() => onEdit(event)}
-                    className="p-2 text-slate-800 hover:text-blue-500 hover:translate-x-1 transition-all"
+                <button 
+                  onClick={() => onEdit(event)}
+                  className="p-2 text-slate-800 hover:text-blue-500 hover:translate-x-1 transition-all"
                 >
                     <ChevronRight size={18} />
                 </button>
@@ -528,7 +528,7 @@ const Switch = ({ checked, onChange }) => (
         className={`w-14 h-8 rounded-[1rem] relative transition-all duration-500 border-2 ${checked ? 'bg-blue-600/20 border-blue-500/40' : 'bg-white/[0.02] border-white/[0.1]'}`}
     >
         <motion.div
-            animate={{
+            animate={{ 
                 x: checked ? 26 : 4,
                 scale: checked ? 1.1 : 1,
                 backgroundColor: checked ? '#3b82f6' : '#334155'

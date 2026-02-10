@@ -3,14 +3,14 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import {
-    LayoutDashboard,
-    Calendar,
-    Users,
-    Image as ImageIcon,
-    QrCode,
-    Mail,
-    FileText,
+import { 
+    LayoutDashboard, 
+    Calendar, 
+    Users, 
+    Image as ImageIcon, 
+    QrCode, 
+    Mail, 
+    FileText, 
     Settings,
     Shield,
     ChevronLeft,
@@ -31,39 +31,29 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
     const navigate = useNavigate();
 
     let sections = [
-        {
-            group: "CORE_SYSTEMS", items: [
-                { to: "/admin", icon: LayoutDashboard, label: "Dashboard_Core", end: true },
-            ]
-        },
-        {
-            group: "OPERATIONS", items: [
-                { to: "/admin/events", icon: Calendar, label: "Event_Matrices" },
-                { to: "/admin/registrations", icon: Target, label: "Registry_Nodes" },
-            ]
-        },
-        {
-            group: "ARCHIVES", items: [
-                { to: "/admin/gallery", icon: ImageIcon, label: "Visual_Archive" },
-            ]
-        },
-        {
-            group: "DIAGNOSTICS", items: [
-                { to: "/admin/scanner", icon: QrCode, label: "Identity_Scanner" },
-                { to: "/admin/logs", icon: Terminal, label: "System_Audit" },
-                { to: "/admin/settings", icon: Settings, label: "Tactical_Config" },
-            ]
-        }
+        { group: "CORE_SYSTEMS", items: [
+            { to: "/admin", icon: LayoutDashboard, label: "Dashboard_Core", end: true },
+        ]},
+        { group: "OPERATIONS", items: [
+            { to: "/admin/events", icon: Calendar, label: "Event_Matrices" },
+            { to: "/admin/registrations", icon: Target, label: "Registry_Nodes" },
+        ]},
+        { group: "ARCHIVES", items: [
+            { to: "/admin/gallery", icon: ImageIcon, label: "Visual_Archive" },
+        ]},
+        { group: "DIAGNOSTICS", items: [
+            { to: "/admin/scanner", icon: QrCode, label: "Identity_Scanner" },
+            { to: "/admin/logs", icon: Terminal, label: "System_Audit" },
+            { to: "/admin/settings", icon: Settings, label: "Tactical_Config" },
+        ]}
     ];
 
     if (user?.role === 'VOLUNTEER') {
         sections = [
-            {
-                group: "VOLUNTEER_UPLINK", items: [
-                    { to: "/admin/scanner", icon: QrCode, label: "Scan_Identity" },
-                    { to: "/admin/registrations", icon: Users, label: "Node_Registry" },
-                ]
-            }
+            { group: "VOLUNTEER_UPLINK", items: [
+                { to: "/admin/scanner", icon: QrCode, label: "Scan_Identity" },
+                { to: "/admin/registrations", icon: Users, label: "Node_Registry" },
+            ]}
         ];
     }
 
@@ -91,7 +81,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
 
             <motion.aside
                 initial={false}
-                animate={{
+                animate={{ 
                     width: isCollapsed ? 100 : 300,
                     x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -300 : 0)
                 }}
@@ -102,8 +92,8 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                 {/* Branding Section */}
                 <div className="h-24 flex items-center px-8 shrink-0 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-                    <button
+                    
+                    <button 
                         onClick={() => navigate('/')}
                         className={`flex items-center gap-5 w-full relative z-10 transition-transform duration-700 ${isCollapsed ? 'justify-center translate-x-1' : ''}`}
                     >
@@ -112,17 +102,17 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                                 <Zap className="w-6 h-6 fill-white stroke-none group-hover/logo:scale-110 transition-transform" />
                             </div>
                         </div>
-
+                        
                         {!isCollapsed && (
                             <div className="flex flex-col text-left">
                                 <span className="font-black text-white tracking-[0.3em] text-sm uppercase leading-none">
                                     ASTRA<span className="text-blue-500">_OPS</span>
                                 </span>
-                                <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.5em] leading-none mt-2">CMDR_SYSTEM</span>
+                                <span className="text-[9px] font-black text-slate-700 uppercase tracking-[0.5em] leading-none mt-2">CMDR_SYSTEM</span>
                             </div>
                         )}
                     </button>
-
+                    
                     <div className="absolute bottom-0 left-8 right-8 h-px bg-gradient-to-r from-white/[0.05] via-transparent to-transparent" />
                 </div>
 
@@ -132,7 +122,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                         <div key={idx} className="space-y-6">
                             {!isCollapsed && (
                                 <div className="px-4 flex items-center justify-between">
-                                    <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.6em]">
+                                    <h3 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.6em]">
                                         {section.group}
                                     </h3>
                                     <div className="h-px flex-1 bg-white/[0.02] ml-6" />
@@ -147,34 +137,34 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                                         onClick={() => setIsMobileOpen(false)}
                                         className={({ isActive }) => `
                                             flex items-center gap-5 px-5 py-4 rounded-2xl transition-all duration-700 group relative overflow-hidden
-                                            ${isActive
-                                                ? 'bg-blue-600/[0.05] text-white border border-blue-500/20'
+                                            ${isActive 
+                                                ? 'bg-blue-600/[0.05] text-white border border-blue-500/20' 
                                                 : 'text-slate-500 hover:text-slate-200 hover:bg-white/[0.02] border border-transparent'}
                                         `}
                                     >
                                         {({ isActive }) => (
                                             <>
                                                 {isActive && (
-                                                    <motion.div
+                                                    <motion.div 
                                                         layoutId="active-bg"
                                                         className="absolute inset-0 bg-blue-600/5 pointer-events-none"
                                                     />
                                                 )}
-
+                                                
                                                 <div className={`relative z-10 transition-all duration-700 ${isCollapsed ? 'mx-auto' : ''}`}>
                                                     <item.icon size={isCollapsed ? 24 : 18} strokeWidth={isActive ? 3 : 2} className={`${isActive ? 'text-blue-500' : ''} group-hover:scale-110 transition-transform duration-500`} />
                                                 </div>
-
+                                                
                                                 {!isCollapsed && (
-                                                    <span className={`font-black uppercase tracking-[0.15em] text-[11px] relative z-10 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'} transition-colors duration-500`}>
+                                                    <span className={`font-black uppercase tracking-[0.15em] text-[11px] relative z-10 ${isActive ? 'text-white' : 'text-slate-700 group-hover:text-slate-400'} transition-colors duration-500`}>
                                                         {item.label}
                                                     </span>
                                                 )}
 
                                                 {isActive && !isCollapsed && (
-                                                    <motion.div
+                                                    <motion.div 
                                                         layoutId="active-indicator"
-                                                        className="absolute right-5 w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(37,99,235,1)]"
+                                                        className="absolute right-5 w-1.5 h-1.5 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(37,99,235,1)]" 
                                                     />
                                                 )}
                                             </>
@@ -200,33 +190,33 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                             )}
                             <div className="absolute inset-x-0 bottom-0 h-1 bg-blue-500/20" />
                         </div>
-
+                        
                         {!isCollapsed && (
                             <div className="flex-1 text-left overflow-hidden">
-                                <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] leading-none mb-2">AUTH_NODE_VAL</p>
+                                <p className="text-[9px] font-black text-slate-800 uppercase tracking-[0.3em] leading-none mb-2">AUTH_NODE_VAL</p>
                                 <p className="text-sm font-black text-white truncate leading-none uppercase tracking-tight">{user?.first_name || 'OPERATOR'}</p>
                             </div>
                         )}
-
+                        
                         {!isCollapsed && (
-                            <div className="flex items-center text-slate-500 group-hover:text-blue-500 transition-colors">
+                            <div className="flex items-center text-slate-800 group-hover:text-blue-500 transition-colors">
                                 <ChevronLeft size={18} />
                             </div>
                         )}
                     </button>
-
+                    
                     <AnimatePresence>
                         {!isCollapsed && (
-                            <motion.button
+                            <motion.button 
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}
                                 onClick={handleLogout}
                                 className="mt-6 w-full h-12 flex items-center justify-center gap-3 rounded-xl bg-rose-500/5 border border-rose-500/10 text-rose-500 text-[10px] font-black uppercase tracking-[0.3em] hover:bg-rose-500 hover:text-white transition-all duration-500 shadow-[0_0_20px_rgba(244,63,94,0.05)]"
-                            >
+                             >
                                 <LogOut size={14} strokeWidth={3} />
                                 TERMINATE_UPLINK
-                            </motion.button>
+                             </motion.button>
                         )}
                     </AnimatePresence>
                 </div>

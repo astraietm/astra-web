@@ -75,20 +75,15 @@ const AdminLayout = () => {
     return (
         <div className="min-h-screen bg-[#030303] text-slate-100 flex overflow-hidden font-inter selection:bg-blue-500/30 selection:text-white relative">
             {/* Premium Ambient Architecture */}
-            <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden select-none">
-                {/* Dynamic Aura Fields */}
-                <div className="absolute top-[-25%] right-[-10%] w-[80%] h-[80%] bg-blue-600/[0.08] rounded-full blur-[180px] animate-pulse-glow" />
-                <div className="absolute bottom-[-20%] left-[-10%] w-[70%] h-[70%] bg-indigo-600/[0.05] rounded-full blur-[160px]" />
-                <div className="absolute top-[20%] left-[30%] w-[60%] h-[60%] bg-cyan-500/[0.03] rounded-full blur-[140px] animate-float" />
+            <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-20%] right-[-10%] w-[70%] h-[70%] bg-blue-600/10 rounded-full blur-[180px] animate-pulse" />
+                <div className="absolute top-[20%] left-[-15%] w-[60%] h-[60%] bg-indigo-600/5 rounded-full blur-[160px]" />
+                <div className="absolute bottom-[-10%] left-[20%] w-[50%] h-[50%] bg-cyan-600/5 rounded-full blur-[140px]" />
 
                 {/* Cyber Grid System */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_90%)]" />
-
-                {/* Deep Contrast Vignette */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,3,3,0.4)_100%)]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
-
-                <NoiseOverlay opacity={0.3} />
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(255,255,255,0.01)_1.5px,transparent_1.5px)] bg-[size:80px_80px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_85%)]" />
+                
+                <NoiseOverlay opacity={0.08} />
             </div>
 
             <AdminSidebar
@@ -126,7 +121,7 @@ const AdminLayout = () => {
 
                     <footer className="h-20 flex items-center justify-between px-12 border-t border-white/[0.03] bg-black/40 backdrop-blur-3xl shrink-0 mt-auto relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/[0.02] to-transparent pointer-events-none" />
-
+                        
                         <div className="flex items-center gap-8 relative z-10">
                             <div className="flex items-center gap-3">
                                 <ShieldCheck className="w-4 h-4 text-blue-500" />
@@ -142,7 +137,7 @@ const AdminLayout = () => {
                                 <div className="w-1.5 h-1.5 rounded-full bg-white/5" />
                                 <span className="text-[8px] font-black uppercase tracking-[0.3em]">PRIMARY_CORE_SYNCED</span>
                             </div>
-
+                            
                             <div className={`flex items-center gap-3 px-5 py-2 rounded-2xl bg-white/[0.02] border border-white/[0.05] transition-all duration-1000 group`}>
                                 <div className={`w-1.5 h-1.5 rounded-full ${isSystemOnline ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,1)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,1)]'} transition-colors duration-1000`} />
                                 <span className={`text-[9px] font-black uppercase tracking-[0.5em] ${isSystemOnline ? 'text-emerald-500/80' : 'text-rose-500/80'} group-hover:tracking-[0.6em] transition-all`}>
