@@ -9,7 +9,7 @@ import TerminalOverlay from '../components/common/TerminalOverlay';
 import { Outlet } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
-import SmoothScroll from '../components/common/SmoothScroll';
+
 
 const MainLayout = () => {
   const [showTerminal, setShowTerminal] = useState(false);
@@ -28,7 +28,6 @@ const MainLayout = () => {
   }, []);
 
   return (
-    <SmoothScroll>
     <div className="flex flex-col min-h-screen bg-background text-white font-sans selection:bg-primary selection:text-background relative overflow-x-hidden max-w-full">
       {/* <NoiseOverlay /> */}
       {/* <MatrixBackground /> Removed per request */}
@@ -47,7 +46,6 @@ const MainLayout = () => {
         {showTerminal && <TerminalOverlay onClose={() => setShowTerminal(false)} />}
       </AnimatePresence>
     </div>
-    </SmoothScroll>
   );
 };
 

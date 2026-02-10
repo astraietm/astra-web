@@ -19,15 +19,16 @@ const LoginModal = () => {
                 token: credentialResponse.credential
             });
             
-            // Artificial delay for effect (optional, but makes it feel more substantial)
+            // Artificial delay for effect
             await new Promise(resolve => setTimeout(resolve, 1000));
             
             handleServerLogin(res.data);
-            // Modal closes via AuthContext usually, but we reset state just in case
             setIsAuthenticating(false);
         } catch (err) {
             console.error("Backend auth failed", err);
             setIsAuthenticating(false);
+            // Alert user visually if backend is unreachable
+            alert("Authentication server unreachable. Please try again later."); 
         }
     };
 
