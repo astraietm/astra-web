@@ -10,22 +10,16 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
-      - key: DATABASE_URL
-        fromDatabase:
-          name: astra-postgres
-          property: externalConnectionString
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "*"
+        value: "api.astraietm.in,astraietm.in,www.astraietm.in,astra-backend-9dbv.onrender.com"
       - key: FORCE_SYNC
         value: "true"
 
 databases:
   - name: astra-postgres
-    databaseName: astra
-    user: astra_user
     plan: free
     region: singapore
