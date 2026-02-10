@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { 
-    Users, 
-    CheckCircle, 
-    Clock, 
-    Search, 
-    Download, 
+import {
+    Users,
+    CheckCircle,
+    Clock,
+    Search,
+    Download,
     ChevronRight,
     SearchX,
     Filter,
@@ -46,7 +46,7 @@ const AdminRegistrations = () => {
 
     const handleClearAll = async () => {
         if (!window.confirm("ARE YOU SURE? This will DELETE ALL REGISTRATIONS from the database. This action cannot be undone.")) return;
-        
+
         setLoading(true);
         try {
             await axios.delete(`${API_URL}/admin-registrations/clear/`, {
@@ -61,15 +61,15 @@ const AdminRegistrations = () => {
     };
 
     const filteredData = registrations.filter(reg => {
-        const matchesSearch = 
+        const matchesSearch =
             reg.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.token?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesEvent = filterEvent === 'all' || reg.event_details.title === filterEvent;
         const isAccessed = reg.is_used || reg.status === 'ATTENDED';
-        const matchesStatus = 
-            filterStatus === 'all' || 
-            (filterStatus === 'accessed' && isAccessed) || 
+        const matchesStatus =
+            filterStatus === 'all' ||
+            (filterStatus === 'accessed' && isAccessed) ||
             (filterStatus === 'pending' && !isAccessed);
         return matchesSearch && matchesEvent && matchesStatus;
     });
@@ -116,23 +116,23 @@ const AdminRegistrations = () => {
                         </p>
                     </div>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-3">
-                    <button 
+                    <button
                         onClick={handleClearAll}
                         className="px-5 py-2.5 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-500/20 transition-all flex items-center gap-2"
                     >
                         <Trash2 className="w-4 h-4" />
                         PURGE_ALL
                     </button>
-                    <button 
+                    <button
                         onClick={fetchRegistrations}
                         className="px-5 py-2.5 bg-white/[0.02] border border-white/[0.05] text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white/[0.05] hover:text-white transition-all flex items-center gap-2"
                     >
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                         SYNC_REGISTRY
                     </button>
-                    <button 
+                    <button
                         onClick={exportToCSV}
                         className="px-5 py-2.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center gap-2 hover:bg-blue-500 transition-all shadow-[0_8px_20px_rgba(37,99,235,0.3)]"
                     >
@@ -148,8 +148,8 @@ const AdminRegistrations = () => {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-3 relative z-10">
                     <div className="md:col-span-6 relative">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder="SEARCH_BY_IDENTITY_OR_TOKEN..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -157,7 +157,7 @@ const AdminRegistrations = () => {
                         />
                     </div>
                     <div className="md:col-span-3 relative">
-                        <select 
+                        <select
                             value={filterEvent}
                             onChange={(e) => setFilterEvent(e.target.value)}
                             className="w-full bg-white/[0.01] border border-white/[0.03] rounded-2xl py-3.5 px-4 text-xs font-bold text-slate-500 focus:outline-none focus:bg-white/[0.03] appearance-none cursor-pointer uppercase tracking-widest"
@@ -169,7 +169,7 @@ const AdminRegistrations = () => {
                         </select>
                     </div>
                     <div className="md:col-span-3 relative">
-                        <select 
+                        <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
                             className="w-full bg-white/[0.01] border border-white/[0.03] rounded-2xl py-3.5 px-4 text-xs font-bold text-slate-500 focus:outline-none focus:bg-white/[0.03] appearance-none cursor-pointer uppercase tracking-widest"
@@ -205,7 +205,7 @@ const AdminRegistrations = () => {
                                 ))
                             ) : filteredData.length > 0 ? (
                                 filteredData.map((reg, idx) => (
-                                    <motion.tr 
+                                    <motion.tr
                                         key={reg.id}
                                         initial={{ opacity: 0, x: -4 }}
                                         animate={{ opacity: 1, x: 0 }}
@@ -214,12 +214,30 @@ const AdminRegistrations = () => {
                                     >
                                         <td className="px-8 py-5">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-center text-xs font-black text-blue-500 group-hover:scale-110 transition-transform">
+                                                <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-center text-xs font-black text-blue-500 group-hover:bg-blue-600/10 group-hover:border-blue-500/30 transition-all duration-500">
                                                     {reg.user_name?.[0]?.toUpperCase() || 'U'}
                                                 </div>
-                                                <div className="min-w-0">
-                                                    <p className="text-[11px] font-black text-white uppercase tracking-tight">{reg.user_name || 'UNSPECIFIED_NODE'}</p>
-                                                    <p className="text-[9px] text-slate-600 font-mono lower-case opacity-60 truncate">{reg.user_email}</p>
+                                                <div className="min-w-0 space-y-1">
+                                                    <p className="text-[11px] font-black text-white uppercase tracking-tight leading-none">{reg.user_name || 'UNSPECIFIED_NODE'}</p>
+                                                    <p className="text-[9px] text-slate-500 font-mono lower-case opacity-60 truncate leading-none">{reg.user_email}</p>
+
+                                                    {reg.team_name && (
+                                                        <div className="mt-3 space-y-2">
+                                                            <div className="inline-flex items-center gap-2 px-2 py-0.5 rounded-md bg-blue-500/5 border border-blue-500/10">
+                                                                <Users size={8} className="text-blue-500" />
+                                                                <span className="text-[8px] font-black text-blue-500 uppercase tracking-widest">{reg.team_name}</span>
+                                                            </div>
+                                                            {reg.team_members && (
+                                                                <div className="flex flex-wrap gap-1.5 pl-1">
+                                                                    {(typeof reg.team_members === 'string' ? reg.team_members.split(',') : reg.team_members).map((member, i) => (
+                                                                        <span key={i} className="text-[7px] font-black text-slate-600 bg-white/[0.02] px-1.5 py-0.5 rounded border border-white/[0.03] uppercase tracking-tighter">
+                                                                            {member.trim()}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </td>
@@ -230,7 +248,7 @@ const AdminRegistrations = () => {
                                             </div>
                                         </td>
                                         <td className="px-8 py-5">
-                                            <button 
+                                            <button
                                                 onClick={() => handleCopyToken(reg.token)}
                                                 className="group/token relative flex flex-col items-start cursor-pointer transition-opacity active:opacity-60"
                                             >
