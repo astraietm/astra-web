@@ -4,6 +4,7 @@ services:
     env: python
     plan: free
     region: singapore
+    rootDir: .
     buildCommand: "cd apps/api && pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate && python manage.py sync_events"
     startCommand: "cd apps/api && python wait_for_db.py && python manage.py migrate && gunicorn core.wsgi:application"
     envVars:
