@@ -6,7 +6,7 @@ services:
     region: singapore
     rootDir: apps/api
     buildCommand: "./build.sh"
-    startCommand: "python wait_for_db.py && python manage.py migrate && python manage.py sync_events && gunicorn core.wsgi:application"
+    startCommand: "python manage.py migrate && python manage.py sync_events && gunicorn core.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
