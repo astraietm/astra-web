@@ -119,7 +119,7 @@ const GalleryGrid = () => {
   const lastScrollTime = React.useRef(0);
   const [imageLoading, setImageLoading] = useState(true);
   
-  const { lenis } = useLenis();
+  const lenis = useLenis();
 
   // Lenis Integration: Stop scrolling when modal is open
   useEffect(() => {
