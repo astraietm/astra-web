@@ -80,7 +80,7 @@ export function HeroSection() {
         >
             <Link 
                 to="/events" 
-                className="group relative inline-flex items-center justify-center w-full sm:w-auto px-10 py-4.5 bg-cyan-400 text-black font-black text-sm tracking-[0.2em] rounded-full overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-[0_20px_40px_rgba(34,211,238,0.3)] will-change-transform"
+                className="group relative inline-flex items-center justify-center w-full sm:w-auto px-12 py-5 bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-black text-sm tracking-[0.2em] rounded-full overflow-hidden transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-[0_0_20px_rgba(34,211,238,0.4)] hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] will-change-transform uppercase"
             >
                 <span className="relative z-10">INITIATE REGISTRATION</span>
                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity" />
