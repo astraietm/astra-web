@@ -8,6 +8,10 @@ services:
     buildCommand: "./build.sh"
     startCommand: "python wait_for_db.py && python manage.py migrate && python manage.py sync_events && gunicorn core.wsgi:application"
     envVars:
+      - key: ASTRA_DB_URL
+        fromDatabase:
+          name: astra-postgres
+          property: externalConnectionString
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: SECRET_KEY

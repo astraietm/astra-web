@@ -5,7 +5,7 @@ import socket
 from urllib.parse import urlparse
 
 def wait_for_db():
-    db_url = os.environ.get('DATABASE_URL')
+    db_url = os.environ.get('ASTRA_DB_URL') or os.environ.get('DATABASE_URL')
     if not db_url:
         print("DATABASE_URL not found!")
         return # Let Django handle the error gracefully

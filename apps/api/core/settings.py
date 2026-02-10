@@ -87,11 +87,19 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# Prefer our explicit external URL if available, otherwise fallback to standard
+database_url = os.environ.get('ASTRA_DB_URL') or os.environ.get('DATABASE_URL')
+
+if database_url:
+    print(f"Using Database URL starting with: {database_url[:15]}...")
+else:
+    print("Using SQLite fallback")
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', f'sqlite:///{BASE_DIR / "db.sqlite3"}'),
+        default=database_url or f'sqlite:///{BASE_DIR / "db.sqlite3"}',
         conn_max_age=600,
-        ssl_require=bool(os.environ.get('DATABASE_URL'))
+        ssl_require=bool(database_url)
     )
 }
 
