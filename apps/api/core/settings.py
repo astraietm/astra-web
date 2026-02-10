@@ -39,10 +39,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Moved to top for proper CORS handling
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -100,17 +100,25 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS
+# CORS & CSRF Configuration
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
-if not CORS_ALLOWED_ORIGINS or CORS_ALLOWED_ORIGINS == ['']:
-    CORS_ALLOWED_ORIGINS = [
-        "https://astraietm.in",
-        "https://www.astraietm.in",
-        "https://api.astraietm.in",
-        "http://localhost:3000",
-        "http://localhost:5173",
-    ]
+# Clean up and ensure defaults
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in CORS_ALLOWED_ORIGINS if origin.strip()]
+
+TRUSTED_ORIGINS = [
+    "https://astraietm.in",
+    "https://www.astraietm.in",
+    "https://api.astraietm.in",
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
+CORS_ALLOWED_ORIGINS.extend(TRUSTED_ORIGINS)
+CORS_ALLOWED_ORIGINS = list(set(CORS_ALLOWED_ORIGINS))
+
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF Trusted Origins (Required for Django 4.0+)
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 # Logging
 LOGGING = {
