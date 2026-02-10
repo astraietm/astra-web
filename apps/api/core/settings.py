@@ -13,10 +13,23 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-development-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Allowed Hosts
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'api.astraietm.in,astraietm.in,astra-backend-9dbv.onrender.com,localhost,127.0.0.1').split(',')
-# Ensure .onrender.com is always allowed in production
-ALLOWED_HOSTS.append('.onrender.com')
-ALLOWED_HOSTS = list(set(ALLOWED_HOSTS)) # Remove duplicates
+# We explicitly allow these to avoid environment variable misconfigurations
+ALLOWED_HOSTS = [
+    'api.astraietm.in',
+    'astraietm.in',
+    'www.astraietm.in',
+    'astra-backend-9dbv.onrender.com',
+    'localhost',
+    '127.0.0.1',
+    '.onrender.com',
+]
+
+# Merge with environment variables if present
+env_hosts = os.environ.get('ALLOWED_HOSTS', '')
+if env_hosts:
+    ALLOWED_HOSTS.extend(env_hosts.split(','))
+
+ALLOWED_HOSTS = list(set([host.strip() for host in ALLOWED_HOSTS if host.strip()]))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -101,17 +114,19 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS & CSRF Configuration
-CORS_ALLOW_ALL_ORIGINS = True  # Hammer approach for production blockers
+CORS_ALLOW_ALL_ORIGINS = True 
 CORS_ALLOW_CREDENTIALS = True
 
-# CSRF Trusted Origins (Required for Django 4.0+)
-CSRF_TRUSTED_ORIGINS = [
+CORS_ALLOWED_ORIGINS = [
     "https://astraietm.in",
     "https://www.astraietm.in",
     "https://api.astraietm.in",
     "http://localhost:3000",
     "http://localhost:5173",
 ]
+
+# CSRF Trusted Origins (Required for Django 4.0+)
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 CORS_ALLOW_METHODS = [
     "DELETE",
