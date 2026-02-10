@@ -78,22 +78,31 @@ const MarqueeRow = ({ items, direction = 'left', speed = 50, variant = 'default'
 
 const GalleryMarquee = () => {
     const [images, setImages] = useState([]);
-    const API_URL = import.meta.env.VITE_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
     useEffect(() => {
         const fetchImages = async () => {
             try {
-                if (!API_URL) throw new Error("No API URL");
-                
                 const response = await axios.get(`${API_URL}/gallery/`);
-                 const mappedItems = response.data
+                
+                // Handle potential pagination or direct array
+                const rawData = Array.isArray(response.data) 
+                    ? response.data 
+                    : (response.data.results || []);
+
+                const mappedItems = rawData
                     .filter(item => item.image_url)
                     .map(item => ({
                         id: item.id,
                         src: getOptimizedImageUrl(item.image_url, 'grid'), 
                     }));
                 
-                setImages(mappedItems);
+                if (mappedItems.length > 0) {
+                    setImages(mappedItems);
+                } else {
+                    // If backend returns empty, let efficientItems fallback handle it
+                    setImages([]);
+                }
             } catch (error) {
                 console.log("Using fallback gallery images", error);
                 setImages([]); 
