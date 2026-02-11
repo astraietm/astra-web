@@ -14,7 +14,7 @@ import TeamRegistrationModal from '../components/events/TeamRegistrationModal';
 import ConfirmRegistrationModal from '../components/events/ConfirmRegistrationModal';
 import TicketDownload from '../components/events/TicketDownload';
 import useRazorpayPayment from '../components/payment/RazorpayPayment';
-import eventsData from '../data/events';
+// import eventsData from '../data/events'; // Removed to ensure only Supabase data is used
 
 const EventDetail = () => {
     const { id } = useParams();
@@ -53,14 +53,7 @@ const EventDetail = () => {
                 setEvent(mappedEvent);
             } catch (error) {
                 console.error('Failed to fetch event from backend:', error);
-                // Fallback to local data
-                const localEvent = eventsData.find(e => e.id === parseInt(id));
-                if (localEvent) {
-                    setEvent(localEvent);
-                    toast.info('Event data loaded locally. Registration requires backend sync.');
-                } else {
-                    toast.error('Event not found in database or local storage');
-                }
+                toast.error('Event not found in database');
             } finally {
                 setLoading(false);
             }
