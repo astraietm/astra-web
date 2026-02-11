@@ -74,10 +74,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# Prioritize EXTERNAL_DATABASE_URL or SUPABASE_URL to bypass Render's auto-injected (and often wrong) DATABASE_URL
+DATABASE_URL = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
+
 db_config = dj_database_url.config(
-    default=os.environ.get('DATABASE_URL', f'sqlite:///{BASE_DIR / "db.sqlite3"}'),
+    default=DATABASE_URL or f'sqlite:///{BASE_DIR / "db.sqlite3"}',
     conn_max_age=600,
-    ssl_require=bool(os.environ.get('DATABASE_URL'))
+    ssl_require=bool(DATABASE_URL)
 )
 if db_config.get('HOST'):
     print(f"DEBUG: Connecting to database host: {db_config['HOST']}")

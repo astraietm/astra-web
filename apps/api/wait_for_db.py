@@ -24,7 +24,8 @@ def start_dummy_server():
     print("Dummy server stopped.")
 
 def wait_for_db():
-    db_url = os.environ.get('DATABASE_URL')
+    # Use the same priority as settings.py to ensure consistency
+    db_url = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
     if not db_url:
         print("DATABASE_URL not found!")
         exit(1)
