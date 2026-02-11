@@ -22,8 +22,9 @@ def wait_for_db():
     # DNS pre-check
     for i in range(10):
         try:
-            socket.gethostbyname(hostname)
-            print(f"DNS Resolved {hostname}", flush=True)
+            # Force IPv4 resolution
+            ips = socket.getaddrinfo(hostname, port, family=socket.AF_INET, proto=socket.IPPROTO_TCP)
+            print(f"DNS Resolved {hostname} to IPv4: {[ip[4][0] for ip in ips]}", flush=True)
             break
         except Exception as e:
             print(f"DNS waiting... {i+1}/10 - {e}", flush=True)
