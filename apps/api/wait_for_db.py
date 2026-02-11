@@ -36,7 +36,9 @@ def wait_for_db():
     hostname = result.hostname
     port = result.port or 5432
     
-    print(f"Checking database at {hostname}:{port}...")
+    # Mask password for logging
+    masked_url = f"postgresql://{username}:****@{hostname}:{port}/{database}"
+    print(f"DEBUG: wait_for_db checking: {masked_url}")
     
     # Debug DNS
     try:

@@ -10,13 +10,11 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
-      - key: DATABASE_URL
-        sync: false
-      - key: SECRET_KEY
-        generateValue: true
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
         value: "*"
       - key: FORCE_SYNC
         value: "false"
+      # IMPORTANT: Set DATABASE_URL in the Render Dashboard -> Environment section.
+      # This file will no longer try to manage it to prevent conflicts with old internal DBs.
