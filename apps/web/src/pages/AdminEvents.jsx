@@ -93,6 +93,25 @@ const AdminEvents = () => {
         }
     };
 
+    const handleSync = async () => {
+        try {
+            toast.success("Initiating event synchronization...");
+            const response = await axios.post(`${API_URL}/operations/sync-events/`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.data.success) {
+                toast.success(`Sync complete! ${response.data.event_count} events in database.`);
+                fetchEvents(); // Refresh the list
+            } else {
+                toast.error("Sync failed: " + response.data.error);
+            }
+        } catch (error) {
+            console.error('Sync error:', error);
+            toast.error("Failed to synchronize events.");
+        }
+    };
+
     const handleDelete = async (id) => {
         if (!window.confirm('CRITICAL_ACTION: PERMANENTLY_DELETE_EVENT_NODE? This procedure is irreversible.')) return;
         try {
@@ -200,6 +219,13 @@ const AdminEvents = () => {
                         />
                     </div>
                     <button
+                        onClick={handleSync}
+                        className="h-14 px-8 bg-purple-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-[1.25rem] flex items-center gap-3 hover:bg-purple-500 transition-all shadow-[0_12px_24px_rgba(168,85,247,0.3)] hover:-translate-y-0.5"
+                    >
+                        <RotateCcw size={16} strokeWidth={3} />
+                        SYNC_EVENTS
+                    </button>
+                    <button
                         onClick={handleCreate}
                         className="h-14 px-8 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-[1.25rem] flex items-center gap-3 hover:bg-blue-500 transition-all shadow-[0_12px_24px_rgba(37,99,235,0.3)] hover:-translate-y-0.5"
                     >
@@ -259,7 +285,7 @@ const AdminEvents = () => {
                             className="fixed right-0 top-0 bottom-0 w-full max-w-3xl bg-[#030303] border-l border-white/[0.05] shadow-[0_0_100px_rgba(37,99,235,0.1)] z-[1001] overflow-hidden flex flex-col"
                         >
                             <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-blue-600/[0.03] to-transparent pointer-events-none" />
-                            
+
                             <div className="p-10 border-b border-white/[0.05] flex items-center justify-between relative z-10">
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3">
@@ -277,7 +303,7 @@ const AdminEvents = () => {
 
                             <div className="flex-1 overflow-y-auto p-10 space-y-12 relative z-10 custom-scrollbar">
                                 <form id="eventForm" onSubmit={handleSubmit} className="space-y-16 pb-20">
-                                    
+
                                     {/* CORE DATA */}
                                     <div className="space-y-8">
                                         <div className="flex items-center gap-4 text-slate-600">
@@ -424,7 +450,7 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
             className="group relative flex flex-col bg-white/[0.01] border border-white/[0.03] rounded-[2.5rem] overflow-hidden hover:border-blue-500/20 hover:bg-white/[0.02] transition-all duration-700"
         >
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-            
+
             <div className="p-10 flex flex-col h-full relative z-10">
                 {/* Header Section */}
                 <div className="flex items-start justify-between mb-10">
@@ -484,7 +510,7 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                             {Math.round(progress)}%_UTILIZED
                         </div>
                     </div>
-                    
+
                     <div className="h-1.5 w-full bg-white/[0.02] border border-white/[0.05] rounded-full overflow-hidden p-[2px]">
                         <motion.div
                             initial={{ width: 0 }}
@@ -497,7 +523,7 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                     </div>
                 </div>
             </div>
-            
+
             {/* Action Bar */}
             <div className="px-10 py-5 bg-white/[0.01] border-t border-white/[0.03] flex items-center justify-between group-hover:bg-white/[0.03] transition-colors duration-500">
                 <div className="flex items-center gap-4">
@@ -510,9 +536,9 @@ const EventCard = ({ event, onEdit, onDelete, index }) => {
                     </div>
                     <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">+ {event.registrations?.length || 0} LINKED_NODES</span>
                 </div>
-                <button 
-                  onClick={() => onEdit(event)}
-                  className="p-2 text-slate-800 hover:text-blue-500 hover:translate-x-1 transition-all"
+                <button
+                    onClick={() => onEdit(event)}
+                    className="p-2 text-slate-800 hover:text-blue-500 hover:translate-x-1 transition-all"
                 >
                     <ChevronRight size={18} />
                 </button>
@@ -528,7 +554,7 @@ const Switch = ({ checked, onChange }) => (
         className={`w-14 h-8 rounded-[1rem] relative transition-all duration-500 border-2 ${checked ? 'bg-blue-600/20 border-blue-500/40' : 'bg-white/[0.02] border-white/[0.1]'}`}
     >
         <motion.div
-            animate={{ 
+            animate={{
                 x: checked ? 26 : 4,
                 scale: checked ? 1.1 : 1,
                 backgroundColor: checked ? '#3b82f6' : '#334155'

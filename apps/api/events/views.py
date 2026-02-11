@@ -323,3 +323,32 @@ class ClearRegistrationsView(APIView):
             }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class SyncEventsView(APIView):
+    """Manually trigger event synchronization from management command"""
+    permission_classes = [permissions.IsAdminUser]
+    
+    def post(self, request):
+        try:
+            from django.core.management import call_command
+            from io import StringIO
+            
+            # Capture command output
+            out = StringIO()
+            call_command('sync_events', stdout=out)
+            output = out.getvalue()
+            
+            # Get updated event count
+            event_count = Event.objects.count()
+            
+            return Response({
+                "success": True,
+                "message": "Events synchronized successfully",
+                "event_count": event_count,
+                "output": output
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "success": False,
+                "error": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
