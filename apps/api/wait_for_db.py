@@ -25,12 +25,12 @@ def start_dummy_server():
 
 def wait_for_db():
     # Use the same priority as settings.py to ensure consistency
-    db_url = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
-    if not db_url:
+    raw_db_url = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
+    if not raw_db_url:
         print("DATABASE_URL not found!")
         exit(1)
 
-    result = urlparse(db_url)
+    result = urlparse(raw_db_url)
     username = result.username
     password = result.password
     database = result.path[1:]

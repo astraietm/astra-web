@@ -75,15 +75,24 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 # Prioritize EXTERNAL_DATABASE_URL or SUPABASE_URL to bypass Render's auto-injected (and often wrong) DATABASE_URL
-DATABASE_URL = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
+RAW_DB_URL = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
+
+if RAW_DB_URL:
+    from urllib.parse import urlparse
+    parsed = urlparse(RAW_DB_URL)
+    print(f"\n{'='*60}")
+    print(f"DATABASE DEBUG INFO")
+    print(f"Detected DB URL: {parsed.scheme}://{parsed.username}:****@{parsed.hostname}:{parsed.port}{parsed.path}")
+    print(f"EXTERNAL_DATABASE_URL found: {bool(os.environ.get('EXTERNAL_DATABASE_URL'))}")
+    print(f"SUPABASE_URL found: {bool(os.environ.get('SUPABASE_URL'))}")
+    print(f"{'='*60}\n")
 
 db_config = dj_database_url.config(
-    default=DATABASE_URL or f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+    default=RAW_DB_URL or f'sqlite:///{BASE_DIR / "db.sqlite3"}',
     conn_max_age=600,
-    ssl_require=bool(DATABASE_URL)
+    ssl_require=bool(RAW_DB_URL)
 )
-if db_config.get('HOST'):
-    print(f"DEBUG: Connecting to database host: {db_config['HOST']}")
+
 DATABASES = {
     'default': db_config
 }
