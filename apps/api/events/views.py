@@ -46,14 +46,15 @@ class RegistrationCreateView(generics.CreateAPIView):
         if updated:
             self.request.user.save()
         
-        # Automatically set user from JWT
         # Automatically set user from JWT and snapshot their profile
+        # Since this endpoint is only for free events (or direct registration), we set status to REGISTERED
         instance = serializer.save(
             user=self.request.user,
             phone_number=phone_number or getattr(self.request.user, 'phone_number', ''),
             college=college or getattr(self.request.user, 'college', ''),
             department=getattr(self.request.user, 'department', '') if hasattr(self.request.user, 'department') else '',
-            year_of_study=getattr(self.request.user, 'year_of_study', '') if hasattr(self.request.user, 'year_of_study') else ''
+            year_of_study=getattr(self.request.user, 'year_of_study', '') if hasattr(self.request.user, 'year_of_study') else '',
+            status='REGISTERED'
         )
         # Send registration email with ticket
         send_registration_email(instance)
@@ -86,6 +87,14 @@ class RegistrationCreateView(generics.CreateAPIView):
                  {"error": "You are already registered for this event."},
                  status=status.HTTP_400_BAD_REQUEST
              )
+        
+        # PAYMENT GATEWAY SECURITY
+        if event.requires_payment:
+             return Response(
+                 {"error": "This event requires payment. Please use the 'Pay & Register' option."},
+                 status=status.HTTP_402_PAYMENT_REQUIRED
+             )
+
         return super().create(request, *args, **kwargs)
 
 class MyRegistrationsView(generics.ListAPIView):
@@ -110,6 +119,13 @@ class VerifyTokenView(APIView):
         registration = get_object_or_404(Registration, token=token)
         
         # Check status or is_used
+        if registration.status == 'PENDING':
+            return Response({
+                "valid": False,
+                "message": "Payment pending. This ticket is not active yet.",
+                "registrant": RegistrationSerializer(registration).data
+            }, status=status.HTTP_200_OK)
+
         if registration.status == 'ATTENDED' or registration.is_used:
             return Response({
                 "valid": False,
