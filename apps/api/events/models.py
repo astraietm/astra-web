@@ -67,7 +67,9 @@ class Registration(models.Model):
     is_used = models.BooleanField(default=False) # Deprecated but kept for backward compat
 
     def save(self, *args, **kwargs):
-        if not self.token:
+        # Generate token ONLY if the registration is confirmed (REGISTERED) or ATTENDED
+        # This prevents PENDING records from having a valid QR code/ticket
+        if not self.token and self.status in ['REGISTERED', 'ATTENDED']:
             while True:
                 token = secrets.token_urlsafe(32)
                 if not Registration.objects.filter(token=token).exists():

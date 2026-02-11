@@ -344,3 +344,24 @@ class VerifyPaymentView(APIView):
             return Response({"error": "Payment record not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": f"Verification error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class AbortPaymentView(APIView):
+    """Clean up records if user cancels the payment process"""
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request):
+        registration_id = request.data.get('registration_id')
+        if not registration_id:
+            return Response({"error": "Registration ID required."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+            registration = Registration.objects.get(id=registration_id, user=request.user)
+            # Only delete if it's still PENDING to avoid deleting confirmed ones accidentally
+            if registration.status == 'PENDING':
+                logger.info(f"User {request.user.email} aborted payment for registration {registration_id}. Deleting pending records.")
+                registration.delete() # Also deletes linked payment via cascade
+                return Response({"success": True, "message": "Abandoned registration cleaned up."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Cannot abort a confirmed registration."}, status=status.HTTP_400_BAD_REQUEST)
+        except Registration.DoesNotExist:
+            return Response({"error": "Registration not found."}, status=status.HTTP_404_NOT_FOUND)

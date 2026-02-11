@@ -9,7 +9,8 @@ from .views import (
     AdminRegistrationsView,
     AdminEventViewSet,
     CreatePaymentOrderView,
-    VerifyPaymentView
+    VerifyPaymentView,
+    AbortPaymentView
 )
 
 router = DefaultRouter()
@@ -24,4 +25,5 @@ urlpatterns = [
     path('admin-registrations/', AdminRegistrationsView.as_view(), name='admin-registrations'),
     path('payment/create-order/', CreatePaymentOrderView.as_view(), name='create-payment-order'),
     path('payment/verify/', VerifyPaymentView.as_view(), name='verify-payment'),
+    path('payment/abort/', AbortPaymentView.as_view(), name='abort-payment'),
 ] + router.urls

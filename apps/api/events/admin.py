@@ -9,8 +9,8 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ('is_registration_open', 'category', 'requires_payment')
 
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'is_used', 'timestamp')
-    list_filter = ('event__title', 'is_used', 'timestamp')
+    list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'status', 'timestamp')
+    list_filter = ('status', 'event__title', 'timestamp')
     search_fields = ('user__email', 'user__full_name', 'token', 'event__title')
     actions = ['export_as_csv', 'resend_confirmation_email']
 
@@ -59,6 +59,13 @@ class RegistrationAdmin(admin.ModelAdmin):
 
     export_as_csv.short_description = "Export Selected to CSV"
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Default to showing confirmed ones only
+        if 'status__exact' in request.GET:
+            return qs
+        return qs.exclude(status='PENDING')
+
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('razorpay_order_id', 'get_user_email', 'get_event_title', 'amount', 'status', 'created_at')
     list_filter = ('status', 'created_at')
@@ -72,6 +79,14 @@ class PaymentAdmin(admin.ModelAdmin):
     def get_event_title(self, obj):
         return obj.registration.event.title
     get_event_title.short_description = 'Event'
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # If user is specifically filtering by status, show all. 
+        # Otherwise, show only SUCCESS by default to keep things clean.
+        if 'status__exact' in request.GET:
+            return qs
+        return qs.filter(status='SUCCESS')
 
 admin.site.register(Event, EventAdmin)
 admin.site.register(Registration, RegistrationAdmin)

@@ -123,7 +123,20 @@ const useRazorpayPayment = () => {
                     color: '#2563EB'
                 },
                 modal: {
-                    ondismiss: function () {
+                    ondismiss: async function () {
+                        console.log('Payment modal dismissed. Cleaning up pending registration...');
+                        try {
+                            await fetch(`${import.meta.env.VITE_API_URL}/payment/abort/`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${activeToken}`
+                                },
+                                body: JSON.stringify({ registration_id: data.registration_id })
+                            });
+                        } catch (e) {
+                            console.error('Failed to abort registration:', e);
+                        }
                         onFailure('Payment cancelled by user');
                     }
                 }
@@ -131,8 +144,20 @@ const useRazorpayPayment = () => {
 
             const razorpay = new window.Razorpay(options);
 
-            razorpay.on('payment.failed', function (response) {
+            razorpay.on('payment.failed', async function (response) {
                 console.error('Payment failed:', response.error);
+                try {
+                    await fetch(`${import.meta.env.VITE_API_URL}/payment/abort/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${activeToken}`
+                        },
+                        body: JSON.stringify({ registration_id: data.registration_id })
+                    });
+                } catch (e) {
+                    console.error('Failed to abort registration after failure:', e);
+                }
                 onFailure(response.error.description || 'Payment failed. Please try again.');
             });
 
