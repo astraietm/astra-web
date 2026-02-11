@@ -106,8 +106,36 @@ const EventModule = ({ event, index }) => {
                     </p>
                 </div>
 
+                {/* Live Slot Tracker */}
+                {(event.max_participation > 0 || event.registration_limit > 0) && (
+                    <div className="mt-4 mb-2">
+                        <div className="flex justify-between items-center mb-1.5">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Live_Capacity</span>
+                            <span className={`text-[9px] font-black uppercase tracking-widest ${
+                                (event.registration_count || 0) >= (event.max_participation || event.registration_limit) 
+                                ? 'text-red-500' 
+                                : 'text-cyan-400'
+                            }`}>
+                                {(event.max_participation || event.registration_limit) - (event.registration_count || 0)} Slots Left
+                            </span>
+                        </div>
+                        <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                            <motion.div 
+                                initial={{ width: 0 }}
+                                whileInView={{ width: `${Math.min(100, ((event.registration_count || 0) / (event.max_participation || event.registration_limit)) * 100)}%` }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                                className={`h-full rounded-full ${
+                                    ((event.registration_count || 0) / (event.max_participation || event.registration_limit)) > 0.9 
+                                    ? 'bg-red-500' 
+                                    : 'bg-cyan-500'
+                                }`} 
+                            />
+                        </div>
+                    </div>
+                )}
+
                 {/* Bottom Row */}
-                <div className="pt-6 flex items-center justify-between border-t border-white/[0.05]">
+                <div className="pt-4 flex items-center justify-between border-t border-white/[0.05]">
                     <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-500 truncate pr-4">
                         {isHawkins ? <Zap size={14} className="text-red-500" /> : <MapPin size={14} className="text-blue-500" />}
                         <span className="truncate">{event.venue || 'Campus_HQ'}</span>

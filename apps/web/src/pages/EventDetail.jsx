@@ -49,6 +49,8 @@ const EventDetail = () => {
                 registration_start: data.registration_start,
                 registration_end: data.registration_end,
                 registration_limit: data.registration_limit,
+                max_participation: data.registration_limit || data.max_participation,
+                registration_count: data.registration_count || 0,
             });
 
             // 1. Try Cache

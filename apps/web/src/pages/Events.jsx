@@ -32,7 +32,9 @@ const Events = () => {
                 description: localEvent.description || event.description,
                 category: localEvent.category || event.category,
                 time: localEvent.time || event.time,
-                venue: localEvent.venue || event.venue
+                venue: localEvent.venue || event.venue,
+                max_participation: event.registration_limit || localEvent.max_participation,
+                registration_count: event.registration_count || 0,
             } : event;
 
             return {

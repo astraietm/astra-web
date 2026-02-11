@@ -83,6 +83,18 @@ const EventCard = ({ event, index }) => {
         <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur-md border border-white/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
           {event.category}
         </div>
+        
+        {/* Live Slot Indicator */}
+        {event.registration_limit > 0 && (
+            <div className="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur-md border border-white/10 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg flex items-center gap-2">
+                <div className={`w-1.5 h-1.5 rounded-full ${
+                    (event.registration_count || 0) >= event.registration_limit ? 'bg-red-500 animate-pulse' : 'bg-green-400 animate-pulse'
+                }`} />
+                <span className={(event.registration_count || 0) >= event.registration_limit ? "text-red-400" : "text-green-400"}>
+                    {Math.max(0, event.registration_limit - (event.registration_count || 0))} Slots Left
+                </span>
+            </div>
+        )}
       </div>
 
       {/* Content */}

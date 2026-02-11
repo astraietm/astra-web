@@ -284,6 +284,28 @@ const Register = () => {
                                     <div className="text-white font-medium">{event.venue}</div>
                                 </div>
                             </div>
+
+                            {/* Live Slots */}
+                            {(event.registration_limit > 0) && (
+                                <div className="p-4 bg-white/5 border border-white/5 rounded-xl mb-12">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <div className="text-xs font-mono text-gray-500 uppercase">Live Capacity</div>
+                                        <div className={`text-xs font-bold ${
+                                            (event.registration_count || 0) >= event.registration_limit ? 'text-red-500' : 'text-green-500'
+                                        }`}>
+                                            {Math.max(0, event.registration_limit - (event.registration_count || 0))} Slots Left
+                                        </div>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                        <div 
+                                            className={`h-full rounded-full ${
+                                                ((event.registration_count || 0) / event.registration_limit) > 0.9 ? 'bg-red-500' : 'bg-primary'
+                                            }`}
+                                            style={{ width: `${Math.min(100, ((event.registration_count || 0) / event.registration_limit) * 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </ScrollReveal>
                     </div>
 

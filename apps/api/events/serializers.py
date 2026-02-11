@@ -7,6 +7,11 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = '__all__'
 
+    registration_count = serializers.SerializerMethodField()
+
+    def get_registration_count(self, obj):
+        return obj.registrations.count()
+
     def validate(self, data):
         """
         Check that registration_end is after registration_start.
