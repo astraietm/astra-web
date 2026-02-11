@@ -26,8 +26,15 @@ def start_dummy_server():
 def wait_for_db():
     # Use the same priority as settings.py to ensure consistency
     raw_db_url = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
+    
+    # CRITICAL FIX: If Render is still injecting the broken host, DISCARD IT
+    if raw_db_url and "dpg-d5ekohje5dus73bv63og-a" in raw_db_url:
+        print("WARNING: wait_for_db detected broken Render host. Discarding...")
+        raw_db_url = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL')
+
     if not raw_db_url:
-        print("DATABASE_URL not found!")
+        print("CRITICAL: DATABASE_URL not found or was discarded because it was the broken host!")
+        print("Please set EXTERNAL_DATABASE_URL in Render Dashboard.")
         exit(1)
 
     result = urlparse(raw_db_url)

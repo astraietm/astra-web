@@ -77,15 +77,28 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Prioritize EXTERNAL_DATABASE_URL or SUPABASE_URL to bypass Render's auto-injected (and often wrong) DATABASE_URL
 RAW_DB_URL = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
 
+# CRITICAL FIX: If Render is still injecting the broken host, DISCARD IT
+if RAW_DB_URL and "dpg-d5ekohje5dus73bv63og-a" in RAW_DB_URL:
+    print("\n" + "!"*60)
+    print("WARNING: Render auto-injected a broken DATABASE_URL. DISCARDING IT.")
+    print("Looking for EXTERNAL_DATABASE_URL to fix this...")
+    print("!"*60 + "\n")
+    # Only allow the custom variables if the main one is broken
+    RAW_DB_URL = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL')
+
 if RAW_DB_URL:
     from urllib.parse import urlparse
     parsed = urlparse(RAW_DB_URL)
     print(f"\n{'='*60}")
     print(f"DATABASE DEBUG INFO")
-    print(f"Detected DB URL: {parsed.scheme}://{parsed.username}:****@{parsed.hostname}:{parsed.port}{parsed.path}")
-    print(f"EXTERNAL_DATABASE_URL found: {bool(os.environ.get('EXTERNAL_DATABASE_URL'))}")
-    print(f"SUPABASE_URL found: {bool(os.environ.get('SUPABASE_URL'))}")
+    print(f"Detected DB Host: {parsed.hostname}")
+    print(f"Source: {'EXTERNAL_DATABASE_URL' if os.environ.get('EXTERNAL_DATABASE_URL') else 'SUPABASE_URL' if os.environ.get('SUPABASE_URL') else 'DATABASE_URL'}")
     print(f"{'='*60}\n")
+else:
+    print("\n" + "!"*60)
+    print("CRITICAL: NO DATABASE URL DETECTED. The app will likely fail.")
+    print("Please set EXTERNAL_DATABASE_URL in Render Dashboard.")
+    print("!"*60 + "\n")
 
 db_config = dj_database_url.config(
     default=RAW_DB_URL or f'sqlite:///{BASE_DIR / "db.sqlite3"}',
