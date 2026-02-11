@@ -11,9 +11,7 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.9
       - key: DATABASE_URL
-        fromDatabase:
-          name: astra-postgres
-          property: connectionString
+        sync: false
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
@@ -22,10 +20,3 @@ services:
         value: "*"
       - key: FORCE_SYNC
         value: "false"
-
-databases:
-  - name: astra-postgres
-    databaseName: astra
-    user: astra_user
-    plan: free
-    region: singapore
