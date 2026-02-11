@@ -17,16 +17,16 @@ def wait_for_db():
     hostname = result.hostname
     port = result.port or 5432
     
-    print(f"Waiting for database at {hostname}...")
+    print(f"Waiting for database at {hostname}...", flush=True)
     
     # DNS pre-check
     for i in range(10):
         try:
             socket.gethostbyname(hostname)
-            print(f"DNS Resolved {hostname}")
+            print(f"DNS Resolved {hostname}", flush=True)
             break
-        except Exception:
-            print(f"DNS waiting... {i+1}/10")
+        except Exception as e:
+            print(f"DNS waiting... {i+1}/10 - {e}", flush=True)
             time.sleep(2)
 
     # Connection check
@@ -42,13 +42,13 @@ def wait_for_db():
                 connect_timeout=5
             )
             conn.close()
-            print("Database is UP!")
+            print("Database is UP!", flush=True)
             return
         except Exception as e:
-            print(f"Database sync... {i+1}/{max_retries}")
+            print(f"Database sync... {i+1}/{max_retries} - {e}", flush=True)
             time.sleep(2)
     
-    print("Proceeding anyway, let's hope for the best...")
+    print("Proceeding anyway, let's hope for the best...", flush=True)
 
 if __name__ == "__main__":
     wait_for_db()
