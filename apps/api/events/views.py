@@ -131,120 +131,138 @@ class AdminEventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     permission_classes = [permissions.IsAdminUser]
 
-# Payment Views
+import logging
+import traceback
 import razorpay
+import hmac
+import hashlib
 from django.conf import settings
 from .models import Payment
 from .serializers import PaymentSerializer
-import hmac
-import hashlib
+
+logger = logging.getLogger(__name__)
 
 class CreatePaymentOrderView(APIView):
     """Create a Razorpay order for event registration"""
     permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
-        event_id = request.data.get('event_id')
-        team_name = request.data.get('team_name', '')
-        team_members = request.data.get('team_members', '')
-        
-        if not event_id:
-            return Response({"error": "Event ID is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
         try:
-            event = Event.objects.get(id=event_id)
-        except Event.DoesNotExist:
-            return Response(
-                {"error": f"Event with ID {event_id} was not found in the database. Please ensure the event is created in the admin panel."}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-        
-        # Check if event requires payment
-        if not event.requires_payment:
-            return Response({"error": "This event does not require payment."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Check if already registered
-        existing_reg = Registration.objects.filter(user=request.user, event=event).first()
-        if existing_reg:
-            # If payment exists and is SUCCESS, then it's a real duplicate
-            if hasattr(existing_reg, 'payment') and existing_reg.payment.status == 'SUCCESS':
-                return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
+            event_id = request.data.get('event_id')
+            team_name = request.data.get('team_name', '')
+            team_members = request.data.get('team_members', '')
             
-            # If it's a free event, existence of registration is enough
+            logger.info(f"Payment request for event {event_id} from user {request.user.email}")
+            
+            if not event_id:
+                return Response({"error": "Event ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            try:
+                event = Event.objects.get(id=event_id)
+            except Event.DoesNotExist:
+                return Response(
+                    {"error": f"Event with ID {event_id} was not found in the database. Please ensure the event is created in the admin panel."}, 
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            # Check if event requires payment
             if not event.requires_payment:
-                return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "This event does not require payment."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Check if already registered
+            existing_reg = Registration.objects.filter(user=request.user, event=event).first()
+            if existing_reg:
+                # If payment exists and is SUCCESS, then it's a real duplicate
+                if hasattr(existing_reg, 'payment') and existing_reg.payment.status == 'SUCCESS':
+                    return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # If it's a free event, existence of registration is enough
+                if not event.requires_payment:
+                    return Response({"error": "You are already registered for this event."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Otherwise, it's a failed/abandoned payment attempt.
-            # Clean it up so we can create a fresh order.
-            existing_reg.delete()
-        
-        # Validate registration rules (same as RegistrationCreateView)
-        if not event.is_registration_open:
-            return Response({"error": "Registration is currently closed."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        now = timezone.now()
-        if now < event.registration_start:
-            return Response({"error": f"Registration starts on {event.registration_start}."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        if now > event.registration_end:
-            return Response({"error": "Registration deadline has passed."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        current_count = event.registrations.count()
-        if current_count >= event.registration_limit:
-            return Response({"error": "Event is fully booked."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Create registration (pending payment)
-        registration = Registration.objects.create(
-            user=request.user,
-            event=event,
-            team_name=team_name,
-            team_members=team_members,
-            status='PENDING'  # Will be confirmed after payment
-        )
-        
-        # Create Razorpay order
-        try:
-            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+                # Otherwise, it's a failed/abandoned payment attempt.
+                # Clean it up so we can create a fresh order.
+                logger.info(f"Cleaning up old pending registration {existing_reg.id}")
+                existing_reg.delete()
             
-            # Amount in paise (multiply by 100)
-            amount_in_paise = int(float(event.payment_amount) * 100)
+            # Validate registration rules (same as RegistrationCreateView)
+            if not event.is_registration_open:
+                return Response({"error": "Registration is currently closed."}, status=status.HTTP_400_BAD_REQUEST)
             
-            order_data = {
-                'amount': amount_in_paise,
-                'currency': 'INR',
-                'receipt': f'reg_{registration.id}',
-                'notes': {
-                    'event_id': event.id,
-                    'event_name': event.title,
-                    'user_email': request.user.email,
-                    'registration_id': registration.id
-                }
-            }
+            now = timezone.now()
+            if now < event.registration_start:
+                return Response({"error": f"Registration starts on {event.registration_start}."}, status=status.HTTP_400_BAD_REQUEST)
             
-            razorpay_order = client.order.create(data=order_data)
+            if now > event.registration_end:
+                return Response({"error": "Registration deadline has passed."}, status=status.HTTP_400_BAD_REQUEST)
             
-            # Create payment record
-            payment = Payment.objects.create(
-                registration=registration,
-                razorpay_order_id=razorpay_order['id'],
-                amount=event.payment_amount,
-                currency='INR',
-                status='PENDING'
+            current_count = event.registrations.count()
+            if current_count >= event.registration_limit:
+                return Response({"error": "Event is fully booked."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Create registration (pending payment)
+            registration = Registration.objects.create(
+                user=request.user,
+                event=event,
+                team_name=team_name,
+                team_members=team_members,
+                status='PENDING'  # Will be confirmed after payment
             )
             
-            return Response({
-                'order_id': razorpay_order['id'],
-                'amount': amount_in_paise,
-                'currency': 'INR',
-                'key_id': settings.RAZORPAY_KEY_ID,
-                'registration_id': registration.id,
-                'event_name': event.title
-            }, status=status.HTTP_201_CREATED)
-            
+            # Create Razorpay order
+            try:
+                if not settings.RAZORPAY_KEY_ID or not settings.RAZORPAY_KEY_SECRET:
+                    logger.error("Razorpay keys are missing in settings!")
+                    raise Exception("Razorpay keys are not configured correctly on the server.")
+
+                client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+                
+                # Amount in paise (multiply by 100)
+                amount_in_paise = int(float(event.payment_amount) * 100)
+                
+                order_data = {
+                    'amount': amount_in_paise,
+                    'currency': 'INR',
+                    'receipt': f'reg_{registration.id}',
+                    'notes': {
+                        'event_id': event.id,
+                        'event_name': event.title,
+                        'user_email': request.user.email,
+                        'registration_id': registration.id
+                    }
+                }
+                
+                razorpay_order = client.order.create(data=order_data)
+                
+                # Create payment record
+                Payment.objects.create(
+                    registration=registration,
+                    razorpay_order_id=razorpay_order['id'],
+                    amount=event.payment_amount,
+                    currency='INR',
+                    status='PENDING'
+                )
+                
+                return Response({
+                    'order_id': razorpay_order['id'],
+                    'amount': amount_in_paise,
+                    'currency': 'INR',
+                    'key_id': settings.RAZORPAY_KEY_ID,
+                    'registration_id': registration.id,
+                    'event_name': event.title
+                }, status=status.HTTP_201_CREATED)
+                
+            except Exception as e:
+                logger.error(f"Razorpay error: {str(e)}")
+                logger.error(traceback.format_exc())
+                # Delete registration if order creation fails
+                registration.delete()
+                return Response({"error": f"Failed to create payment order: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         except Exception as e:
-            # Delete registration if order creation fails
-            registration.delete()
-            return Response({"error": f"Failed to create payment order: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error(f"Unexpected error in payment order creation: {str(e)}")
+            logger.error(traceback.format_exc())
+            return Response({"error": f"Internal Server Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class VerifyPaymentView(APIView):
     """Verify Razorpay payment signature"""
