@@ -66,8 +66,8 @@ const EventModule = ({ event, index }) => {
                             !event.is_registration_open ? 'bg-amber-400' : 
                                 `bg-${accentColor}-500 shadow-[0_0_10px_rgba(${isHawkins ? '239,68,68' : '59,130,246'},0.8)] animate-pulse`
                             }`} />
-                        <span className="text-[9px] font-black tracking-[0.2em] uppercase text-white/80">
-                            {isCompleted ? 'Archived' : !event.is_registration_open ? 'Access_Pending' : 'Active_Link'}
+                        <span className="text-[10px] font-bold tracking-wider text-white/90">
+                            {isCompleted ? 'Archived' : !event.is_registration_open ? 'Coming Soon' : 'Registration Open'}
                         </span>
                     </div>
                 </div>
@@ -86,17 +86,17 @@ const EventModule = ({ event, index }) => {
                 <div className="min-w-0">
                     {/* Category & Status */}
                     <div className="flex items-center gap-3 mb-4">
-                        <span className={`px-2.5 py-1 rounded-lg bg-${accentColor}-500/10 border border-${accentColor}-500/20 text-[9px] font-black uppercase tracking-[0.2em] text-${accentColor}-400`}>
-                            {event.category || 'Classified'}
+                        <span className={`px-2.5 py-1 rounded-lg bg-${accentColor}-500/10 border border-${accentColor}-500/20 text-[10px] font-medium tracking-wide text-${accentColor}-400`}>
+                            {event.category || 'Event'}
                         </span>
-                        <div className="flex items-center gap-2 text-[9px] text-slate-500 font-black uppercase tracking-[0.2em]">
+                        <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium tracking-wide">
                             <Clock size={12} className="text-slate-700" />
                             {event.time || '10:00 AM'}
                         </div>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-2xl md:text-3xl font-black text-white mb-3 leading-[1.1] tracking-tight group-hover:text-cyan-400 transition-colors duration-500 truncate">
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 leading-tight group-hover:text-cyan-400 transition-colors duration-500 truncate">
                         {event.title}
                     </h3>
 
@@ -110,8 +110,8 @@ const EventModule = ({ event, index }) => {
                 {(event.max_participation > 0 || event.registration_limit > 0) && (
                     <div className="mt-4 mb-2">
                         <div className="flex justify-between items-center mb-1.5">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Live_Capacity</span>
-                            <span className={`text-[9px] font-black uppercase tracking-widest ${
+                            <span className="text-[10px] font-medium tracking-wide text-slate-500">Live Capacity</span>
+                            <span className={`text-[10px] font-medium tracking-wide ${
                                 (event.registration_count || 0) >= (event.max_participation || event.registration_limit) 
                                 ? 'text-red-500' 
                                 : 'text-cyan-400'
@@ -136,9 +136,9 @@ const EventModule = ({ event, index }) => {
 
                 {/* Bottom Row */}
                 <div className="pt-4 flex items-center justify-between border-t border-white/[0.05]">
-                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-500 truncate pr-4">
+                    <div className="flex items-center gap-2 text-[10px] font-medium text-slate-500 tracking-wide group-hover:text-white transition-colors duration-500 truncate pr-4">
                         {isHawkins ? <Zap size={14} className="text-red-500" /> : <MapPin size={14} className="text-blue-500" />}
-                        <span className="truncate">{event.venue || 'Campus_HQ'}</span>
+                        <span className="truncate">{event.venue || 'TBA'}</span>
                     </div>
 
                     <div className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black group-hover:border-white group-hover:scale-110 transition-all duration-700 shrink-0`}>

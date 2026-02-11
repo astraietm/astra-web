@@ -55,7 +55,7 @@ const EventHero = () => {
                     className="inline-flex items-center gap-2.5 px-4 py-2 mb-10 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-[0_0_15px_rgba(59,130,246,0.1)]"
                 >
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400/80">Innovation Hub / 2026</span>
+                    <span className="text-[10px] font-medium tracking-widest text-blue-400">Innovation Hub 2026</span>
                 </motion.div>
 
                 {/* Precision Typography Title */}
@@ -63,12 +63,12 @@ const EventHero = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
-                    className="text-5xl xs:text-6xl md:text-8xl lg:text-[9rem] font-black text-white mb-8 tracking-tighter leading-[0.9] font-outfit will-change-transform"
+                    className="text-5xl xs:text-6xl md:text-8xl lg:text-[9rem] font-bold text-white mb-8 tracking-tight leading-[0.9] font-outfit will-change-transform"
                 >
-                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40 uppercase">
+                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/40">
                         Zero
                     </span>
-                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-cyan-400 to-blue-600 ml-3 md:ml-6 uppercase font-black opacity-90">
+                    <span className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-cyan-400 to-blue-600 ml-3 md:ml-6 font-bold opacity-90">
                         Day
                     </span>
                 </motion.h1>
@@ -78,7 +78,7 @@ const EventHero = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
-                    className="text-xs sm:text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium mb-14 px-6 uppercase tracking-wider opacity-80"
+                    className="text-xs sm:text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium mb-14 px-6 tracking-wide opacity-80"
                 >
                     Tactical deployment of engineering excellence. A curated collection of high-fidelity simulations for the next generation of security operators.
                 </motion.p>
@@ -94,19 +94,19 @@ const EventHero = () => {
                         <Search size={16} className="text-slate-500 group-focus-within:text-cyan-400 transition-colors" />
                         <input 
                             type="text" 
-                            placeholder="QUERY SYSTEM MODULES..."
-                            className="bg-transparent border-none outline-none text-white text-[10px] sm:text-sm w-full placeholder:text-slate-600 font-bold uppercase tracking-widest"
+                            placeholder="Search event modules..."
+                            className="bg-transparent border-none outline-none text-white text-[10px] sm:text-sm w-full placeholder:text-slate-600 font-medium tracking-wide"
                         />
                     </div>
                     
                     <div className="flex items-center gap-2">
-                        <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 bg-white/[0.03] hover:bg-white/10 rounded-xl border border-white/5 text-[9px] font-black text-white uppercase tracking-widest transition-all active:scale-95">
+                        <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 bg-white/[0.03] hover:bg-white/10 rounded-xl border border-white/5 text-[11px] font-semibold text-white tracking-wider transition-all active:scale-95">
                             <Filter size={14} className="text-cyan-400" />
                             <span>Filter</span>
                         </button>
                         
-                        <button className="flex-1 sm:flex-none px-6 py-3 sm:py-2.5 bg-cyan-400 text-black rounded-xl text-[9px] font-black uppercase tracking-widest shadow-[0_20px_40px_-10px_rgba(34,211,238,0.3)] hover:scale-[1.03] active:scale-95 transition-all">
-                            Execute_Query
+                        <button className="flex-1 sm:flex-none px-6 py-3 sm:py-2.5 bg-cyan-400 text-black rounded-xl text-[11px] font-bold tracking-wider shadow-[0_20px_40px_-10px_rgba(34,211,238,0.3)] hover:scale-[1.03] active:scale-95 transition-all">
+                            Search Events
                         </button>
                     </div>
                 </motion.div>

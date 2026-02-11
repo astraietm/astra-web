@@ -98,15 +98,15 @@ const Events = () => {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-[1px] bg-blue-500/50" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-500/80">Classified Archives</span>
+                        <span className="text-xs font-medium tracking-widest text-blue-400">Archives</span>
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tighter">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
                         Upcoming Sessions
                     </h2>
                 </div>
 
                 <div className="flex items-center gap-4 px-5 py-2.5 bg-white/[0.03] border border-white/10 rounded-2xl backdrop-blur-xl">
-                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Total Nodes</span>
+                    <span className="text-xs font-medium text-gray-500 tracking-wide">Total Events</span>
                     <div className="w-px h-3 bg-white/10" />
                     {loading ? (
                         <div className="w-4 h-4 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
@@ -132,8 +132,8 @@ const Events = () => {
                             <div className="w-16 h-16 border-2 border-blue-500/10 rounded-full" />
                             <div className="absolute inset-0 w-16 h-16 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
                         </div>
-                        <p className="mt-8 text-[10px] text-blue-500/50 font-black tracking-[0.4em] uppercase animate-pulse">
-                            Syncing Neural Modules
+                        <p className="mt-8 text-sm text-blue-500/70 font-medium tracking-widest animate-pulse">
+                            Loading events...
                         </p>
                     </motion.div>
                 ) : (
@@ -151,8 +151,8 @@ const Events = () => {
                             ))
                         ) : (
                             <div className="col-span-full py-32 text-center rounded-[3rem] bg-white/[0.02] border border-white/5 border-dashed">
-                                <p className="text-gray-500 text-xl font-bold mb-3 tracking-tight">No Events Synchronized</p>
-                                <p className="text-gray-600 text-sm max-w-sm mx-auto">The classified event database is currently empty. Check your credentials and try again later.</p>
+                                <p className="text-gray-500 text-lg font-medium mb-2">No events found</p>
+                                <p className="text-gray-600 text-sm max-w-sm mx-auto">There are no events currently scheduled. Please check back later.</p>
                             </div>
                         )}
                     </motion.div>
