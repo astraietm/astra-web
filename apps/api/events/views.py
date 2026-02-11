@@ -47,7 +47,14 @@ class RegistrationCreateView(generics.CreateAPIView):
             self.request.user.save()
         
         # Automatically set user from JWT
-        instance = serializer.save(user=self.request.user)
+        # Automatically set user from JWT and snapshot their profile
+        instance = serializer.save(
+            user=self.request.user,
+            phone_number=phone_number or getattr(self.request.user, 'phone_number', ''),
+            college=college or getattr(self.request.user, 'college', ''),
+            department=getattr(self.request.user, 'department', '') if hasattr(self.request.user, 'department') else '',
+            year_of_study=getattr(self.request.user, 'year_of_study', '') if hasattr(self.request.user, 'year_of_study') else ''
+        )
         # Send registration email with ticket
         send_registration_email(instance)
 
@@ -206,6 +213,10 @@ class CreatePaymentOrderView(APIView):
                 event=event,
                 team_name=team_name,
                 team_members=team_members,
+                phone_number=getattr(request.user, 'phone_number', ''),
+                college=getattr(request.user, 'college', ''),
+                department=getattr(request.user, 'department', '') if hasattr(request.user, 'department') else '',
+                year_of_study=getattr(request.user, 'year_of_study', '') if hasattr(request.user, 'year_of_study') else '',
                 status='PENDING'  # Will be confirmed after payment
             )
             

@@ -56,6 +56,12 @@ class Registration(models.Model):
     team_name = models.CharField(max_length=255, blank=True)
     team_members = models.TextField(blank=True, help_text="Comma separated names or JSON")
 
+    # Personal Data Snapshot
+    phone_number = models.CharField(max_length=20, blank=True, default='')
+    college = models.CharField(max_length=255, blank=True, default='')
+    department = models.CharField(max_length=100, blank=True, default='')
+    year_of_study = models.CharField(max_length=50, blank=True, default='')
+
     # Status fields
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     is_used = models.BooleanField(default=False) # Deprecated but kept for backward compat
