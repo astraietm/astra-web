@@ -21,7 +21,7 @@ services:
       - key: ALLOWED_HOSTS
         value: "*"
       - key: FORCE_SYNC
-        value: "true"
+        value: "false"
 
 databases:
   - name: astra-postgres
