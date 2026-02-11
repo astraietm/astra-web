@@ -9,9 +9,9 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ('is_registration_open', 'category', 'requires_payment')
 
 class RegistrationAdmin(admin.ModelAdmin):
-    list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'status', 'timestamp')
-    list_filter = ('status', 'event__title', 'timestamp')
-    search_fields = ('user__email', 'user__full_name', 'token', 'event__title')
+    list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'phone_number', 'college', 'department', 'year_of_study', 'team_members', 'status', 'timestamp')
+    list_filter = ('status', 'event__title', 'college', 'year_of_study', 'timestamp')
+    search_fields = ('user__email', 'user__full_name', 'phone_number', 'token', 'event__title', 'team_members')
     actions = ['export_as_csv', 'resend_confirmation_email']
 
     def resend_confirmation_email(self, request, queryset):
@@ -38,7 +38,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     def export_as_csv(self, request, queryset):
         meta = self.model._meta
         # Custom CSV export to handle ForeignKeys nicely
-        field_names = ['User Email', 'User Name', 'Event', 'Token', 'Is Used', 'Timestamp']
+        field_names = ['User Email', 'User Name', 'Event', 'Phone', 'College', 'Department', 'Year', 'Team Members', 'Status', 'Timestamp']
         
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format('registrations')
@@ -50,8 +50,12 @@ class RegistrationAdmin(admin.ModelAdmin):
                 obj.user.email,
                 obj.user.full_name,
                 obj.event.title,
-                obj.token,
-                obj.is_used,
+                obj.phone_number,
+                obj.college,
+                obj.department,
+                obj.year_of_study,
+                obj.team_members,
+                obj.status,
                 obj.timestamp
             ])
 
