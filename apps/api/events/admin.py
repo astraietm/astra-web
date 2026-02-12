@@ -4,9 +4,15 @@ import csv
 from .models import Registration, Event, Payment
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'event_date', 'venue', 'category', 'is_registration_open', 'requires_payment', 'payment_amount')
+    list_display = ('title', 'event_date', 'time', 'venue', 'category', 'is_registration_open', 'requires_payment', 'payment_amount')
     search_fields = ('title', 'venue')
     list_filter = ('is_registration_open', 'category', 'requires_payment')
+    
+    # Ensure time field is editable in admin
+    fields = ('title', 'description', 'event_date', 'time', 'duration', 'venue', 'image', 'category', 
+              'registration_start', 'registration_end', 'registration_limit', 'is_registration_open',
+              'is_team_event', 'team_size_min', 'team_size_max',
+              'requires_payment', 'payment_amount', 'prize', 'content_blocks', 'coordinators')
 
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'phone_number', 'college', 'department', 'year_of_study', 'team_members', 'status', 'timestamp')
