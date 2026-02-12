@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { 
-    Users, 
-    Calendar, 
-    Activity, 
+import {
+    Users,
+    Calendar,
+    Activity,
     ArrowUpRight,
     TrendingUp,
     TrendingDown,
@@ -40,14 +40,39 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            if (!token) {
+                console.error('No auth token available');
+                setLoading(false);
+                return;
+            }
+
             try {
-                const [regRes, eventRes] = await Promise.all([
-                    axios.get(`${API_URL}/admin-registrations/`, { headers: { Authorization: `Bearer ${token}` } }),
-                    axios.get(`${API_URL}/operations/events/`, { headers: { Authorization: `Bearer ${token}` } })
-                ]);
-                const regs = regRes.data || [];
-                const events = eventRes.data || [];
-                
+                console.log('Fetching admin dashboard data...');
+                console.log('API URL:', API_URL);
+                console.log('Token present:', !!token);
+
+                const headers = { Authorization: `Bearer ${token}` };
+
+                // Fetch registrations
+                let regs = [];
+                try {
+                    const regRes = await axios.get(`${API_URL}/admin-registrations/`, { headers });
+                    regs = regRes.data || [];
+                    console.log('Registrations fetched:', regs.length);
+                } catch (regError) {
+                    console.error('Error fetching registrations:', regError.response?.status, regError.response?.data || regError.message);
+                }
+
+                // Fetch events
+                let events = [];
+                try {
+                    const eventRes = await axios.get(`${API_URL}/operations/events/`, { headers });
+                    events = eventRes.data || [];
+                    console.log('Events fetched:', events.length);
+                } catch (eventError) {
+                    console.error('Error fetching events:', eventError.response?.status, eventError.response?.data || eventError.message);
+                }
+
                 const attended = regs.filter(r => r.is_used || r.status === 'ATTENDED').length;
                 const activeEventsCount = events.filter(e => e.is_registration_open).length;
 
@@ -57,14 +82,16 @@ const AdminDashboard = () => {
                     attendanceRate: regs.length > 0 ? Math.round((attended / regs.length) * 100) : 0,
                     recentActivity: regs.slice(0, 5)
                 });
+
+                console.log('Dashboard stats updated successfully');
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching dashboard data:', error);
+                console.error('Unexpected error in fetchData:', error);
                 setLoading(false);
             }
         };
 
-        if (token) fetchData();
+        fetchData();
     }, [token]);
 
     const statCards = [
@@ -133,10 +160,10 @@ const AdminDashboard = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                   <div className="flex flex-col items-end mr-4">
-                      <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Registry Export</span>
-                      <span className="text-[9px] font-medium text-slate-700 uppercase tracking-tighter">Authorized Personal Only</span>
-                   </div>
+                    <div className="flex flex-col items-end mr-4">
+                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Registry Export</span>
+                        <span className="text-[9px] font-medium text-slate-700 uppercase tracking-tighter">Authorized Personal Only</span>
+                    </div>
                     <button className="relative group overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-lg opacity-40 group-hover:opacity-100 transition-opacity" />
                         <div className="relative px-8 py-4 bg-blue-600 rounded-2xl flex items-center gap-3 border border-white/10 group-active:scale-95 transition-transform">
@@ -158,23 +185,22 @@ const AdminDashboard = () => {
                         className="relative group h-48"
                     >
                         <div className="absolute inset-0 bg-white/[0.02] border border-white/[0.05] rounded-[2rem] transition-all duration-500 group-hover:bg-white/[0.04] group-hover:border-white/[0.1] shadow-2xl" />
-                        <div className="absolute inset-0 rounded-[2rem] transition-opacity duration-700 opacity-0 group-hover:opacity-100" 
-                             style={{ background: `radial-gradient(400px circle at 50% 50%, ${stat.glow}, transparent 80%)` }} />
-                        
+                        <div className="absolute inset-0 rounded-[2rem] transition-opacity duration-700 opacity-0 group-hover:opacity-100"
+                            style={{ background: `radial-gradient(400px circle at 50% 50%, ${stat.glow}, transparent 80%)` }} />
+
                         <div className="relative p-8 h-full flex flex-col justify-between z-10">
                             <div className="flex items-start justify-between">
                                 <div className="p-3 bg-white/[0.03] border border-white/[0.05] rounded-xl group-hover:scale-110 group-hover:border-white/15 transition-all duration-500">
                                     <stat.icon className="w-5 h-5 text-white/40 group-hover:text-white transition-colors" strokeWidth={1.5} />
                                 </div>
-                                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] text-[9px] font-black uppercase tracking-widest ${
-                                    stat.trend === 'up' ? 'text-emerald-500' : stat.trend === 'none' ? 'text-amber-500' : 'text-red-500'
-                                }`}>
+                                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/[0.03] border border-white/[0.05] text-[9px] font-black uppercase tracking-widest ${stat.trend === 'up' ? 'text-emerald-500' : stat.trend === 'none' ? 'text-amber-500' : 'text-red-500'
+                                    }`}>
                                     {stat.trend === 'up' && <TrendingUp size={10} />}
                                     {stat.trend === 'none' && <Shield size={10} />}
                                     {stat.change}
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-2 group-hover:text-slate-400 transition-colors">{stat.title}</p>
                                 <p className="text-4xl font-black text-white uppercase tracking-tighter group-hover:scale-105 origin-left transition-transform duration-500">
@@ -202,20 +228,20 @@ const AdminDashboard = () => {
                                 <button className="px-5 py-2.5 text-[10px] font-black text-slate-600 uppercase tracking-widest hover:text-white transition-colors">Archived Logs</button>
                             </div>
                         </div>
-                        
+
                         <div className="flex-1 flex items-end justify-between gap-6 pb-4">
                             {[20, 60, 40, 95, 30, 80, 50, 90, 35, 75, 45, 100].map((height, idx) => (
                                 <div key={idx} className="flex-1 flex flex-col items-center gap-6 group/bar">
                                     <div className="relative w-full flex flex-col items-center">
-                                         <div className="absolute bottom-full mb-3 px-2 py-1 bg-white/5 border border-white/10 rounded uppercase text-[8px] font-black opacity-0 group-hover/bar:opacity-100 transition-opacity">
+                                        <div className="absolute bottom-full mb-3 px-2 py-1 bg-white/5 border border-white/10 rounded uppercase text-[8px] font-black opacity-0 group-hover/bar:opacity-100 transition-opacity">
                                             {height}%
-                                         </div>
-                                         <motion.div
+                                        </div>
+                                        <motion.div
                                             initial={{ height: 0 }}
                                             animate={{ height: `${height}%` }}
                                             transition={{ delay: idx * 0.05, duration: 1, ease: [0.19, 1, 0.22, 1] }}
                                             className="w-full max-w-[12px] min-h-[4px] rounded-full bg-gradient-to-t from-blue-600/20 via-blue-500/80 to-indigo-400 group-hover/bar:from-blue-500 transition-all shadow-[0_0_20px_rgba(37,99,235,0.2)]"
-                                         />
+                                        />
                                     </div>
                                     <div className="w-1.5 h-1.5 rounded-full bg-white/[0.05] group-hover/bar:bg-blue-500 transition-colors duration-500" />
                                 </div>
@@ -267,8 +293,8 @@ const AdminDashboard = () => {
                                 ))
                             )}
                         </div>
-                        
-                        <button 
+
+                        <button
                             onClick={() => navigate('/admin/registrations')}
                             className="mt-8 py-4 w-full bg-white/[0.02] border border-white/5 rounded-2xl text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] hover:text-white hover:bg-white/[0.05] hover:border-blue-500/30 transition-all group flex items-center justify-center gap-3"
                         >

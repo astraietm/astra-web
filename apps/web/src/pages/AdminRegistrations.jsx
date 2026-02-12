@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-    Users, 
-    CheckCircle, 
-    Clock, 
-    Search, 
-    Filter, 
-    Download, 
+import {
+    Users,
+    CheckCircle,
+    Clock,
+    Search,
+    Filter,
+    Download,
     User as UserIcon,
     ArrowUpDown,
     MoreVertical,
@@ -37,29 +37,41 @@ const AdminRegistrations = () => {
     }, [token]);
 
     const fetchRegistrations = async () => {
+        if (!token) {
+            console.error('No auth token available for registrations');
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         try {
+            console.log('Fetching registrations from:', `${API_URL}/admin-registrations/`);
+            console.log('Token present:', !!token);
+
             const response = await axios.get(`${API_URL}/admin-registrations/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
+            console.log('Registrations fetched successfully:', response.data.length);
             setRegistrations(response.data);
             setLoading(false);
         } catch (error) {
-            console.error('Error fetching registrations:', error);
+            console.error('Error fetching registrations:', error.response?.status, error.response?.data || error.message);
+            setRegistrations([]);
             setLoading(false);
         }
     };
 
     const filteredData = registrations.filter(reg => {
-        const matchesSearch = 
+        const matchesSearch =
             reg.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             reg.token?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesEvent = filterEvent === 'all' || reg.event_details.title === filterEvent;
         const isAccessed = reg.is_used || reg.status === 'ATTENDED';
-        const matchesStatus = 
-            filterStatus === 'all' || 
-            (filterStatus === 'accessed' && isAccessed) || 
+        const matchesStatus =
+            filterStatus === 'all' ||
+            (filterStatus === 'accessed' && isAccessed) ||
             (filterStatus === 'pending' && !isAccessed);
         return matchesSearch && matchesEvent && matchesStatus;
     });
@@ -102,14 +114,14 @@ const AdminRegistrations = () => {
                     </div>
                 </div>
                 <div className="flex gap-4">
-                    <button 
+                    <button
                         onClick={fetchRegistrations}
                         className="px-6 py-3 bg-white/[0.02] border border-white/10 text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-white/[0.05] hover:border-blue-500/30 transition-all flex items-center gap-2"
                     >
                         <Zap className="w-4 h-4 text-blue-500" />
                         Sync Data
                     </button>
-                    <button 
+                    <button
                         onClick={exportToCSV}
                         className="relative group overflow-hidden"
                     >
@@ -128,8 +140,8 @@ const AdminRegistrations = () => {
                     {/* Search Component */}
                     <div className="md:col-span-6 relative group/input">
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600 group-focus-within/input:text-blue-500 transition-colors z-10" />
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder="SEARCH NODE IDENTIFIER (NAME, EMAIL, TOKEN)..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -138,7 +150,7 @@ const AdminRegistrations = () => {
                     </div>
                     {/* Event Filter */}
                     <div className="md:col-span-3">
-                        <select 
+                        <select
                             value={filterEvent}
                             onChange={(e) => setFilterEvent(e.target.value)}
                             className="w-full bg-black/40 border border-white/[0.03] rounded-[2rem] py-4 px-8 text-[11px] font-black tracking-widest text-slate-300 focus:outline-none focus:border-blue-500/30 appearance-none cursor-pointer uppercase"
@@ -151,7 +163,7 @@ const AdminRegistrations = () => {
                     </div>
                     {/* Status Filter */}
                     <div className="md:col-span-3">
-                        <select 
+                        <select
                             value={filterStatus}
                             onChange={(e) => setFilterStatus(e.target.value)}
                             className="w-full bg-black/40 border border-white/[0.03] rounded-[2rem] py-4 px-8 text-[11px] font-black tracking-widest text-slate-300 focus:outline-none focus:border-blue-500/30 appearance-none cursor-pointer uppercase"
@@ -188,7 +200,7 @@ const AdminRegistrations = () => {
                                 ))
                             ) : filteredData.length > 0 ? (
                                 filteredData.map((reg, idx) => (
-                                    <motion.tr 
+                                    <motion.tr
                                         key={reg.id}
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
