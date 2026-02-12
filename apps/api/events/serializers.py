@@ -39,6 +39,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user', 'timestamp', 'updated_at', 'token', 'qr_code', 'is_used', 'status']
 
     def get_qr_code(self, obj):
-        if obj.token:
+        # Only generate QR code for valid tokens (not PENDING/CANCELLED placeholders)
+        if obj.token and not obj.token.startswith('PENDING_') and not obj.token.startswith('CANCELLED_'):
             return generate_qr_code(obj.token, color="#000000")
         return None

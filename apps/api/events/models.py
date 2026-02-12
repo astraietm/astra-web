@@ -50,7 +50,7 @@ class Registration(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
     timestamp = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    token = models.CharField(max_length=64, unique=True, blank=True, null=True, db_index=True)
+    token = models.CharField(max_length=64, unique=True, blank=True, db_index=True)
     
     # Team Data
     team_name = models.CharField(max_length=255, blank=True)
@@ -67,23 +67,30 @@ class Registration(models.Model):
     is_used = models.BooleanField(default=False) # Deprecated but kept for backward compat
 
     def save(self, *args, **kwargs):
-        # Generate token ONLY if the registration is confirmed (REGISTERED) or ATTENDED
-        # This prevents PENDING records from having a valid QR code/ticket
+        # Always generate a token to avoid unique constraint violations
+        # PENDING/CANCELLED get a prefixed placeholder token (not used for QR)
+        # REGISTERED/ATTENDED get a proper token for QR code generation
         
-        # Treat empty string as no token (to avoid unique constraint violations)
-        if self.token == '':
-            self.token = None
+        if not self.token or self.token == '':
+            # Generate unique token based on status
+            prefix = ''
+            if self.status == 'PENDING':
+                prefix = 'PENDING_'
+            elif self.status == 'CANCELLED':
+                prefix = 'CANCELLED_'
             
-        if not self.token and self.status in ['REGISTERED', 'ATTENDED']:
-            # Generate unique token
+            while True:
+                token = f"{prefix}{secrets.token_urlsafe(32)}"
+                if not Registration.objects.filter(token=token).exists():
+                    self.token = token
+                    break
+        elif self.status in ['REGISTERED', 'ATTENDED'] and (self.token.startswith('PENDING_') or self.token.startswith('CANCELLED_')):
+            # Upgrade from placeholder to real token when status changes to REGISTERED/ATTENDED
             while True:
                 token = secrets.token_urlsafe(32)
                 if not Registration.objects.filter(token=token).exists():
                     self.token = token
                     break
-        elif self.status in ['PENDING', 'CANCELLED']:
-            # Ensure PENDING/CANCELLED registrations have no token to avoid unique constraint issues
-            self.token = None
             
         super().save(*args, **kwargs)
 
