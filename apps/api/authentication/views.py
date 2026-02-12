@@ -126,3 +126,9 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+class AdminUsersView(generics.ListAPIView):
+    """Admin endpoint to fetch all registered users"""
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
+    queryset = User.objects.all().order_by('-date_joined')

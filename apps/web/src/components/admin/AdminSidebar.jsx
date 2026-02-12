@@ -3,14 +3,14 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { 
-    LayoutDashboard, 
-    Calendar, 
-    Users, 
-    Image as ImageIcon, 
-    QrCode, 
-    Mail, 
-    FileText, 
+import {
+    LayoutDashboard,
+    Calendar,
+    Users,
+    Image as ImageIcon,
+    QrCode,
+    Mail,
+    FileText,
     Settings,
     Shield,
     ChevronLeft,
@@ -25,27 +25,35 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
     const navigate = useNavigate();
 
     let sections = [
-        { group: "Operations", items: [
-            { to: "/admin", icon: LayoutDashboard, label: "Terminal", end: true },
-            { to: "/admin/events", icon: Calendar, label: "Event Registry" },
-            { to: "/admin/registrations", icon: Users, label: "Users & Access" },
-        ]},
-        { group: "Resources", items: [
-            { to: "/admin/gallery", icon: ImageIcon, label: "Media Assets" },
-        ]},
-        { group: "Infrastructure", items: [
-            { to: "/admin/scanner", icon: QrCode, label: "Access Scan" },
-            { to: "/admin/logs", icon: Activity, label: "System Logs" },
-            { to: "/admin/settings", icon: Settings, label: "OS Settings" },
-        ]}
+        {
+            group: "Operations", items: [
+                { to: "/admin", icon: LayoutDashboard, label: "Terminal", end: true },
+                { to: "/admin/events", icon: Calendar, label: "Event Registry" },
+                { to: "/admin/users", icon: Users, label: "Users & Access" },
+            ]
+        },
+        {
+            group: "Resources", items: [
+                { to: "/admin/gallery", icon: ImageIcon, label: "Media Assets" },
+            ]
+        },
+        {
+            group: "Infrastructure", items: [
+                { to: "/admin/scanner", icon: QrCode, label: "Access Scan" },
+                { to: "/admin/logs", icon: Activity, label: "System Logs" },
+                { to: "/admin/settings", icon: Settings, label: "OS Settings" },
+            ]
+        }
     ];
 
     if (user?.role === 'VOLUNTEER') {
         sections = [
-            { group: "Volunteer Access", items: [
-                { to: "/admin/scanner", icon: QrCode, label: "Scanner" },
-                { to: "/admin/registrations", icon: Users, label: "Registrations" },
-            ]}
+            {
+                group: "Volunteer Access", items: [
+                    { to: "/admin/scanner", icon: QrCode, label: "Scanner" },
+                    { to: "/admin/registrations", icon: Users, label: "Registrations" },
+                ]
+            }
         ];
     }
 
@@ -66,7 +74,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
 
             <motion.aside
                 initial={false}
-                animate={{ 
+                animate={{
                     width: isCollapsed ? 88 : 300,
                     x: isMobileOpen ? 0 : (typeof window !== 'undefined' && window.innerWidth < 1024 ? -300 : 0)
                 }}
@@ -77,7 +85,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                 {/* Branding Section */}
                 <div className="h-24 flex items-center px-6 border-b border-white/[0.04] shrink-0 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <button 
+                    <button
                         onClick={() => navigate('/')}
                         className={`flex items-center gap-4 w-full relative z-10 transition-transform duration-300 ${isCollapsed ? 'justify-center' : ''}`}
                     >
@@ -87,7 +95,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                             </div>
                             <div className="absolute inset-0 rounded-2xl bg-blue-600/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                         </div>
-                        
+
                         {!isCollapsed && (
                             <div className="flex flex-col text-left">
                                 <span className="font-black text-white tracking-widest text-lg uppercase">
@@ -120,8 +128,8 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                                         onClick={() => setIsMobileOpen(false)}
                                         className={({ isActive }) => `
                                             flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative
-                                            ${isActive 
-                                                ? 'bg-blue-600/[0.08] text-white shadow-[inset_0_0_20px_rgba(37,99,235,0.05)] border border-blue-500/10' 
+                                            ${isActive
+                                                ? 'bg-blue-600/[0.08] text-white shadow-[inset_0_0_20px_rgba(37,99,235,0.05)] border border-blue-500/10'
                                                 : 'text-slate-500 hover:text-slate-200 hover:bg-white/[0.03] border border-transparent'}
                                         `}
                                     >
@@ -165,7 +173,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                                 )}
                             </div>
                         </div>
-                        
+
                         {!isCollapsed && (
                             <div className="flex-1 text-left overflow-hidden">
                                 <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] leading-none mb-1.5">Authorized User</p>
@@ -179,21 +187,21 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                             </div>
                         )}
                     </button>
-                    
+
                     {!isCollapsed && (
                         <div className="mt-4 space-y-2">
-                             <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.2em] text-slate-700">
+                            <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-[0.2em] text-slate-700">
                                 <span>Clearance level</span>
                                 <span className="text-blue-500/80">LVL_05 ACTIVE</span>
-                             </div>
-                             <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                <motion.div 
+                            </div>
+                            <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                <motion.div
                                     className="h-full bg-gradient-to-r from-blue-600 to-indigo-500"
                                     initial={{ width: 0 }}
                                     animate={{ width: "92%" }}
                                     transition={{ duration: 2.5, ease: "circOut" }}
                                 />
-                             </div>
+                            </div>
                         </div>
                     )}
                 </div>

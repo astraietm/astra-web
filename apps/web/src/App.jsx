@@ -28,6 +28,7 @@ const ShippingPolicy = React.lazy(() => import('./pages/ShippingPolicy'));
 
 // Admin Lazy Loading
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
+const AdminUsers = React.lazy(() => import('./pages/AdminUsers'));
 const AdminRegistrations = React.lazy(() => import('./pages/AdminRegistrations'));
 const AdminEvents = React.lazy(() => import('./pages/AdminEvents'));
 const AdminGallery = React.lazy(() => import('./pages/AdminGallery'));
@@ -83,6 +84,7 @@ function App() {
                 {/* ADMIN ROUTES */}
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<AdminDashboard />} />
+                  <Route path="users" element={<AdminUsers />} />
                   <Route path="registrations" element={<AdminRegistrations />} />
                   <Route path="events" element={<AdminEvents />} />
                   <Route path="gallery" element={<AdminGallery />} />
