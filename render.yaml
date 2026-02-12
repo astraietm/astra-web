@@ -10,8 +10,6 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
-      - key: DATABASE_URL
-        sync: false  # This prevents auto-sync from Render DB
       - key: SECRET_KEY
         generateValue: true
       - key: DEBUG
