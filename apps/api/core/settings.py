@@ -75,48 +75,56 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 # Get DATABASE_URL from Render environment variables
+# ==============================
+# Database Configuration
+# ==============================
+
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
     from urllib.parse import urlparse
+
     parsed = urlparse(DATABASE_URL)
-    
-    # Debug output
-    print(f"\n{'='*60}")
-    print(f"DATABASE CONNECTION DEBUG")
+
+    print("\n" + "=" * 60)
+    print("DATABASE CONNECTION DEBUG")
     print(f"Host: {parsed.hostname}")
     print(f"Port: {parsed.port}")
     print(f"Database: {parsed.path.lstrip('/')}")
     print(f"Username: {parsed.username}")
     print(f"Password length: {len(parsed.password) if parsed.password else 0} chars")
-    print(f"{'='*60}\n")
-    
-    # Parse the database URL from Render
+    print("=" * 60 + "\n")
+
     db_config = dj_database_url.parse(
         DATABASE_URL,
         conn_max_age=600,
         ssl_require=True
     )
-    
-    # Ensure OPTIONS dict exists and add sslmode
-    if 'OPTIONS' not in db_config:
-        db_config['OPTIONS'] = {}
-    db_config['OPTIONS']['sslmode'] = 'require'
-    
-    DATABASES = {'default': db_config}
-else:
-    # Fallback for local development
-    print("\n" + "!"*60)
-    print("WARNING: NO DATABASE_URL FOUND. USING SQLITE FALLBACK.")
-    print("Set DATABASE_URL in Render Dashboard for production.")
-    print("!"*60 + "\n")
+
+    # Ensure OPTIONS exists
+    if "OPTIONS" not in db_config:
+        db_config["OPTIONS"] = {}
+
+    # Required for Supabase pooler
+    db_config["OPTIONS"]["sslmode"] = "require"
+    db_config["DISABLE_SERVER_SIDE_CURSORS"] = True
+
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+        "default": db_config
     }
 
+else:
+    print("\n" + "!" * 60)
+    print("WARNING: NO DATABASE_URL FOUND. USING SQLITE FALLBACK.")
+    print("Set DATABASE_URL in Render Dashboard for production.")
+    print("!" * 60 + "\n")
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator' },
     { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator' },
