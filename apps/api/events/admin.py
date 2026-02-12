@@ -16,7 +16,7 @@ class EventAdmin(admin.ModelAdmin):
 
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('get_user_email', 'get_user_name', 'get_event_title', 'phone_number', 'college', 'department', 'year_of_study', 'team_members', 'status', 'timestamp')
-    list_filter = ('status', 'event__title', 'college', 'year_of_study', 'timestamp')
+    list_filter = ('status', 'event', 'college', 'year_of_study', 'timestamp')
     search_fields = ('user__email', 'user__full_name', 'phone_number', 'token', 'event__title', 'team_members')
     actions = ['export_as_csv', 'resend_confirmation_email']
 
@@ -70,11 +70,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     export_as_csv.short_description = "Export Selected to CSV"
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        # Default to showing confirmed ones only
-        if 'status__exact' in request.GET:
-            return qs
-        return qs.exclude(status='PENDING')
+        return super().get_queryset(request)
 
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('razorpay_order_id', 'get_user_email', 'get_event_title', 'amount', 'status', 'created_at')
