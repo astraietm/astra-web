@@ -74,35 +74,41 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# Prioritize EXTERNAL_DATABASE_URL or SUPABASE_URL to bypass Render's auto-injected (and often wrong) DATABASE_URL
-RAW_DB_URL = os.environ.get('EXTERNAL_DATABASE_URL') or os.environ.get('SUPABASE_URL')
+# Get DATABASE_URL from Render environment variables
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
-# If neither is set, check if the standard one is actually safe to use
-if not RAW_DB_URL:
-    db_url = os.environ.get('DATABASE_URL')
-    if db_url and "dpg-d5ekohje5dus73bv63og-a" not in db_url:
-        RAW_DB_URL = db_url
-
-if RAW_DB_URL:
+if DATABASE_URL:
     from urllib.parse import urlparse
-    parsed = urlparse(RAW_DB_URL)
+    parsed = urlparse(DATABASE_URL)
+    
+    # Debug output
     print(f"\n{'='*60}")
-    print(f"DATABASE OVERRIDE ACTIVE")
+    print(f"DATABASE CONNECTION DEBUG")
     print(f"Host: {parsed.hostname}")
+    print(f"Port: {parsed.port}")
+    print(f"Database: {parsed.path.lstrip('/')}")
+    print(f"Username: {parsed.username}")
+    print(f"Password length: {len(parsed.password) if parsed.password else 0} chars")
     print(f"{'='*60}\n")
     
-    # Use parse() directly 
-    DATABASES = {
-        'default': dj_database_url.parse(
-            RAW_DB_URL,
-            conn_max_age=600,
-            ssl_require=True
-        )
-    }
+    # Parse the database URL from Render
+    db_config = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        ssl_require=True
+    )
+    
+    # Ensure OPTIONS dict exists and add sslmode
+    if 'OPTIONS' not in db_config:
+        db_config['OPTIONS'] = {}
+    db_config['OPTIONS']['sslmode'] = 'require'
+    
+    DATABASES = {'default': db_config}
 else:
+    # Fallback for local development
     print("\n" + "!"*60)
-    print("WARNING: NO SUPABASE URL FOUND. USING SQLITE FALLBACK FOR BUILD.")
-    print("Please set SUPABASE_URL in Render Dashboard.")
+    print("WARNING: NO DATABASE_URL FOUND. USING SQLITE FALLBACK.")
+    print("Set DATABASE_URL in Render Dashboard for production.")
     print("!"*60 + "\n")
     DATABASES = {
         'default': {
