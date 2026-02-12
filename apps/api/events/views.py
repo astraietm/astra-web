@@ -103,7 +103,11 @@ class MyRegistrationsView(generics.ListAPIView):
 
     def get_queryset(self):
         # Only show registrations that are confirmed (Paid Success OR Free Event)
-        return Registration.objects.filter(user=self.request.user).filter(
+        # Optimize with select_related to prevent N+1 queries
+        return Registration.objects.select_related(
+            'event', 
+            'payment'
+        ).filter(user=self.request.user).filter(
             Q(event__requires_payment=False) | 
             Q(payment__status='SUCCESS')
         ).order_by('-timestamp')
@@ -145,9 +149,17 @@ class VerifyTokenView(APIView):
         }, status=status.HTTP_200_OK)
 
 class AdminRegistrationsView(generics.ListAPIView):
-    queryset = Registration.objects.all().order_by('-timestamp')
     serializer_class = RegistrationSerializer
     permission_classes = [permissions.IsAdminUser] # Restrict to staff/admins
+    
+    def get_queryset(self):
+        # Optimize with select_related to prevent N+1 queries
+        # This fetches user, event, and payment data in a single query
+        return Registration.objects.select_related(
+            'user', 
+            'event', 
+            'payment'
+        ).order_by('-timestamp')
 
 class AdminEventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('-created_at')

@@ -93,7 +93,7 @@ export function EventTracks() {
                     />
                   </div>
 
-                  <h3 className="text-2xl font-bold text-white uppercase leading-tight tracking-wider mb-2 group-hover:text-white transition-colors duration-300">
+                  <h3 className="text-2xl font-bold text-white leading-tight tracking-tight mb-2 group-hover:text-white transition-colors duration-300">
                     {event.title}
                   </h3>
                   <p className="text-gray-500 text-sm font-medium group-hover:text-gray-400 transition-colors duration-300">
