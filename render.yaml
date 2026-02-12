@@ -6,7 +6,7 @@ services:
     region: singapore
     rootDir: apps/api
     buildCommand: "./build.sh"
-    startCommand: "python wait_for_db.py && python manage.py migrate && gunicorn core.wsgi:application"
+    startCommand: "python manage.py migrate && gunicorn core.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
@@ -18,5 +18,3 @@ services:
         value: "*"
       - key: FORCE_SYNC
         value: "false"
-      # IMPORTANT: Set DATABASE_URL in the Render Dashboard -> Environment section.
-      # This file will no longer try to manage it to prevent conflicts with old internal DBs.
