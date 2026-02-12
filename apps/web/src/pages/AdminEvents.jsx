@@ -64,9 +64,11 @@ const AdminEvents = () => {
         requires_payment: false,
         is_team_event: false,
         team_size_min: 1,
-        team_size_max: 1
+        team_size_max: 1,
+        content_blocks: []
     };
     const [formData, setFormData] = useState(initialFormState);
+    const [jsonError, setJsonError] = useState(null);
     const [currentEventId, setCurrentEventId] = useState(null);
 
     useEffect(() => {
@@ -123,7 +125,8 @@ const AdminEvents = () => {
             requires_payment: event.requires_payment || false,
             is_team_event: event.is_team_event || false,
             team_size_min: event.team_size_min || 1,
-            team_size_max: event.team_size_max || 1
+            team_size_max: event.team_size_max || 1,
+            content_blocks: event.content_blocks || []
         });
         setIsEditing(true);
         setShowForm(true);
@@ -133,7 +136,19 @@ const AdminEvents = () => {
         setCurrentEventId(null);
         setFormData(initialFormState);
         setIsEditing(false);
+        setJsonError(null);
         setShowForm(true);
+    };
+
+    const handleJsonChange = (e) => {
+        const val = e.target.value;
+        try {
+            const parsed = JSON.parse(val);
+            setFormData(prev => ({ ...prev, content_blocks: parsed }));
+            setJsonError(null);
+        } catch (err) {
+            setJsonError("INVALID_JSON_STRUCTURE");
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -399,6 +414,33 @@ const AdminEvents = () => {
                                                     </div>
                                                 </motion.div>
                                             )}
+
+                                            <div className="col-span-2 space-y-4">
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex flex-col">
+                                                        <h3 className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Structured Intelligence</h3>
+                                                        <p className="text-[9px] font-bold text-slate-600 uppercase mt-1">JSON Content Matrix (Blocks)</p>
+                                                    </div>
+                                                    {jsonError && (
+                                                        <div className="flex items-center gap-2 text-rose-500">
+                                                            <AlertTriangle size={12} />
+                                                            <span className="text-[9px] font-black uppercase tracking-widest">{jsonError}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="relative group/json">
+                                                    <div className="absolute top-4 right-4 flex items-center gap-2 z-10 opacity-0 group-hover/json:opacity-100 transition-opacity">
+                                                        <div className="px-2 py-1 bg-black/60 border border-white/10 rounded text-[8px] font-black text-slate-500 uppercase">application/json</div>
+                                                    </div>
+                                                    <textarea
+                                                        defaultValue={JSON.stringify(formData.content_blocks, null, 2)}
+                                                        onChange={handleJsonChange}
+                                                        rows={10}
+                                                        className={`w-full bg-black/40 border rounded-[2rem] p-8 text-blue-400 font-mono text-[11px] leading-relaxed focus:outline-none transition-all ${jsonError ? 'border-rose-500/50' : 'border-white/[0.04] focus:border-blue-500/30'}`}
+                                                        placeholder='[{"type":"mission","title":"Alpha","content":"..."}]'
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>

@@ -6,7 +6,8 @@ from .views import (
     RegistrationCreateView, 
     MyRegistrationsView, 
     VerifyTokenView,
-    AdminRegistrationsView,
+    AdminRegistrationViewSet,
+    AdminPaymentListView,
     AdminEventViewSet,
     CreatePaymentOrderView,
     VerifyPaymentView,
@@ -15,6 +16,7 @@ from .views import (
 
 router = DefaultRouter()
 router.register(r'operations/events', AdminEventViewSet, basename='admin-events')
+router.register(r'operations/registrations', AdminRegistrationViewSet, basename='admin-registrations')
 
 urlpatterns = [
     path('events/', EventListView.as_view(), name='event-list'),
@@ -22,7 +24,7 @@ urlpatterns = [
     path('register/', RegistrationCreateView.as_view(), name='register'),
     path('my-registrations/', MyRegistrationsView.as_view(), name='my-registrations'),
     path('verify/<str:token>/', VerifyTokenView.as_view(), name='verify'),
-    path('admin-registrations/', AdminRegistrationsView.as_view(), name='admin-registrations'),
+    path('operations/payments/', AdminPaymentListView.as_view(), name='admin-payments'),
     path('payment/create-order/', CreatePaymentOrderView.as_view(), name='create-payment-order'),
     path('payment/verify/', VerifyPaymentView.as_view(), name='verify-payment'),
     path('payment/abort/', AbortPaymentView.as_view(), name='abort-payment'),

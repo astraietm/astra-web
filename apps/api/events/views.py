@@ -148,18 +148,45 @@ class VerifyTokenView(APIView):
             "registrant": RegistrationSerializer(registration).data
         }, status=status.HTTP_200_OK)
 
-class AdminRegistrationsView(generics.ListAPIView):
+class AdminRegistrationViewSet(viewsets.ModelViewSet):
     serializer_class = RegistrationSerializer
-    permission_classes = [permissions.IsAdminUser] # Restrict to staff/admins
+    permission_classes = [permissions.IsAdminUser]
     
     def get_queryset(self):
-        # Optimize with select_related to prevent N+1 queries
-        # This fetches user, event, and payment data in a single query
         return Registration.objects.select_related(
             'user', 
             'event', 
             'payment'
         ).order_by('-timestamp')
+
+    def perform_update(self, serializer):
+        old_instance = self.get_object()
+        new_status = self.request.data.get('status')
+        instance = serializer.save()
+        
+        # Log status change if it happened
+        if old_instance.status != instance.status:
+            logger.info(f"Admin {self.request.user.email} changed registration {instance.id} status from {old_instance.status} to {instance.status}")
+
+class AdminPaymentListView(generics.ListAPIView):
+    """View all payment transactions - Admin Only"""
+    permission_classes = [permissions.IsAdminUser]
+    
+    def get(self, request):
+        payments = Payment.objects.select_related('registration__user', 'registration__event').all().order_by('-created_at')
+        data = []
+        for p in payments:
+            data.append({
+                'id': p.id,
+                'razorpay_order_id': p.razorpay_order_id,
+                'razorpay_payment_id': p.razorpay_payment_id,
+                'amount': p.amount,
+                'status': p.status,
+                'user_email': p.registration.user.email,
+                'event_title': p.registration.event.title,
+                'created_at': p.created_at
+            })
+        return Response(data)
 
 class AdminEventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('-created_at')

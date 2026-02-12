@@ -29,7 +29,9 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
             group: "Operations", items: [
                 { to: "/admin", icon: LayoutDashboard, label: "Terminal", end: true },
                 { to: "/admin/events", icon: Calendar, label: "Event Registry" },
-                { to: "/admin/users", icon: Users, label: "Users & Access" },
+                { to: "/admin/registrations", icon: Users, label: "Node Access" },
+                { to: "/admin/payments", icon: CreditCard, label: "Credit Ledger" },
+                { to: "/admin/users", icon: Shield, label: "Personnel Registry" },
             ]
         },
         {
