@@ -17,8 +17,7 @@ import {
     ChevronRight,
     Activity,
     ArrowLeft,
-    Command,
-    CreditCard
+    Command
 } from 'lucide-react';
 
 const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
@@ -31,7 +30,6 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
                 { to: "/admin", icon: LayoutDashboard, label: "Terminal", end: true },
                 { to: "/admin/events", icon: Calendar, label: "Event Registry" },
                 { to: "/admin/registrations", icon: Users, label: "Node Access" },
-                { to: "/admin/payments", icon: CreditCard, label: "Credit Ledger" },
                 { to: "/admin/users", icon: Shield, label: "Personnel Registry" },
             ]
         },

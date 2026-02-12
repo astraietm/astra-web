@@ -168,25 +168,6 @@ class AdminRegistrationViewSet(viewsets.ModelViewSet):
         if old_instance.status != instance.status:
             logger.info(f"Admin {self.request.user.email} changed registration {instance.id} status from {old_instance.status} to {instance.status}")
 
-class AdminPaymentListView(generics.ListAPIView):
-    """View all payment transactions - Admin Only"""
-    permission_classes = [permissions.IsAdminUser]
-    
-    def get(self, request):
-        payments = Payment.objects.select_related('registration__user', 'registration__event').all().order_by('-created_at')
-        data = []
-        for p in payments:
-            data.append({
-                'id': p.id,
-                'razorpay_order_id': p.razorpay_order_id,
-                'razorpay_payment_id': p.razorpay_payment_id,
-                'amount': p.amount,
-                'status': p.status,
-                'user_email': p.registration.user.email,
-                'event_title': p.registration.event.title,
-                'created_at': p.created_at
-            })
-        return Response(data)
 
 class AdminEventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('-created_at')
