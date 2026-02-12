@@ -17,7 +17,8 @@ import {
     ChevronRight,
     Activity,
     ArrowLeft,
-    Command
+    Command,
+    CreditCard
 } from 'lucide-react';
 
 const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
