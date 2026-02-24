@@ -10,7 +10,8 @@ from .views import (
     AdminEventViewSet,
     CreatePaymentOrderView,
     VerifyPaymentView,
-    ClearRegistrationsView
+    ClearRegistrationsView,
+    SyncEventsView
 )
 
 router = DefaultRouter()
@@ -26,4 +27,5 @@ urlpatterns = [
     path('payment/create-order/', CreatePaymentOrderView.as_view(), name='create-payment-order'),
     path('payment/verify/', VerifyPaymentView.as_view(), name='verify-payment'),
     path('admin-registrations/clear/', ClearRegistrationsView.as_view(), name='clear-registrations'),
+    path('operations/sync-events/', SyncEventsView.as_view(), name='sync-events'),
 ] + router.urls
