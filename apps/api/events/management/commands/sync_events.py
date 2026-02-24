@@ -234,7 +234,7 @@ class Command(BaseCommand):
                 "payment_amount": 10.00,
                 "registration_limit": 50,
                 "is_team_event": False,
-                "event_date": timezone.make_aware(datetime(2026, 2, 11, 15, 0)),
+                "event_date": timezone.make_aware(datetime(2026, 2, 26, 15, 0)),
                 "time": "03:00 PM",
                 "duration": "1 Hour",
                 "prize": "₹100",
