@@ -72,6 +72,7 @@ const useRazorpayPayment = () => {
             }
 
             console.log('API Response Data:', data);
+            console.log('Razorpay Key starts with:', data.key_id ? data.key_id.substring(0, 8) : 'MISSING');
 
             if (!response.ok) {
                 console.error('Payment order creation failed:', data);
@@ -89,6 +90,10 @@ const useRazorpayPayment = () => {
                 order_id: data.order_id,
                 handler: async function (response) {
                     console.log('Razorpay payment successful, verifying...', response);
+                    
+                    // Add a tiny delay and feedback
+                    onFailure('Processing payment verification... Don\'t close the page.');
+                    
                     // Verify payment on backend
                     try {
                         const verifyResponse = await fetch(`${import.meta.env.VITE_API_URL}/payment/verify/`, {
@@ -128,26 +133,33 @@ const useRazorpayPayment = () => {
                 },
                 modal: {
                     ondismiss: function () {
+                        console.log('User closed Razorpay modal');
                         onFailure('Payment cancelled by user');
                     }
+                },
+                // Add more robust retry logic
+                retry: {
+                    enabled: true,
+                    max_count: 3
                 }
             };
 
             const razorpay = new window.Razorpay(options);
 
             razorpay.on('payment.failed', function (response) {
-                console.error('Payment failed:', response.error);
-                onFailure(response.error.description || 'Payment failed. Please try again.');
+                console.error('Payment failed in Razorpay UI:', response.error);
+                onFailure(`Payment Failed: ${response.error.description}. Code: ${response.error.code}`);
             });
 
+            console.log('Opening Razorpay modal...');
             razorpay.open();
 
         } catch (error) {
-            console.error('Payment Error:', error);
+            console.error('Payment Error caught in catch block:', error);
             const isBrave = (navigator.brave && await navigator.brave.isBrave()) || false;
             let errorMsg = 'Payment initialization failed: ' + error.message;
             if (isBrave) {
-                errorMsg = 'Payment blocked by browser. Please disable Brave Shields for this site to complete registration.';
+                errorMsg = 'Payment blocked by browser. Please disable Brave Shields/Adblockers for this site to complete registration.';
             } else if (error.message.includes('fetch')) {
                 errorMsg = 'Network error during payment setup. Check your internet or disable Adblockers.';
             }
