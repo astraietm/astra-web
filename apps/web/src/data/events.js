@@ -481,6 +481,37 @@ const eventsData = [
                 ]
             }
         ]
+    },
+    {
+        id: 1004,
+        title: "Paper Toss",
+        description: "Precision and aim. Simple yet challenging.",
+        long_description: "A classic test of focus and motor skills. Can you land the crumpled paper in the bin from varying distances? Compete against others in this high-tension, low-tech challenge of accuracy.",
+        date: "2026-02-11T15:00:00",
+        event_date: "2026-02-11",
+        time: "03:00 PM",
+        venue: "Front Porch",
+        image: "https://images.unsplash.com/photo-1590402485294-219600ad9550?auto=format&fit=crop&q=80&w=2070",
+        duration: "1 Hour",
+        is_registration_open: true,
+        is_paid: true,
+        fee: "₹10",
+        category: "Fun",
+        is_team_event: false,
+        max_participation: 50,
+        prize: "1st: ₹100",
+        coordinators: [],
+        content_blocks: [
+            {
+                title: "Rules",
+                list: [
+                    "Individual participation",
+                    "Three attempts per distance level",
+                    "The distance increases after each successful toss",
+                    "In case of a tie, a speed round will be held"
+                ]
+            }
+        ]
     }
 ];
 

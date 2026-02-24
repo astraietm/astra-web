@@ -223,6 +223,24 @@ class Command(BaseCommand):
                 "content_blocks": [],
                 "coordinators": [],
                 "image": "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=2070"
+            },
+            {
+                "id": 1004,
+                "title": "Paper Toss",
+                "description": "Precision and aim. Simple yet challenging paper toss competition.",
+                "venue": "Front Porch",
+                "category": "Fun",
+                "requires_payment": True,
+                "payment_amount": 10.00,
+                "registration_limit": 50,
+                "is_team_event": False,
+                "event_date": timezone.make_aware(datetime(2026, 2, 11, 15, 0)),
+                "time": "03:00 PM",
+                "duration": "1 Hour",
+                "prize": "₹100",
+                "content_blocks": [],
+                "coordinators": [],
+                "image": "https://images.unsplash.com/photo-1590402485294-219600ad9550?auto=format&fit=crop&q=80&w=2070"
             }
         ]
 
