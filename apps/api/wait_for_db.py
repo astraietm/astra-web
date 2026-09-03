@@ -46,7 +46,11 @@ def wait_for_db():
             print("Database is UP!", flush=True)
             return
         except Exception as e:
-            print(f"Database sync... {i+1}/{max_retries} - {e}", flush=True)
+            err_str = str(e)
+            print(f"Database sync... {i+1}/{max_retries} - {err_str}", flush=True)
+            if "tenant/user" in err_str and "not found" in err_str:
+                print("⚠️  [SUPABASE NOTICE] Tenant/User not found. Your Supabase project may be PAUSED.", flush=True)
+                print("👉 Please log into https://supabase.com/dashboard and click 'Restore project' / 'Resume', or check ASTRA_DB_URL on Render.", flush=True)
             time.sleep(2)
     
     print("Proceeding anyway, let's hope for the best...", flush=True)
