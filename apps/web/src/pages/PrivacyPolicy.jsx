@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Lock, Eye, Database, Cookie, Share2, Mail } from 'lucide-react';
 
 const PrivacyPolicy = () => {

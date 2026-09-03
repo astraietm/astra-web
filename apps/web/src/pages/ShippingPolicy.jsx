@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Truck, Mail, Clock, AlertCircle } from 'lucide-react';
 
 const ShippingPolicy = () => {

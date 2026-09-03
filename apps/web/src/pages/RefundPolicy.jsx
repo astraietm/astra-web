@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { RefreshCcw, CalendarX, CheckCircle2, XCircle } from 'lucide-react';
 
 const RefundPolicy = () => {

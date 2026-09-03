@@ -22,8 +22,9 @@ const KPICard = ({ title, value, icon: Icon, trend, trendValue, isPrimary = fals
     const isNumber = typeof value === 'number' || (typeof value === 'string' && !isNaN(parseFloat(value)));
     const numericValue = isNumber ? (typeof value === 'number' ? value : parseFloat(value)) : 0;
     
-    // We only animate if it's a number.
-    const displayValue = isNumber ? useCountUp(numericValue) : value;
+    // Call hook unconditionally to adhere to React Rules of Hooks
+    const animatedNumber = useCountUp(numericValue);
+    const displayValue = isNumber ? animatedNumber : value;
 
     if (isLoading) {
         return (

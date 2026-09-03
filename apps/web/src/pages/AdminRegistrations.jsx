@@ -26,23 +26,23 @@ const AdminRegistrations = () => {
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
-    useEffect(() => {
-        fetchRegistrations();
-    }, [token]);
-
     const fetchRegistrations = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${API_URL}/admin-registrations/`, {
+            const res = await axios.get(`${API_URL}/events/admin/registrations/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setRegistrations(response.data);
-            setLoading(false);
+            setRegistrations(res.data);
         } catch (error) {
-            console.error('Error fetching registrations:', error);
+            console.error("Failed to fetch registrations", error);
+        } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchRegistrations();
+    }, [token]);
 
     const handleClearAll = async () => {
         if (!window.confirm("ARE YOU SURE? This will DELETE ALL REGISTRATIONS from the database. This action cannot be undone.")) return;
