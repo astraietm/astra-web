@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { cn } from '../../utils/cn';
+import { cn } from '../../lib/utils';
 
 /**
  * Spotlight Effect Component

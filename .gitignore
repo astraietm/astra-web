@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+**/node_modules/
 .pnp
 .pnp.js
 
@@ -9,20 +10,23 @@ coverage/
 
 # Build outputs
 dist/
+**/dist/
 build/
 *.egg-info/
 
 # Environment variables
-
+.env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.env.*
 !.env.example
+!.env.*.example
 
 # Python
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -34,6 +38,7 @@ NOSONAR
 
 # Database
 *.sqlite3
+**/db.sqlite3
 db.sqlite3
 
 # Logs
