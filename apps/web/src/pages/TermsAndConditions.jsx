@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { FileText, Shield, Users, CreditCard, Scale, AlertOctagon } from 'lucide-react';
 
 const TermsAndConditions = () => {
