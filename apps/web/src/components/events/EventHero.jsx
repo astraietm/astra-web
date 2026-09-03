@@ -47,16 +47,6 @@ const EventHero = () => {
                 style={{ y, opacity, scale }}
                 className="relative z-10 text-center px-4 max-w-5xl mx-auto"
             >
-                {/* Luxury Label */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="inline-flex items-center gap-2.5 px-4 py-2 mb-10 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-xl shadow-[0_0_15px_rgba(59,130,246,0.1)]"
-                >
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
-                    <span className="text-[10px] font-medium tracking-widest text-blue-400">Innovation Hub 2026</span>
-                </motion.div>
 
                 {/* Precision Typography Title */}
                 <motion.h1 
