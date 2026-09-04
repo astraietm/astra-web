@@ -1,19 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { 
     Users, 
-    CheckCircle, 
+    CheckCircle2, 
     Clock, 
     Search, 
     Download, 
-    ChevronRight,
-    SearchX,
+    ChevronRight, 
+    RefreshCw, 
+    Trash2,
+    Copy,
+    Check,
     Filter,
-    RefreshCw,
-    Trash2
+    X,
+    UserCheck,
+    Ticket
 } from 'lucide-react';
+import PageHeader from '../components/admin/common/PageHeader';
+import StatusBadge from '../components/admin/common/StatusBadge';
+import EmptyState from '../components/admin/common/EmptyState';
+import { TableSkeleton } from '../components/admin/common/LoadingSkeleton';
+import AttendeeDrawer from '../components/admin/common/AttendeeDrawer';
 
 const AdminRegistrations = () => {
     const { token } = useAuth();
@@ -23,16 +32,17 @@ const AdminRegistrations = () => {
     const [filterEvent, setFilterEvent] = useState('all');
     const [filterStatus, setFilterStatus] = useState('all');
     const [copyingToken, setCopyingToken] = useState(null);
+    const [selectedAttendee, setSelectedAttendee] = useState(null);
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
     const fetchRegistrations = async () => {
         setLoading(true);
         try {
-            const res = await axios.get(`${API_URL}/events/admin/registrations/`, {
+            const res = await axios.get(`${API_URL}/admin-registrations/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setRegistrations(res.data);
+            setRegistrations(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
             console.error("Failed to fetch registrations", error);
         } finally {
@@ -45,7 +55,7 @@ const AdminRegistrations = () => {
     }, [token]);
 
     const handleClearAll = async () => {
-        if (!window.confirm("ARE YOU SURE? This will DELETE ALL REGISTRATIONS from the database. This action cannot be undone.")) return;
+        if (!window.confirm("Are you sure you want to delete ALL registrations? This action cannot be undone.")) return;
         
         setLoading(true);
         try {
@@ -53,238 +63,407 @@ const AdminRegistrations = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setRegistrations([]);
-            setLoading(false);
         } catch (error) {
             console.error('Error clearing registrations:', error);
+        } finally {
             setLoading(false);
         }
     };
 
-    const filteredData = registrations.filter(reg => {
-        const matchesSearch = 
-            reg.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            reg.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            reg.token?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesEvent = filterEvent === 'all' || reg.event_details.title === filterEvent;
-        const isAccessed = reg.is_used || reg.status === 'ATTENDED';
-        const matchesStatus = 
-            filterStatus === 'all' || 
-            (filterStatus === 'accessed' && isAccessed) || 
-            (filterStatus === 'pending' && !isAccessed);
-        return matchesSearch && matchesEvent && matchesStatus;
-    });
+    const uniqueEvents = useMemo(() => {
+        return ['all', ...new Set(registrations.map(r => r.event_details?.title).filter(Boolean))];
+    }, [registrations]);
 
-    const uniqueEvents = ['all', ...new Set(registrations.map(r => r.event_details.title))];
+    const filteredData = useMemo(() => {
+        return registrations.filter(reg => {
+            const matchesSearch = 
+                reg.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                reg.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                reg.token?.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesEvent = filterEvent === 'all' || reg.event_details?.title === filterEvent;
+            const isAccessed = reg.is_used || reg.status === 'ATTENDED';
+            const matchesStatus = 
+                filterStatus === 'all' || 
+                (filterStatus === 'attended' && isAccessed) || 
+                (filterStatus === 'pending' && !isAccessed);
+            return matchesSearch && matchesEvent && matchesStatus;
+        });
+    }, [registrations, searchTerm, filterEvent, filterStatus]);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 25;
+
+    // Reset pagination on filter/search change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filterEvent, filterStatus]);
+
+    const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+    const paginatedData = useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return filteredData.slice(start, start + pageSize);
+    }, [filteredData, currentPage, pageSize]);
+
+    // Statistics
+    const stats = useMemo(() => {
+        const total = registrations.length;
+        const attended = registrations.filter(r => r.is_used || r.status === 'ATTENDED').length;
+        const pending = total - attended;
+        const rate = total > 0 ? Math.round((attended / total) * 100) : 0;
+        return { total, attended, pending, rate };
+    }, [registrations]);
 
     const exportToCSV = () => {
         const headers = ['Name', 'Email', 'Event', 'Registration Date', 'Token', 'Status'];
         const csvData = filteredData.map(reg => [
-            reg.user_name,
-            reg.user_email,
-            reg.event_details.title,
-            new Date(reg.timestamp).toLocaleString(),
-            reg.token,
-            (reg.is_used || reg.status === 'ATTENDED') ? 'Attended' : 'Registered'
+            `"${reg.user_name || 'Anonymous'}"`,
+            `"${reg.user_email || ''}"`,
+            `"${reg.event_details?.title || ''}"`,
+            `"${new Date(reg.timestamp).toLocaleString()}"`,
+            `"${reg.token || ''}"`,
+            (reg.is_used || reg.status === 'ATTENDED') ? 'Checked In' : 'Registered'
         ]);
-        const csvContent = [headers, ...csvData].map(e => e.join(',')).join('\n');
+        const csvContent = [headers.join(','), ...csvData.map(e => e.join(','))].join('\n');
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `registrations_${new Date().toLocaleDateString()}.csv`;
+        link.download = `astra_registrations_${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
     };
 
-    const handleCopyToken = (t) => {
+    const handleCopyToken = (e, t) => {
+        e.stopPropagation();
         navigator.clipboard.writeText(t);
         setCopyingToken(t);
         setTimeout(() => setCopyingToken(null), 2000);
     };
 
+    const hasActiveFilters = searchTerm !== '' || filterEvent !== 'all' || filterStatus !== 'all';
+
+    const resetFilters = () => {
+        setSearchTerm('');
+        setFilterEvent('all');
+        setFilterStatus('all');
+    };
+
     return (
-        <div className="space-y-10 pb-10">
-            {/* Context Header */}
-            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-8">
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <div className="h-px w-8 bg-blue-500/40" />
-                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.5em]">Inventory_Audit</span>
+        <div className="space-y-6 pb-12">
+            {/* Standard SaaS Page Header */}
+            <PageHeader
+                title="Registrations & Passes"
+                subtitle="Manage registered participants, view digital pass credentials, and export attendee rosters."
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Registrations' }
+                ]}
+                actions={
+                    <div className="flex flex-wrap items-center gap-2.5">
+                        {registrations.length > 0 && (
+                            <button 
+                                onClick={handleClearAll}
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-xs font-semibold transition-colors"
+                            >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                Clear All
+                            </button>
+                        )}
+                        <button 
+                            onClick={fetchRegistrations}
+                            disabled={loading}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-semibold transition-colors disabled:opacity-50"
+                        >
+                            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                            Refresh
+                        </button>
+                        <button 
+                            onClick={exportToCSV}
+                            disabled={filteredData.length === 0}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-semibold transition-colors shadow-sm shadow-blue-500/20"
+                        >
+                            <Download className="w-3.5 h-3.5" />
+                            Export CSV ({filteredData.length})
+                        </button>
                     </div>
+                }
+            />
+
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="p-4 rounded-xl bg-[#111319] border border-white/[0.06] flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-black text-white uppercase tracking-[0.1em]">Security_Registry</h1>
-                        <p className="text-[11px] text-slate-500 mt-2 font-mono uppercase tracking-tight">
-                            Total_Records_Loaded: <span className="text-blue-500">{registrations.length}</span> // Filtered_View: <span className="text-white">{filteredData.length}</span>
-                        </p>
+                        <p className="text-xs text-slate-400 font-medium">Total Registered</p>
+                        <p className="text-xl font-bold text-white mt-1">{stats.total}</p>
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                        <Users className="w-4 h-4" />
                     </div>
                 </div>
-                
-                <div className="flex flex-wrap gap-3">
-                    <button 
-                        onClick={handleClearAll}
-                        className="px-5 py-2.5 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-500/20 transition-all flex items-center gap-2"
-                    >
-                        <Trash2 className="w-4 h-4" />
-                        PURGE_ALL
-                    </button>
-                    <button 
-                        onClick={fetchRegistrations}
-                        className="px-5 py-2.5 bg-white/[0.02] border border-white/[0.05] text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white/[0.05] hover:text-white transition-all flex items-center gap-2"
-                    >
-                        <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-                        SYNC_REGISTRY
-                    </button>
-                    <button 
-                        onClick={exportToCSV}
-                        className="px-5 py-2.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center gap-2 hover:bg-blue-500 transition-all shadow-[0_8px_20px_rgba(37,99,235,0.3)]"
-                    >
-                        <Download className="w-4 h-4" />
-                        EXTRACT_CSV
-                    </button>
+
+                <div className="p-4 rounded-xl bg-[#111319] border border-white/[0.06] flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-slate-400 font-medium">Checked In</p>
+                        <p className="text-xl font-bold text-emerald-400 mt-1">{stats.attended}</p>
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <UserCheck className="w-4 h-4" />
+                    </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#111319] border border-white/[0.06] flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-slate-400 font-medium">Pending Entry</p>
+                        <p className="text-xl font-bold text-amber-400 mt-1">{stats.pending}</p>
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                        <Clock className="w-4 h-4" />
+                    </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#111319] border border-white/[0.06] flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-slate-400 font-medium">Turnout Rate</p>
+                        <p className="text-xl font-bold text-indigo-400 mt-1">{stats.rate}%</p>
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                        <Ticket className="w-4 h-4" />
+                    </div>
                 </div>
             </div>
 
-            {/* Tactical Control Bar */}
-            <div className="p-2 bg-white/[0.01] border border-white/[0.03] rounded-3xl backdrop-blur-3xl relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/[0.02] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 relative z-10">
-                    <div className="md:col-span-6 relative">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-600" />
-                        <input 
-                            type="text" 
-                            placeholder="SEARCH_BY_IDENTITY_OR_TOKEN..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-white/[0.01] border border-white/[0.03] rounded-2xl py-3.5 pl-11 pr-4 text-xs font-bold text-white placeholder:text-slate-800 focus:outline-none focus:bg-white/[0.03] focus:border-white/[0.08] transition-all uppercase tracking-widest"
-                        />
-                    </div>
-                    <div className="md:col-span-3 relative">
+            {/* Filter & Search Bar */}
+            <div className="p-3 bg-[#111319] border border-white/[0.06] rounded-xl flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <input 
+                        type="text" 
+                        placeholder="Search by participant name, email, or ticket token..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                    {/* Event Filter */}
+                    <div className="relative min-w-[170px]">
                         <select 
                             value={filterEvent}
                             onChange={(e) => setFilterEvent(e.target.value)}
-                            className="w-full bg-white/[0.01] border border-white/[0.03] rounded-2xl py-3.5 px-4 text-xs font-bold text-slate-500 focus:outline-none focus:bg-white/[0.03] appearance-none cursor-pointer uppercase tracking-widest"
+                            className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-colors appearance-none cursor-pointer"
                         >
-                            <option value="all">EVENT_ALL</option>
+                            <option value="all">All Events</option>
                             {uniqueEvents.filter(e => e !== 'all').map(event => (
                                 <option key={event} value={event}>{event}</option>
                             ))}
                         </select>
+                        <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" />
                     </div>
-                    <div className="md:col-span-3 relative">
-                        <select 
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="w-full bg-white/[0.01] border border-white/[0.03] rounded-2xl py-3.5 px-4 text-xs font-bold text-slate-500 focus:outline-none focus:bg-white/[0.03] appearance-none cursor-pointer uppercase tracking-widest"
+
+                    {/* Status Filter */}
+                    <select 
+                        value={filterStatus}
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                        className="bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-colors appearance-none cursor-pointer"
+                    >
+                        <option value="all">All Statuses</option>
+                        <option value="attended">Checked In</option>
+                        <option value="pending">Pending</option>
+                    </select>
+
+                    {hasActiveFilters && (
+                        <button
+                            onClick={resetFilters}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white text-xs transition-colors"
+                            title="Reset filters"
                         >
-                            <option value="all">STATUS_ALL</option>
-                            <option value="accessed">STATE_VERIFIED</option>
-                            <option value="pending">STATE_PENDING</option>
-                        </select>
-                    </div>
+                            <X className="w-3.5 h-3.5" />
+                            <span>Reset</span>
+                        </button>
+                    )}
                 </div>
             </div>
 
-            {/* Matrix Data Grid */}
-            <div className="border border-white/[0.03] rounded-[2.5rem] overflow-hidden bg-white/[0.01] backdrop-blur-sm relative">
-                <div className="overflow-x-auto custom-scrollbar">
+            {/* Registrations Table */}
+            <div className="bg-[#111319] border border-white/[0.06] rounded-xl overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="border-b border-white/[0.03] bg-white/[0.01]">
-                                <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Identity_Node</th>
-                                <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Operational_Node</th>
-                                <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Security_Token</th>
-                                <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Registry_Timestamp</th>
-                                <th className="px-8 py-6 text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Validation_State</th>
-                                <th className="px-8 py-6 text-right text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">Utilities</th>
+                            <tr className="border-b border-white/[0.06] bg-white/[0.02]">
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Participant</th>
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Event</th>
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Ticket Token</th>
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Registered Date</th>
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pass</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/[0.02]">
+                        <tbody className="divide-y divide-white/[0.04]">
                             {loading ? (
-                                Array.from({ length: 8 }).map((_, i) => (
-                                    <tr key={i} className="animate-pulse">
-                                        <td colSpan="6" className="px-8 py-7"><div className="h-3 bg-white/[0.02] rounded-full w-full" /></td>
-                                    </tr>
-                                ))
-                            ) : filteredData.length > 0 ? (
-                                filteredData.map((reg, idx) => (
-                                    <motion.tr 
-                                        key={reg.id}
-                                        initial={{ opacity: 0, x: -4 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: idx * 0.02 }}
-                                        className="hover:bg-white/[0.02] transition-all duration-300 group"
-                                    >
-                                        <td className="px-8 py-5">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-xl bg-white/[0.02] border border-white/[0.05] flex items-center justify-center text-xs font-black text-blue-500 group-hover:scale-110 transition-transform">
-                                                    {reg.user_name?.[0]?.toUpperCase() || 'U'}
+                                <TableSkeleton rows={6} cols={6} />
+                            ) : paginatedData.length > 0 ? (
+                                paginatedData.map((reg) => {
+                                    const isAttended = reg.is_used || reg.status === 'ATTENDED';
+                                    const initial = (reg.user_name?.[0] || 'U').toUpperCase();
+
+                                    return (
+                                        <tr 
+                                            key={reg.id || reg.token}
+                                            onClick={() => setSelectedAttendee(reg)}
+                                            className="hover:bg-white/[0.02] cursor-pointer transition-colors group"
+                                        >
+                                            {/* Participant */}
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-semibold">
+                                                        {initial}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-xs font-semibold text-white truncate group-hover:text-blue-400 transition-colors">
+                                                            {reg.user_name || 'Anonymous Participant'}
+                                                        </p>
+                                                        <p className="text-[11px] text-slate-400 truncate">
+                                                            {reg.user_email || 'No email provided'}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="min-w-0">
-                                                    <p className="text-[11px] font-black text-white uppercase tracking-tight">{reg.user_name || 'UNSPECIFIED_NODE'}</p>
-                                                    <p className="text-[9px] text-slate-600 font-mono lower-case opacity-60 truncate">{reg.user_email}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{reg.event_details.title}</span>
-                                                <span className="text-[8px] font-black text-blue-500/40 uppercase tracking-[0.2em] mt-1">NODE_ASSIGNED</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <button 
-                                                onClick={() => handleCopyToken(reg.token)}
-                                                className="group/token relative flex flex-col items-start cursor-pointer transition-opacity active:opacity-60"
-                                            >
-                                                <code className="text-[10px] font-mono text-slate-500 group-hover/token:text-blue-400 transition-colors">
-                                                    {reg.token.substring(0, 8)}...{reg.token.substring(reg.token.length - 4)}
-                                                </code>
-                                                <span className="text-[7px] font-black text-slate-800 uppercase tracking-widest mt-0.5 group-hover/token:text-blue-500/40 transition-colors">
-                                                    {copyingToken === reg.token ? 'COPIED_TO_CLIPBOARD' : 'CLICK_TO_CLONE'}
+                                            </td>
+
+                                            {/* Event */}
+                                            <td className="px-5 py-3.5">
+                                                <span className="text-xs font-medium text-slate-200">
+                                                    {reg.event_details?.title || 'Unknown Event'}
                                                 </span>
-                                            </button>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            <div className="flex flex-col">
-                                                <p className="text-[10px] font-mono text-slate-400 font-black">{new Date(reg.timestamp).toLocaleDateString([], { year: 'numeric', month: 'short', day: '2-digit' })}</p>
-                                                <p className="text-[9px] font-mono text-slate-700 uppercase">{new Date(reg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}_UTC</p>
-                                            </div>
-                                        </td>
-                                        <td className="px-8 py-5">
-                                            {reg.is_used || reg.status === 'ATTENDED' ? (
-                                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/[0.03] border border-emerald-500/10 shadow-[inner_0_0_10px_rgba(16,185,129,0.02)]">
-                                                    <div className="w-1 h-1 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                                                    <span className="text-[9px] font-black text-emerald-500/80 uppercase tracking-widest">VERIFIED</span>
+                                            </td>
+
+                                            {/* Ticket Token */}
+                                            <td className="px-5 py-3.5">
+                                                <button 
+                                                    type="button"
+                                                    onClick={(e) => handleCopyToken(e, reg.token)}
+                                                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.06] text-[11px] font-mono text-slate-300 hover:text-white transition-colors"
+                                                    title="Click to copy token"
+                                                >
+                                                    {copyingToken === reg.token ? (
+                                                        <>
+                                                            <Check className="w-3 h-3 text-emerald-400" />
+                                                            <span className="text-emerald-400 text-[10px]">Copied</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Copy className="w-3 h-3 text-slate-400" />
+                                                            <span>{reg.token ? `${reg.token.slice(0, 6)}...${reg.token.slice(-4)}` : 'N/A'}</span>
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </td>
+
+                                            {/* Registered Date */}
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex flex-col">
+                                                    <span className="text-xs text-slate-300">
+                                                        {reg.timestamp ? new Date(reg.timestamp).toLocaleDateString(undefined, {
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            year: 'numeric'
+                                                        }) : '—'}
+                                                    </span>
+                                                    <span className="text-[10px] text-slate-500">
+                                                        {reg.timestamp ? new Date(reg.timestamp).toLocaleTimeString([], {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        }) : ''}
+                                                    </span>
                                                 </div>
-                                            ) : (
-                                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/[0.03] border border-amber-500/10">
-                                                    <div className="w-1 h-1 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)] animate-pulse" />
-                                                    <span className="text-[9px] font-black text-amber-500/80 uppercase tracking-widest">PENDING</span>
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="px-8 py-5 text-right">
-                                            <button className="p-2.5 bg-white/[0.02] border border-white/[0.05] rounded-xl text-slate-700 hover:text-white hover:bg-white/[0.05] hover:border-white/10 transition-all">
-                                                <ChevronRight size={14} />
-                                            </button>
-                                        </td>
-                                    </motion.tr>
-                                ))
+                                            </td>
+
+                                            {/* Status */}
+                                            <td className="px-5 py-3.5">
+                                                <StatusBadge 
+                                                    status={isAttended ? 'success' : 'neutral'}
+                                                    label={isAttended ? 'Checked In' : 'Registered'}
+                                                />
+                                            </td>
+
+                                            {/* Action / View */}
+                                            <td className="px-5 py-3.5 text-right">
+                                                <button 
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setSelectedAttendee(reg);
+                                                    }}
+                                                    className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                                                    title="View attendee pass details"
+                                                >
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             ) : (
                                 <tr>
-                                    <td colSpan="6" className="px-8 py-32 text-center">
-                                        <div className="flex flex-col items-center gap-6 opacity-20">
-                                            <SearchX className="w-16 h-16 text-slate-500" />
-                                            <div className="space-y-1">
-                                                <p className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Grid_Search_Null</p>
-                                                <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">No spectral signatures match your query parameters</p>
-                                            </div>
-                                        </div>
+                                    <td colSpan={6} className="p-0">
+                                        <EmptyState
+                                            icon={Users}
+                                            title={hasActiveFilters ? "No matching registrations" : "No registrations found"}
+                                            description={
+                                                hasActiveFilters 
+                                                    ? "Try adjusting your search term or filters to find what you're looking for."
+                                                    : "Participants who sign up for your events will show up in this directory."
+                                            }
+                                            actionLabel={hasActiveFilters ? "Clear Filters" : undefined}
+                                            onAction={hasActiveFilters ? resetFilters : undefined}
+                                        />
                                     </td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
+
+                {/* Table Footer / Summary & Pagination */}
+                {!loading && filteredData.length > 0 && (
+                    <div className="px-5 py-3 border-t border-white/[0.06] bg-white/[0.01] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+                        <div>
+                            Showing <strong className="text-white">{(currentPage - 1) * pageSize + 1}</strong> to <strong className="text-white">{Math.min(currentPage * pageSize, filteredData.length)}</strong> of <strong className="text-white">{filteredData.length}</strong> participants
+                            {filteredData.length !== registrations.length && (
+                                <span className="text-slate-500 ml-1"> (filtered from {registrations.length})</span>
+                            )}
+                        </div>
+                        {totalPages > 1 && (
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    disabled={currentPage === 1}
+                                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                    className="px-2.5 py-1 rounded bg-white/[0.04] hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-medium text-slate-300 hover:text-white transition-colors"
+                                >
+                                    Previous
+                                </button>
+                                <span className="px-2 font-mono text-[11px] text-slate-400">
+                                    Page {currentPage} of {totalPages}
+                                </span>
+                                <button
+                                    type="button"
+                                    disabled={currentPage === totalPages}
+                                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                    className="px-2.5 py-1 rounded bg-white/[0.04] hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-medium text-slate-300 hover:text-white transition-colors"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
+
+            {/* Slide-over Attendee Pass Drawer */}
+            <AttendeeDrawer 
+                isOpen={Boolean(selectedAttendee)}
+                onClose={() => setSelectedAttendee(null)}
+                attendee={selectedAttendee}
+            />
         </div>
     );
 };

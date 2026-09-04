@@ -1,151 +1,160 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Terminal, Clock, CheckCircle, AlertCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { ArrowUpRight, Users, Copy, Check, ChevronRight } from 'lucide-react';
+import StatusBadge from '../common/StatusBadge';
+import EmptyState from '../common/EmptyState';
 
-const StatusBadge = ({ isUsed, status }) => {
-    // If it's used, it's definitely checked in/attended
-    if (isUsed || status === 'ATTENDED') {
-        return (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-                <CheckCircle size={10} />
-                ATTENDED
-            </span>
-        );
-    }
-    
-    // Default registered
-    return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            <Clock size={10} />
-            PENDING
-        </span>
-    );
-};
-
-const UserAvatar = ({ name }) => {
-    const initials = name 
-        ? name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() 
-        : '??';
-        
-    const colors = [
-        'bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-cyan-500'
-    ];
-    // Simple hash for consistent color
-    const colorIndex = initials.charCodeAt(0) % colors.length;
-    
-    return (
-        <div className={`w-8 h-8 rounded-lg ${colors[colorIndex]} text-white flex items-center justify-center text-xs font-bold shadow-lg`}>
-            {initials}
-        </div>
-    );
-};
-
-const RecentActivityTable = ({ registrations, isLoading }) => {
+const RecentActivityTable = ({ registrations = [], onSelectAttendee }) => {
     const navigate = useNavigate();
+    const [copiedToken, setCopiedToken] = useState(null);
 
-    if (isLoading) {
-        return (
-            <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 h-[300px] animate-pulse">
-                <div className="flex justify-between mb-6">
-                     <div className="h-6 w-32 bg-white/10 rounded" />
-                     <div className="h-8 w-8 bg-white/10 rounded" />
-                </div>
-                <div className="space-y-4">
-                    {[1,2,3,4].map(i => (
-                        <div key={i} className="h-12 w-full bg-white/5 rounded-lg" />
-                    ))}
-                </div>
-            </div>
-        );
-    }
+    const handleCopy = (e, token) => {
+        e.stopPropagation();
+        if (!token) return;
+        navigator.clipboard.writeText(token);
+        setCopiedToken(token);
+        setTimeout(() => setCopiedToken(null), 2000);
+    };
 
     return (
-        <div className="bg-vision-card backdrop-blur-2xl border border-white/5 rounded-[20px] p-6 flex flex-col h-full">
+        <div className="bg-[#111319] border border-white/[0.06] rounded-2xl p-5 sm:p-6 flex flex-col shadow-sm">
             {/* Header */}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center justify-between gap-4 mb-4">
                 <div>
-                    <h3 className="text-white font-bold text-lg font-orbitron tracking-wide">Live Feed</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                        <div className="relative w-2 h-2">
-                             <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping"></span>
-                             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </div>
-                        <p className="text-gray-400 text-xs text-mono uppercase"><span className="text-white font-bold">{registrations.length}</span> recent registrations</p>
-                    </div>
+                    <h3 className="text-sm font-semibold text-white tracking-tight">Recent Registrations</h3>
+                    <p className="text-xs text-slate-400 font-medium">Real-time attendee pass activity</p>
                 </div>
-                <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="p-2.5 text-vision-primary bg-vision-primary/10 border border-vision-primary/20 rounded-xl hover:bg-vision-primary hover:text-white transition-all shadow-[0_0_15px_rgba(6,182,212,0.1)] hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]"
-                    onClick={() => navigate('/admin/registrations')}
-                    title="View All Records"
-                >
-                    <Terminal size={18} />
-                </motion.button>
+                {registrations.length > 0 && (
+                    <button
+                        onClick={() => navigate('/admin/registrations')}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                        <span>View all</span>
+                        <ArrowUpRight size={13} />
+                    </button>
+                )}
             </div>
 
-            {/* Table Container */}
-            <div className="overflow-x-auto flex-1 no-scrollbar">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr>
-                            <th className="text-[10px] text-gray-500 uppercase font-bold py-3 pl-4 border-b border-white/5 font-mono tracking-wider">User</th>
-                            <th className="text-[10px] text-gray-500 uppercase font-bold py-3 border-b border-white/5 font-mono tracking-wider">Event Protocol</th>
-                            <th className="text-[10px] text-gray-500 uppercase font-bold py-3 border-b border-white/5 text-center font-mono tracking-wider">Status</th>
-                            <th className="text-[10px] text-gray-500 uppercase font-bold py-3 border-b border-white/5 text-right pr-4 font-mono tracking-wider">Timestamp</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {registrations.length === 0 ? (
-                            <tr>
-                                <td colSpan="4" className="text-center py-12">
-                                    <div className="flex flex-col items-center gap-3">
-                                        <AlertCircle className="w-8 h-8 text-gray-600" />
-                                        <p className="text-gray-500 text-sm font-medium">No recent activity on the network.</p>
-                                    </div>
-                                </td>
+            {/* Table or Empty State */}
+            {registrations.length === 0 ? (
+                <div className="py-6">
+                    <EmptyState 
+                        icon={Users}
+                        title="No registrations yet" 
+                        description="New attendee registrations will appear here once participants sign up."
+                        actionLabel="View Registration Portal"
+                        onAction={() => navigate('/events')}
+                    />
+                </div>
+            ) : (
+                <div className="overflow-x-auto -mx-5 sm:-mx-6 px-5 sm:px-6">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/[0.06] text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                <th className="pb-3 pr-4">Participant</th>
+                                <th className="pb-3 px-4">Event</th>
+                                <th className="pb-3 px-4">Pass</th>
+                                <th className="pb-3 px-4 text-center">Status</th>
+                                <th className="pb-3 px-4 text-right">Registered</th>
+                                <th className="pb-3 pl-4 text-right">Action</th>
                             </tr>
-                        ) : (
-                            registrations.map((reg, i) => (
-                                <motion.tr 
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.05 }}
-                                    key={i} 
-                                    className="group hover:bg-white/[0.03] transition-colors border-b border-white/[0.02] last:border-0"
-                                >
-                                    <td className="py-4 pl-4">
-                                        <div className="flex items-center gap-3">
-                                            <UserAvatar name={reg.user_details?.full_name} />
-                                            <div className="flex flex-col">
-                                                 <span className="text-white text-sm font-bold group-hover:text-vision-primary transition-colors cursor-pointer">{reg.user_details?.full_name || "Unknown Agent"}</span>
-                                                 <span className="text-gray-500 text-[10px] font-mono">{reg.user_details?.email}</span>
+                        </thead>
+                        <tbody className="divide-y divide-white/[0.03] text-xs">
+                            {registrations.map((reg, idx) => {
+                                const name = reg.user_name || reg.user_details?.full_name || 'Participant';
+                                const email = reg.user_email || reg.user_details?.email || '';
+                                const isCheckedIn = reg.is_used || reg.status === 'ATTENDED';
+                                const eventTitle = reg.event_details?.title || 'Festival Event';
+                                const token = reg.token || '';
+                                const timestamp = reg.timestamp || reg.registration_date;
+
+                                return (
+                                    <tr 
+                                        key={reg.id || token || idx}
+                                        onClick={() => onSelectAttendee && onSelectAttendee(reg)}
+                                        className="hover:bg-white/[0.02] transition-colors cursor-pointer group"
+                                    >
+                                        {/* Participant */}
+                                        <td className="py-3 pr-4">
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="w-7 h-7 rounded-lg bg-blue-600/10 border border-blue-500/20 text-blue-400 font-bold text-xs flex items-center justify-center shrink-0">
+                                                    {name.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="font-semibold text-white group-hover:text-blue-400 transition-colors truncate max-w-[160px]">
+                                                        {name}
+                                                    </p>
+                                                    <p className="text-[11px] text-slate-400 font-mono truncate max-w-[160px]">
+                                                        {email}
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="py-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-vision-secondary/50"></div>
-                                            <span className="text-gray-300 font-medium text-xs font-mono">{reg.event_details?.title || "Unknown protocol"}</span>
-                                        </div>
-                                    </td>
-                                    <td className="py-4 text-center">
-                                        <StatusBadge isUsed={reg.is_used} status={reg.status} />
-                                    </td>
-                                    <td className="py-4 pr-4 text-right">
-                                        <span className="text-gray-500 text-[10px] font-mono whitespace-nowrap">
-                                            {new Date(reg.registration_date).toLocaleDateString(undefined, { month: '2-digit', day: '2-digit' })}
-                                            <span className="mx-1 opacity-50">|</span>
-                                            {new Date(reg.registration_date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false })}
-                                        </span>
-                                    </td>
-                                </motion.tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                        </td>
+
+                                        {/* Event */}
+                                        <td className="py-3 px-4 text-slate-300 font-medium truncate max-w-[180px]">
+                                            {eventTitle}
+                                        </td>
+
+                                        {/* Pass Token */}
+                                        <td className="py-3 px-4">
+                                            {token ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => handleCopy(e, token)}
+                                                    className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.06] text-[11px] font-mono text-slate-300 hover:text-white transition-colors"
+                                                    title="Click to copy pass token"
+                                                >
+                                                    {copiedToken === token ? (
+                                                        <>
+                                                            <Check className="w-3 h-3 text-emerald-400" />
+                                                            <span className="text-emerald-400 text-[10px]">Copied</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Copy className="w-3 h-3 text-slate-400" />
+                                                            <span>{token.slice(0, 6)}...</span>
+                                                        </>
+                                                    )}
+                                                </button>
+                                            ) : (
+                                                <span className="text-slate-500 font-mono text-[11px]">—</span>
+                                            )}
+                                        </td>
+
+                                        {/* Status */}
+                                        <td className="py-3 px-4 text-center">
+                                            <StatusBadge 
+                                                status={isCheckedIn ? 'Checked In' : 'Confirmed'} 
+                                            />
+                                        </td>
+
+                                        {/* Registered Date */}
+                                        <td className="py-3 px-4 text-right text-slate-400 font-mono text-[11px] whitespace-nowrap">
+                                            {timestamp ? new Date(timestamp).toLocaleDateString([], { month: 'short', day: 'numeric' }) : '—'}
+                                        </td>
+
+                                        {/* Action */}
+                                        <td className="py-3 pl-4 text-right">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onSelectAttendee && onSelectAttendee(reg);
+                                                }}
+                                                className="p-1 rounded text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                                                title="View attendee pass"
+                                            >
+                                                <ChevronRight size={14} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )}
         </div>
     );
 };

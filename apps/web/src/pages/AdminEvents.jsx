@@ -10,26 +10,23 @@ import {
     Calendar,
     Clock,
     Users,
-    ToggleLeft,
-    ToggleRight,
     ArrowLeft,
     Save,
     X,
-    Shield,
-    AlertTriangle,
-    RotateCcw,
     MapPin,
-    Terminal,
     Search,
-    Cpu,
-    Zap,
-    Target,
-    Database,
+    RotateCcw,
     ChevronRight,
-    SearchX,
-    Loader2
+    LayoutGrid,
+    List,
+    DollarSign,
+    Layers
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import PageHeader from '../components/admin/common/PageHeader';
+import StatusBadge from '../components/admin/common/StatusBadge';
+import EmptyState from '../components/admin/common/EmptyState';
+import { TableSkeleton } from '../components/admin/common/LoadingSkeleton';
 
 const AdminEvents = () => {
     const { user, token } = useAuth();
@@ -42,6 +39,8 @@ const AdminEvents = () => {
 
     // Modal / Slide-over state
     const [showForm, setShowForm] = useState(false);
+    const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
+    const [activeCategory, setActiveCategory] = useState('All');
 
     // Search / Filter
     const [searchQuery, setSearchQuery] = useState('');
@@ -55,7 +54,7 @@ const AdminEvents = () => {
         event_date: '',
         venue: '',
         image: '',
-        category: '',
+        category: 'Technical',
         registration_start: '',
         registration_end: '',
         registration_limit: 100,
@@ -95,14 +94,14 @@ const AdminEvents = () => {
 
     const handleSync = async () => {
         try {
-            toast.success("Initiating event synchronization...");
+            toast.success("Synchronizing events...");
             const response = await axios.post(`${API_URL}/operations/sync-events/`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
             if (response.data.success) {
-                toast.success(`Sync complete! ${response.data.event_count} events in database.`);
-                fetchEvents(); // Refresh the list
+                toast.success(`Sync complete. ${response.data.event_count} events updated.`);
+                fetchEvents();
             } else {
                 toast.error("Sync failed: " + response.data.error);
             }
@@ -113,15 +112,15 @@ const AdminEvents = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('CRITICAL_ACTION: PERMANENTLY_DELETE_EVENT_NODE? This procedure is irreversible.')) return;
+        if (!window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) return;
         try {
             await axios.delete(`${API_URL}/operations/events/${id}/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            toast.success("Event node decommissioned successfully.");
+            toast.success("Event deleted successfully.");
             fetchEvents();
         } catch (error) {
-            toast.error("Failed to terminate event node.");
+            toast.error("Failed to delete event.");
         }
     };
 
@@ -133,11 +132,11 @@ const AdminEvents = () => {
             event_date: event.event_date ? new Date(event.event_date).toISOString().slice(0, 16) : '',
             venue: event.venue,
             image: event.image,
-            category: event.category,
+            category: event.category || 'Technical',
             registration_start: event.registration_start ? new Date(event.registration_start).toISOString().slice(0, 16) : '',
             registration_end: event.registration_end ? new Date(event.registration_end).toISOString().slice(0, 16) : '',
-            registration_limit: event.registration_limit,
-            is_registration_open: event.is_registration_open,
+            registration_limit: event.registration_limit || 100,
+            is_registration_open: event.is_registration_open ?? true,
             payment_amount: event.payment_amount || 0,
             requires_payment: event.requires_payment || false,
             is_team_event: event.is_team_event || false,
@@ -162,18 +161,18 @@ const AdminEvents = () => {
                 await axios.put(`${API_URL}/operations/events/${currentEventId}/`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                toast.success("Operational parameters updated.");
+                toast.success("Event updated successfully.");
             } else {
                 await axios.post(`${API_URL}/operations/events/`, formData, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                toast.success("New operational node initialized.");
+                toast.success("Event created successfully.");
             }
             setShowForm(false);
             fetchEvents();
         } catch (error) {
             console.error('Save error:', error);
-            toast.error("Protocol failure: Unable to synchronize changes.");
+            toast.error("Failed to save changes. Please try again.");
         }
     };
 
@@ -185,88 +184,209 @@ const AdminEvents = () => {
         }));
     };
 
-    const filteredEvents = events.filter(ev =>
-        ev.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        ev.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const categories = ['All', 'Technical', 'Workshops', 'Hackathons', 'Cultural'];
+
+    const filteredEvents = events.filter(ev => {
+        const matchesSearch = ev.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (ev.category && ev.category.toLowerCase().includes(searchQuery.toLowerCase()));
+        const matchesCategory = activeCategory === 'All' || 
+            (ev.category && ev.category.toLowerCase() === activeCategory.toLowerCase());
+        return matchesSearch && matchesCategory;
+    });
 
     return (
-        <div className="space-y-12 pb-20">
+        <div className="space-y-6 pb-16">
             {/* Header */}
-            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-10 relative">
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <div className="h-px w-8 bg-blue-500/40" />
-                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.5em]">Command_Center</span>
+            <PageHeader
+                title="Events"
+                subtitle="Manage your events, schedules, capacity, and registration rules."
+                breadcrumbs={[{ label: 'Admin', to: '/admin' }, { label: 'Events' }]}
+                actions={
+                    <div className="flex items-center gap-2.5">
+                        <button
+                            onClick={handleSync}
+                            className="h-9 px-3.5 bg-[#111319] hover:bg-white/[0.06] border border-white/[0.08] text-xs font-semibold text-slate-300 hover:text-white rounded-xl flex items-center gap-2 transition-colors"
+                        >
+                            <RotateCcw size={14} />
+                            <span>Sync</span>
+                        </button>
+                        <button
+                            onClick={handleCreate}
+                            className="h-9 px-3.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition-colors shadow-sm"
+                        >
+                            <Plus size={15} />
+                            <span>Create Event</span>
+                        </button>
                     </div>
-                    <div>
-                        <h1 className="text-2xl font-black text-white uppercase tracking-[0.1em]">Event_Lifecycle_Manager</h1>
-                        <p className="text-[11px] text-slate-500 mt-2 font-mono uppercase tracking-tight">
-                            Active_Operations: <span className="text-blue-500">{events.length}</span> // Filtered: <span className="text-white">{filteredEvents.length}</span>
-                        </p>
-                    </div>
+                }
+            />
+
+            {/* Filter & Toolbar Row */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                {/* Category Filter Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                    {categories.map(cat => (
+                        <button
+                            key={cat}
+                            onClick={() => setActiveCategory(cat)}
+                            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
+                                activeCategory === cat
+                                    ? 'bg-blue-600/15 text-blue-400 font-semibold border border-blue-500/30'
+                                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                            }`}
+                        >
+                            {cat}
+                        </button>
+                    ))}
                 </div>
 
-                <div className="flex flex-wrap gap-4 w-full xl:w-auto">
-                    <div className="relative group flex-1 xl:flex-none xl:min-w-[400px]">
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 group-focus-within:text-blue-500 transition-colors z-10" />
+                {/* Search & View Switcher */}
+                <div className="flex items-center gap-2.5">
+                    <div className="relative flex-1 sm:w-64">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="SCAN_OPERATIONS..."
+                            placeholder="Filter events..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="h-14 w-full bg-white/[0.01] border border-white/[0.05] rounded-[1.25rem] pl-14 pr-6 text-xs font-black text-white placeholder:text-slate-800 focus:outline-none focus:bg-white/[0.03] focus:border-white/[0.1] transition-all uppercase tracking-widest"
+                            className="h-9 w-full bg-[#111319] border border-white/[0.08] rounded-xl pl-9 pr-3 text-xs font-medium text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500/40 transition-colors"
                         />
                     </div>
-                    <button
-                        onClick={handleSync}
-                        className="h-14 px-8 bg-purple-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-[1.25rem] flex items-center gap-3 hover:bg-purple-500 transition-all shadow-[0_12px_24px_rgba(168,85,247,0.3)] hover:-translate-y-0.5"
-                    >
-                        <RotateCcw size={16} strokeWidth={3} />
-                        SYNC_EVENTS
-                    </button>
-                    <button
-                        onClick={handleCreate}
-                        className="h-14 px-8 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-[1.25rem] flex items-center gap-3 hover:bg-blue-500 transition-all shadow-[0_12px_24px_rgba(37,99,235,0.3)] hover:-translate-y-0.5"
-                    >
-                        <Plus size={16} strokeWidth={3} />
-                        INITIALIZE_NODE
-                    </button>
+
+                    <div className="flex items-center bg-[#111319] border border-white/[0.08] p-0.5 rounded-xl">
+                        <button
+                            onClick={() => setViewMode('grid')}
+                            className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-white/[0.08] text-white' : 'text-slate-400 hover:text-white'}`}
+                            title="Grid View"
+                        >
+                            <LayoutGrid size={15} />
+                        </button>
+                        <button
+                            onClick={() => setViewMode('table')}
+                            className={`p-1.5 rounded-lg transition-colors ${viewMode === 'table' ? 'bg-white/[0.08] text-white' : 'text-slate-400 hover:text-white'}`}
+                            title="Table View"
+                        >
+                            <List size={15} />
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Grid */}
-            <div className="relative z-0">
-                {loading ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+            {/* Content: Grid or Table */}
+            {loading ? (
+                viewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         {Array.from({ length: 6 }).map((_, i) => (
-                            <div key={i} className="h-80 bg-white/[0.02] border border-white/[0.05] rounded-[2.5rem] animate-pulse" />
+                            <div key={i} className="h-64 rounded-2xl bg-[#111319] border border-white/[0.06] animate-pulse" />
                         ))}
-                    </div>
-                ) : filteredEvents.length === 0 ? (
-                    <div className="py-40 flex flex-col items-center justify-center opacity-20 gap-8">
-                        <SearchX className="w-20 h-20 text-slate-600" strokeWidth={1} />
-                        <div className="space-y-2 text-center">
-                            <p className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Zero_Nodes_Detected</p>
-                            <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">Awaiting sector population or expansion of query parameters</p>
-                        </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
-                        {filteredEvents.map((event, idx) => (
-                            <EventCard
-                                key={event.id}
-                                event={event}
-                                index={idx}
-                                onEdit={handleEdit}
-                                onDelete={handleDelete}
-                            />
-                        ))}
+                    <div className="bg-[#111319] border border-white/[0.06] rounded-2xl overflow-hidden">
+                        <TableSkeleton rows={6} cols={5} />
                     </div>
-                )}
-            </div>
+                )
+            ) : filteredEvents.length === 0 ? (
+                <EmptyState
+                    icon={Calendar}
+                    title="No events found"
+                    description="No events match your current filter criteria. Create an event or adjust search."
+                    action={
+                        <button
+                            onClick={handleCreate}
+                            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-1.5"
+                        >
+                            <Plus size={14} />
+                            <span>Create First Event</span>
+                        </button>
+                    }
+                />
+            ) : viewMode === 'grid' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {filteredEvents.map((event) => (
+                        <EventCard
+                            key={event.id}
+                            event={event}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                        />
+                    ))}
+                </div>
+            ) : (
+                <div className="bg-[#111319] border border-white/[0.06] rounded-2xl overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="border-b border-white/[0.06] text-[11px] font-semibold text-slate-400 uppercase tracking-wider bg-white/[0.01]">
+                                    <th className="py-3.5 px-6">Event Title</th>
+                                    <th className="py-3.5 px-6">Date & Venue</th>
+                                    <th className="py-3.5 px-6">Category</th>
+                                    <th className="py-3.5 px-6">Capacity</th>
+                                    <th className="py-3.5 px-6 text-center">Status</th>
+                                    <th className="py-3.5 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/[0.03] text-xs">
+                                {filteredEvents.map((event) => {
+                                    const capacity = event.registration_limit || 100;
+                                    const registered = event.registrations?.length || 0;
+                                    const percent = Math.min(100, Math.round((registered / capacity) * 100));
 
-            {/* Form Slide-over */}
+                                    return (
+                                        <tr key={event.id} className="hover:bg-white/[0.02] transition-colors">
+                                            <td className="py-4 px-6 font-semibold text-white">
+                                                {event.title}
+                                            </td>
+                                            <td className="py-4 px-6 text-slate-300">
+                                                <div className="space-y-0.5">
+                                                    <p>{event.event_date ? new Date(event.event_date).toLocaleDateString([], { month: 'short', day: 'numeric' }) : 'TBD'}</p>
+                                                    <p className="text-[11px] text-slate-400">{event.venue || 'Main Stage'}</p>
+                                                </div>
+                                            </td>
+                                            <td className="py-4 px-6 text-slate-400">
+                                                {event.category || 'General'}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <div className="space-y-1 w-28">
+                                                    <div className="flex justify-between text-[10px] font-mono text-slate-400">
+                                                        <span>{registered}/{capacity}</span>
+                                                        <span>{percent}%</span>
+                                                    </div>
+                                                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
+                                                        <div className="h-full bg-blue-500 rounded-full" style={{ width: `${percent}%` }} />
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="py-4 px-6 text-center">
+                                                <StatusBadge status={event.is_registration_open ? 'Registration Open' : 'Registration Closed'} />
+                                            </td>
+                                            <td className="py-4 px-6 text-right">
+                                                <div className="flex items-center justify-end gap-1.5">
+                                                    <button
+                                                        onClick={() => handleEdit(event)}
+                                                        className="p-1.5 rounded-lg hover:bg-white/[0.06] text-slate-400 hover:text-white transition-colors"
+                                                        title="Edit Event"
+                                                    >
+                                                        <Edit2 size={14} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(event.id)}
+                                                        className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors"
+                                                        title="Delete Event"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+
+            {/* Create / Edit Event Drawer / Modal */}
             <AnimatePresence>
                 {showForm && (
                     <>
@@ -275,158 +395,254 @@ const AdminEvents = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowForm(false)}
-                            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[1000]"
+                            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[1000]"
                         />
                         <motion.div
                             initial={{ x: '100%', opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             exit={{ x: '100%', opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                            className="fixed right-0 top-0 bottom-0 w-full max-w-3xl bg-[#030303] border-l border-white/[0.05] shadow-[0_0_100px_rgba(37,99,235,0.1)] z-[1001] overflow-hidden flex flex-col"
+                            transition={{ type: "spring", stiffness: 220, damping: 25 }}
+                            className="fixed right-0 top-0 bottom-0 w-full max-w-2xl bg-[#0D0F15] border-l border-white/[0.08] shadow-2xl z-[1001] overflow-hidden flex flex-col"
                         >
-                            <div className="absolute top-0 right-0 w-full h-[300px] bg-gradient-to-b from-blue-600/[0.03] to-transparent pointer-events-none" />
-
-                            <div className="p-10 border-b border-white/[0.05] flex items-center justify-between relative z-10">
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-                                        <span className="text-[8px] font-black text-blue-500 uppercase tracking-[0.5em]">Protocol_Config</span>
-                                    </div>
-                                    <h2 className="text-2xl font-black text-white uppercase tracking-[0.1em]">
-                                        {isEditing ? 'RECONFIGURE_NODE' : 'INITIALIZE_SEQUENCE'}
+                            {/* Drawer Header */}
+                            <div className="p-6 border-b border-white/[0.08] flex items-center justify-between">
+                                <div>
+                                    <h2 className="text-lg font-bold text-white tracking-tight">
+                                        {isEditing ? 'Edit Event Details' : 'Create New Event'}
                                     </h2>
+                                    <p className="text-xs text-slate-400 mt-0.5">
+                                        Configure event parameters, timing, and registration limits.
+                                    </p>
                                 </div>
-                                <button onClick={() => setShowForm(false)} className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-slate-500 hover:text-white hover:bg-white/[0.08] transition-all">
-                                    <X size={20} />
+                                <button 
+                                    onClick={() => setShowForm(false)} 
+                                    className="p-2 rounded-xl bg-white/[0.04] border border-white/[0.08] text-slate-400 hover:text-white transition-colors"
+                                >
+                                    <X size={16} />
                                 </button>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-10 space-y-12 relative z-10 custom-scrollbar">
-                                <form id="eventForm" onSubmit={handleSubmit} className="space-y-16 pb-20">
-
-                                    {/* CORE DATA */}
-                                    <div className="space-y-8">
-                                        <div className="flex items-center gap-4 text-slate-600">
-                                            <Database size={14} className="text-blue-500" />
-                                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Core_Data_Parameters</h3>
-                                            <div className="h-px flex-1 bg-white/[0.03]" />
+                            {/* Drawer Form Body */}
+                            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                                <form id="eventForm" onSubmit={handleSubmit} className="space-y-6">
+                                    {/* SECTION: BASIC INFO */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">General Information</h3>
+                                        
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-medium text-slate-300">Event Title</label>
+                                            <input
+                                                required
+                                                type="text"
+                                                name="title"
+                                                value={formData.title}
+                                                onChange={handleChange}
+                                                placeholder="e.g. Autonomous Robotics Hackathon"
+                                                className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500/40"
+                                            />
                                         </div>
-                                        <div className="grid grid-cols-1 gap-8">
-                                            <div className="space-y-3">
-                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Title_Signature</label>
-                                                <input required name="title" value={formData.title} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-sm font-black text-white focus:border-blue-500/30 focus:bg-white/[0.02] focus:outline-none transition-all placeholder:text-slate-900 uppercase tracking-widest" placeholder="NODE_IDENTIFIER..." />
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-medium text-slate-300">Category</label>
+                                                <select
+                                                    name="category"
+                                                    value={formData.category}
+                                                    onChange={handleChange}
+                                                    className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500/40 cursor-pointer"
+                                                >
+                                                    <option value="Technical">Technical</option>
+                                                    <option value="Workshops">Workshops</option>
+                                                    <option value="Hackathons">Hackathons</option>
+                                                    <option value="Cultural">Cultural</option>
+                                                    <option value="General">General</option>
+                                                </select>
                                             </div>
-                                            <div className="space-y-3">
-                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Objective_Description</label>
-                                                <textarea required name="description" value={formData.description} onChange={handleChange} rows={5} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-slate-400 font-medium text-xs focus:border-blue-500/30 focus:bg-white/[0.02] focus:outline-none transition-all placeholder:text-slate-900 leading-relaxed" placeholder="DEFINE_OBJECTIVES..." />
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-medium text-slate-300">Venue</label>
+                                                <input
+                                                    type="text"
+                                                    name="venue"
+                                                    value={formData.venue}
+                                                    onChange={handleChange}
+                                                    placeholder="e.g. Seminar Hall A"
+                                                    className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500/40"
+                                                />
                                             </div>
-                                            <div className="grid grid-cols-2 gap-8">
-                                                <div className="space-y-3">
-                                                    <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Classification</label>
-                                                    <input required name="category" value={formData.category} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-xs font-black text-white focus:border-blue-500/30 uppercase tracking-widest" placeholder="WORKSHOP..." />
-                                                </div>
-                                                <div className="space-y-3">
-                                                    <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Sector_Location</label>
-                                                    <input required name="venue" value={formData.venue} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-xs font-black text-white focus:border-blue-500/30 uppercase tracking-widest" placeholder="AUDITORIUM_01..." />
-                                                </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-medium text-slate-300">Description</label>
+                                            <textarea
+                                                rows="3"
+                                                name="description"
+                                                value={formData.description}
+                                                onChange={handleChange}
+                                                placeholder="Short summary of the event..."
+                                                className="w-full bg-[#111319] border border-white/[0.08] rounded-xl p-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500/40 resize-none leading-relaxed"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* SECTION: SCHEDULE & CAPACITY */}
+                                    <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+                                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Schedule & Capacity</h3>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-medium text-slate-300">Event Date & Time</label>
+                                                <input
+                                                    type="datetime-local"
+                                                    name="event_date"
+                                                    value={formData.event_date}
+                                                    onChange={handleChange}
+                                                    className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500/40"
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-medium text-slate-300">Max Capacity</label>
+                                                <input
+                                                    type="number"
+                                                    name="registration_limit"
+                                                    value={formData.registration_limit}
+                                                    onChange={handleChange}
+                                                    min="1"
+                                                    className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500/40"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-medium text-slate-300">Registration Opens</label>
+                                                <input
+                                                    type="datetime-local"
+                                                    name="registration_start"
+                                                    value={formData.registration_start}
+                                                    onChange={handleChange}
+                                                    className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500/40"
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-xs font-medium text-slate-300">Registration Closes</label>
+                                                <input
+                                                    type="datetime-local"
+                                                    name="registration_end"
+                                                    value={formData.registration_end}
+                                                    onChange={handleChange}
+                                                    className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500/40"
+                                                />
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* TEMPORAL ARCS */}
-                                    <div className="space-y-8">
-                                        <div className="flex items-center gap-4 text-slate-600">
-                                            <Clock size={14} className="text-pink-500" />
-                                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Temporal_Registry</h3>
-                                            <div className="h-px flex-1 bg-white/[0.03]" />
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-8">
-                                            <div className="space-y-3">
-                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Event_Timestamp</label>
-                                                <input required type="datetime-local" name="event_date" value={formData.event_date} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-white text-xs font-mono focus:border-blue-500/30 outline-none" />
-                                            </div>
-                                            <div className="space-y-3">
-                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Capacity_Limit</label>
-                                                <input required type="number" name="registration_limit" value={formData.registration_limit} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-white text-xs font-mono focus:border-blue-500/30" />
-                                            </div>
-                                            <div className="space-y-3">
-                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Registry_Open</label>
-                                                <input required type="datetime-local" name="registration_start" value={formData.registration_start} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-white text-xs font-mono focus:border-blue-500/30 outline-none" />
-                                            </div>
-                                            <div className="space-y-3">
-                                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] ml-1">Registry_Final</label>
-                                                <input required type="datetime-local" name="registration_end" value={formData.registration_end} onChange={handleChange} className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-white text-xs font-mono focus:border-blue-500/30 outline-none" />
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {/* SECTION: RULES & FEES */}
+                                    <div className="space-y-4 pt-4 border-t border-white/[0.06]">
+                                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Registration Rules</h3>
 
-                                    {/* SECURITY & ACCESS */}
-                                    <div className="space-y-8">
-                                        <div className="flex items-center gap-4 text-slate-600">
-                                            <Shield size={14} className="text-emerald-500" />
-                                            <h3 className="text-[10px] font-black uppercase tracking-[0.4em]">Node_Security_Protocol</h3>
-                                            <div className="h-px flex-1 bg-white/[0.03]" />
-                                        </div>
-
-                                        <div className="grid grid-cols-1 gap-4">
-                                            <div className="flex items-center justify-between p-6 rounded-[1.5rem] bg-white/[0.01] border border-white/[0.05] hover:bg-white/[0.02] transition-colors group/row">
-                                                <div className="space-y-1">
-                                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Registry_Enabled</p>
-                                                    <p className="text-[8px] text-slate-700 font-mono uppercase tracking-tight">Allows Identity Nodes to associate with this Operational Node</p>
+                                        <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-xs font-semibold text-white">Open for Registration</p>
+                                                    <p className="text-[11px] text-slate-400">Allow participants to register immediately</p>
                                                 </div>
-                                                <Switch checked={formData.is_registration_open} onChange={() => setFormData(p => ({ ...p, is_registration_open: !p.is_registration_open }))} />
+                                                <input
+                                                    type="checkbox"
+                                                    name="is_registration_open"
+                                                    checked={formData.is_registration_open}
+                                                    onChange={handleChange}
+                                                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                                                />
                                             </div>
 
-                                            <div className="flex items-center justify-between p-6 rounded-[1.5rem] bg-white/[0.01] border border-white/[0.05] hover:bg-white/[0.02] transition-colors">
-                                                <div className="space-y-1">
-                                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Resource_Exchange_Required</p>
-                                                    <p className="text-[8px] text-slate-700 font-mono uppercase tracking-tight">Registration requires credit authorization</p>
+                                            <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
+                                                <div>
+                                                    <p className="text-xs font-semibold text-white">Paid Event</p>
+                                                    <p className="text-[11px] text-slate-400">Requires registration entry fee</p>
                                                 </div>
-                                                <Switch checked={formData.requires_payment} onChange={() => setFormData(p => ({ ...p, requires_payment: !p.requires_payment }))} />
+                                                <input
+                                                    type="checkbox"
+                                                    name="requires_payment"
+                                                    checked={formData.requires_payment}
+                                                    onChange={handleChange}
+                                                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                                                />
                                             </div>
 
                                             {formData.requires_payment && (
-                                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-8 rounded-[1.5rem] bg-blue-500/[0.02] border border-blue-500/10 space-y-4">
-                                                    <label className="text-[9px] font-black text-blue-500 uppercase tracking-[0.3em]">Resource_Amount (INR)</label>
-                                                    <div className="flex items-baseline gap-3">
-                                                        <span className="text-xl font-black text-blue-500">₹</span>
-                                                        <input type="number" name="payment_amount" value={formData.payment_amount} onChange={handleChange} className="w-full bg-transparent border-none text-3xl font-black text-white focus:outline-none placeholder:text-slate-900" placeholder="0.00" />
-                                                    </div>
-                                                </motion.div>
+                                                <div className="pt-2">
+                                                    <label className="text-xs font-medium text-slate-300 block mb-1">Fee (INR)</label>
+                                                    <input
+                                                        type="number"
+                                                        name="payment_amount"
+                                                        value={formData.payment_amount}
+                                                        onChange={handleChange}
+                                                        className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-4 py-2 text-xs text-white"
+                                                    />
+                                                </div>
                                             )}
 
-                                            <div className="flex items-center justify-between p-6 rounded-[1.5rem] bg-white/[0.01] border border-white/[0.05] hover:bg-white/[0.02] transition-colors">
-                                                <div className="space-y-1">
-                                                    <p className="text-[10px] font-black text-white uppercase tracking-widest">Multi_Link_Operation</p>
-                                                    <p className="text-[8px] text-slate-700 font-mono uppercase tracking-tight">Enable tactical unit clustering (Teams)</p>
+                                            <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
+                                                <div>
+                                                    <p className="text-xs font-semibold text-white">Team Event</p>
+                                                    <p className="text-[11px] text-slate-400">Participants register as squads/teams</p>
                                                 </div>
-                                                <Switch checked={formData.is_team_event} onChange={() => setFormData(p => ({ ...p, is_team_event: !p.is_team_event }))} />
+                                                <input
+                                                    type="checkbox"
+                                                    name="is_team_event"
+                                                    checked={formData.is_team_event}
+                                                    onChange={handleChange}
+                                                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                                                />
                                             </div>
 
                                             {formData.is_team_event && (
-                                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-8 rounded-[1.5rem] bg-purple-500/[0.02] border border-purple-500/10 grid grid-cols-2 gap-8">
-                                                    <div className="space-y-4">
-                                                        <label className="text-[9px] font-black text-purple-500 uppercase tracking-[0.3em]">Min_Unit_Size</label>
-                                                        <input type="number" name="team_size_min" value={formData.team_size_min} onChange={handleChange} className="w-full bg-white/[0.02] border border-purple-500/10 rounded-xl p-4 text-white text-center font-black" />
+                                                <div className="grid grid-cols-2 gap-4 pt-2">
+                                                    <div>
+                                                        <label className="text-xs font-medium text-slate-300 block mb-1">Min Team Size</label>
+                                                        <input
+                                                            type="number"
+                                                            name="team_size_min"
+                                                            value={formData.team_size_min}
+                                                            onChange={handleChange}
+                                                            min="1"
+                                                            className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-4 py-2 text-xs text-white"
+                                                        />
                                                     </div>
-                                                    <div className="space-y-4">
-                                                        <label className="text-[9px] font-black text-purple-500 uppercase tracking-[0.3em]">Max_Unit_Size</label>
-                                                        <input type="number" name="team_size_max" value={formData.team_size_max} onChange={handleChange} className="w-full bg-white/[0.02] border border-purple-500/10 rounded-xl p-4 text-white text-center font-black" />
+                                                    <div>
+                                                        <label className="text-xs font-medium text-slate-300 block mb-1">Max Team Size</label>
+                                                        <input
+                                                            type="number"
+                                                            name="team_size_max"
+                                                            value={formData.team_size_max}
+                                                            onChange={handleChange}
+                                                            min="1"
+                                                            className="w-full bg-[#111319] border border-white/[0.08] rounded-xl px-4 py-2 text-xs text-white"
+                                                        />
                                                     </div>
-                                                </motion.div>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
                                 </form>
                             </div>
 
-                            <div className="p-10 border-t border-white/[0.05] bg-black flex gap-6 relative z-10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
-                                <button type="button" onClick={() => setShowForm(false)} className="px-10 py-5 rounded-2xl bg-white/[0.03] text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] hover:bg-white/[0.08] hover:text-white transition-all">
-                                    ABORT_SEQUENCE
+                            {/* Drawer Actions */}
+                            <div className="p-4 border-t border-white/[0.08] bg-[#0A0C11] flex gap-3">
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowForm(false)} 
+                                    className="px-4 py-2.5 rounded-xl bg-white/[0.04] text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.08] transition-colors"
+                                >
+                                    Cancel
                                 </button>
-                                <button type="submit" form="eventForm" className="flex-1 px-10 py-5 bg-blue-600 rounded-2xl text-[9px] font-black text-white uppercase tracking-[0.3em] hover:bg-blue-500 transition-all shadow-[0_12px_30px_rgba(37,99,235,0.4)] flex items-center justify-center gap-3">
-                                    <Save size={16} />
-                                    {isEditing ? 'UPDATE_GRID_DATA' : 'COMMIT_NEW_NODE'}
+                                <button 
+                                    type="submit" 
+                                    form="eventForm" 
+                                    className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold transition-colors shadow-sm flex items-center justify-center gap-2"
+                                >
+                                    <Save size={14} />
+                                    <span>{isEditing ? 'Save Changes' : 'Create Event'}</span>
                                 </button>
                             </div>
                         </motion.div>
@@ -437,132 +653,85 @@ const AdminEvents = () => {
     );
 };
 
-const EventCard = ({ event, onEdit, onDelete, index }) => {
-    const isPast = new Date(event.event_date) < new Date();
-    const progress = Math.min(((event.registrations?.length || 0) / event.registration_limit) * 100, 100);
+const EventCard = ({ event, onEdit, onDelete }) => {
+    const capacity = event.registration_limit || 100;
+    const registered = event.registrations?.length || 0;
+    const progress = Math.min(100, Math.round((registered / capacity) * 100));
 
     return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-            className="group relative flex flex-col bg-white/[0.01] border border-white/[0.03] rounded-[2.5rem] overflow-hidden hover:border-blue-500/20 hover:bg-white/[0.02] transition-all duration-700"
-        >
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/[0.05] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
-            <div className="p-10 flex flex-col h-full relative z-10">
-                {/* Header Section */}
-                <div className="flex items-start justify-between mb-10">
-                    <div className="flex flex-col gap-3">
-                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-[0.3em] border ${event.is_registration_open ? 'bg-emerald-500/[0.03] text-emerald-500 border-emerald-500/10' : 'bg-rose-500/[0.03] text-rose-500 border-rose-500/10'}`}>
-                            <div className={`w-1 h-1 rounded-full ${event.is_registration_open ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                            {event.is_registration_open ? 'OPS_OPEN' : 'OPS_LOCKED'}
-                        </div>
-                        <span className="text-[9px] font-black text-blue-500/40 uppercase tracking-[0.4em] px-1">{event.category}</span>
-                    </div>
-
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <button onClick={() => onEdit(event)} className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.05] text-slate-500 hover:text-white hover:bg-blue-600 transition-all flex items-center justify-center">
-                            <Edit2 size={14} />
-                        </button>
-                        <button onClick={() => onDelete(event.id)} className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.05] text-slate-500 hover:text-white hover:bg-rose-600 transition-all flex items-center justify-center">
-                            <Trash2 size={14} />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Content Section */}
-                <div className="space-y-6 flex-1">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight leading-tight group-hover:text-blue-500 transition-colors duration-500">
-                        {event.title}
-                    </h3>
-
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-3 text-slate-400 group-hover:text-slate-300 transition-colors">
-                            <div className="w-7 h-7 rounded-lg bg-white/[0.03] border border-white/[0.05] flex items-center justify-center">
-                                <Calendar size={12} className="text-blue-500/60" />
-                            </div>
-                            <span className="text-[10px] font-mono font-black uppercase tracking-tight">
-                                {new Date(event.event_date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase()}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-3 text-slate-400 group-hover:text-slate-300 transition-colors">
-                            <div className="w-7 h-7 rounded-lg bg-white/[0.03] border border-white/[0.05] flex items-center justify-center">
-                                <MapPin size={12} className="text-pink-500/60" />
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">{event.venue}</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Registry Analytics */}
-                <div className="mt-12 pt-8 border-t border-white/[0.05] space-y-5">
-                    <div className="flex items-end justify-between">
-                        <div className="space-y-1">
-                            <span className="text-[8px] font-black text-slate-600 uppercase tracking-[0.4em]">REGISTRY_LOAD</span>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-2xl font-black text-white tabular-nums tracking-tighter">{event.registrations?.length || '0'}</span>
-                                <span className="text-[10px] text-slate-800 font-mono">/ {event.registration_limit}</span>
-                            </div>
-                        </div>
-                        <div className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest ${progress >= 100 ? 'bg-rose-500/10 text-rose-500' : 'bg-blue-600/10 text-blue-500'}`}>
-                            {Math.round(progress)}%_UTILIZED
-                        </div>
-                    </div>
-
-                    <div className="h-1.5 w-full bg-white/[0.02] border border-white/[0.05] rounded-full overflow-hidden p-[2px]">
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${progress}%` }}
-                            transition={{ duration: 1.5, ease: "circOut" }}
-                            className={`h-full rounded-full relative ${progress >= 100 ? 'bg-rose-500' : 'bg-blue-600'}`}
+        <div className="group flex flex-col bg-[#111319] border border-white/[0.06] hover:border-white/[0.12] rounded-2xl overflow-hidden transition-all duration-200 shadow-sm">
+            <div className="p-5 flex flex-col flex-1">
+                {/* Status & Actions Header */}
+                <div className="flex items-center justify-between gap-2 mb-3">
+                    <StatusBadge 
+                        status={event.is_registration_open ? 'Registration Open' : 'Registration Closed'} 
+                    />
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                            onClick={() => onEdit(event)} 
+                            className="p-1.5 rounded-lg hover:bg-white/[0.08] text-slate-400 hover:text-white transition-colors"
+                            title="Edit Event"
                         >
-                            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)] animate-[shimmer_2s_infinite]" />
-                        </motion.div>
+                            <Edit2 size={13} />
+                        </button>
+                        <button 
+                            onClick={() => onDelete(event.id)} 
+                            className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 transition-colors"
+                            title="Delete Event"
+                        >
+                            <Trash2 size={13} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Event Title & Metadata */}
+                <h3 className="text-base font-semibold text-white tracking-tight leading-snug mb-3 group-hover:text-blue-400 transition-colors">
+                    {event.title}
+                </h3>
+
+                <div className="space-y-1.5 text-xs text-slate-400 mb-4">
+                    <div className="flex items-center gap-2">
+                        <Calendar size={13} className="text-slate-500 shrink-0" />
+                        <span className="truncate">
+                            {event.event_date ? new Date(event.event_date).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'Date TBD'}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <MapPin size={13} className="text-slate-500 shrink-0" />
+                        <span className="truncate">{event.venue || 'Venue TBD'}</span>
+                    </div>
+                </div>
+
+                {/* Capacity Progress Bar */}
+                <div className="mt-auto pt-4 border-t border-white/[0.04] space-y-2">
+                    <div className="flex justify-between items-center text-xs">
+                        <span className="text-[11px] text-slate-400">Capacity</span>
+                        <span className="text-[11px] font-mono font-semibold text-slate-200">
+                            {registered}/{capacity} ({progress}%)
+                        </span>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                        <div 
+                            style={{ width: `${progress}%` }} 
+                            className={`h-full rounded-full transition-all duration-300 ${progress >= 100 ? 'bg-rose-500' : 'bg-blue-600'}`} 
+                        />
                     </div>
                 </div>
             </div>
 
-            {/* Action Bar */}
-            <div className="px-10 py-5 bg-white/[0.01] border-t border-white/[0.03] flex items-center justify-between group-hover:bg-white/[0.03] transition-colors duration-500">
-                <div className="flex items-center gap-4">
-                    <div className="flex -space-x-3">
-                        {[1, 2, 3].map(i => (
-                            <div key={i} className="w-7 h-7 rounded-full bg-slate-900 border-2 border-[#030303] flex items-center justify-center overflow-hidden">
-                                <Users size={12} className="text-slate-700" />
-                            </div>
-                        ))}
-                    </div>
-                    <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">+ {event.registrations?.length || 0} LINKED_NODES</span>
-                </div>
+            {/* Bottom Card Footer */}
+            <div className="px-5 py-2.5 bg-[#0E1017] border-t border-white/[0.04] flex items-center justify-between text-xs">
+                <span className="text-slate-400">{event.category || 'General'}</span>
                 <button
                     onClick={() => onEdit(event)}
-                    className="p-2 text-slate-800 hover:text-blue-500 hover:translate-x-1 transition-all"
+                    className="text-blue-400 hover:text-blue-300 font-semibold inline-flex items-center gap-1 transition-colors"
                 >
-                    <ChevronRight size={18} />
+                    <span>Configure</span>
+                    <ChevronRight size={13} />
                 </button>
             </div>
-        </motion.div>
+        </div>
     );
 };
-
-const Switch = ({ checked, onChange }) => (
-    <button
-        type="button"
-        onClick={onChange}
-        className={`w-14 h-8 rounded-[1rem] relative transition-all duration-500 border-2 ${checked ? 'bg-blue-600/20 border-blue-500/40' : 'bg-white/[0.02] border-white/[0.1]'}`}
-    >
-        <motion.div
-            animate={{
-                x: checked ? 26 : 4,
-                scale: checked ? 1.1 : 1,
-                backgroundColor: checked ? '#3b82f6' : '#334155'
-            }}
-            className={`absolute top-1.5 w-4 h-4 rounded-full shadow-lg`}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        />
-    </button>
-);
 
 export default AdminEvents;

@@ -1,92 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
 import { 
-    Shield, 
+    Activity, 
     Search, 
-    Filter, 
     Download, 
+    RefreshCw, 
+    ShieldCheck, 
     AlertTriangle, 
-    CheckCircle, 
-    Info, 
-    XCircle,
-    RotateCcw,
-    Activity,
-    Users,
-    Key,
-    Database,
+    Server, 
+    X,
+    Filter,
     Clock,
-    Terminal,
-    Target,
-    Zap,
-    Cpu,
-    SearchX,
-    Loader2
+    Calendar
 } from 'lucide-react';
-
-const LogRow = ({ type, message, user, ip, time, index }) => (
-    <motion.tr 
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: index * 0.01 }}
-        className="hover:bg-white/[0.01] transition-colors group border-b border-white/[0.03] last:border-0"
-    >
-        <td className="py-6 px-8">
-            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-[0.2em] border
-                ${type === 'ERROR' ? 'bg-rose-500/5 text-rose-500 border-rose-500/10' : 
-                  type === 'WARN' ? 'bg-amber-500/5 text-amber-500 border-amber-500/10' : 
-                  type === 'SUCCESS' ? 'bg-emerald-500/5 text-emerald-500 border-emerald-500/10' : 
-                  'bg-blue-500/5 text-blue-500 border-blue-500/10'}`}>
-                <div className={`w-1.5 h-1.5 rounded-full ${
-                     type === 'ERROR' ? 'bg-rose-500' : 
-                     type === 'WARN' ? 'bg-amber-500' : 
-                     type === 'SUCCESS' ? 'bg-emerald-500' : 
-                     'bg-blue-500'
-                }`} />
-                {type}
-            </div>
-        </td>
-        <td className="py-6 px-8">
-            <span className="text-[11px] font-black text-slate-300 uppercase tracking-tight group-hover:text-white transition-colors">
-                {message}
-            </span>
-        </td>
-        <td className="py-6 px-8">
-            <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/5 flex items-center justify-center text-[10px] font-black text-slate-500 group-hover:text-blue-500 transition-colors">
-                    {user?.[0]?.toUpperCase() || 'S'}
-                </div>
-                <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest truncate max-w-[150px]">
-                    {user || 'SYST_ROOT'}
-                </span>
-            </div>
-        </td>
-        <td className="py-6 px-8">
-            <code className="text-[10px] font-mono text-slate-600 bg-white/[0.01] px-3 py-1.5 rounded-lg border border-white/[0.03]">
-                {ip || '0.0.0.0'}
-            </code>
-        </td>
-        <td className="py-6 px-8 text-right font-mono">
-            <div className="flex flex-col items-end">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">{new Date(time).toLocaleDateString()}</span>
-                <span className="text-[9px] text-slate-800 tracking-widest">{new Date(time).toLocaleTimeString()}</span>
-            </div>
-        </td>
-    </motion.tr>
-);
+import PageHeader from '../components/admin/common/PageHeader';
+import StatusBadge from '../components/admin/common/StatusBadge';
+import EmptyState from '../components/admin/common/EmptyState';
+import { TableSkeleton } from '../components/admin/common/LoadingSkeleton';
 
 const AdminLogs = () => {
     const { token } = useAuth();
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
     
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedLevel, setSelectedLevel] = useState('ALL');
+    const [dateRange, setDateRange] = useState('ALL'); // 'ALL' | 'TODAY' | '7D' | '30D'
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchLogs();
-    }, [token]);
 
     const fetchLogs = async () => {
         setLoading(true);
@@ -94,7 +35,7 @@ const AdminLogs = () => {
             const response = await axios.get(`${API_URL}/operations/logs/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setLogs(response.data);
+            setLogs(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Failed to fetch logs", error);
         } finally {
@@ -102,138 +43,317 @@ const AdminLogs = () => {
         }
     };
 
-    const filteredLogs = logs.filter(log => 
-        (log.action || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-        (log.user_email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (log.level || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    useEffect(() => {
+        fetchLogs();
+    }, [token]);
+
+    const filteredLogs = useMemo(() => {
+        const now = new Date();
+        return logs.filter(log => {
+            const matchesSearch = 
+                (log.action || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+                (log.user_email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (log.level || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (log.ip_address || '').toLowerCase().includes(searchTerm.toLowerCase());
+            
+            const matchesLevel = selectedLevel === 'ALL' || (log.level || '').toUpperCase() === selectedLevel;
+
+            let matchesDate = true;
+            if (dateRange !== 'ALL' && log.timestamp) {
+                const logDate = new Date(log.timestamp);
+                const diffMs = now - logDate;
+                const diffDays = diffMs / (1000 * 60 * 60 * 24);
+                if (dateRange === 'TODAY') {
+                    matchesDate = diffDays <= 1;
+                } else if (dateRange === '7D') {
+                    matchesDate = diffDays <= 7;
+                } else if (dateRange === '30D') {
+                    matchesDate = diffDays <= 30;
+                }
+            }
+
+            return matchesSearch && matchesLevel && matchesDate;
+        });
+    }, [logs, searchTerm, selectedLevel, dateRange]);
+
+    // Metric stats
+    const stats = useMemo(() => {
+        const total = logs.length;
+        const success = logs.filter(l => (l.level || '').toUpperCase() === 'SUCCESS').length;
+        const warnings = logs.filter(l => (l.level || '').toUpperCase() === 'WARN' || (l.level || '').toUpperCase() === 'WARNING').length;
+        const errors = logs.filter(l => (l.level || '').toUpperCase() === 'ERROR').length;
+        return { total, success, warnings, errors };
+    }, [logs]);
+
+    const exportLogsCSV = () => {
+        const headers = ['Timestamp', 'User', 'Action', 'Resource', 'Status'];
+        const csvData = filteredLogs.map(l => [
+            `"${l.timestamp ? new Date(l.timestamp).toISOString() : ''}"`,
+            `"${l.user_email || 'System'}"`,
+            `"${l.action || ''}"`,
+            `"${l.ip_address || '127.0.0.1'}"`,
+            `"${l.level || 'INFO'}"`
+        ]);
+        const csvContent = [headers.join(','), ...csvData.map(e => e.join(','))].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `astra_audit_logs_${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+    };
+
+    const getBadgeStatus = (level) => {
+        const l = (level || '').toUpperCase();
+        if (l === 'ERROR') return 'error';
+        if (l === 'WARN' || l === 'WARNING') return 'warning';
+        if (l === 'SUCCESS') return 'success';
+        return 'info';
+    };
+
+    const hasActiveFilters = searchTerm !== '' || selectedLevel !== 'ALL' || dateRange !== 'ALL';
+
+    const resetFilters = () => {
+        setSearchTerm('');
+        setSelectedLevel('ALL');
+        setDateRange('ALL');
+    };
 
     return (
-        <div className="space-y-12 pb-20">
-            {/* Header */}
-            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-10 relative">
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <div className="h-px w-8 bg-blue-500/40" />
-                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.5em]">Security_Audit</span>
+        <div className="space-y-6 pb-12">
+            {/* Standard SaaS Page Header */}
+            <PageHeader
+                title="Activity & Audit Logs"
+                subtitle="Review administrative operations, authorization records, and operational events across the festival platform."
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Audit Logs' }
+                ]}
+                actions={
+                    <div className="flex items-center gap-2.5">
+                        <button 
+                            onClick={fetchLogs}
+                            disabled={loading}
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-semibold transition-colors disabled:opacity-50"
+                        >
+                            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                            Refresh
+                        </button>
+                        <button
+                            onClick={exportLogsCSV}
+                            disabled={filteredLogs.length === 0}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-semibold transition-colors shadow-sm shadow-blue-500/20"
+                        >
+                            <Download className="w-3.5 h-3.5" />
+                            Export CSV
+                        </button>
                     </div>
+                }
+            />
+
+            {/* Quick Metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="p-4 rounded-xl bg-[#111319] border border-white/[0.06] flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-black text-white uppercase tracking-[0.1em]">System_Activity_Logs</h1>
-                        <p className="text-[11px] text-slate-500 mt-2 font-mono uppercase tracking-tight">
-                            Total_Events: <span className="text-blue-500">{logs.length}</span> // Filtered: <span className="text-white">{filteredLogs.length}</span>
-                        </p>
+                        <p className="text-xs text-slate-400 font-medium">Logged Records</p>
+                        <p className="text-xl font-bold text-white mt-1">{stats.total}</p>
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                        <Activity className="w-4 h-4" />
                     </div>
                 </div>
 
-                <div className="flex flex-wrap gap-4 w-full xl:w-auto">
-                    <div className="relative group flex-1 xl:flex-none xl:min-w-[400px]">
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-700 group-focus-within:text-blue-500 transition-colors z-10" />
-                        <input
-                            type="text"
-                            placeholder="SCAN_AUDIT_TRAIL..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="h-14 w-full bg-white/[0.01] border border-white/[0.05] rounded-[1.25rem] pl-14 pr-6 text-xs font-black text-white placeholder:text-slate-800 focus:outline-none focus:bg-white/[0.03] focus:border-white/[0.1] transition-all uppercase tracking-widest"
-                        />
+                <div className="p-4 rounded-xl bg-[#111319] border border-white/[0.06] flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-slate-400 font-medium">Successful</p>
+                        <p className="text-xl font-bold text-emerald-400 mt-1">{stats.success}</p>
                     </div>
-                    <button
-                        onClick={fetchLogs}
-                        className="h-14 px-8 bg-white/[0.02] border border-white/[0.05] text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] rounded-[1.25rem] flex items-center gap-3 hover:bg-white/[0.05] hover:text-white transition-all"
-                    >
-                        <RotateCcw size={16} />
-                        REFRESH
-                    </button>
-                    <button className="h-14 px-8 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-[1.25rem] flex items-center gap-3 hover:bg-blue-500 transition-all shadow-[0_12px_24px_rgba(37,99,235,0.3)] hover:-translate-y-0.5">
-                        <Download size={16} />
-                        EXPORT_LOGS
-                    </button>
+                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <ShieldCheck className="w-4 h-4" />
+                    </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#111319] border border-white/[0.06] flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-slate-400 font-medium">Warnings</p>
+                        <p className="text-xl font-bold text-amber-400 mt-1">{stats.warnings}</p>
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                        <AlertTriangle className="w-4 h-4" />
+                    </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#111319] border border-white/[0.06] flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-slate-400 font-medium">Errors & Alerts</p>
+                        <p className="text-xl font-bold text-rose-400 mt-1">{stats.errors}</p>
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                        <Server className="w-4 h-4" />
+                    </div>
                 </div>
             </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                {[
-                    { label: 'Total_Operations', val: logs.length, icon: Activity, color: 'blue' },
-                    { label: 'Security_Nodes', val: logs.filter(l => l.level === 'SUCCESS').length, icon: Shield, color: 'emerald' },
-                    { label: 'Alert_Nodes', val: logs.filter(l => l.level === 'ERROR').length, icon: AlertTriangle, color: 'rose' },
-                    { label: 'Active_Sectors', val: '04', icon: Cpu, color: 'indigo' }
-                ].map((stat, i) => (
-                    <div key={i} className="p-8 rounded-[2rem] bg-white/[0.01] border border-white/[0.03] flex items-center gap-6 hover:bg-white/[0.02] hover:border-white/10 transition-all group relative overflow-hidden">
-                         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700" />
-                         <div className={`w-14 h-14 rounded-2xl bg-${stat.color}-500/5 border border-${stat.color}-500/10 flex items-center justify-center text-${stat.color}-500`}>
-                            <stat.icon size={20} />
-                         </div>
-                         <div className="flex flex-col">
-                            <span className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em]">{stat.label}</span>
-                            <span className="text-3xl font-black text-white mt-1 tabular-nums tracking-tighter">{stat.val}</span>
-                         </div>
+            {/* Filter and Search Bar */}
+            <div className="p-3 bg-[#111319] border border-white/[0.06] rounded-xl flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <input
+                        type="text"
+                        placeholder="Search audit records by action, user email, or IP address..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                    />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                    {/* Severity Filter */}
+                    <div className="relative min-w-[130px]">
+                        <select 
+                            value={selectedLevel}
+                            onChange={(e) => setSelectedLevel(e.target.value)}
+                            className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-colors appearance-none cursor-pointer"
+                        >
+                            <option value="ALL">All Severities</option>
+                            <option value="SUCCESS">Success</option>
+                            <option value="INFO">Info</option>
+                            <option value="WARN">Warning</option>
+                            <option value="ERROR">Error</option>
+                        </select>
+                        <Filter className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" />
                     </div>
-                ))}
+
+                    {/* Date Range Filter */}
+                    <div className="relative min-w-[120px]">
+                        <select 
+                            value={dateRange}
+                            onChange={(e) => setDateRange(e.target.value)}
+                            className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-colors appearance-none cursor-pointer"
+                        >
+                            <option value="ALL">All Dates</option>
+                            <option value="TODAY">Last 24h</option>
+                            <option value="7D">Last 7 Days</option>
+                            <option value="30D">Last 30 Days</option>
+                        </select>
+                        <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500 pointer-events-none" />
+                    </div>
+
+                    {hasActiveFilters && (
+                        <button
+                            onClick={resetFilters}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white text-xs transition-colors"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                            <span>Reset</span>
+                        </button>
+                    )}
+                </div>
             </div>
 
-            {/* Logs Table */}
-            <div className="relative bg-white/[0.01] border border-white/[0.03] rounded-[2.5rem] overflow-hidden flex flex-col min-h-[600px]">
-                <div className="absolute inset-0 bg-gradient-to-b from-blue-600/[0.01] to-transparent pointer-events-none" />
-                
-                <div className="flex-1 overflow-x-auto custom-scrollbar relative z-10">
-                    <table className="w-full border-collapse text-left">
-                        <thead className="sticky top-0 bg-[#030303] z-20 border-b border-white/[0.03]">
-                            <tr>
-                                <th className="px-8 py-6 text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">SEC_LEVEL</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">OPERATION_MESSAGE</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">USER_IDENTITY</th>
-                                <th className="px-8 py-6 text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">SRC_ENDPOINT</th>
-                                <th className="px-8 py-6 text-right text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">TIMESTAMP</th>
+            {/* Audit Logs Table with exact requested columns: Timestamp, User, Action, Resource, Status */}
+            <div className="bg-[#111319] border border-white/[0.06] rounded-xl overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="border-b border-white/[0.06] bg-white/[0.02]">
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Timestamp</th>
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">User</th>
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Action</th>
+                                <th className="px-5 py-3.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Resource / Host</th>
+                                <th className="px-5 py-3.5 text-right text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/[0.03]">
+                        <tbody className="divide-y divide-white/[0.04]">
                             {loading ? (
-                                Array.from({ length: 8 }).map((_, i) => (
-                                    <tr key={i} className="animate-pulse">
-                                        <td colSpan="5" className="px-8 py-6">
-                                            <div className="h-8 bg-white/[0.02] border border-white/[0.05] rounded-xl w-full" />
+                                <TableSkeleton rows={8} cols={5} />
+                            ) : filteredLogs.length > 0 ? (
+                                filteredLogs.map((log, idx) => (
+                                    <tr key={log.id || idx} className="hover:bg-white/[0.02] transition-colors">
+                                        {/* Timestamp */}
+                                        <td className="px-5 py-3.5 whitespace-nowrap">
+                                            <div className="flex flex-col">
+                                                <span className="text-xs text-slate-200">
+                                                    {log.timestamp ? new Date(log.timestamp).toLocaleDateString(undefined, {
+                                                        month: 'short',
+                                                        day: 'numeric',
+                                                        year: 'numeric'
+                                                    }) : '—'}
+                                                </span>
+                                                <span className="text-[10px] text-slate-500 font-mono">
+                                                    {log.timestamp ? new Date(log.timestamp).toLocaleTimeString([], {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        second: '2-digit'
+                                                    }) : ''}
+                                                </span>
+                                            </div>
+                                        </td>
+
+                                        {/* User */}
+                                        <td className="px-5 py-3.5">
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="w-6 h-6 rounded-md bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-[10px] font-bold text-slate-300 shrink-0">
+                                                    {(log.user_email?.[0] || 'S').toUpperCase()}
+                                                </div>
+                                                <span className="text-xs text-slate-300 font-medium truncate max-w-[180px]">
+                                                    {log.user_email || 'System'}
+                                                </span>
+                                            </div>
+                                        </td>
+
+                                        {/* Action */}
+                                        <td className="px-5 py-3.5">
+                                            <span className="text-xs font-medium text-white">
+                                                {log.action}
+                                            </span>
+                                        </td>
+
+                                        {/* Resource / Host */}
+                                        <td className="px-5 py-3.5">
+                                            <span className="text-[11px] font-mono text-slate-400 bg-white/[0.02] px-2 py-0.5 rounded border border-white/[0.05]">
+                                                {log.ip_address || '127.0.0.1'}
+                                            </span>
+                                        </td>
+
+                                        {/* Status */}
+                                        <td className="px-5 py-3.5 text-right">
+                                            <StatusBadge 
+                                                status={getBadgeStatus(log.level)}
+                                                label={(log.level || 'INFO').toUpperCase()}
+                                            />
                                         </td>
                                     </tr>
                                 ))
-                            ) : filteredLogs.length === 0 ? (
+                            ) : (
                                 <tr>
-                                    <td colSpan="5" className="py-40 text-center">
-                                         <div className="flex flex-col items-center gap-8 opacity-20">
-                                            <SearchX size={60} strokeWidth={1} />
-                                            <div className="space-y-2 text-center">
-                                                <p className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Zero_Log_Entries</p>
-                                                <p className="text-[9px] font-mono text-slate-500 uppercase tracking-widest">No matching activities recorded in this sector</p>
-                                            </div>
-                                         </div>
+                                    <td colSpan={5} className="p-0">
+                                        <EmptyState 
+                                            icon={Activity}
+                                            title={hasActiveFilters ? "No matching log entries" : "No activity recorded yet"}
+                                            description={
+                                                hasActiveFilters 
+                                                    ? "Try adjusting your search criteria or date filters."
+                                                    : "Administrative operations and security events will be automatically recorded here."
+                                            }
+                                            actionLabel={hasActiveFilters ? "Reset Filters" : undefined}
+                                            onAction={hasActiveFilters ? resetFilters : undefined}
+                                        />
                                     </td>
                                 </tr>
-                            ) : (
-                                filteredLogs.map((log, i) => (
-                                    <LogRow 
-                                        key={i} 
-                                        index={i}
-                                        type={log.level}
-                                        message={log.action}
-                                        user={log.user_email}
-                                        ip={log.ip_address}
-                                        time={log.timestamp}
-                                    />
-                                ))
                             )}
                         </tbody>
                     </table>
                 </div>
 
-                {/* Footer */}
-                <div className="p-8 border-t border-white/[0.03] bg-black/40 flex justify-between items-center relative z-10 backdrop-blur-xl">
-                    <span className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em]">
-                         STREAMING_RESULTS: <span className="text-blue-500">{filteredLogs.length}</span> / {logs.length} UNIT_NODES
-                    </span>
-                    <div className="flex items-center gap-4">
-                        <button className="px-6 py-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[9px] font-black text-slate-500 uppercase tracking-widest hover:text-white hover:bg-white/[0.05] transition-all disabled:opacity-30">PREV_SECTOR</button>
-                        <button className="px-6 py-2.5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[9px] font-black text-slate-500 uppercase tracking-widest hover:text-white hover:bg-white/[0.05] transition-all disabled:opacity-30">NEXT_SECTOR</button>
+                {!loading && filteredLogs.length > 0 && (
+                    <div className="px-5 py-3 border-t border-white/[0.06] bg-white/[0.01] flex items-center justify-between text-xs text-slate-400">
+                        <span>Showing <strong className="text-white">{filteredLogs.length}</strong> of <strong className="text-white">{logs.length}</strong> audit entries</span>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                            <Clock className="w-3 h-3" />
+                            <span>Live audit logging active</span>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );

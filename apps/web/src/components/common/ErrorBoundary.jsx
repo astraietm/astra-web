@@ -35,42 +35,36 @@ class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[#05080f] flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-gradient-to-br from-[#0F141F] to-[#0A0F1C] border border-red-500/30 rounded-lg p-8 text-center">
-            {/* Corner Accents */}
-            <div className="relative">
-              <div className="absolute -top-12 -left-12 w-8 h-8 border-t-2 border-l-2 border-red-500/50" />
-              <div className="absolute -top-12 -right-12 w-8 h-8 border-t-2 border-r-2 border-red-500/50" />
-              <div className="absolute -bottom-12 -left-12 w-8 h-8 border-b-2 border-l-2 border-red-500/50" />
-              <div className="absolute -bottom-12 -right-12 w-8 h-8 border-b-2 border-r-2 border-red-500/50" />
-              
-              <AlertTriangle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-              
-              <h1 className="text-2xl font-bold text-white mb-2 font-mono uppercase">
-                [SYSTEM_ERROR]
-              </h1>
-              
-              <p className="text-gray-400 mb-6 font-mono text-sm">
-                <span className="text-red-400">&gt;</span> Critical failure detected in application runtime
-              </p>
-
-              {this.state.error && (
-                <div className="bg-black/30 border border-red-500/20 rounded p-4 mb-6 text-left">
-                  <p className="text-xs font-mono text-red-400 mb-2">ERROR_LOG:</p>
-                  <p className="text-xs font-mono text-gray-500 break-all">
-                    {this.state.error.toString()}
-                  </p>
-                </div>
-              )}
-
-              <button
-                onClick={this.handleReset}
-                className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-red-500/20 text-red-400 border border-red-500/30 rounded font-mono text-sm uppercase tracking-wider hover:bg-red-500/30 transition-all"
-              >
-                <RefreshCw className="w-4 h-4" />
-                [REBOOT_SYSTEM]
-              </button>
+        <div className="min-h-screen bg-[#08090D] flex items-center justify-center p-6">
+          <div className="max-w-lg w-full bg-[#0F1117] border border-white/[0.08] rounded-2xl p-8 text-center shadow-2xl">
+            <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-5">
+              <AlertTriangle className="w-7 h-7" />
             </div>
+            
+            <h1 className="text-xl font-bold text-white mb-2">
+              Something went wrong
+            </h1>
+            
+            <p className="text-slate-400 mb-6 text-sm">
+              An unexpected error occurred while loading this section. Please try refreshing the page.
+            </p>
+
+            {this.state.error && (
+              <div className="bg-black/40 border border-white/[0.06] rounded-xl p-4 mb-6 text-left overflow-hidden">
+                <p className="text-[11px] font-semibold text-slate-400 mb-1">Error details:</p>
+                <p className="text-xs font-mono text-rose-300 break-all">
+                  {this.state.error.toString()}
+                </p>
+              </div>
+            )}
+
+            <button
+              onClick={this.handleReset}
+              className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Reload Page</span>
+            </button>
           </div>
         </div>
       );

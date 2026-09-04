@@ -1,64 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
     Send, 
     Bell, 
-    CheckCircle, 
+    CheckCircle2, 
     AlertTriangle, 
     Clock, 
-    Zap, 
     Users, 
     Loader2,
-    History,
-    ChevronRight,
-    ArrowUpRight,
-    Target,
-    Activity,
-    Radio,
-    Signal,
-    Database,
-    SearchX
+    SearchX,
+    ShieldAlert,
+    Info,
+    RefreshCw
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-
-const NotificationItem = ({ type, title, message, time, recipients, priority, index }) => (
-    <motion.div 
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: index * 0.05, duration: 0.8 }}
-        className="p-8 rounded-[2rem] bg-white/[0.01] border border-white/[0.03] hover:bg-white/[0.02] hover:border-white/10 transition-all group relative overflow-hidden"
-    >
-        <div className="flex justify-between items-start mb-6 relative z-10">
-            <div className="flex items-center gap-6">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-700 group-hover:scale-110
-                    ${priority === 'URGENT' ? 'bg-rose-500/5 text-rose-500 border-rose-500/10 shadow-[0_0_20px_rgba(244,63,94,0.1)]' : 
-                      priority === 'SUCCESS' ? 'bg-emerald-500/5 text-emerald-500 border-emerald-500/10 shadow-[0_0_20px_rgba(16,185,129,0.1)]' : 
-                      'bg-blue-500/5 text-blue-500 border-blue-500/10 shadow-[0_0_20px_rgba(59,130,246,0.1)]'}`}>
-                    {priority === 'URGENT' ? <AlertTriangle size={22} /> : 
-                     priority === 'SUCCESS' ? <CheckCircle size={22} /> : 
-                     <Signal size={22} />}
-                </div>
-                <div className="space-y-1.5">
-                    <h4 className="font-black text-white text-[11px] uppercase tracking-widest group-hover:text-blue-500 transition-colors">{title}</h4>
-                    <div className="flex items-center gap-3">
-                         <span className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em]">{recipients}</span>
-                         <div className="w-1 h-1 rounded-full bg-slate-800" />
-                         <span className={`text-[9px] font-black uppercase tracking-[0.3em] ${priority === 'URGENT' ? 'text-rose-500' : 'text-slate-700'}`}>{priority}_PRIORITY</span>
-                    </div>
-                </div>
-            </div>
-            <div className="flex items-center gap-2 text-[9px] font-black text-slate-800 uppercase tracking-widest bg-white/[0.02] px-3 py-1.5 rounded-lg border border-white/[0.05] group-hover:text-slate-500 transition-colors">
-                <Clock size={12} />
-                {time}
-            </div>
-        </div>
-        <p className="text-slate-400 text-[10px] font-medium leading-relaxed pl-20 group-hover:text-slate-300 transition-colors uppercase tracking-tight">{message}</p>
-        
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
-    </motion.div>
-);
+import PageHeader from '../components/admin/common/PageHeader';
+import StatusBadge from '../components/admin/common/StatusBadge';
+import EmptyState from '../components/admin/common/EmptyState';
 
 const AdminNotifications = () => {
     const { token } = useAuth();
@@ -71,15 +31,11 @@ const AdminNotifications = () => {
     
     // Form State
     const [formData, setFormData] = useState({
-        audience: 'ALL_NODES',
+        audience: 'ALL_USERS',
         priority: 'NORMAL',
         subject: '',
         message: ''
     });
-
-    useEffect(() => {
-        fetchNotifications();
-    }, [token]);
 
     const fetchNotifications = async () => {
         setLoading(true);
@@ -87,7 +43,7 @@ const AdminNotifications = () => {
             const response = await axios.get(`${API_URL}/operations/notifications/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setNotifications(response.data);
+            setNotifications(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Failed to fetch notifications", error);
         } finally {
@@ -95,169 +51,245 @@ const AdminNotifications = () => {
         }
     };
 
-    const handleSend = async () => {
-        if (!formData.subject || !formData.message) return;
+    useEffect(() => {
+        fetchNotifications();
+    }, [token]);
+
+    const handleSend = async (e) => {
+        e.preventDefault();
+        if (!formData.subject.trim() || !formData.message.trim()) {
+            toast?.error?.('Please provide both a subject and a message.');
+            return;
+        }
         
         setSending(true);
         try {
             await axios.post(`${API_URL}/operations/notifications/`, {
-                subject: formData.subject,
-                message: formData.message,
+                subject: formData.subject.trim(),
+                message: formData.message.trim(),
                 priority: formData.priority,
                 recipients_criteria: formData.audience
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             
-            setFormData({ ...formData, subject: '', message: '' });
-            toast.success('Signal broadcast dispatched successfully.');
+            setFormData({ audience: 'ALL_USERS', priority: 'NORMAL', subject: '', message: '' });
+            toast?.success?.('Announcement sent successfully.');
             fetchNotifications(); 
         } catch (error) {
-            toast.error('Signal dispatch protocol failure.');
+            console.error('Failed to send announcement:', error);
+            toast?.error?.('Failed to send announcement. Please try again.');
         } finally {
             setSending(false);
         }
     };
 
-    return (
-        <div className="space-y-12 pb-20">
-            {/* Header */}
-            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-10 relative">
-                <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                        <div className="h-px w-8 bg-blue-500/40" />
-                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.5em]">Broadcast_Center</span>
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-black text-white uppercase tracking-[0.1em]">Signal_Broadcaster</h1>
-                        <p className="text-[11px] text-slate-500 mt-2 font-mono uppercase tracking-tight">
-                            Active_Uplinks: <span className="text-blue-500">REALTIME_ENABLED</span> // Dispatched_Clusters: <span className="text-white">{notifications.length}</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
+    const getPriorityBadge = (priority) => {
+        switch (priority) {
+            case 'URGENT':
+                return <StatusBadge status="error" label="Urgent" />;
+            case 'SUCCESS':
+                return <StatusBadge status="success" label="Confirmed" />;
+            default:
+                return <StatusBadge status="info" label="Standard" />;
+        }
+    };
 
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
-                {/* Compose Form */}
-                <div className="xl:col-span-7 space-y-10">
-                    <div className="bg-white/[0.01] border border-white/[0.03] rounded-[2.5rem] p-10 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/[0.01] to-transparent pointer-events-none" />
-                        
-                        <div className="flex items-center gap-6 mb-12 relative z-10">
-                            <div className="w-16 h-16 rounded-2xl bg-blue-600/5 border border-blue-600/10 flex items-center justify-center text-blue-500 shadow-[0_0_30px_rgba(37,99,235,0.1)] group-hover:scale-105 transition-transform duration-700">
-                                <Radio size={24} strokeWidth={2.5} />
+    const getAudienceLabel = (crit) => {
+        switch (crit) {
+            case 'ALL_USERS':
+                return 'All Attendees';
+            case 'ADMINS':
+                return 'Admins Only';
+            case 'VOLUNTEERS':
+                return 'Staff & Volunteers';
+            default:
+                return crit || 'All Attendees';
+        }
+    };
+
+    return (
+        <div className="space-y-6 pb-12">
+            {/* Standard SaaS Page Header */}
+            <PageHeader
+                title="Broadcast Announcements"
+                subtitle="Dispatch updates, critical alerts, and reminders to event participants and staff."
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Notifications' }
+                ]}
+                badge={
+                    <span className="text-xs text-slate-400 font-medium">
+                        Sent: <strong className="text-white">{notifications.length}</strong>
+                    </span>
+                }
+                actions={
+                    <button 
+                        onClick={fetchNotifications}
+                        disabled={loading}
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-semibold transition-colors disabled:opacity-50"
+                    >
+                        <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                        Refresh
+                    </button>
+                }
+            />
+
+            {/* Grid Layout: Compose Form & Announcement History */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                {/* Left: Compose Form */}
+                <div className="lg:col-span-7">
+                    <div className="bg-[#111319] border border-white/[0.06] rounded-xl p-6 shadow-sm">
+                        <div className="flex items-center gap-3 pb-5 border-b border-white/[0.06]">
+                            <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center">
+                                <Send className="w-4 h-4" />
                             </div>
-                            <div className="flex flex-col gap-1">
-                                <h3 className="text-xl font-black text-white uppercase tracking-tight">Synthesize_Signal</h3>
-                                <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">Configure_Broadcast_Parameters</p>
+                            <div>
+                                <h3 className="text-sm font-bold text-white">Compose Announcement</h3>
+                                <p className="text-xs text-slate-400">Direct notifications to your selected audience.</p>
                             </div>
                         </div>
-                        
-                        <form className="space-y-10 relative z-10" onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-3">
-                                    <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] ml-1">Target_Cluster</label>
+
+                        <form onSubmit={handleSend} className="space-y-4 pt-5">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-medium text-slate-300">Target Audience</label>
                                     <select 
                                         value={formData.audience}
                                         onChange={(e) => setFormData({...formData, audience: e.target.value})}
-                                        className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-4.5 py-4 text-[11px] font-black text-white focus:outline-none focus:border-blue-500/30 transition-all cursor-pointer uppercase tracking-widest"
+                                        className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
                                     >
-                                        <option value="ALL_NODES">All_Registered_Nodes</option>
-                                        <option value="ADMIN_ROOT">Command_Level_Admins</option>
-                                        <option value="VOL_UNITS">Operational_Volunteers</option>
+                                        <option value="ALL_USERS">All Registered Participants</option>
+                                        <option value="ADMINS">Administrators Only</option>
+                                        <option value="VOLUNTEERS">Volunteers & Coordinators</option>
                                     </select>
                                 </div>
-                                <div className="space-y-3">
-                                    <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] ml-1">Priority_Protocol</label>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-medium text-slate-300">Priority Level</label>
                                     <select 
                                         value={formData.priority}
                                         onChange={(e) => setFormData({...formData, priority: e.target.value})}
-                                        className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-4.5 py-4 text-[11px] font-black text-white focus:outline-none focus:border-blue-500/30 transition-all cursor-pointer uppercase tracking-widest"
+                                        className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2.5 px-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
                                     >
-                                        <option value="NORMAL">Normal_Status</option>
-                                        <option value="URGENT">Urgent_Intercept</option>
-                                        <option value="SUCCESS">Auth_Confirmation</option>
+                                        <option value="NORMAL">Standard</option>
+                                        <option value="URGENT">Urgent Alert</option>
+                                        <option value="SUCCESS">Confirmation</option>
                                     </select>
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] ml-1">Signal_Header</label>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-medium text-slate-300">Subject</label>
                                 <input 
                                     type="text" 
                                     value={formData.subject}
                                     onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                                    placeholder="BROADCAST_IDENTIFIER..."
-                                    className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl p-5 text-sm font-black text-white placeholder:text-slate-900 focus:border-blue-500/30 focus:outline-none transition-all uppercase tracking-widest"
+                                    placeholder="e.g. Venue Opening Timings & Badge Collection"
+                                    className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2.5 px-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
                                     required
                                 />
                             </div>
 
-                            <div className="space-y-3">
-                                <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] ml-1">Data_Payload</label>
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-medium text-slate-300">Message</label>
                                 <textarea 
-                                    rows="6"
+                                    rows="5"
                                     value={formData.message}
                                     onChange={(e) => setFormData({...formData, message: e.target.value})}
-                                    placeholder="ENCODE_MESSAGE_CONTENT..."
-                                    className="w-full bg-white/[0.01] border border-white/[0.05] rounded-[2rem] p-6 text-slate-400 font-medium text-xs focus:border-blue-500/30 focus:outline-none transition-all placeholder:text-slate-900 resize-none leading-relaxed uppercase"
+                                    placeholder="Write your announcement details here..."
+                                    className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg p-3 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors resize-none leading-relaxed"
                                     required
-                                ></textarea>
+                                />
                             </div>
 
                             <button 
                                 type="submit" 
                                 disabled={sending}
-                                className="w-full h-16 bg-blue-600 rounded-[1.5rem] text-white text-[10px] font-black uppercase tracking-[0.4em] flex items-center justify-center gap-4 hover:bg-blue-500 transition-all shadow-[0_15px_40px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 disabled:opacity-30 disabled:translate-y-0"
+                                className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm shadow-blue-500/20"
                             >
-                                {sending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} strokeWidth={3} />}
-                                {sending ? 'DISPATCHING_SIGNAL' : 'EXECUTE_BROADCAST'}
+                                {sending ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        <span>Dispatching Announcement...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Send className="w-4 h-4" />
+                                        <span>Send Announcement</span>
+                                    </>
+                                )}
                             </button>
                         </form>
                     </div>
                 </div>
 
-                {/* Recent History */}
-                <div className="xl:col-span-5 flex flex-col h-full min-h-[600px]">
-                    <div className="bg-white/[0.01] border border-white/[0.03] rounded-[3rem] relative overflow-hidden flex flex-col h-full group/history">
-                        <div className="p-8 border-b border-white/[0.03] flex items-center justify-between bg-black/40 backdrop-blur-3xl sticky top-0 z-10">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-blue-500/5 flex items-center justify-center text-blue-500">
-                                    <Activity size={16} />
-                                </div>
-                                <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">SIGNAL_ARCHIVE</h3>
+                {/* Right: History Timeline */}
+                <div className="lg:col-span-5">
+                    <div className="bg-[#111319] border border-white/[0.06] rounded-xl overflow-hidden flex flex-col shadow-sm">
+                        <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                                <Bell className="w-4 h-4 text-slate-400" />
+                                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Sent Announcements</h3>
                             </div>
+                            <span className="text-xs text-slate-400">
+                                {notifications.length} total
+                            </span>
                         </div>
-                        
-                        <div className="p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar relative z-10">
+
+                        <div className="p-4 space-y-3 max-h-[580px] overflow-y-auto">
                             {loading ? (
-                                Array.from({ length: 4 }).map((_, i) => (
-                                    <div key={i} className="h-32 rounded-[2rem] bg-white/[0.01] border border-white/[0.03] animate-pulse" />
+                                Array.from({ length: 3 }).map((_, i) => (
+                                    <div key={i} className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] animate-pulse space-y-2">
+                                        <div className="h-4 bg-white/10 rounded w-2/3" />
+                                        <div className="h-3 bg-white/5 rounded w-full" />
+                                        <div className="h-3 bg-white/5 rounded w-4/5" />
+                                    </div>
                                 ))
                             ) : notifications.length === 0 ? (
-                                <div className="h-full flex flex-col items-center justify-center opacity-20 gap-8 py-20">
-                                    <SearchX size={60} strokeWidth={1} />
-                                    <div className="space-y-2 text-center">
-                                        <p className="text-[10px] font-black text-white uppercase tracking-[0.4em]">NO_SIGNALS_RECORDED</p>
-                                        <p className="text-[8px] font-mono text-slate-500 uppercase tracking-widest">Archive_Ready_For_Data</p>
-                                    </div>
+                                <div className="py-12">
+                                    <EmptyState 
+                                        icon={Bell}
+                                        title="No announcements yet"
+                                        description="Sent announcements will appear here with recipient criteria and dispatch timestamps."
+                                    />
                                 </div>
                             ) : (
-                                notifications.map((notif, idx) => (
-                                    <NotificationItem 
+                                notifications.map((notif) => (
+                                    <div 
                                         key={notif.id}
-                                        index={idx}
-                                        priority={notif.priority}
-                                        title={notif.subject}
-                                        message={notif.message}
-                                        time={new Date(notif.created_at).toLocaleDateString()}
-                                        recipients={notif.recipients_criteria}
-                                    />
+                                        className="p-4 rounded-xl bg-[#0d0f14] border border-white/[0.06] hover:border-white/10 transition-colors space-y-2.5"
+                                    >
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                {getPriorityBadge(notif.priority)}
+                                                <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-white/[0.04] text-slate-400 border border-white/[0.06]">
+                                                    {getAudienceLabel(notif.recipients_criteria)}
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-mono text-slate-500 whitespace-nowrap">
+                                                {notif.created_at ? new Date(notif.created_at).toLocaleDateString(undefined, {
+                                                    month: 'short',
+                                                    day: 'numeric'
+                                                }) : 'Recent'}
+                                            </span>
+                                        </div>
+
+                                        <h4 className="text-xs font-bold text-white tracking-tight">
+                                            {notif.subject}
+                                        </h4>
+
+                                        <p className="text-xs text-slate-300 leading-relaxed break-words whitespace-pre-wrap">
+                                            {notif.message}
+                                        </p>
+                                    </div>
                                 ))
                             )}
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     );

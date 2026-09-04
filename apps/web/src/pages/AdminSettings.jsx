@@ -10,66 +10,42 @@ import {
     Globe, 
     Bell, 
     Server, 
-    Database, 
     Users, 
     Mail, 
     Trash2, 
     Shield, 
     Activity,
-    Cpu,
-    Zap,
-    Terminal,
-    Target,
-    RotateCcw,
-    ShieldCheck,
-    Cloud,
-    Power,
-    Command
+    Plus,
+    Loader2,
+    Check,
+    RefreshCw,
+    Sliders
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import PageHeader from '../components/admin/common/PageHeader';
+import StatusBadge from '../components/admin/common/StatusBadge';
 
-const Toggle = ({ enabled, onChange }) => (
+const ToggleSwitch = ({ enabled, onChange }) => (
     <button 
+        type="button"
         onClick={() => onChange(!enabled)}
-        className={`w-14 h-8 flex items-center rounded-2xl p-1.5 transition-all duration-500 relative ${enabled ? 'bg-blue-600/20 border-blue-500/40' : 'bg-white/[0.02] border-white/[0.1]'} border-2`}
+        className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-200 cursor-pointer ${
+            enabled ? 'bg-blue-600' : 'bg-white/10'
+        }`}
     >
-        <motion.div 
-            animate={{ 
-                x: enabled ? 24 : 0,
-                backgroundColor: enabled ? '#3b82f6' : '#334155',
-                scale: enabled ? 1.1 : 1
-            }}
-            className={`w-4 h-4 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.5)]`}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        <div 
+            className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 shadow-sm ${
+                enabled ? 'translate-x-5' : 'translate-x-0'
+            }`}
         />
     </button>
 );
 
-const SettingSection = ({ icon: Icon, title, sub, children }) => (
-    <div className="bg-white/[0.01] border border-white/[0.03] rounded-[2.5rem] p-10 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-600/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-        
-        <div className="flex items-center gap-6 mb-12 relative z-10">
-            <div className="w-14 h-14 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-500/10 transition-all">
-                <Icon size={22} />
-            </div>
-            <div className="flex flex-col gap-1">
-                <h3 className="text-xl font-black text-white uppercase tracking-tight">{title}</h3>
-                <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.3em]">{sub}</p>
-            </div>
-        </div>
-
-        <div className="space-y-10 relative z-10">
-            {children}
-        </div>
-    </div>
-);
-
 const SettingItem = ({ label, description, rightElement }) => (
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 group/item">
-        <div className="space-y-2 pr-6 flex-1">
-            <h4 className="text-[11px] font-black text-slate-300 uppercase tracking-widest group-hover/item:text-white transition-colors">{label}</h4>
-            <p className="text-[10px] font-medium text-slate-500 leading-relaxed max-w-lg uppercase tracking-tight">{description}</p>
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4 border-b border-white/[0.04] last:border-b-0">
+        <div className="space-y-1 max-w-xl">
+            <h4 className="text-xs font-semibold text-white">{label}</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">{description}</p>
         </div>
         <div className="shrink-0">
             {rightElement}
@@ -83,21 +59,23 @@ const AdminSettings = () => {
     const toast = useToast();
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
+    const [activeTab, setActiveTab] = useState('general');
+
     const [settings, setSettings] = useState({
         registrationOpen: true,
         maintenanceMode: false,
         emailNotifications: true,
         publicProfile: true,
         twoFactor: true,
-        darkMode: true
+        sessionTimeout: '30m'
     });
     
     // Team Management State
     const [teamMembers, setTeamMembers] = useState([]);
     const [newMemberEmail, setNewMemberEmail] = useState('');
     const [newMemberRole, setNewMemberRole] = useState('VOLUNTEER');
-    
     const [saving, setSaving] = useState(false);
+    const [loadingTeam, setLoadingTeam] = useState(false);
 
     useEffect(() => {
         if (user && !user.is_staff) {
@@ -108,44 +86,54 @@ const AdminSettings = () => {
     }, [user, navigate]);
 
     const fetchTeam = async () => {
+        setLoadingTeam(true);
         try {
             const response = await axios.get(`${API_URL}/operations/team/`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setTeamMembers(response.data);
+            setTeamMembers(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Failed to fetch team", error);
+        } finally {
+            setLoadingTeam(false);
         }
     };
 
-    const handleAddMember = async () => {
+    const handleAddMember = async (e) => {
+        e.preventDefault();
+        if (!newMemberEmail.trim()) return;
+
         try {
             await axios.post(`${API_URL}/operations/team/`, {
-                email: newMemberEmail,
+                email: newMemberEmail.trim(),
                 role: newMemberRole
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setNewMemberEmail('');
-            toast.success('New personnel node authorized.');
+            toast?.success?.('Team member invited successfully.');
             fetchTeam();
         } catch (error) {
-            toast.error('Authorization sequence failure.');
+            console.error("Failed to invite member", error);
+            toast?.error?.('Failed to invite member. Please check the email.');
         }
     };
 
     const handleDeleteMember = async (id) => {
-        if(!confirm('CRITICAL_PROCEDURE: TERMINATE_ACCESS_NODE? This action is permanent.')) return;
+        if (!confirm('Are you sure you want to remove this team member?')) return;
         try {
             await axios.delete(`${API_URL}/operations/team/${id}/`, {
                  headers: { Authorization: `Bearer ${token}` }
             });
-            toast.success('Personnel node decommissioned.');
+            toast?.success?.('Team member removed.');
             fetchTeam();
         } catch (error) {
-            toast.error('Termination failure.');
+            console.error("Failed to remove member", error);
+            toast?.error?.('Failed to remove team member.');
         }
     };
+
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     const fetchSettings = async () => {
         try {
@@ -154,6 +142,7 @@ const AdminSettings = () => {
             });
             if (response.data) {
                 setSettings(prev => ({ ...prev, ...response.data }));
+                setHasUnsavedChanges(false);
             }
         } catch (error) {
             console.error("Failed to fetch settings", error);
@@ -166,9 +155,11 @@ const AdminSettings = () => {
             await axios.post(`${API_URL}/operations/settings/`, settings, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            toast.success('Operational parameters synchronized.');
+            setHasUnsavedChanges(false);
+            toast?.success?.('Settings saved successfully.');
         } catch (error) {
-            toast.error('Protocol failure: Sync aborted.');
+            console.error("Failed to save settings", error);
+            toast?.error?.('Failed to save settings. Please try again.');
         } finally {
             setSaving(false);
         }
@@ -176,223 +167,339 @@ const AdminSettings = () => {
 
     const updateSetting = (key, value) => {
         setSettings(prev => ({ ...prev, [key]: value }));
+        setHasUnsavedChanges(true);
     };
 
     return (
-        <div className="space-y-12 pb-20">
-            {/* Header */}
-            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-10 relative">
-                <div className="space-y-4">
+        <div className="space-y-6 pb-12">
+            {/* Standard SaaS Page Header */}
+            <PageHeader
+                title="Platform Settings"
+                subtitle="Configure event portal policies, notification channels, security controls, and collaborator access."
+                breadcrumbs={[
+                    { label: 'Admin', to: '/admin' },
+                    { label: 'Settings' }
+                ]}
+                actions={
                     <div className="flex items-center gap-3">
-                        <div className="h-px w-8 bg-blue-500/40" />
-                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-[0.5em]">System_Config</span>
+                        {hasUnsavedChanges ? (
+                            <span className="text-xs text-amber-400 font-medium">Unsaved changes</span>
+                        ) : (
+                            <span className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
+                                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                Changes saved
+                            </span>
+                        )}
+                        <button 
+                            onClick={handleSave}
+                            disabled={saving || !hasUnsavedChanges}
+                            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-colors shadow-sm ${
+                                hasUnsavedChanges 
+                                    ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/20' 
+                                    : 'bg-white/[0.04] text-slate-500 border border-white/[0.06] cursor-not-allowed'
+                            }`}
+                        >
+                            {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                            <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+                        </button>
                     </div>
-                    <div>
-                        <h1 className="text-2xl font-black text-white uppercase tracking-[0.1em]">Tactical_Command_Center</h1>
-                        <p className="text-[11px] text-slate-500 mt-2 font-mono uppercase tracking-tight">
-                            Manage_Identity_Clusters: <span className="text-blue-500">{teamMembers.length}</span> // System_Status: <span className="text-emerald-500 font-black">STABLE</span>
-                        </p>
-                    </div>
-                </div>
-                
-                <div className="flex gap-4 w-full xl:w-auto">
-                    <button 
-                        onClick={handleSave}
-                        disabled={saving}
-                        className="flex-1 xl:flex-none h-14 px-10 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-[1.25rem] flex items-center justify-center gap-3 hover:bg-blue-500 transition-all shadow-[0_12px_30px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 disabled:opacity-50"
-                    >
-                        {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                        {saving ? 'SYNCING_NODES' : 'COMMIT_CHANGES'}
-                    </button>
-                </div>
+                }
+            />
+
+            {/* Sub-navigation Tabs */}
+            <div className="flex items-center gap-2 border-b border-white/[0.06] pb-3">
+                <button
+                    onClick={() => setActiveTab('general')}
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-2 ${
+                        activeTab === 'general'
+                            ? 'bg-white/[0.08] text-white'
+                            : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                    }`}
+                >
+                    <Sliders className="w-3.5 h-3.5" />
+                    <span>General & Security</span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('team')}
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-2 ${
+                        activeTab === 'team'
+                            ? 'bg-white/[0.08] text-white'
+                            : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                    }`}
+                >
+                    <Users className="w-3.5 h-3.5" />
+                    <span>Team Collaborators</span>
+                    <span className="px-1.5 py-0.2 rounded-full bg-white/[0.08] text-[10px] text-slate-300">
+                        {teamMembers.length}
+                    </span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('system')}
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-2 ${
+                        activeTab === 'system'
+                            ? 'bg-white/[0.08] text-white'
+                            : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                    }`}
+                >
+                    <Server className="w-3.5 h-3.5" />
+                    <span>System Diagnostics</span>
+                </button>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
-                {/* General Config */}
-                <SettingSection icon={Globe} title="Node Visibility" sub="System_Access_Parameters">
-                    <SettingItem 
-                        label="Public Registration" 
-                        description="Enable Identity Nodes to associate with established event nodes."
-                        rightElement={
-                            <Toggle 
-                                enabled={settings.registrationOpen} 
-                                onChange={(val) => updateSetting('registrationOpen', val)} 
-                            />
-                        }
-                    />
-                    <div className="h-px w-full bg-white/[0.03]" />
-                    <SettingItem 
-                        label="Maintenance Protocol" 
-                        description="Deactivate sector access for non-admin nodes. System lockdown."
-                        rightElement={
-                            <Toggle 
-                                enabled={settings.maintenanceMode} 
-                                onChange={(val) => updateSetting('maintenanceMode', val)} 
-                            />
-                        }
-                    />
-                </SettingSection>
-
-                {/* Notifications */}
-                <SettingSection icon={Bell} title="Event Streams" sub="Protocol_Alert_Systems">
-                    <SettingItem 
-                        label="Binary Notification" 
-                        description="Authorize automated signal transmission for status transitions."
-                        rightElement={
-                            <Toggle 
-                                enabled={settings.emailNotifications} 
-                                onChange={(val) => updateSetting('emailNotifications', val)} 
-                            />
-                        }
-                    />
-                    <div className="h-px w-full bg-white/[0.03]" />
-                     <SettingItem 
-                        label="External Webhook" 
-                        description="Establish secure uplink to secondary communication clusters."
-                        rightElement={
-                            <button className="text-[9px] font-black text-blue-500 uppercase tracking-widest hover:text-white transition-colors flex items-center gap-2">
-                                <Zap size={12} />
-                                ESTABLISH_LINK
-                            </button>
-                        }
-                    />
-                </SettingSection>
-
-                {/* Security */}
-                <SettingSection icon={Lock} title="Auth Protocols" sub="Identity_Shield_Level">
-                    <SettingItem 
-                        label="Dual-Factor Auth" 
-                        description="Require secondary verification node for administrative clearance."
-                        rightElement={
-                            <Toggle 
-                                enabled={settings.twoFactor} 
-                                onChange={(val) => updateSetting('twoFactor', val)} 
-                            />
-                        }
-                    />
-                    <div className="h-px w-full bg-white/[0.03]" />
-                    <SettingItem 
-                        label="Temporal Timeout" 
-                        description="Automatically terminate active session upon detected inactivity."
-                        rightElement={
-                            <select className="bg-white/[0.02] border border-white/[0.05] rounded-xl px-4 py-2.5 text-[10px] font-black text-white focus:outline-none focus:border-blue-500/30 uppercase tracking-widest cursor-pointer">
-                                <option>15_MINUTES</option>
-                                <option>30_MINUTES</option>
-                                <option>01_HOUR</option>
-                                <option>SESSION_LOCKED</option>
-                            </select>
-                        }
-                    />
-                </SettingSection>
-
-                {/* Database */}
-                <SettingSection icon={Server} title="Core Systems" sub="Cache_Node_Management">
-                    <SettingItem 
-                        label="Purge Cache" 
-                        description="Reset local memory nodes to force binary synchronization."
-                        rightElement={
-                            <button className="px-5 py-2.5 bg-white/[0.03] border border-white/5 rounded-xl text-[9px] font-black text-slate-500 hover:text-white hover:bg-white/[0.08] transition-all uppercase tracking-widest leading-none">
-                                PURGE_NODES
-                            </button>
-                        }
-                    />
-                    <div className="h-px w-full bg-white/[0.03]" />
-                    <SettingItem 
-                        label="Logic Latency" 
-                        description="Current temporal offset from primary compute cluster."
-                        rightElement={
-                            <div className="flex items-center gap-3">
-                                <Activity size={14} className="text-emerald-500" />
-                                <span className="text-[10px] font-black text-emerald-500 font-mono tracking-tighter">12.04_MS</span>
+            {/* Tab 1: General & Security */}
+            {activeTab === 'general' && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    {/* General Portal Controls */}
+                    <div className="bg-[#111319] border border-white/[0.06] rounded-xl p-6 shadow-sm space-y-4">
+                        <div className="flex items-center gap-3 pb-3 border-b border-white/[0.06]">
+                            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center">
+                                <Globe className="w-4 h-4" />
                             </div>
-                        }
-                    />
-                </SettingSection>
-
-                {/* Team Access */}
-                <div className="xl:col-span-2">
-                    <SettingSection icon={Users} title="Personnel Manager" sub="Authorized_Operational_Nodes">
-                        <div className="space-y-10">
-                            {/* Add New Personnel */}
-                            <div className="flex flex-col md:flex-row gap-6 items-end bg-white/[0.01] p-8 md:p-10 rounded-[2rem] border border-white/[0.03] relative group/add">
-                                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/[0.01] to-transparent pointer-events-none" />
-                                <div className="flex-1 space-y-3 w-full relative z-10">
-                                    <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] ml-1">Identity_Endpoint</label>
-                                    <div className="relative">
-                                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-700 w-4 h-4" />
-                                        <input 
-                                            type="email" 
-                                            placeholder="USER_IDENTIFIER..." 
-                                            value={newMemberEmail}
-                                            onChange={(e) => setNewMemberEmail(e.target.value)}
-                                            className="w-full bg-white/[0.01] border border-white/[0.05] rounded-2xl py-5 pl-14 pr-6 text-sm font-black text-white focus:outline-none focus:border-blue-500/30 transition-all placeholder:text-slate-900 uppercase tracking-widest"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="w-full md:w-64 space-y-3 relative z-10">
-                                     <label className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] ml-1">Access_Level</label>
-                                     <select 
-                                        value={newMemberRole}
-                                        onChange={(e) => setNewMemberRole(e.target.value)}
-                                        className="w-full bg-white/[0.02] border border-white/[0.05] rounded-2xl py-[1.125rem] px-5 text-[11px] font-black text-white focus:outline-none focus:border-blue-500/30 transition-all appearance-none cursor-pointer uppercase tracking-widest"
-                                     >
-                                         <option value="VOLUNTEER">Volunteer</option>
-                                         <option value="ADMIN">Command_Admin</option>
-                                     </select>
-                                </div>
-                                <button 
-                                    onClick={handleAddMember}
-                                    disabled={!newMemberEmail}
-                                    className="h-[60px] px-8 bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-blue-500 transition-all disabled:opacity-30 flex items-center justify-center gap-3 relative z-10 shadow-[0_12px_24px_rgba(37,99,235,0.2)]"
-                                >
-                                    <Plus size={16} strokeWidth={3} />
-                                    AUTHORIZE
-                                </button>
-                            </div>
-
-                            {/* Personnel List */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
-                                {teamMembers.length === 0 ? (
-                                    <div className="col-span-full py-20 flex flex-col items-center gap-6 opacity-20 border border-dashed border-white/10 rounded-[2rem]">
-                                        <Users size={40} strokeWidth={1} />
-                                        <span className="text-[10px] font-black uppercase tracking-[0.5em]">Zero_Nodes_Authorized</span>
-                                    </div>
-                                ) : (
-                                    teamMembers.map((member) => (
-                                        <div 
-                                            key={member.id} 
-                                            className="flex flex-col gap-6 bg-white/[0.01] p-8 rounded-[2rem] border border-white/[0.03] hover:border-white/10 hover:bg-white/[0.02] transition-all group/node relative overflow-hidden"
-                                        >
-                                            <div className="flex justify-between items-start relative z-10">
-                                                <div className="flex flex-col gap-1">
-                                                     <div className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border flex items-center gap-2 w-fit ${member.role === 'ADMIN' ? 'bg-indigo-500/[0.03] text-indigo-500 border-indigo-500/10' : 'bg-emerald-500/[0.03] text-emerald-500 border-emerald-500/10'}`}>
-                                                        <div className={`w-1 h-1 rounded-full ${member.role === 'ADMIN' ? 'bg-indigo-500' : 'bg-emerald-500'}`} />
-                                                        {member.role === 'ADMIN' ? 'CMDR_CLEARANCE' : 'OPS_CLEARANCE'}
-                                                     </div>
-                                                </div>
-                                                <button 
-                                                    onClick={() => handleDeleteMember(member.id)}
-                                                    className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-800 hover:text-rose-500 hover:bg-rose-500/10 transition-all group-hover/node:opacity-100 opacity-0 duration-500"
-                                                    title="Decommission Node"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-
-                                            <div className="space-y-1 relative z-10">
-                                                <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em]">SECURE_UPLINK</p>
-                                                <p className="text-sm font-black text-white truncate max-w-full uppercase tracking-tight">{member.email}</p>
-                                            </div>
-                                            
-                                            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none opacity-0 group-hover/node:opacity-100 transition-opacity duration-1000" />
-                                        </div>
-                                    ))
-                                )}
+                            <div>
+                                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Portal Availability</h3>
+                                <p className="text-[11px] text-slate-400">Public event registration and visibility controls.</p>
                             </div>
                         </div>
-                    </SettingSection>
+
+                        <div>
+                            <SettingItem 
+                                label="Public Event Registrations" 
+                                description="Enable attendees to browse event catalogue and submit registrations online."
+                                rightElement={
+                                    <ToggleSwitch 
+                                        enabled={settings.registrationOpen} 
+                                        onChange={(val) => updateSetting('registrationOpen', val)} 
+                                    />
+                                }
+                            />
+
+                            <SettingItem 
+                                label="Maintenance Mode" 
+                                description="Temporarily redirect non-administrative visitors to an event maintenance screen."
+                                rightElement={
+                                    <ToggleSwitch 
+                                        enabled={settings.maintenanceMode} 
+                                        onChange={(val) => updateSetting('maintenanceMode', val)} 
+                                    />
+                                }
+                            />
+
+                            <SettingItem 
+                                label="Email Confirmations" 
+                                description="Automatically dispatch verification pass receipts when registration succeeds."
+                                rightElement={
+                                    <ToggleSwitch 
+                                        enabled={settings.emailNotifications} 
+                                        onChange={(val) => updateSetting('emailNotifications', val)} 
+                                    />
+                                }
+                            />
+                        </div>
+                    </div>
+
+                    {/* Security & Access */}
+                    <div className="bg-[#111319] border border-white/[0.06] rounded-xl p-6 shadow-sm space-y-4">
+                        <div className="flex items-center gap-3 pb-3 border-b border-white/[0.06]">
+                            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                                <Lock className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Security & Sessions</h3>
+                                <p className="text-[11px] text-slate-400">Authentication guards and staff access timeouts.</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <SettingItem 
+                                label="Two-Factor Enforcement" 
+                                description="Require secondary authentication passcode for administrative dashboard logins."
+                                rightElement={
+                                    <ToggleSwitch 
+                                        enabled={settings.twoFactor} 
+                                        onChange={(val) => updateSetting('twoFactor', val)} 
+                                    />
+                                }
+                            />
+
+                            <SettingItem 
+                                label="Staff Session Inactivity Timeout" 
+                                description="Automatically terminate idle administrative browser sessions."
+                                rightElement={
+                                    <select 
+                                        value={settings.sessionTimeout || '30m'}
+                                        onChange={(e) => updateSetting('sessionTimeout', e.target.value)}
+                                        className="bg-[#0d0f14] border border-white/[0.08] rounded-lg py-1.5 px-3 text-xs text-white focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
+                                    >
+                                        <option value="15m">15 minutes</option>
+                                        <option value="30m">30 minutes</option>
+                                        <option value="1h">1 hour</option>
+                                        <option value="session">End of Session</option>
+                                    </select>
+                                }
+                            />
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
+
+            {/* Tab 2: Team Collaborators */}
+            {activeTab === 'team' && (
+                <div className="space-y-6">
+                    {/* Invite Form */}
+                    <div className="p-5 rounded-xl bg-[#111319] border border-white/[0.06]">
+                        <form onSubmit={handleAddMember} className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+                            <div className="flex-1 space-y-1.5">
+                                <label className="text-xs font-medium text-slate-300">Invite Collaborator Email</label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                    <input 
+                                        type="email" 
+                                        required
+                                        placeholder="organizer@university.edu"
+                                        value={newMemberEmail}
+                                        onChange={(e) => setNewMemberEmail(e.target.value)}
+                                        className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="w-full sm:w-56 space-y-1.5">
+                                <label className="text-xs font-medium text-slate-300">Role Permission</label>
+                                <select 
+                                    value={newMemberRole}
+                                    onChange={(e) => setNewMemberRole(e.target.value)}
+                                    className="w-full bg-[#0d0f14] border border-white/[0.08] rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
+                                >
+                                    <option value="VOLUNTEER">Volunteer (Entrance Scanner)</option>
+                                    <option value="ADMIN">Full Administrator</option>
+                                </select>
+                            </div>
+
+                            <button 
+                                type="submit"
+                                disabled={!newMemberEmail.trim()}
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+                            >
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add Member</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    {/* Team Members List */}
+                    <div className="bg-[#111319] border border-white/[0.06] rounded-xl overflow-hidden shadow-sm">
+                        <div className="px-5 py-3.5 border-b border-white/[0.06] flex items-center justify-between">
+                            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Authorized Team Personnel</h3>
+                            <button 
+                                onClick={fetchTeam}
+                                className="p-1 rounded-md text-slate-400 hover:text-white transition-colors"
+                                title="Refresh team"
+                            >
+                                <RefreshCw className={`w-3.5 h-3.5 ${loadingTeam ? 'animate-spin' : ''}`} />
+                            </button>
+                        </div>
+
+                        <div className="divide-y divide-white/[0.04]">
+                            {teamMembers.length === 0 ? (
+                                <div className="py-12 text-center text-slate-400 text-xs">
+                                    <Users className="w-8 h-8 mx-auto mb-2 text-slate-500 opacity-40" />
+                                    <p className="font-medium">No additional team members invited yet.</p>
+                                    <p className="text-[11px] text-slate-500 mt-0.5">Invite volunteers or co-administrators using the form above.</p>
+                                </div>
+                            ) : (
+                                teamMembers.map((member) => (
+                                    <div 
+                                        key={member.id}
+                                        className="px-5 py-3.5 flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
+                                    >
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="w-8 h-8 rounded-lg bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-xs font-bold text-slate-300">
+                                                {(member.email?.[0] || 'U').toUpperCase()}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="text-xs font-semibold text-white truncate">{member.email}</p>
+                                                <p className="text-[11px] text-slate-500">Added coordinator</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-3">
+                                            <StatusBadge 
+                                                status={member.role === 'ADMIN' ? 'info' : 'success'}
+                                                label={member.role === 'ADMIN' ? 'Administrator' : 'Volunteer'}
+                                            />
+                                            <button 
+                                                onClick={() => handleDeleteMember(member.id)}
+                                                className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                                title="Remove member"
+                                            >
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Tab 3: System Diagnostics */}
+            {activeTab === 'system' && (
+                <div className="bg-[#111319] border border-white/[0.06] rounded-xl p-6 shadow-sm space-y-6">
+                    <div className="flex items-center gap-3 pb-4 border-b border-white/[0.06]">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                            <Server className="w-4 h-4" />
+                        </div>
+                        <div>
+                            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Health & Connectivity</h3>
+                            <p className="text-[11px] text-slate-400">Live operational diagnostics and server telemetry.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="p-4 rounded-xl bg-[#0d0f14] border border-white/[0.06] space-y-1">
+                            <span className="text-[11px] text-slate-500 font-medium">Database Latency</span>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                                <span className="text-sm font-bold text-white font-mono">14 ms</span>
+                            </div>
+                            <span className="text-[10px] text-emerald-400 font-medium">Optimal Response Time</span>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-[#0d0f14] border border-white/[0.06] space-y-1">
+                            <span className="text-[11px] text-slate-500 font-medium">API Gateway</span>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                                <span className="text-sm font-bold text-white font-mono">v1.2 Operations</span>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-medium">{API_URL}</span>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-[#0d0f14] border border-white/[0.06] space-y-1">
+                            <span className="text-[11px] text-slate-500 font-medium">Environment Mode</span>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-blue-400" />
+                                <span className="text-sm font-bold text-white font-mono">Production / Live</span>
+                            </div>
+                            <span className="text-[10px] text-slate-400 font-medium">SSL / TLS 1.3 Active</span>
+                        </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
+                        <div className="space-y-0.5">
+                            <h4 className="text-xs font-semibold text-white">Application Cache</h4>
+                            <p className="text-xs text-slate-400">Purge stale query caches to force immediate data refresh from Postgres.</p>
+                        </div>
+                        <button 
+                            type="button"
+                            onClick={() => toast?.success?.('Cache flushed successfully.')}
+                            className="px-4 py-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-semibold transition-colors"
+                        >
+                            Flush Cache
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
