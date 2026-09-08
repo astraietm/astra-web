@@ -76,6 +76,7 @@ const AdminSettings = () => {
     const [newMemberRole, setNewMemberRole] = useState('VOLUNTEER');
     const [saving, setSaving] = useState(false);
     const [loadingTeam, setLoadingTeam] = useState(false);
+    const [invitingMember, setInvitingMember] = useState(false);
 
     useEffect(() => {
         if (user && !user.is_staff) {
@@ -101,11 +102,16 @@ const AdminSettings = () => {
 
     const handleAddMember = async (e) => {
         e.preventDefault();
-        if (!newMemberEmail.trim()) return;
+        const trimmedEmail = newMemberEmail.trim();
+        if (!trimmedEmail) {
+            toast?.error?.('Please enter a valid email address.');
+            return;
+        }
 
+        setInvitingMember(true);
         try {
             await axios.post(`${API_URL}/operations/team/`, {
-                email: newMemberEmail.trim(),
+                email: trimmedEmail,
                 role: newMemberRole
             }, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -115,7 +121,14 @@ const AdminSettings = () => {
             fetchTeam();
         } catch (error) {
             console.error("Failed to invite member", error);
-            toast?.error?.('Failed to invite member. Please check the email.');
+            const serverError = 
+                error.response?.data?.error || 
+                error.response?.data?.detail || 
+                (Array.isArray(error.response?.data?.email) ? error.response.data.email[0] : null) ||
+                'Unable to send the invitation. Please try again.';
+            toast?.error?.(serverError);
+        } finally {
+            setInvitingMember(false);
         }
     };
 
@@ -129,7 +142,11 @@ const AdminSettings = () => {
             fetchTeam();
         } catch (error) {
             console.error("Failed to remove member", error);
-            toast?.error?.('Failed to remove team member.');
+            const serverError = 
+                error.response?.data?.error || 
+                error.response?.data?.detail || 
+                'Failed to remove team member.';
+            toast?.error?.(serverError);
         }
     };
 
@@ -377,11 +394,15 @@ const AdminSettings = () => {
 
                             <button 
                                 type="submit"
-                                disabled={!newMemberEmail.trim()}
+                                disabled={invitingMember || !newMemberEmail.trim()}
                                 className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
                             >
-                                <Plus className="w-3.5 h-3.5" />
-                                <span>Add Member</span>
+                                {invitingMember ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                ) : (
+                                    <Plus className="w-3.5 h-3.5" />
+                                )}
+                                <span>{invitingMember ? 'Inviting...' : 'Add Member'}</span>
                             </button>
                         </form>
                     </div>

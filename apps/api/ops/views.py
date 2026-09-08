@@ -1,12 +1,17 @@
-from rest_framework import generics, status, permissions
+from rest_framework import generics, status, permissions, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.core.mail import send_mail
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.conf import settings
 import threading
+import logging
 from .models import AuditLog, SystemSetting, Notification
 from .serializers import AuditLogSerializer, SystemSettingSerializer, NotificationSerializer
 from authentication.models import User, AllowedEmail
+
+logger = logging.getLogger(__name__)
 
 class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -49,8 +54,6 @@ class IsSuperAdmin(permissions.BasePermission):
 
 class AllowedEmailListCreateView(generics.ListCreateAPIView):
 
-    # Inline serializer definition to avoid file jumping
-    from rest_framework import serializers
     class AllowedEmailSerializer(serializers.ModelSerializer):
         class Meta:
             model = AllowedEmail
@@ -60,30 +63,153 @@ class AllowedEmailListCreateView(generics.ListCreateAPIView):
     serializer_class = AllowedEmailSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
-    def perform_create(self, serializer):
-        instance = serializer.save()
-        AuditLog.objects.create(
-            user=self.request.user,
-            action=f"Added Team Member",
-            details=f"Email: {instance.email}, Role: {instance.role}",
-            level="SUCCESS",
-            ip_address=self.request.META.get('REMOTE_ADDR')
+    def create(self, request, *args, **kwargs):
+        inviter = request.user
+        logger.info(
+            f"[TEAM_INVITE_START] Requester={getattr(inviter, 'email', None)} (role={getattr(inviter, 'role', None)})"
         )
+
+        raw_email = request.data.get('email', '')
+        raw_role = request.data.get('role', 'VOLUNTEER')
+
+        # 1. Email validation & sanitization
+        if not raw_email or not str(raw_email).strip():
+            logger.warning("[TEAM_INVITE_ERR] Empty email address provided")
+            return Response(
+                {"error": "Please enter a valid email address.", "code": "empty_email"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        email = str(raw_email).strip().lower()
+        try:
+            validate_email(email)
+        except ValidationError:
+            logger.warning(f"[TEAM_INVITE_ERR] Invalid email syntax: {email}")
+            return Response(
+                {"error": "Please enter a valid email address.", "code": "invalid_email"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 2. Role validation
+        allowed_roles = [c[0] for c in User.ROLE_CHOICES if c[0] in ['ADMIN', 'VOLUNTEER']]
+        if raw_role not in allowed_roles:
+            logger.warning(f"[TEAM_INVITE_ERR] Invalid role requested: {raw_role}")
+            return Response(
+                {"error": "Invalid role permission specified.", "code": "invalid_role"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        role = raw_role
+
+        # 3. RBAC authorization: Only Superusers / Admins can invite another ADMIN
+        if role == 'ADMIN' and not (getattr(inviter, 'is_superuser', False) or getattr(inviter, 'role', '') == 'ADMIN'):
+            logger.warning(
+                f"[TEAM_INVITE_FORBIDDEN] Non-admin {inviter.email} attempted to grant ADMIN permissions."
+            )
+            return Response(
+                {"error": "You do not have permission to invite this role.", "code": "permission_denied"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # 4. Duplicate checks
+        # A. Already in AllowedEmail
+        if AllowedEmail.objects.filter(email=email).exists():
+            logger.info(f"[TEAM_INVITE_DUPLICATE] Email {email} already in AllowedEmail list")
+            return Response(
+                {"error": "An invitation is already pending for this email.", "code": "already_invited"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # B. Already an active team member with matching or higher staff privileges
+        existing_user = User.objects.filter(email=email).first()
+        if existing_user and existing_user.is_staff and existing_user.role in ['ADMIN', 'VOLUNTEER']:
+            logger.info(f"[TEAM_INVITE_DUPLICATE] User {email} is already active team staff (role={existing_user.role})")
+            return Response(
+                {"error": "This user is already a team member.", "code": "already_member"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 5. Create AllowedEmail record
+        allowed = AllowedEmail.objects.create(email=email, role=role)
+
+        # If user account already exists, promote role and staff privileges immediately
+        if existing_user:
+            existing_user.role = role
+            existing_user.is_staff = True
+            existing_user.save()
+            logger.info(f"[TEAM_INVITE_SUCCESS] Upgraded existing user {email} to staff role={role}")
+        else:
+            logger.info(f"[TEAM_INVITE_SUCCESS] Created invitation whitelist entry for {email} role={role}")
+
+        # 6. Audit Logging
+        AuditLog.objects.create(
+            user=inviter,
+            action="Added Team Member",
+            details=f"Email: {allowed.email}, Role: {allowed.role}",
+            level="SUCCESS",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+
+        # 7. Safe optional invitation notification
+        try:
+            subject = f"Invitation: ASTRA Collaborator ({role})"
+            message = (
+                f"Hello,\n\n"
+                f"You have been added to the ASTRA operations team as a {role}.\n\n"
+                f"Please access the management portal at https://astraietm.in/admin\n\n"
+                f"— ASTRA Security Systems"
+            )
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=True
+            )
+        except Exception as mail_err:
+            logger.debug(f"[TEAM_INVITE_MAIL_SKIP] Notification email not dispatched: {mail_err}")
+
+        serializer = self.get_serializer(allowed)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class AllowedEmailDeleteView(generics.DestroyAPIView):
     queryset = AllowedEmail.objects.all()
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
-    def perform_destroy(self, instance):
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
         email = instance.email
-        super().perform_destroy(instance)
+        inviter = request.user
+
+        # Prevent admin from locking themselves out
+        if email.lower() == getattr(inviter, 'email', '').lower():
+            logger.warning(f"[TEAM_DELETE_BLOCKED] Admin {email} attempted self-deletion")
+            return Response(
+                {"error": "You cannot remove your own administrator account.", "code": "self_delete_forbidden"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Delete whitelist entry
+        self.perform_destroy(instance)
+
+        # Demote corresponding User if exists and is not superuser
+        try:
+            user = User.objects.get(email=email)
+            if not user.is_superuser:
+                user.is_staff = False
+                user.role = 'USER'
+                user.save()
+                logger.info(f"[TEAM_DELETE_DEMOTED] Demoted user {email} from staff")
+        except User.DoesNotExist:
+            pass
+
         AuditLog.objects.create(
-            user=self.request.user,
-            action=f"Removed Team Member",
+            user=inviter,
+            action="Removed Team Member",
             details=f"Email: {email}",
             level="WARN",
-            ip_address=self.request.META.get('REMOTE_ADDR')
+            ip_address=request.META.get('REMOTE_ADDR')
         )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class NotificationListCreateView(generics.ListCreateAPIView):
     queryset = Notification.objects.all().order_by('-created_at')
