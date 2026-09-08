@@ -42,11 +42,11 @@ class ErrorBoundary extends Component {
             </div>
             
             <h1 className="text-xl font-bold text-white mb-2">
-              Something went wrong
+              Unable to load this page
             </h1>
             
             <p className="text-slate-400 mb-6 text-sm">
-              An unexpected error occurred while loading this section. Please try refreshing the page.
+              Something went wrong while loading the workspace.
             </p>
 
             {this.state.error && (
@@ -60,10 +60,10 @@ class ErrorBoundary extends Component {
 
             <button
               onClick={this.handleReset}
-              className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-semibold transition-all shadow-sm"
+              className="flex items-center justify-center gap-2 w-full px-5 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-semibold transition-all shadow-sm cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" />
-              <span>Reload Page</span>
+              <span>Try Again</span>
             </button>
           </div>
         </div>
