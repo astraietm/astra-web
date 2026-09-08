@@ -80,7 +80,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOp
             </AnimatePresence>
 
             <aside
-                className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-[#0A0C11] border-r border-white/[0.08] z-[90] transition-all duration-300 flex flex-col justify-between
+                className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-[#0A0C11] border-r border-white/[0.08] z-[100] lg:z-[90] isolate transition-all duration-300 flex flex-col justify-between
                     ${isCollapsed ? 'w-20' : 'w-60'}
                     ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 `}
