@@ -8,7 +8,7 @@ import { ToastProvider } from '@/lib/toast-context';
 import LoginModal from '@/components/auth/LoginModal';
 import CompleteProfileModal from '@/components/auth/CompleteProfileModal';
 
-const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID || '';
 
 export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

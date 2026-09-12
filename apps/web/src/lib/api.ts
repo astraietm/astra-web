@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.astraietm.in';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.VITE_API_URL || 'https://api.astraietm.in';
 
 const api = axios.create({
   baseURL: API_URL,
