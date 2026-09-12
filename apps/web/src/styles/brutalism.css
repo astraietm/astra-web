@@ -1,0 +1,229 @@
+/* TinkerHub-inspired Editorial Brutalist Styles */
+
+/* ========== Hard Offset Shadows ========== */
+.shadow-brutal-sm {
+  box-shadow: 2px 2px 0px 0px var(--color-shadow);
+}
+
+.shadow-brutal {
+  box-shadow: 4px 4px 0px 0px var(--color-shadow);
+}
+
+.shadow-brutal-lg {
+  box-shadow: 8px 8px 0px 0px var(--color-shadow);
+}
+
+.shadow-brutal-xl {
+  box-shadow: 12px 12px 0px 0px var(--color-shadow);
+}
+
+/* ========== Mechanical Press ========== */
+.pressable-brutal {
+  transition:
+    transform var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)),
+    box-shadow var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pressable-brutal:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px var(--color-shadow);
+  }
+}
+
+.pressable-brutal:active {
+  transform: translate(2px, 2px) scale(0.98);
+  box-shadow: 1px 1px 0px 0px var(--color-shadow);
+}
+
+/* ========== Graph Paper Background (TinkerHub signature) ========== */
+.bg-graph-paper {
+  background-color: var(--color-background);
+  background-image:
+    linear-gradient(to right, rgba(180, 180, 220, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(180, 180, 220, 0.25) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ========== Paper Texture Card ========== */
+.paper-texture {
+  background-color: #FAFAFA;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23fafafa'/%3E%3Crect width='1' height='1' fill='%23f0f0f0' opacity='0.3'/%3E%3C/svg%3E");
+  box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);
+  transition:
+    transform var(--duration-normal, 220ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)),
+    box-shadow var(--duration-normal, 220ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+/* ========== Gingham / Checkered Pattern ========== */
+.bg-gingham {
+  background-color: #B8D4FF;
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.5) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.5) 75%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.5) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.5) 75%);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}
+
+/* ========== Black Angled Banner / Stamp ========== */
+.black-banner {
+  display: inline-block;
+  background-color: #000000;
+  color: #FFFFFF;
+  padding: 0.75rem 2rem;
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transform: skewX(-2deg);
+  transition:
+    transform var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)),
+    background-color var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .black-banner:hover {
+    transform: skewX(0deg) scale(1.02);
+  }
+}
+
+.black-banner-lg {
+  font-size: 2.5rem;
+  padding: 1rem 3rem;
+}
+
+/* ========== Sticker Badge Base (Tactile Vinyl Spring) ========== */
+.sticker-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0px 0px #000;
+  transform: rotate(-2deg);
+  transition:
+    transform var(--duration-normal, 220ms) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    box-shadow var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sticker-badge:hover {
+    transform: rotate(0deg) translateY(-2px) scale(1.04);
+    box-shadow: 3px 3px 0px 0px #000;
+  }
+}
+
+.sticker-badge:active {
+  transform: rotate(0deg) translateY(1px) scale(0.97);
+  box-shadow: 1px 1px 0px 0px #000;
+}
+
+.sticker-yellow { background-color: var(--color-yellow); color: #000; }
+.sticker-pink { background-color: var(--color-pink); color: #000; }
+.sticker-lime { background-color: var(--color-lime); color: #000; }
+.sticker-lilac { background-color: var(--color-lilac); color: #000; }
+.sticker-mint { background-color: var(--color-mint); color: #000; }
+
+/* ========== Pixel Border ========== */
+.pixel-border {
+  border: 2px solid var(--color-border);
+  position: relative;
+}
+
+/* ========== Hide Scrollbar ========== */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ========== Marquee Animation ========== */
+@keyframes marquee-scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-marquee {
+  animation: marquee-scroll var(--marquee-speed, 25s) linear infinite;
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .marquee-hover-pause:hover .animate-marquee {
+    animation-play-state: paused;
+  }
+}
+
+/* ========== Stagger Fade In ========== */
+@keyframes stagger-fade-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ========== Float Gentle ========== */
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translate3d(0, -8px, 0) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+.animate-float {
+  animation: float-gentle 4.5s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) infinite;
+  will-change: transform;
+}
+
+/* ========== Status Pulsing LED ========== */
+@keyframes led-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+.animate-pulse-led {
+  animation: led-pulse 1.8s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) infinite;
+}
+
+/* ========== Accessibility: Reduced Motion Override ========== */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-marquee {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .animate-float {
+    animation: none !important;
+  }
+
+  .animate-pulse-led {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}

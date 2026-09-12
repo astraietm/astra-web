@@ -58,3 +58,8 @@ tmp/
 
 # Render/Vercel
 .vercel
+
+# Next.js
+.next/
+**/.next/
+out/
