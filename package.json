@@ -6,9 +6,9 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run build -w apps/web",
-    "dev:web": "npm run dev -w apps/web",
-    "build:web": "npm run build -w apps/web",
+    "build": "cd apps/web && npm run build",
+    "dev:web": "cd apps/web && npm run dev",
+    "build:web": "cd apps/web && npm run build",
     "lint:web": "npm run lint -w apps/web",
     "start:web": "npm run start -w apps/web",
     "dev:api": "cd apps/api && python manage.py runserver",
