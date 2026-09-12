@@ -12,9 +12,9 @@ interface PaperCardProps {
 }
 
 const sizeMap = {
-  sm: 'p-6 sm:p-8',
-  md: 'p-8 sm:p-10 md:p-12',
-  lg: 'p-10 sm:p-14 md:p-16',
+  sm: 'p-4 sm:p-6 md:p-8',
+  md: 'p-5 sm:p-8 md:p-12',
+  lg: 'p-5 sm:p-10 md:p-16',
 };
 
 export const PaperCard: React.FC<PaperCardProps> = ({

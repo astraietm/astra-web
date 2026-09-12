@@ -57,10 +57,10 @@ export const MissionSection: React.FC = () => {
           <div className="flex items-center justify-center gap-3">
             <div className="w-8 h-px bg-gray-400" />
             <a
-              href="#pillars"
+              href="#stories"
               className="font-editorial italic text-sm text-gray-500 hover:text-black transition-colors inline-flex items-center gap-2"
             >
-              check our vision here
+              check arena stories here
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="animate-bounce">
                 <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

@@ -33,10 +33,10 @@ const events = [
 
 export const EventsSection: React.FC = () => {
   return (
-    <section id="events" className="relative py-16 sm:py-20 bg-graph-paper">
-      <div className="max-w-4xl mx-auto px-6 sm:px-12">
+    <section id="events" className="relative py-14 sm:py-20 bg-graph-paper">
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 md:px-12">
         {/* Black Banner Heading */}
-        <div className="mb-10 sm:mb-14">
+        <div className="mb-8 sm:mb-12">
           <BlackBanner size="md">
             UPCOMING EVENTS
           </BlackBanner>
@@ -48,42 +48,46 @@ export const EventsSection: React.FC = () => {
             <Link
               key={index}
               href="/events"
-              className="group flex items-center gap-4 sm:gap-6 py-4 sm:py-5 border-t border-gray-200 hover:bg-white/80 transition-[background-color,transform] duration-160 ease-[var(--ease-out)] active:scale-[0.99] px-2 sm:px-4 rounded-md"
+              className="group flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-6 py-4 sm:py-5 border-t border-gray-200 hover:bg-white/80 transition-[background-color,transform] duration-160 ease-[var(--ease-out)] active:scale-[0.99] px-3 sm:px-4 rounded-md"
             >
-              {/* Icon */}
-              <span className="text-2xl flex-shrink-0 transition-transform duration-160 ease-[var(--ease-out)] group-hover:scale-110" aria-hidden="true">
-                {event.icon}
-              </span>
-
-              {/* Date & Time */}
-              <div className="flex-shrink-0 w-32 sm:w-40">
-                <span className="font-display font-bold text-sm sm:text-base text-black">
-                  {event.date}
+              <div className="flex items-center gap-3 sm:gap-4 flex-grow">
+                {/* Icon */}
+                <span className="text-xl sm:text-2xl flex-shrink-0 transition-transform duration-160 ease-[var(--ease-out)] group-hover:scale-110" aria-hidden="true">
+                  {event.icon}
                 </span>
-                <span className="font-mono text-[10px] sm:text-xs text-gray-500 ml-2">
-                  {event.time}
+
+                {/* Date & Time */}
+                <div className="flex-shrink-0 w-28 sm:w-36">
+                  <span className="font-display font-bold text-xs sm:text-sm md:text-base text-black block sm:inline">
+                    {event.date}
+                  </span>
+                  <span className="font-mono text-[10px] sm:text-xs text-gray-500 sm:ml-2 block sm:inline">
+                    {event.time}
+                  </span>
+                </div>
+
+                {/* Title */}
+                <span className="font-editorial italic text-sm sm:text-base md:text-xl text-black flex-grow group-hover:text-pink-600 transition-colors">
+                  {event.title}
                 </span>
               </div>
 
-              {/* Title */}
-              <span className="font-editorial italic text-base sm:text-lg md:text-xl text-black flex-grow group-hover:text-black">
-                {event.title}
-              </span>
-
               {/* Arrow */}
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="flex-shrink-0 text-gray-400 group-hover:text-black transition-[transform,color] duration-160 ease-[var(--ease-out)] group-hover:translate-x-1 group-hover:-translate-y-1"
-              >
-                <path d="M7 17L17 7M17 7H7M17 7V17" />
-              </svg>
+              <div className="self-end sm:self-center flex-shrink-0">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-gray-400 group-hover:text-black transition-[transform,color] duration-160 ease-[var(--ease-out)] group-hover:translate-x-1 group-hover:-translate-y-1"
+                >
+                  <path d="M7 17L17 7M17 7H7M17 7V17" />
+                </svg>
+              </div>
             </Link>
           ))}
           {/* Bottom border */}

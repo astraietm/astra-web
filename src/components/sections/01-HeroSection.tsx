@@ -1,14 +1,13 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { VelocityMarquee } from '@/components/motion/VelocityMarquee';
 import { ParallaxLayer } from '@/components/motion/ParallaxLayer';
 import { DraggableSticker } from '@/components/motion/DraggableSticker';
 import { PixelDots } from '@/components/visual/PixelDots';
 import { BrutalistButton } from '@/components/ui/BrutalistButton';
 import { MagneticWrapper } from '@/components/motion/MagneticWrapper';
-import { Shield, Terminal, Calendar, MapPin, Award, ArrowDown } from 'lucide-react';
+import { Shield, Terminal, Calendar, MapPin, Award } from 'lucide-react';
 
 export const HeroSection: React.FC = () => {
   return (
@@ -31,8 +30,9 @@ export const HeroSection: React.FC = () => {
           ]}
           bgColor="#F79CFF"
           textColor="#000000"
-          baseVelocity={1.2}
-          className="border-y-2 border-black py-1.5 shadow-[0px_4px_0px_#000]"
+          baseVelocity={0.35}
+          separator="✦"
+          className="border-y-2 border-black py-2 shadow-[0px_3px_0px_#000]"
         />
       </div>
 
@@ -43,14 +43,14 @@ export const HeroSection: React.FC = () => {
         {/* Floating Draggable Stickers Layer (TinkerHub Signature Playful Feature) */}
         <div className="absolute inset-0 pointer-events-none z-30">
           {/* Top Left Sticker */}
-          <div className="absolute top-2 left-4 sm:left-12 pointer-events-auto">
+          <div className="absolute top-0 sm:top-2 left-2 sm:left-12 pointer-events-auto transform scale-90 sm:scale-100">
             <DraggableSticker color="lime" initialRotation={-6} size="sm">
               24H WARGAMES ⚡
             </DraggableSticker>
           </div>
 
           {/* Top Right Sticker */}
-          <div className="absolute top-4 right-4 sm:right-16 pointer-events-auto">
+          <div className="absolute top-1 sm:top-4 right-2 sm:right-16 pointer-events-auto transform scale-90 sm:scale-100">
             <DraggableSticker color="yellow" initialRotation={4} size="sm">
               OCT 6 &amp; 7, 2026 ✦
             </DraggableSticker>
@@ -78,30 +78,17 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Subtitle Tag */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1] }}
-          className="flex items-center gap-2 bg-black text-[#C3FF16] px-3.5 py-1.5 border-2 border-black shadow-[3px_3px_0px_#000] mb-5 sm:mb-6 select-none"
-        >
-          <Terminal className="w-3.5 h-3.5" />
-          <span className="font-mono text-xs sm:text-sm font-bold uppercase tracking-wider">
-            THE ARENA BETWEEN ATTACK &amp; DEFENSE
-          </span>
-        </motion.div>
+        {/* Subtitle with Authentic TinkerHub Editorial Styling */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 mb-3 sm:mb-6 select-none mt-4 sm:mt-0">
+          <p className="font-editorial italic text-base sm:text-xl md:text-2xl text-gray-600 tracking-wide text-center">
+            the arena between
+          </p>
+        </div>
 
         {/* Massive Pixel Art Headline */}
-        <motion.h1
-          initial={{ opacity: 0, scale: 0.96, y: 18 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55, ease: [0.23, 1, 0.32, 1], delay: 0.08 }}
-          className="font-pixel text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold text-center leading-[0.92] tracking-tight text-black uppercase select-none relative"
-        >
+        <h1 className="font-pixel text-4xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] font-bold text-center leading-[0.92] sm:leading-[0.88] tracking-tight text-black uppercase select-none relative max-w-full break-words">
           <span>EXPLOIT</span>
-          <span className="relative inline-block mx-2 sm:mx-4">
+          <span className="relative inline-block mx-1.5 sm:mx-4">
             <span
               className="text-[#C3FF16] inline-block hover:scale-110 hover:rotate-6 transition-transform duration-200 cursor-default"
               style={{ WebkitTextStroke: '2px #000' }}
@@ -111,75 +98,42 @@ export const HeroSection: React.FC = () => {
           </span>
           <br className="sm:hidden" />
           <span>DEFEND</span>
-        </motion.h1>
+        </h1>
 
-        {/* Editorial Subtitle Description */}
-        <motion.p
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1], delay: 0.18 }}
-          className="mt-5 sm:mt-7 font-editorial italic text-lg sm:text-xl md:text-2xl text-gray-800 text-center max-w-2xl leading-relaxed"
-        >
-          ASTRA is Kerala&apos;s Flagship National Cyber Security Conclave — uniting elite researchers, ethical hackers, and defenders of the digital frontier.
-        </motion.p>
-
-        {/* Live Info Matrix Pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1], delay: 0.25 }}
-          className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm font-mono font-bold"
-        >
-          <div className="flex items-center gap-1.5 bg-white border-2 border-black px-3 py-1 shadow-[2px_2px_0px_#000]">
-            <Calendar className="w-3.5 h-3.5 text-black" />
-            <span>OCT 6 &amp; 7, 2026</span>
-          </div>
-          <div className="flex items-center gap-1.5 bg-white border-2 border-black px-3 py-1 shadow-[2px_2px_0px_#000]">
-            <MapPin className="w-3.5 h-3.5 text-black" />
-            <span>KMCT IETM CALICUT</span>
-          </div>
-          <div className="flex items-center gap-1.5 bg-th-yellow border-2 border-black px-3 py-1 shadow-[2px_2px_0px_#000]">
-            <Award className="w-3.5 h-3.5 text-black" />
-            <span>₹100K+ PRIZES</span>
-          </div>
-        </motion.div>
+        {/* Body Description */}
+        <p className="mt-4 sm:mt-8 font-editorial text-sm sm:text-lg md:text-xl text-gray-700 text-center max-w-2xl leading-relaxed px-2">
+          ASTRA is a National Cyber Security Conclave — working towards
+          building elite cyber defense practitioners in Kerala.
+        </p>
 
         {/* Action CTAs with Magnetic Effect */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1], delay: 0.32 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-4 relative z-20"
-        >
-          <MagneticWrapper strength={0.25}>
+        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 relative z-20 w-full sm:w-auto max-w-xs sm:max-w-none">
+          <MagneticWrapper strength={0.25} className="w-full sm:w-auto">
             <BrutalistButton
               href="/events#pass-registration"
               size="lg"
               variant="primary"
               withArrow
-              className="id-hero-claim-btn"
+              className="w-full sm:w-auto text-center justify-center"
             >
               Claim Conclave Pass
             </BrutalistButton>
           </MagneticWrapper>
-          <MagneticWrapper strength={0.25}>
+          <MagneticWrapper strength={0.25} className="w-full sm:w-auto">
             <BrutalistButton
               href="/events"
               size="lg"
               variant="secondary"
-              className="id-hero-explore-btn"
+              className="w-full sm:w-auto text-center justify-center"
             >
-              Explore 6 Events
+              Explore Events Schedule
             </BrutalistButton>
           </MagneticWrapper>
-        </motion.div>
+        </div>
 
-        {/* Institution Sub-credit */}
-        <p className="mt-6 font-mono text-[11px] sm:text-xs text-gray-500 text-center max-w-xl">
-          Organized by Department of Cyber Security, KMCT Institute of Emerging Technology and Management
+        {/* Sub-credit */}
+        <p className="mt-6 font-sans text-xs sm:text-sm text-gray-400 text-center max-w-xl">
+          Presented by the Department of Cyber Security, KMCT Institute of Emerging Technology and Management — Oct 6 &amp; 7, 2026
         </p>
 
         {/* Floating Tilted Parallax Card (Left Side) */}
@@ -219,5 +173,6 @@ export const HeroSection: React.FC = () => {
     </section>
   );
 };
+
 
 
