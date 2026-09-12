@@ -1,0 +1,57 @@
+:root {
+  /* TinkerHub-inspired palette for ASTRA 2026 */
+  --color-background: #F0F0FA;
+  --color-foreground: #0A0A0A;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F5F5FF;
+  --color-muted: #E8E8F0;
+  --color-muted-foreground: #6B6B80;
+  --color-border: #0A0A0A;
+  --color-shadow: #0A0A0A;
+
+  /* TinkerHub Sticker Accent Palette */
+  --color-pink: #F79CFF;
+  --color-yellow: #FFE816;
+  --color-lime: #C3FF16;
+  --color-mint: #97F8B7;
+  --color-lilac: #E8CCFF;
+  --color-sky: #4A9EFF;
+  --color-cream: #FEEDD2;
+  --color-gold: #D4A843;
+
+  /* Semantic Accents */
+  --color-accent: var(--color-yellow);
+  --color-accent-green: #10B981;
+  --color-accent-blue: #2563EB;
+  --color-accent-magenta: #EC4899;
+
+  /* Typography Families */
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Space Mono', Menlo, Consolas, monospace;
+  --font-editorial: 'Instrument Serif', 'Georgia', 'Times New Roman', serif;
+  --font-pixel: 'Pixelify Sans', 'Courier New', monospace;
+
+  /* Spacing Scale */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-section: clamp(4rem, 8vw, 8rem);
+
+  /* Layout Boundaries */
+  --max-width-content: 1280px;
+  --gutter-width: clamp(1rem, 4vw, 2.5rem);
+
+  /* Motion & Easing Tokens (Emil Kowalski / Animate standard) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-instant: 120ms;
+  --duration-fast: 160ms;
+  --duration-normal: 220ms;
+  --duration-slow: 380ms;
+}
