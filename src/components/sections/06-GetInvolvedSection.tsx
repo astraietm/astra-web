@@ -26,7 +26,7 @@ export const GetInvolvedSection: React.FC = () => {
     <section id="get-involved" className="relative py-20 sm:py-28 md:py-36 overflow-hidden bg-gingham">
       <div className="max-w-4xl mx-auto px-6 sm:px-12 flex flex-col items-center">
         {/* Tilted Paper Card */}
-        <PaperCard rotation={2} size="lg" className="w-full max-w-xl">
+        <PaperCard rotation={2} size="lg" className="w-full max-w-xl" withPixelDots pixelDotsCount={18}>
           {/* Top label */}
           <p className="font-pixel text-[10px] sm:text-xs uppercase tracking-wider text-gray-500 text-center mb-4">
             SECURE THE FUTURE.

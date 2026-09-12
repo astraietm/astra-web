@@ -2,13 +2,17 @@
 
 import React from 'react';
 import { PaperCard } from '@/components/ui/PaperCard';
+import { PixelDots } from '@/components/visual/PixelDots';
 
 export const MissionSection: React.FC = () => {
   return (
-    <section id="mission" className="relative py-20 sm:py-28 md:py-36 bg-graph-paper">
-      <div className="max-w-4xl mx-auto px-6 sm:px-12 flex flex-col items-center">
-        {/* Paper Card — TinkerHub "THE MISSION" style */}
-        <PaperCard size="lg" className="w-full max-w-2xl text-center">
+    <section id="mission" className="relative py-20 sm:py-28 md:py-36 bg-graph-paper overflow-hidden">
+      {/* Small pixel dots on the section canvas */}
+      <PixelDots count={32} minSize={2.5} maxSize={5} colors={['#F79CFF', '#FFE816', '#C3FF16', '#4A9EFF', '#97F8B7', '#0A0A0A', '#E8CCFF']} opacity={0.75} />
+
+      <div className="max-w-4xl mx-auto px-6 sm:px-12 flex flex-col items-center relative z-10">
+        {/* Paper Card — TinkerHub "THE MISSION" style with pixel dots on white canvas */}
+        <PaperCard size="lg" className="w-full max-w-2xl text-center" withPixelDots pixelDotsCount={16}>
           {/* Hand-drawn style shield/target illustration */}
           <div className="flex justify-center mb-6" aria-hidden="true">
             <svg

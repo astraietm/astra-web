@@ -6,6 +6,7 @@ import { BlackBanner } from '@/components/ui/BlackBanner';
 import { StickerBadge } from '@/components/ui/StickerBadge';
 import { DotMatrixDisplay } from '@/components/ui/DotMatrixDisplay';
 import { ImageStreamHero } from '@/components/ui/image-stream-hero';
+import { PixelDots } from '@/components/visual/PixelDots';
 
 const GALLERY_STREAM_IMAGES = [
   {
@@ -60,8 +61,11 @@ const MOMENTS = [
 
 export const StoriesSection: React.FC = () => {
   return (
-    <section id="stories" className="relative py-16 sm:py-24 bg-graph-paper">
-      <div className="max-w-6xl mx-auto px-6 sm:px-12">
+    <section id="stories" className="relative py-16 sm:py-24 bg-graph-paper overflow-hidden">
+      {/* Pixel Dots on Stories canvas */}
+      <PixelDots count={28} minSize={2.5} maxSize={5.5} colors={['#F79CFF', '#FFE816', '#C3FF16', '#4A9EFF', '#97F8B7', '#0A0A0A']} opacity={0.7} />
+
+      <div className="max-w-6xl mx-auto px-6 sm:px-12 relative z-10">
         {/* Header with Dot Matrix Status */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 sm:mb-14">
           <div>

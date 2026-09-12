@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { VelocityMarquee } from '@/components/motion/VelocityMarquee';
 import { PaperCard } from '@/components/ui/PaperCard';
 import { ParallaxLayer } from '@/components/motion/ParallaxLayer';
+import { PixelDots } from '@/components/visual/PixelDots';
 
 const pillars = [
   {
@@ -59,11 +60,29 @@ export const PillarsSection: React.FC = () => {
           background: 'linear-gradient(180deg, #4A9EFF 0%, #6BB3FF 40%, #8EC8FF 70%, #B0D9FF 100%)',
         }}
       >
+        {/* Subtle Pixel Dots in the Sky Atmosphere */}
+        <PixelDots
+          count={26}
+          minSize={2.5}
+          maxSize={5}
+          colors={['#FFFFFF', '#FFE816', '#C3FF16', '#F79CFF', '#000000']}
+          opacity={0.65}
+        />
+
         {/* Parallax Cloud-like patches */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <ParallaxLayer speed={-30} className="absolute inset-0">
-            <div
-              className="absolute w-[600px] h-[300px] rounded-full opacity-30"
+            <motion.div
+              animate={{
+                x: [-10, 15, -10],
+                y: [0, -8, 0],
+              }}
+              transition={{
+                duration: 12,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              className="absolute w-[600px] h-[300px] rounded-full opacity-35 filter blur-xl"
               style={{
                 background: 'radial-gradient(ellipse, white 0%, transparent 70%)',
                 top: '15%',
@@ -72,8 +91,17 @@ export const PillarsSection: React.FC = () => {
             />
           </ParallaxLayer>
           <ParallaxLayer speed={40} className="absolute inset-0">
-            <div
-              className="absolute w-[500px] h-[250px] rounded-full opacity-25"
+            <motion.div
+              animate={{
+                x: [15, -12, 15],
+                y: [0, 8, 0],
+              }}
+              transition={{
+                duration: 14,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              className="absolute w-[500px] h-[250px] rounded-full opacity-30 filter blur-xl"
               style={{
                 background: 'radial-gradient(ellipse, white 0%, transparent 70%)',
                 top: '45%',
@@ -83,67 +111,85 @@ export const PillarsSection: React.FC = () => {
           </ParallaxLayer>
         </div>
 
-        {/* Marble Columns (hidden on mobile, visible on desktop) */}
-        <div className="hidden md:block absolute left-4 sm:left-8 top-0 bottom-0 w-12 sm:w-20 pointer-events-none" aria-hidden="true">
-          <div className="h-full w-full flex flex-col items-center">
-            <div className="w-full h-16 sm:h-20 bg-gradient-to-b from-gray-200 to-gray-300 rounded-t-lg border border-gray-400" style={{ clipPath: 'polygon(10% 100%, 90% 100%, 100% 0%, 0% 0%)' }} />
-            <div className="flex-grow w-3/4 bg-gradient-to-r from-gray-200 via-white to-gray-200 border-x border-gray-300" />
-          </div>
+        {/* Marble Columns (hidden on mobile, visible on desktop) with subtle float */}
+        <div className="hidden md:block absolute left-4 sm:left-8 top-0 bottom-0 w-12 sm:w-20 pointer-events-none z-10" aria-hidden="true">
+          <ParallaxLayer speed={-15} className="h-full w-full">
+            <div className="h-full w-full flex flex-col items-center">
+              <div
+                className="w-full h-16 sm:h-20 bg-gradient-to-b from-gray-200 to-gray-300 rounded-t-lg border border-gray-400 shadow-[2px_2px_8px_rgba(0,0,0,0.15)]"
+                style={{ clipPath: 'polygon(10% 100%, 90% 100%, 100% 0%, 0% 0%)' }}
+              />
+              <div className="flex-grow w-3/4 bg-gradient-to-r from-gray-200 via-white to-gray-200 border-x border-gray-300 shadow-[inset_0_0_12px_rgba(0,0,0,0.06)]" />
+            </div>
+          </ParallaxLayer>
         </div>
-        <div className="hidden md:block absolute right-4 sm:right-8 top-0 bottom-0 w-12 sm:w-20 pointer-events-none" aria-hidden="true">
-          <div className="h-full w-full flex flex-col items-center">
-            <div className="w-full h-16 sm:h-20 bg-gradient-to-b from-gray-200 to-gray-300 rounded-t-lg border border-gray-400" style={{ clipPath: 'polygon(10% 100%, 90% 100%, 100% 0%, 0% 0%)' }} />
-            <div className="flex-grow w-3/4 bg-gradient-to-r from-gray-200 via-white to-gray-200 border-x border-gray-300" />
-          </div>
+
+        <div className="hidden md:block absolute right-4 sm:right-8 top-0 bottom-0 w-12 sm:w-20 pointer-events-none z-10" aria-hidden="true">
+          <ParallaxLayer speed={-15} className="h-full w-full">
+            <div className="h-full w-full flex flex-col items-center">
+              <div
+                className="w-full h-16 sm:h-20 bg-gradient-to-b from-gray-200 to-gray-300 rounded-t-lg border border-gray-400 shadow-[2px_2px_8px_rgba(0,0,0,0.15)]"
+                style={{ clipPath: 'polygon(10% 100%, 90% 100%, 100% 0%, 0% 0%)' }}
+              />
+              <div className="flex-grow w-3/4 bg-gradient-to-r from-gray-200 via-white to-gray-200 border-x border-gray-300 shadow-[inset_0_0_12px_rgba(0,0,0,0.06)]" />
+            </div>
+          </ParallaxLayer>
         </div>
 
         {/* Content */}
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-12 md:px-20">
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-12 md:px-20 z-10">
           {/* Section subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-editorial italic text-lg sm:text-xl md:text-2xl text-white/90 text-center mb-10 sm:mb-16"
+            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+            className="font-editorial italic text-lg sm:text-xl md:text-2xl text-white/90 text-center mb-10 sm:mb-16 drop-shadow-sm select-none"
           >
             Our four pillars that guide us
           </motion.p>
 
-          {/* Pillar Items with Staggered In-View Spring Reveals */}
+          {/* Pillar Items with Interactive Staggered In-View Spring Reveals */}
           <div className="space-y-8 sm:space-y-14">
             {pillars.map((pillar, idx) => (
               <motion.div
                 key={pillar.number}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 32, scale: 0.97 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{
                   type: 'spring',
                   stiffness: 240,
-                  damping: 22,
-                  delay: idx * 0.08,
+                  damping: 24,
+                  delay: idx * 0.1,
                 }}
-                className="flex items-start gap-4 sm:gap-8 md:gap-12"
+                className="group flex items-start gap-4 sm:gap-8 md:gap-12"
               >
-                {/* Number */}
-                <span className="font-editorial italic text-3xl sm:text-5xl md:text-6xl text-white/80 flex-shrink-0 mt-1 select-none">
+                {/* Number with Interactive Spring Hover Lift */}
+                <motion.span
+                  whileHover={{ scale: 1.12, rotate: idx % 2 === 0 ? -4 : 4 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  className="font-editorial italic text-3xl sm:text-5xl md:text-6xl text-white/80 group-hover:text-[#FFE816] transition-colors duration-200 flex-shrink-0 mt-1 select-none drop-shadow-sm cursor-default"
+                >
                   {pillar.number}
-                </span>
+                </motion.span>
 
                 {/* Content */}
                 <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-6 flex-grow">
-                  {/* Title */}
-                  <h3 className="font-pixel text-lg sm:text-2xl md:text-3xl text-white font-bold flex-shrink-0">
+                  {/* Title with Interactive Hover Shift */}
+                  <h3 className="font-pixel text-lg sm:text-2xl md:text-3xl text-white font-bold flex-shrink-0 group-hover:translate-x-1 transition-transform duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] drop-shadow-sm">
                     {pillar.title}
                   </h3>
 
-                  {/* Paper Card with description */}
+                  {/* Paper Card with description, tactile hover and pixel dots */}
                   <PaperCard
                     rotation={idx % 2 === 0 ? 1.5 : -1.5}
                     size="sm"
-                    className="w-full sm:max-w-sm p-4 sm:p-5"
+                    withPixelDots
+                    pixelDotsCount={10}
+                    className="w-full sm:max-w-sm p-4 sm:p-5 shadow-[4px_4px_0px_#000] border-2 border-black"
                   >
-                    <p className="font-editorial text-xs sm:text-sm md:text-base text-gray-700 leading-relaxed text-center">
+                    <p className="font-editorial text-xs sm:text-sm md:text-base text-gray-800 leading-relaxed text-center">
                       {pillar.description}
                     </p>
                   </PaperCard>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { PixelDots } from '@/components/visual/PixelDots';
 
 const fundingPartners = [
   { name: 'KMCT Group', abbrev: 'KMCT' },
@@ -15,8 +16,11 @@ const institutionalPartners = [
 
 export const PartnersSection: React.FC = () => {
   return (
-    <section id="partners" className="relative py-16 sm:py-20 bg-graph-paper border-t border-gray-200">
-      <div className="max-w-5xl mx-auto px-6 sm:px-12">
+    <section id="partners" className="relative py-16 sm:py-20 bg-graph-paper border-t border-gray-200 overflow-hidden">
+      {/* Small pixel dots on canvas */}
+      <PixelDots count={22} minSize={2.5} maxSize={5} colors={['#97F8B7', '#4A9EFF', '#F79CFF', '#FFE816', '#C3FF16', '#0A0A0A']} opacity={0.65} />
+
+      <div className="max-w-5xl mx-auto px-6 sm:px-12 relative z-10">
         {/* Partner Groups */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16">
           {/* Funding Partners */}

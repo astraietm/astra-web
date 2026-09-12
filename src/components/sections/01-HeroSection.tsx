@@ -38,7 +38,7 @@ export const HeroSection: React.FC = () => {
 
       {/* ─── 2. MAIN HERO STAGE ─── */}
       <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-8 md:px-12 relative z-10 max-w-7xl mx-auto w-full">
-        <PixelDots count={12} />
+        <PixelDots count={36} minSize={2.5} maxSize={5.5} opacity={0.8} colors={['#F79CFF', '#FFE816', '#C3FF16', '#4A9EFF', '#97F8B7', '#0A0A0A', '#E8CCFF']} />
 
         {/* Floating Draggable Stickers Layer (TinkerHub Signature Playful Feature) */}
         <div className="absolute inset-0 pointer-events-none z-30">

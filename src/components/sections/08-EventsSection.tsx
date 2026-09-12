@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { BlackBanner } from '@/components/ui/BlackBanner';
+import { PixelDots } from '@/components/visual/PixelDots';
 
 const events = [
   {
@@ -33,8 +34,11 @@ const events = [
 
 export const EventsSection: React.FC = () => {
   return (
-    <section id="events" className="relative py-14 sm:py-20 bg-graph-paper">
-      <div className="max-w-4xl mx-auto px-4 sm:px-8 md:px-12">
+    <section id="events" className="relative py-14 sm:py-20 bg-graph-paper overflow-hidden">
+      {/* Subtle Pixel Dots on Events Canvas */}
+      <PixelDots count={26} minSize={2.5} maxSize={5} colors={['#FFE816', '#F79CFF', '#C3FF16', '#4A9EFF', '#97F8B7', '#0A0A0A']} opacity={0.7} />
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-8 md:px-12 relative z-10">
         {/* Black Banner Heading */}
         <div className="mb-8 sm:mb-12">
           <BlackBanner size="md">

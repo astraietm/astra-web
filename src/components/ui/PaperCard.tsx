@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { PixelDots } from '@/components/visual/PixelDots';
 
 interface PaperCardProps {
   children: React.ReactNode;
@@ -9,6 +10,8 @@ interface PaperCardProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   animateIn?: boolean;
+  withPixelDots?: boolean;
+  pixelDotsCount?: number;
 }
 
 const sizeMap = {
@@ -23,8 +26,20 @@ export const PaperCard: React.FC<PaperCardProps> = ({
   className = '',
   size = 'md',
   animateIn = true,
+  withPixelDots = false,
+  pixelDotsCount = 18,
 }) => {
   const prefersReduced = useReducedMotion();
+
+  const dotsElement = withPixelDots ? (
+    <PixelDots
+      count={pixelDotsCount}
+      minSize={3}
+      maxSize={5}
+      opacity={0.65}
+      colors={['#FFE816', '#C3FF16', '#F79CFF', '#4A9EFF', '#0A0A0A']}
+    />
+  ) : null;
 
   if (prefersReduced || !animateIn) {
     return (
@@ -32,7 +47,8 @@ export const PaperCard: React.FC<PaperCardProps> = ({
         className={`paper-texture relative ${sizeMap[size]} ${className}`}
         style={rotation !== 0 ? { transform: `rotate(${rotation}deg)` } : undefined}
       >
-        {children}
+        {dotsElement}
+        <div className="relative z-10">{children}</div>
       </div>
     );
   }
@@ -55,7 +71,9 @@ export const PaperCard: React.FC<PaperCardProps> = ({
       }}
       className={`paper-texture relative will-change-transform ${sizeMap[size]} ${className}`}
     >
-      {children}
+      {dotsElement}
+      <div className="relative z-10">{children}</div>
     </motion.div>
   );
 };
+
