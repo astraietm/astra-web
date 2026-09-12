@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 
 type GlyphType = 'star' | 'cross' | 'spark' | 'corner-tl' | 'corner-br' | 'badge' | 'cube';
