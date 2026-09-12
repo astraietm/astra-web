@@ -6,7 +6,7 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "cd apps/web && npm run build",
+    "build": "next build",
     "dev:web": "cd apps/web && npm run dev",
     "build:web": "cd apps/web && npm run build",
     "lint:web": "npm run lint -w apps/web",
