@@ -67,7 +67,7 @@ export default function GalleryPage() {
         return label === activeCategory;
       });
 
-  const streamImages = items.slice(0, 8).map((i) => i.image_url);
+  const streamImages = items.slice(0, 8).map((i) => ({ src: i.image_url, alt: i.title }));
 
   return (
     <div className="w-full relative bg-graph-paper min-h-screen">

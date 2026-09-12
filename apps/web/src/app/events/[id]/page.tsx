@@ -52,7 +52,7 @@ interface EventDetailData {
 export default function EventDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const { user, openLoginModal } = useAuth();
+  const { user, setIsLoginModalOpen } = useAuth();
   const { showToast } = useToast();
 
   const [event, setEvent] = useState<EventDetailData | null>(null);
@@ -79,7 +79,7 @@ export default function EventDetailPage() {
 
   const handleRegisterClick = () => {
     if (!user) {
-      openLoginModal();
+      setIsLoginModalOpen(true);
       return;
     }
     router.push(`/register/${params.id}`);
@@ -108,7 +108,7 @@ export default function EventDetailPage() {
   if (error || !event) {
     return (
       <div className="min-h-screen pt-32 pb-20 px-4 max-w-3xl mx-auto text-center">
-        <PixelFrame variant="yellow" className="p-8">
+        <PixelFrame accentColor="yellow" className="p-8">
           <h2 className="font-heading text-2xl mb-4">EVENT NOT FOUND</h2>
           <p className="font-sans text-neutral-700 mb-6">{error || "Event details are unavailable."}</p>
           <Link
@@ -136,23 +136,23 @@ export default function EventDetailPage() {
         </Link>
       </div>
 
-      <PixelFrame variant="white" className="p-6 md:p-10 mb-8">
+      <PixelFrame className="p-6 md:p-10 mb-8">
         {/* Header */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <StickerBadge variant="pink">{event.category || "EVENT"}</StickerBadge>
+          <StickerBadge color="pink">{event.category || "EVENT"}</StickerBadge>
 
           {event.is_team_event ? (
-            <StickerBadge variant="mint">
+            <StickerBadge color="mint">
               Team ({event.team_size_min}-{event.team_size_max})
             </StickerBadge>
           ) : (
-            <StickerBadge variant="yellow">Solo</StickerBadge>
+            <StickerBadge color="yellow">Solo</StickerBadge>
           )}
 
           {event.requires_payment ? (
-            <StickerBadge variant="lilac">₹{event.payment_amount}</StickerBadge>
+            <StickerBadge color="lilac">₹{event.payment_amount}</StickerBadge>
           ) : (
-            <StickerBadge variant="lime">FREE</StickerBadge>
+            <StickerBadge color="lime">FREE</StickerBadge>
           )}
 
           {event.is_registration_open ? (
