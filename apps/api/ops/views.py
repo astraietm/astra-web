@@ -16,9 +16,41 @@ from core.permissions import IsAdminUser
 logger = logging.getLogger(__name__)
 
 class AuditLogListView(generics.ListAPIView):
-    queryset = AuditLog.objects.all().order_by('-timestamp')
     serializer_class = AuditLogSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def get_queryset(self):
+        qs = AuditLog.objects.all().order_by('-timestamp')
+        
+        level = self.request.query_params.get('level')
+        if level and level.upper() != 'ALL':
+            qs = qs.filter(level__iexact=level)
+            
+        search = self.request.query_params.get('search')
+        if search and search.strip():
+            term = search.strip()
+            qs = qs.filter(
+                Q(action__icontains=term) |
+                Q(details__icontains=term) |
+                Q(user__email__icontains=term) |
+                Q(ip_address__icontains=term)
+            )
+            
+        return qs[:250]
+
+class AuditLogClearView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def delete(self, request):
+        count, _ = AuditLog.objects.all().delete()
+        AuditLog.objects.create(
+            user=request.user,
+            action="Cleared System Logs",
+            details=f"Purged {count} log entries.",
+            level="WARN",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        return Response({"status": "success", "message": f"Cleared {count} log entries."})
 
 class SystemSettingListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
