@@ -175,32 +175,17 @@ export default function EventsPage() {
       return;
     }
 
-    requireLogin({
-      label: `Register for ${event.title}`,
-      run: async (activeToken: string) => {
-        if (event.requiresPayment) {
-          // Redirect to dedicated registration page for payment events
+    if (!user) {
+      requireLogin({
+        label: `Register for ${event.title}`,
+        run: () => {
           window.location.href = `/register/${event.backendId}`;
-          return;
-        }
+        },
+      });
+      return;
+    }
 
-        setRegistering(event.backendId!);
-        try {
-          await api.post("/api/register/", { event: event.backendId }, {
-            headers: { Authorization: `Bearer ${activeToken}` },
-          });
-          showToast(`Successfully registered for ${event.title}!`, "success");
-          // Refresh events to update counts
-          const res = await api.get("/api/events/");
-          setEvents((res.data as BackendEvent[]).map(mapBackendEvent));
-        } catch (err: any) {
-          const msg = err.response?.data?.error || "Registration failed. Please try again.";
-          showToast(msg, "error");
-        } finally {
-          setRegistering(null);
-        }
-      },
-    });
+    window.location.href = `/register/${event.backendId}`;
   };
 
   return (
