@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings } from 'lucide-react';
+import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings, Ticket, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
 interface NavLink {
@@ -26,8 +26,21 @@ const navigationLinks: NavLink[] = [
 
 export const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const { user, setIsLoginModalOpen, logout } = useAuth();
+  const { user, setIsLoginModalOpen, setIsProfileModalOpen, logout } = useAuth();
+
+  const userDropdownRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(e.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const openMenu = useCallback(() => {
     setMenuOpen(true);
@@ -49,11 +62,14 @@ export const Navbar: React.FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && menuOpen) closeMenu();
+      if (e.key === 'Escape') {
+        if (menuOpen) closeMenu();
+        if (userDropdownOpen) setUserDropdownOpen(false);
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [menuOpen, closeMenu]);
+  }, [menuOpen, userDropdownOpen, closeMenu]);
 
   const handleSectionJump = (id: string, e?: React.MouseEvent) => {
     if (pathname === '/') {
@@ -116,35 +132,100 @@ export const Navbar: React.FC = () => {
           </Link>
         </div>
 
-        {/* Right: Auth Buttons */}
+        {/* Right: Auth & Profile Buttons */}
         <div className="flex items-center gap-2 pointer-events-auto">
           {user ? (
-            <>
-              {user.is_staff && (
-                <Link
-                  href="/admin"
-                  className="hidden sm:flex items-center gap-1.5 bg-white/95 backdrop-blur-md border-2 border-black px-3 py-1.5 font-mono text-[10px] font-bold uppercase shadow-[2px_2px_0px_#000] hover:bg-th-pink transition-colors"
-                >
-                  <Settings className="w-3 h-3" />
-                  Admin
-                </Link>
-              )}
+            <div className="flex items-center gap-2 relative" ref={userDropdownRef}>
+              {/* Quick Access: My Passes */}
+              <Link
+                href="/dashboard"
+                onClick={() => { if (menuOpen) closeMenu(); }}
+                className="flex items-center gap-1.5 bg-[#C3FF16] text-black border-2 border-black px-2.5 py-1 sm:px-3.5 sm:py-1.5 font-mono text-[10px] sm:text-xs font-bold uppercase shadow-[2px_2px_0px_#000] hover:bg-th-yellow transition-colors"
+              >
+                <Ticket className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline">My Passes</span>
+              </Link>
+
+              {/* User Dropdown Toggle */}
               <button
-                onClick={() => {
-                  if (menuOpen) closeMenu();
-                  logout();
-                }}
-                className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 font-mono text-[10px] font-bold uppercase shadow-[2px_2px_0px_#000] hover:bg-red-100 transition-colors"
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 font-mono text-[10px] font-bold uppercase shadow-[2px_2px_0px_#000] hover:bg-gray-100 transition-colors"
               >
                 {user.avatar ? (
-                  <img src={user.avatar} alt="" className="w-4 h-4 rounded-full border border-black" />
+                  <img src={user.avatar} alt="" className="w-4 h-4 rounded-full border border-black object-cover" />
                 ) : (
-                  <User className="w-3 h-3" />
+                  <User className="w-3.5 h-3.5 text-black" />
                 )}
-                <span className="hidden sm:inline">{user.name?.split(' ')[0] || 'User'}</span>
-                <LogOut className="w-3 h-3 text-gray-500" />
+                <span className="hidden sm:inline max-w-[100px] truncate">{user.name?.split(' ')[0] || user.full_name?.split(' ')[0] || 'User'}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
-            </>
+
+              {/* Profile Dropdown Popover */}
+              <AnimatePresence>
+                {userDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-full mt-2 w-56 bg-white border-2 border-black shadow-[4px_4px_0px_#000] overflow-hidden z-[90]"
+                  >
+                    {/* User Info Header */}
+                    <div className="bg-black text-white p-3 border-b-2 border-black">
+                      <p className="font-display font-bold text-xs truncate">{user.name || user.full_name || 'Attendee'}</p>
+                      <p className="font-mono text-[10px] text-gray-400 truncate">{user.email}</p>
+                    </div>
+
+                    {/* Menu Links */}
+                    <div className="p-1 space-y-0.5">
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 font-mono text-xs text-black font-bold uppercase hover:bg-th-yellow transition-colors border border-transparent hover:border-black"
+                      >
+                        <Ticket className="w-4 h-4 text-black" />
+                        <span>My Registrations</span>
+                      </Link>
+
+                      <button
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          setIsProfileModalOpen(true);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 font-mono text-xs text-black font-bold uppercase hover:bg-th-yellow transition-colors border border-transparent hover:border-black text-left"
+                      >
+                        <User className="w-4 h-4 text-black" />
+                        <span>Edit Profile</span>
+                      </button>
+
+                      {user.is_staff && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 font-mono text-xs text-black font-bold uppercase hover:bg-th-pink transition-colors border border-transparent hover:border-black"
+                        >
+                          <Settings className="w-4 h-4 text-black" />
+                          <span>Admin Panel</span>
+                        </Link>
+                      )}
+
+                      <div className="border-t border-black/20 my-1" />
+
+                      <button
+                        onClick={() => {
+                          setUserDropdownOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 font-mono text-xs text-red-600 font-bold uppercase hover:bg-red-50 transition-colors border border-transparent hover:border-red-200 text-left"
+                      >
+                        <LogOut className="w-4 h-4 text-red-600" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ) : (
             <button
               onClick={() => {
