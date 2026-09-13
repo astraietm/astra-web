@@ -108,10 +108,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
 
       <div className="flex-1 flex min-w-0 relative">
-        {/* Mobile Overlay */}
+        {/* Mobile Overlay — starts below the sticky header */}
         {isMobileOpen && (
           <div
-            className="fixed inset-0 bg-black/70 z-30 lg:hidden"
+            className="fixed top-14 inset-x-0 bottom-0 bg-black/70 z-30 lg:hidden"
             onClick={() => setIsMobileOpen(false)}
           />
         )}
@@ -123,7 +123,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             bg-[#0C0C14] border-r-2 border-white/15
             flex flex-col transition-all duration-300 ease-in-out
             ${isCollapsed ? "w-16" : "w-56"}
-            ${isMobileOpen ? "left-0" : "-left-64 lg:left-0"}
+            ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           `}
           style={{
             backgroundImage:
