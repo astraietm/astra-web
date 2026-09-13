@@ -90,6 +90,9 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
     setSubmitting(true);
     try {
       const eventDateObj = new Date(formData.event_date);
+      const regStartObj = eventToEdit?.registration_start
+        ? new Date(eventToEdit.registration_start)
+        : new Date();
       const regEndObj = formData.registration_end
         ? new Date(formData.registration_end)
         : new Date(eventDateObj.getTime() + 24 * 60 * 60 * 1000);
@@ -101,6 +104,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
         team_size_min: formData.is_team_event ? Number(formData.team_size_min) : 1,
         team_size_max: formData.is_team_event ? Number(formData.team_size_max) : 1,
         event_date: eventDateObj.toISOString(),
+        registration_start: regStartObj.toISOString(),
         registration_end: regEndObj.toISOString(),
       };
 

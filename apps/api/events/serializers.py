@@ -13,14 +13,6 @@ class EventSerializer(serializers.ModelSerializer):
         return obj.registrations.count()
 
     def validate(self, data):
-        """
-        Check that registration_end is after registration_start.
-        """
-        if 'registration_start' in data and 'registration_end' in data:
-            if data['registration_end'] <= data['registration_start']:
-                raise serializers.ValidationError({
-                    "registration_end": "Registration end date must be after start date."
-                })
         return data
 
 class PaymentSerializer(serializers.ModelSerializer):

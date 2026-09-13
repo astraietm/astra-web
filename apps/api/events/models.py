@@ -38,11 +38,13 @@ class Event(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if not self.registration_end or self.registration_end <= self.registration_start:
+        if not self.registration_start:
+            self.registration_start = timezone.now()
+        if not self.registration_end:
             if self.event_date:
                 self.registration_end = self.event_date + timedelta(days=1)
             else:
-                self.registration_end = timezone.now() + timedelta(days=30)
+                self.registration_end = self.registration_start + timedelta(days=30)
         super().save(*args, **kwargs)
 
     def __str__(self):
