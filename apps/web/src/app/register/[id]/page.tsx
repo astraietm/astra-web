@@ -8,7 +8,7 @@ import { StickerBadge } from "@/components/ui/StickerBadge";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
 import api, { API_URL } from "@/lib/api";
-import { ArrowLeft, Loader2, Users, CreditCard, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Loader2, Users, CreditCard, CheckCircle2, X } from "lucide-react";
 import Link from "next/link";
 
 import { TicketPass } from "@/components/events/TicketPass";
@@ -24,6 +24,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [registration, setRegistration] = useState<any>(null);
 
   // Form fields
@@ -93,13 +94,27 @@ export default function RegisterPage() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user || !token) {
       requireLogin({
         label: "Register for event",
-        run: () => handleSubmit(e),
+        run: () => setShowConfirmModal(true),
+      });
+      return;
+    }
+
+    setShowConfirmModal(true);
+  };
+
+  const executeRegistration = async () => {
+    setShowConfirmModal(false);
+
+    if (!user || !token) {
+      requireLogin({
+        label: "Register for event",
+        run: () => executeRegistration(),
       });
       return;
     }
@@ -146,7 +161,10 @@ export default function RegisterPage() {
               if (verifyRes.data.success) {
                 setRegistration(verifyRes.data.registration);
                 setSuccess(true);
-                showToast("Payment verified! Registration successful.", "success");
+                showToast("Payment verified! Forwarding to your registered tickets...", "success");
+                setTimeout(() => {
+                  router.push("/dashboard");
+                }, 1200);
               }
             } catch {
               showToast("Payment verification failed.", "error");
@@ -190,7 +208,10 @@ export default function RegisterPage() {
       });
       setRegistration(res.data);
       setSuccess(true);
-      showToast("Registration successful!", "success");
+      showToast("Registration confirmed! Forwarding to your registered tickets...", "success");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 1200);
     } catch (err: any) {
       showToast(err.response?.data?.error || "Registration failed.", "error");
     } finally {
@@ -214,7 +235,7 @@ export default function RegisterPage() {
             <CheckCircle2 className="w-14 h-14 text-emerald-600 mx-auto mb-2" />
             <h1 className="font-pixel text-2xl font-bold uppercase text-black mb-1">REGISTRATION CONFIRMED!</h1>
             <p className="font-sans text-sm text-gray-700">
-              Your official ticket pass for <strong>{event?.title}</strong> has been generated below.
+              Your official ticket pass for <strong>{event?.title}</strong> has been generated below. Redirecting to your dashboard...
             </p>
           </div>
 
@@ -225,7 +246,7 @@ export default function RegisterPage() {
               href="/dashboard"
               className="px-6 py-2.5 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000]"
             >
-              My Dashboard →
+              Go to My Registrations →
             </Link>
             <Link
               href="/events"
@@ -260,7 +281,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Phone *</label>
@@ -321,12 +342,95 @@ export default function RegisterPage() {
               ) : event?.requires_payment ? (
                 <><CreditCard className="w-4 h-4" /> PAY ₹{event.payment_amount} &amp; REGISTER</>
               ) : (
-                "CONFIRM REGISTRATION →"
+                "REVIEW & CONFIRM REGISTRATION →"
               )}
             </button>
           </form>
         </PixelFrame>
       </div>
+
+      {/* Registration Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-white border-4 border-black p-6 shadow-[8px_8px_0px_#000] text-black">
+            <div className="bg-black text-white px-4 py-3 -mx-6 -mt-6 mb-4 flex items-center justify-between">
+              <h2 className="font-pixel text-sm font-bold uppercase tracking-wider text-th-yellow">
+                CONFIRM TICKET REGISTRATION
+              </h2>
+              <button onClick={() => setShowConfirmModal(false)} className="text-white/60 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="font-sans text-xs text-gray-600 mb-4">
+              Please review your details before finalizing registration.
+            </p>
+
+            {/* Details Summary Card */}
+            <div className="bg-gray-50 border-2 border-black p-4 space-y-3 font-mono text-xs mb-6">
+              <div className="border-b border-black/20 pb-2">
+                <span className="text-[9px] uppercase text-gray-500 block">Event</span>
+                <span className="font-bold text-sm text-black block">{event?.title}</span>
+                <span className="text-[10px] text-gray-600">
+                  {event?.event_date ? new Date(event.event_date).toLocaleDateString("en-IN") : "TBA"} • {event?.venue}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div>
+                  <span className="text-[9px] uppercase text-gray-500 block">Registrant Name</span>
+                  <span className="font-bold text-black">{user?.name || user?.full_name || "Attendee"}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] uppercase text-gray-500 block">Phone</span>
+                  <span className="font-bold text-black">{phone}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] uppercase text-gray-500 block">College</span>
+                  <span className="font-bold text-black truncate block">{college}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] uppercase text-gray-500 block">Dept &amp; Semester</span>
+                  <span className="font-bold text-black">{department || "—"} ({yearOfStudy || "—"})</span>
+                </div>
+              </div>
+
+              {event?.is_team_event && teamName && (
+                <div className="pt-2 border-t border-black/20 text-[11px]">
+                  <span className="text-[9px] uppercase text-gray-500 block">Team</span>
+                  <span className="font-bold text-black">Team {teamName}</span>
+                  {teamMembers && <span className="text-[10px] text-gray-600 block">Members: {teamMembers}</span>}
+                </div>
+              )}
+
+              <div className="pt-2 border-t border-black/20 flex justify-between items-center text-xs">
+                <span className="font-bold uppercase text-gray-700">Registration Fee:</span>
+                <span className="font-bold text-black text-sm">
+                  {event?.requires_payment ? `₹${event.payment_amount}` : "FREE"}
+                </span>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="flex-1 px-4 py-3 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-100 transition-colors shadow-[3px_3px_0px_#000]"
+              >
+                ← Edit Details
+              </button>
+              <button
+                type="button"
+                onClick={executeRegistration}
+                className="flex-1 px-4 py-3 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000]"
+              >
+                {event?.requires_payment ? `PROCEED TO PAY ₹${event.payment_amount} →` : "YES, CONFIRM →"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
