@@ -5,8 +5,10 @@ from django.contrib.auth.hashers import make_password
 def set_admin_password(apps, schema_editor):
     """Set password for astraietm25@gmail.com using raw SQL to avoid model state issues."""
     from django.db import connection
+    from django.utils import timezone
     
     hashed = make_password('Notastra@2025')
+    now = timezone.now()
     
     with connection.cursor() as cursor:
         # Check if user exists
@@ -22,12 +24,22 @@ def set_admin_password(apps, schema_editor):
                 [hashed, row[0]]
             )
         else:
-            cursor.execute(
-                """INSERT INTO authentication_user 
-                   (email, password, is_staff, is_superuser, is_active, full_name, phone_number, college, usn, first_name, last_name, date_joined) 
-                   VALUES (%s, %s, true, true, true, '', '', '', '', '', '', NOW())""",
-                ['astraietm25@gmail.com', hashed]
-            )
+            cursor.execute("PRAGMA table_info(authentication_user)")
+            cols = [c[1] for c in cursor.fetchall()]
+            if 'role' in cols:
+                cursor.execute(
+                    """INSERT INTO authentication_user 
+                       (email, password, is_staff, is_superuser, is_active, full_name, phone_number, college, usn, first_name, last_name, date_joined, role) 
+                       VALUES (%s, %s, true, true, true, '', '', '', '', '', '', %s, 'ADMIN')""",
+                    ['astraietm25@gmail.com', hashed, now]
+                )
+            else:
+                cursor.execute(
+                    """INSERT INTO authentication_user 
+                       (email, password, is_staff, is_superuser, is_active, full_name, phone_number, college, usn, first_name, last_name, date_joined) 
+                       VALUES (%s, %s, true, true, true, '', '', '', '', '', '', %s)""",
+                    ['astraietm25@gmail.com', hashed, now]
+                )
 
 
 class Migration(migrations.Migration):

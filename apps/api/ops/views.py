@@ -226,8 +226,11 @@ class PublicConfigView(APIView):
 
     def get(self, request):
         settings_qs = SystemSetting.objects.all()
-        # Return all settings - in production, filter to only safe keys like 'maintenanceMode'
         data = {s.key: s.value for s in settings_qs}
+        if "departments" not in data or not data["departments"]:
+            data["departments"] = ["CSE", "CY", "EC", "EEE", "ME", "CE", "AD", "MCA", "BSH", "Other"]
+        if "semesters" not in data or not data["semesters"]:
+            data["semesters"] = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "PG", "Faculty", "Other"]
         return Response(data)
 
 

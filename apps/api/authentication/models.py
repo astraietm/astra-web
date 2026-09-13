@@ -26,6 +26,8 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, default='')
     college = models.CharField(max_length=255, blank=True, default='')
     usn = models.CharField(max_length=50, blank=True, default='')
+    department = models.CharField(max_length=100, blank=True, default='')
+    semester = models.CharField(max_length=50, blank=True, default='')
     avatar = models.URLField(blank=True, null=True)
     google_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     

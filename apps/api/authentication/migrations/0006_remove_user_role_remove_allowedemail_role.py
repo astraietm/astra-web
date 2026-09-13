@@ -3,6 +3,8 @@ from django.db import migrations, connection
 
 def safe_remove_columns(apps, schema_editor):
     """Remove role columns only if they exist (handles case where SQL was run manually)."""
+    if connection.vendor == 'sqlite':
+        return
     with connection.cursor() as cursor:
         cursor.execute("""
             SELECT column_name FROM information_schema.columns 

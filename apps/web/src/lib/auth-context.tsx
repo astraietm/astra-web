@@ -14,6 +14,8 @@ export interface User {
   phone_number: string;
   college: string;
   usn: string;
+  department?: string;
+  semester?: string;
 }
 
 interface PendingAction {

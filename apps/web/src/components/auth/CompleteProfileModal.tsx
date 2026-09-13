@@ -14,7 +14,43 @@ const CompleteProfileModal: React.FC = () => {
   const [phone, setPhone] = useState(user?.phone_number || '');
   const [college, setCollege] = useState(user?.college || '');
   const [usn, setUsn] = useState(user?.usn || '');
+  const [department, setDepartment] = useState(user?.department || '');
+  const [semester, setSemester] = useState(user?.semester || '');
   const [saving, setSaving] = useState(false);
+
+  const [departments, setDepartments] = useState<string[]>([
+    "CSE", "CY", "EC", "EEE", "ME", "CE", "AD", "MCA", "BSH", "Other"
+  ]);
+  const [semesters, setSemesters] = useState<string[]>([
+    "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "PG", "Faculty", "Other"
+  ]);
+
+  React.useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const res = await api.get('/api/ops/public-config/');
+        if (res.data.departments && Array.isArray(res.data.departments)) {
+          setDepartments(res.data.departments);
+        }
+        if (res.data.semesters && Array.isArray(res.data.semesters)) {
+          setSemesters(res.data.semesters);
+        }
+      } catch {
+        // Fallback options preserved
+      }
+    };
+    fetchOptions();
+  }, []);
+
+  React.useEffect(() => {
+    if (user) {
+      setPhone(user.phone_number || '');
+      setCollege(user.college || '');
+      setUsn(user.usn || '');
+      setDepartment(user.department || '');
+      setSemester(user.semester || '');
+    }
+  }, [user]);
 
   if (!isProfileModalOpen) return null;
 
@@ -31,6 +67,8 @@ const CompleteProfileModal: React.FC = () => {
         phone_number: phone,
         college,
         usn,
+        department,
+        semester,
       });
 
       updateUser(res.data);
@@ -77,9 +115,9 @@ const CompleteProfileModal: React.FC = () => {
             )}
           </div>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[85vh] overflow-y-auto">
             <p className="text-sm text-gray-600 font-sans">
-              We need your phone number and college to complete event registrations.
+              We need your phone number, college, department and semester to complete event registrations.
             </p>
 
             <div>
@@ -108,6 +146,40 @@ const CompleteProfileModal: React.FC = () => {
                 required
                 className="w-full px-4 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow shadow-[2px_2px_0px_#000]"
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">
+                  Department
+                </label>
+                <select
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  className="w-full px-3 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow shadow-[2px_2px_0px_#000] bg-white"
+                >
+                  <option value="">Select Dept</option>
+                  {departments.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">
+                  Semester
+                </label>
+                <select
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
+                  className="w-full px-3 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow shadow-[2px_2px_0px_#000] bg-white"
+                >
+                  <option value="">Select Sem</option>
+                  {semesters.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div>

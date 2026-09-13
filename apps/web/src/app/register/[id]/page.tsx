@@ -31,8 +31,32 @@ export default function RegisterPage() {
   const [teamMembers, setTeamMembers] = useState("");
   const [phone, setPhone] = useState(user?.phone_number || "");
   const [college, setCollege] = useState(user?.college || "");
-  const [department, setDepartment] = useState("");
-  const [yearOfStudy, setYearOfStudy] = useState("");
+  const [department, setDepartment] = useState(user?.department || "");
+  const [yearOfStudy, setYearOfStudy] = useState(user?.semester || "");
+
+  const [departments, setDepartments] = useState<string[]>([
+    "CSE", "CY", "EC", "EEE", "ME", "CE", "AD", "MCA", "BSH", "Other"
+  ]);
+  const [semesters, setSemesters] = useState<string[]>([
+    "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "PG", "Faculty", "Other"
+  ]);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const res = await api.get("/api/ops/public-config/");
+        if (res.data.departments && Array.isArray(res.data.departments)) {
+          setDepartments(res.data.departments);
+        }
+        if (res.data.semesters && Array.isArray(res.data.semesters)) {
+          setSemesters(res.data.semesters);
+        }
+      } catch {
+        // preserve defaults
+      }
+    };
+    fetchOptions();
+  }, []);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -53,6 +77,8 @@ export default function RegisterPage() {
     if (user) {
       setPhone(user.phone_number || "");
       setCollege(user.college || "");
+      setDepartment(user.department || "");
+      setYearOfStudy(user.semester || "");
     }
   }, [user]);
 
@@ -248,21 +274,22 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Department</label>
-                <input type="text" value={department} onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow" />
+                <select value={department} onChange={(e) => setDepartment(e.target.value)}
+                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow bg-white">
+                  <option value="">Select Dept</option>
+                  {departments.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
               </div>
               <div>
-                <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Year of Study</label>
+                <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Semester / Year</label>
                 <select value={yearOfStudy} onChange={(e) => setYearOfStudy(e.target.value)}
                   className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow bg-white">
-                  <option value="">Select</option>
-                  <option value="1st Year">1st Year</option>
-                  <option value="2nd Year">2nd Year</option>
-                  <option value="3rd Year">3rd Year</option>
-                  <option value="4th Year">4th Year</option>
-                  <option value="PG">PG</option>
-                  <option value="Faculty">Faculty</option>
-                  <option value="Other">Other</option>
+                  <option value="">Select Sem</option>
+                  {semesters.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
                 </select>
               </div>
             </div>
