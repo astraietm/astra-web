@@ -27,9 +27,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  const hasAdminAccess = Boolean(user && (user.is_staff || user.is_superuser));
+
   useEffect(() => {
-    if (!loading && (!user || !user.is_staff)) router.push("/");
-  }, [user, loading, router]);
+    if (!loading && !hasAdminAccess) router.push("/");
+  }, [hasAdminAccess, loading, router]);
 
   useEffect(() => { setIsMobileOpen(false); }, [pathname]);
 
@@ -45,7 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
     </div>
   );
-  if (!user || !user.is_staff) return null;
+  if (!hasAdminAccess) return null;
 
   return (
     <div
@@ -87,10 +89,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Right */}
         <div className="flex items-center gap-2">
-          {user.avatar && (
+          {user?.avatar && (
             <img src={user.avatar} alt="" className="w-6 h-6 rounded-full border-2 border-white/30 hidden sm:block" />
           )}
-          <span className="hidden sm:block font-mono text-[10px] text-white/60 uppercase">{user.name?.split(" ")[0]}</span>
+          <span className="hidden sm:block font-mono text-[10px] text-white/60 uppercase">{user?.name?.split(" ")[0]}</span>
           <Link
             href="/"
             className="hidden sm:flex items-center gap-1 font-mono text-[10px] text-white/50 border border-white/20 px-2.5 py-1 hover:border-white/60 hover:text-white transition-colors uppercase"
@@ -187,7 +189,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {!isCollapsed && (
             <div className="p-3 border-t-2 border-white/10">
               <div className="flex items-center gap-2 border-2 border-white/10 p-2">
-                {user.avatar ? (
+                {user?.avatar ? (
                   <img src={user.avatar} alt="" className="w-6 h-6 border border-white/30 flex-shrink-0" />
                 ) : (
                   <div className="w-6 h-6 bg-[#F79CFF] border border-black flex items-center justify-center flex-shrink-0">
@@ -195,8 +197,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   </div>
                 )}
                 <div className="overflow-hidden">
-                  <p className="font-pixel text-[9px] text-white uppercase truncate">{user.name}</p>
-                  <p className="font-mono text-[8px] text-white/40 uppercase truncate">{"STAFF"}</p>
+                  <p className="font-pixel text-[9px] text-white uppercase truncate">{user?.name}</p>
+                  <p className="font-mono text-[8px] text-white/40 uppercase truncate">
+                    {user?.is_superuser ? "SUPERUSER" : "STAFF"}
+                  </p>
                 </div>
               </div>
             </div>

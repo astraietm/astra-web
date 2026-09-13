@@ -5,17 +5,15 @@ from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.db.models import Q
 import threading
 import logging
 from .models import AuditLog, SystemSetting, Notification
 from .serializers import AuditLogSerializer, SystemSettingSerializer, NotificationSerializer
 from authentication.models import User, AllowedEmail
+from core.permissions import IsAdminUser
 
 logger = logging.getLogger(__name__)
-
-class IsAdminUser(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user and request.user.is_staff
 
 class AuditLogListView(generics.ListAPIView):
     queryset = AuditLog.objects.all().order_by('-timestamp')
@@ -49,21 +47,26 @@ class SystemSettingListCreateView(APIView):
 
 class TeamListView(APIView):
     """
-    GET  /api/ops/team/  → all users with is_staff=True
+    GET  /api/ops/team/  → all users with is_superuser=True, is_staff=True, or Admin group
     POST /api/ops/team/  → whitelist email + promote user if exists
     """
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     def get(self, request):
-        staff_users = User.objects.filter(is_staff=True).order_by('date_joined')
+        team_users = User.objects.filter(
+            Q(is_staff=True) | Q(is_superuser=True) | Q(groups__name__iexact='Admin')
+        ).distinct().order_by('date_joined')
+
         data = [
             {
                 'id': u.id,
                 'email': u.email,
                 'added_at': u.date_joined,
                 'is_superuser': u.is_superuser,
+                'is_staff': u.is_staff,
+                'groups': list(u.groups.values_list('name', flat=True)),
             }
-            for u in staff_users
+            for u in team_users
         ]
         return Response(data)
 
@@ -86,9 +89,9 @@ class TeamListView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Check if already a staff user
+        # Check if already a staff / superuser / admin group user
         existing_user = User.objects.filter(email__iexact=email).first()
-        if existing_user and existing_user.is_staff:
+        if existing_user and (existing_user.is_staff or existing_user.is_superuser or existing_user.groups.filter(name__iexact='Admin').exists()):
             return Response(
                 {"error": "This user is already a team member.", "code": "already_member"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -136,7 +139,7 @@ class TeamListView(APIView):
 
 class TeamDeleteView(APIView):
     """
-    DELETE /api/ops/team/<user_id>/  → revoke staff from user + remove from whitelist
+    DELETE /api/ops/team/<user_id>/  → revoke staff/admin status from user + remove from whitelist
     """
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
@@ -162,10 +165,13 @@ class TeamDeleteView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Revoke staff
+        # Revoke staff and admin groups
         user.is_staff = False
+        admin_groups = user.groups.filter(name__iexact='Admin')
+        if admin_groups.exists():
+            user.groups.remove(*admin_groups)
         user.save()
-        logger.info(f"[TEAM_DELETE_DEMOTED] Demoted user {user.email} from staff")
+        logger.info(f"[TEAM_DELETE_DEMOTED] Demoted user {user.email} from staff/admin")
 
         # Also remove from whitelist if present
         AllowedEmail.objects.filter(email__iexact=user.email).delete()

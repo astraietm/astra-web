@@ -54,13 +54,16 @@ class GoogleLoginView(APIView):
                 if picture and user.avatar != picture:
                     user.avatar = picture
                 
-                # Check if user should be staff (if added to allowed list)
+                # Check if user should be staff (if added to allowed list or is superuser / in Admin group)
                 from .models import AllowedEmail
                 try:
                     AllowedEmail.objects.get(email__iexact=email)
                     user.is_staff = True
                 except AllowedEmail.DoesNotExist:
                     pass  # Keep existing is_staff status
+
+                if user.is_superuser or user.groups.filter(name__iexact='Admin').exists():
+                    user.is_staff = True
 
                 user.save()
             except User.DoesNotExist:
@@ -82,13 +85,16 @@ class GoogleLoginView(APIView):
                     is_staff=is_staff
                 )
 
+            is_admin_access = bool(user.is_staff or user.is_superuser or user.groups.filter(name__iexact='Admin').exists())
+
             # Generate JWT
             refresh = RefreshToken.for_user(user)
             # Add custom claims
             refresh['email'] = user.email
             refresh['full_name'] = user.full_name
             refresh['avatar'] = user.avatar
-            refresh['is_staff'] = user.is_staff
+            refresh['is_staff'] = is_admin_access
+            refresh['is_superuser'] = user.is_superuser
             refresh['phone_number'] = user.phone_number
             refresh['college'] = user.college
             refresh['usn'] = user.usn
@@ -100,7 +106,8 @@ class GoogleLoginView(APIView):
                     'email': user.email,
                     'name': user.full_name,
                     'avatar': user.avatar,
-                    'is_staff': user.is_staff,
+                    'is_staff': is_admin_access,
+                    'is_superuser': user.is_superuser,
                     'phone_number': user.phone_number,
                     'college': user.college,
                     'usn': user.usn

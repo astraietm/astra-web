@@ -10,6 +10,7 @@ export interface User {
   full_name?: string;
   avatar: string;
   is_staff: boolean;
+  is_superuser?: boolean;
   phone_number: string;
   college: string;
   usn: string;
@@ -90,6 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               full_name: decoded.full_name || '',
               avatar: decoded.avatar || '',
               is_staff: decoded.is_staff || false,
+              is_superuser: decoded.is_superuser || false,
               phone_number: decoded.phone_number || '',
               college: decoded.college || '',
               usn: decoded.usn || '',

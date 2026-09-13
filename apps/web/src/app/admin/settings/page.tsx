@@ -168,13 +168,25 @@ export default function AdminSettings() {
                 key={member.id}
                 className="flex items-center justify-between border-2 border-white/10 p-3 hover:border-white/20 transition-colors"
               >
-              <div>
+                <div>
                   <p className="font-mono text-xs text-white">{member.email}</p>
-                  <span className={`inline-block mt-1 font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${
-                    member.is_superuser
-                      ? "bg-[#FF4444] text-white border-red-700"
-                      : "bg-[#FFE816] text-black border-black"
-                  }`}>{member.is_superuser ? "SUPERUSER" : "STAFF"}</span>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                    {member.is_superuser && (
+                      <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] bg-[#FF4444] text-white border-red-700">
+                        SUPERUSER
+                      </span>
+                    )}
+                    {member.is_staff && (
+                      <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] bg-[#FFE816] text-black border-black">
+                        STAFF
+                      </span>
+                    )}
+                    {!member.is_superuser && Array.isArray(member.groups) && member.groups.includes("Admin") && (
+                      <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] bg-[#C3FF16] text-black border-black">
+                        ADMIN GROUP
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <button
                   onClick={() => handleRemoveMember(member.id, member.email)}

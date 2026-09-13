@@ -7,6 +7,7 @@ from .models import Registration, Event
 from .serializers import RegistrationSerializer, EventSerializer
 from .utils import send_registration_email
 from django.db.models import Q
+from core.permissions import IsAdminUser
 
 class EventListView(generics.ListAPIView):
     queryset = Event.objects.all()
@@ -124,12 +125,12 @@ class VerifyTokenView(APIView):
 class AdminRegistrationsView(generics.ListAPIView):
     queryset = Registration.objects.all().order_by('-timestamp')
     serializer_class = RegistrationSerializer
-    permission_classes = [permissions.IsAdminUser] # Restrict to staff/admins
+    permission_classes = [IsAdminUser] # Restrict to staff/admins
 
 class AdminEventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('-created_at')
     serializer_class = EventSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 # Payment Views
 import razorpay
@@ -310,7 +311,7 @@ class VerifyPaymentView(APIView):
             return Response({"error": f"Verification error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ClearRegistrationsView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminUser]
 
     def delete(self, request):
         try:
@@ -326,7 +327,7 @@ class ClearRegistrationsView(APIView):
 
 class SyncEventsView(APIView):
     """Manually trigger event synchronization from management command"""
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminUser]
     
     def post(self, request):
         try:
