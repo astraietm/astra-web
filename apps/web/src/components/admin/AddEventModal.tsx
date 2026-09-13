@@ -22,6 +22,7 @@ const DEFAULT_FORM = {
   category: "WORKSHOP",
   venue: "",
   event_date: new Date().toISOString().slice(0, 16),
+  registration_end: "",
   time: "10:00 AM",
   duration: "2 Hours",
   registration_limit: 100,
@@ -48,6 +49,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
         category: eventToEdit.category || "WORKSHOP",
         venue: eventToEdit.venue || "",
         event_date: eventToEdit.event_date ? new Date(eventToEdit.event_date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
+        registration_end: eventToEdit.registration_end ? new Date(eventToEdit.registration_end).toISOString().slice(0, 16) : "",
         time: eventToEdit.time || "10:00 AM",
         duration: eventToEdit.duration || "2 Hours",
         registration_limit: eventToEdit.registration_limit || 100,
@@ -87,13 +89,19 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
 
     setSubmitting(true);
     try {
+      const eventDateObj = new Date(formData.event_date);
+      const regEndObj = formData.registration_end
+        ? new Date(formData.registration_end)
+        : new Date(eventDateObj.getTime() + 24 * 60 * 60 * 1000);
+
       const payload = {
         ...formData,
         registration_limit: Number(formData.registration_limit) || 100,
         payment_amount: formData.requires_payment ? String(formData.payment_amount) : "0.00",
         team_size_min: formData.is_team_event ? Number(formData.team_size_min) : 1,
         team_size_max: formData.is_team_event ? Number(formData.team_size_max) : 1,
-        event_date: new Date(formData.event_date).toISOString(),
+        event_date: eventDateObj.toISOString(),
+        registration_end: regEndObj.toISOString(),
       };
 
       if (eventToEdit?.id) {
@@ -214,7 +222,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
             </div>
           </div>
 
-          {/* Limit, Registration Status & Image URL */}
+          {/* Limit, Registration Deadline & Image URL */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Registration Limit</label>
@@ -227,7 +235,17 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
                 className={INPUT_CLS}
               />
             </div>
-            <div className="sm:col-span-2">
+            <div>
+              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Registration Deadline</label>
+              <input
+                type="datetime-local"
+                name="registration_end"
+                value={formData.registration_end}
+                onChange={handleChange}
+                className={INPUT_CLS}
+              />
+            </div>
+            <div>
               <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Image URL (Optional)</label>
               <input
                 type="url"

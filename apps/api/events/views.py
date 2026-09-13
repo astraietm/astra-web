@@ -67,7 +67,7 @@ class RegistrationCreateView(generics.CreateAPIView):
         if now < event.registration_start:
              return Response({"error": f"Registration starts on {event.registration_start}."}, status=status.HTTP_400_BAD_REQUEST)
         
-        if now > event.registration_end:
+        if event.registration_end > event.registration_start and now > event.registration_end:
              return Response({"error": "Registration deadline has passed."}, status=status.HTTP_400_BAD_REQUEST)
 
         current_count = event.registrations.count()
@@ -187,7 +187,7 @@ class CreatePaymentOrderView(APIView):
         if now < event.registration_start:
             return Response({"error": f"Registration starts on {event.registration_start}."}, status=status.HTTP_400_BAD_REQUEST)
         
-        if now > event.registration_end:
+        if event.registration_end > event.registration_start and now > event.registration_end:
             return Response({"error": "Registration deadline has passed."}, status=status.HTTP_400_BAD_REQUEST)
         
         current_count = event.registrations.count()

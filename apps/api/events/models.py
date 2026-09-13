@@ -3,6 +3,8 @@ from django.conf import settings
 from django.utils import timezone
 import secrets
 
+from datetime import timedelta
+
 class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
@@ -34,6 +36,14 @@ class Event(models.Model):
     prize = models.CharField(max_length=255, blank=True, help_text="Prize pool amount or description")
     
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.registration_end or self.registration_end <= self.registration_start:
+            if self.event_date:
+                self.registration_end = self.event_date + timedelta(days=1)
+            else:
+                self.registration_end = timezone.now() + timedelta(days=30)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
