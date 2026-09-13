@@ -79,14 +79,14 @@ class SystemSettingListCreateView(APIView):
 
 class TeamListView(APIView):
     """
-    GET  /api/ops/team/  → all users with is_superuser=True, is_staff=True, or Admin group
+    GET  /api/ops/team/  → all users with is_superuser=True or is_staff=True
     POST /api/ops/team/  → whitelist email + promote user if exists
     """
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     def get(self, request):
         team_users = User.objects.filter(
-            Q(is_staff=True) | Q(is_superuser=True) | Q(groups__name__iexact='Admin')
+            Q(is_staff=True) | Q(is_superuser=True)
         ).distinct().order_by('date_joined')
 
         data = [

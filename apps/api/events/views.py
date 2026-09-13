@@ -97,11 +97,11 @@ class MyRegistrationsView(generics.ListAPIView):
         ).order_by('-timestamp')
 
 class VerifyTokenView(APIView):
-    # Depending on requirements, this might need Admin permission
-    # per USER request "Admin QR Scan Support", this should ideally be protected.
-    # But for simplicity or if the scanner app just has the link, we can keep it open or require Admin.
-    # Let's keep it AllowAny for now for easy testing, but in production, we'd use IsAdminUser.
-    permission_classes = [permissions.AllowAny] 
+    """
+    Verify and accept ticket entry pass (QR scan).
+    Strictly requires authenticated staff/superuser credentials.
+    """
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     def get(self, request, token):
         registration = get_object_or_404(Registration, token=token)
