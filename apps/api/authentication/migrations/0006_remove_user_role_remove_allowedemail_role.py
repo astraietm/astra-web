@@ -10,7 +10,7 @@ def safe_remove_columns(apps, schema_editor):
         """)
         if cursor.fetchone():
             cursor.execute('ALTER TABLE authentication_user DROP COLUMN role')
-        
+
         cursor.execute("""
             SELECT column_name FROM information_schema.columns 
             WHERE table_name = 'authentication_allowedemail' AND column_name = 'role'
@@ -27,18 +27,16 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.SeparateDatabaseAndState(
-            # Update Django's internal state so it knows role fields are gone
             state_operations=[
                 migrations.RemoveField(
                     model_name='user',
-                    field_name='role',
+                    name='role',
                 ),
                 migrations.RemoveField(
                     model_name='allowedemail',
-                    field_name='role',
+                    name='role',
                 ),
             ],
-            # Safely drop columns at DB level (no-op if already dropped)
             database_operations=[
                 migrations.RunPython(safe_remove_columns, migrations.RunPython.noop),
             ],
