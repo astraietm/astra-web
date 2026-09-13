@@ -213,7 +213,7 @@ export default function EventsPage() {
       <div className="pt-20 sm:pt-24">
         <MarqueeTicker
           items={[
-            "ASTRA 2026 // NATIONAL CYBER SECURITY CONCLAVE",
+            "ASTRA 2026 // NATIONAL CYBER SECURITY SYMPOSIUM",
             "OCT 6 & 7 — KMCT CALICUT",
             "24H NATIONAL CTF WARGAMES",
             "REGISTER NOW",
@@ -420,7 +420,7 @@ export default function EventsPage() {
                 <p className="font-mono text-[10px] text-gray-500">Requires valid college ID</p>
               </div>
               <ul className="space-y-2 text-xs font-sans text-gray-800 mb-6">
-                <li className="flex items-center gap-2">✓ Keynote &amp; Conclave access</li>
+                <li className="flex items-center gap-2">✓ Keynote & session access</li>
                 <li className="flex items-center gap-2">✓ Certificate of Participation</li>
                 <li className="flex items-center gap-2">✓ Delegate physical kit</li>
               </ul>
@@ -551,7 +551,7 @@ function getFallbackEvents(): DisplayEvent[] {
       venue: "Main Auditorium, KMCT Campus",
       type: "IN-PERSON",
       badgeColor: "yellow",
-      description: "Inaugural conclave with national cyber defense chiefs dissecting AI-augmented offensive vectors and sovereign cybersecurity resilience.",
+      description: "Inaugural keynote with national cyber defense chiefs dissecting AI-augmented offensive vectors and sovereign cybersecurity resilience.",
       highlights: ["Keynote address by CERT-In & Defense advisors", "Official inauguration of ASTRA 2026", "Release of collegiate threat intelligence paper"],
       registrationStatus: "OPEN",
       isTeamEvent: false, teamSizeMin: 1, teamSizeMax: 1,
@@ -618,13 +618,13 @@ function getFallbackEvents(): DisplayEvent[] {
       day: "DAY 2",
       date: "OCT 07",
       time: "04:00 PM — 06:30 PM IST",
-      title: "Valedictory, Bounty Prize Distribution & Cyber Network Conclave",
+      title: "Valedictory, Bounty Prize Distribution & Cyber Networking",
       category: "GRAND FINALE",
       venue: "Main Auditorium, KMCT Campus",
       type: "IN-PERSON",
       badgeColor: "lilac",
       description: "Closing ceremony with prize distribution, CTF leaderboard reveal, and networking.",
-      highlights: ["CTF bounty prize distribution", "Best performer awards", "Networking conclave"],
+      highlights: ["CTF bounty prize distribution", "Best performer awards", "Networking session"],
       registrationStatus: "OPEN",
       isTeamEvent: false, teamSizeMin: 1, teamSizeMax: 1,
       requiresPayment: false, paymentAmount: "0",

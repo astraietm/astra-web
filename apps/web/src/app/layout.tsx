@@ -7,7 +7,7 @@ import { Providers } from '@/lib/providers';
 export const metadata: Metadata = {
   title: 'ASTRA 2026 — Department of Cyber Security | KMCT Institute of Emerging Technology and Management, Calicut, Kerala',
   description:
-    'ASTRA 2026 is the Flagship National Cyber Security Conclave & 24H National CTF hosted by the Department of Cyber Security, KMCT Institute of Emerging Technology and Management, Calicut, Kerala on October 6 & 7, 2026.',
+    'ASTRA 2026 is the Flagship National Cyber Security Symposium & 24H National CTF hosted by the Department of Cyber Security, KMCT Institute of Emerging Technology and Management, Calicut, Kerala on October 6 & 7, 2026.',
   keywords: [
     'ASTRA 2026',
     'ASTRA Cyber Security',
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     'KMCT Institute of Emerging Technology and Management',
     'KMCT Calicut Kerala',
     'National CTF 2026',
-    'Ethical Hacking Conclave',
+    'Ethical Hacking Symposium',
     'October 6 7 2026 Kerala',
   ],
   authors: [{ name: 'Department of Cyber Security, KMCT' }],

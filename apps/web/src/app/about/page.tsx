@@ -14,9 +14,9 @@ export default function AboutPage() {
         </h1>
 
         <PixelFrame dotGrid cornerAccent className="p-8 mb-8">
-          <h2 className="font-pixel text-xl font-bold uppercase mb-4">THE CONCLAVE</h2>
+          <h2 className="font-pixel text-xl font-bold uppercase mb-4">THE EVENT</h2>
           <p className="font-sans text-sm text-gray-700 leading-relaxed mb-4">
-            ASTRA 2026 is the flagship National Cyber Security Conclave organized by the Department of
+            ASTRA 2026 is the flagship National Cyber Security Symposium organized by the Department of
             Cyber Security at KMCT Institute of Emerging Technology and Management, Calicut, Kerala. This
             two-day event brings together ethical hackers, cyber security researchers, students, and
             industry professionals for a comprehensive exploration of sovereign cybersecurity.

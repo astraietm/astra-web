@@ -22,7 +22,7 @@ export const HeroSection: React.FC = () => {
             'ASTRA 2026',
             'OCTOBER 6 & 7',
             'KMCT CALICUT, KERALA',
-            'NATIONAL CYBER CONCLAVE',
+            'NATIONAL CYBER SECURITY',
             '24H CTF WARGAMES',
             '₹100,000+ BOUNTIES',
             'ZERO-DAY DEFENSE',
@@ -102,7 +102,7 @@ export const HeroSection: React.FC = () => {
 
         {/* Body Description */}
         <p className="mt-4 sm:mt-8 font-editorial text-sm sm:text-lg md:text-xl text-gray-700 text-center max-w-2xl leading-relaxed px-2">
-          ASTRA is a National Cyber Security Conclave — working towards
+          ASTRA is a National Cyber Security Symposium — working towards
           building elite cyber defense practitioners in Kerala.
         </p>
 
@@ -116,7 +116,7 @@ export const HeroSection: React.FC = () => {
               withArrow
               className="w-full sm:w-auto text-center justify-center"
             >
-              Claim Conclave Pass
+              Claim Event Pass
             </BrutalistButton>
           </MagneticWrapper>
           <MagneticWrapper strength={0.25} className="w-full sm:w-auto">

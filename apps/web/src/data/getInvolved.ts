@@ -12,7 +12,7 @@ export interface ActionCardData {
 export const getInvolvedData: ActionCardData[] = [
   {
     number: '01',
-    title: 'DELEGATE CONCLAVE PASS',
+    title: 'DELEGATE PASS',
     badge: 'ALL-ACCESS // OCT 6-7',
     description: 'Access all keynote sessions, technology symposiums, cybersecurity panel discussions, networking lunch, and delegate kits.',
     ctaText: 'Get Delegate Pass',

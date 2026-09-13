@@ -15,7 +15,7 @@ interface NavLink {
 }
 
 const navigationLinks: NavLink[] = [
-  { number: '01', label: 'Conclave Overview', href: '/' },
+  { number: '01', label: 'ASTRA Overview', href: '/' },
   { number: '02', label: 'Stories from the Arena', href: '/#stories' },
   { number: '03', label: 'Upcoming Events (Oct 6-7)', href: '/events', isSpecial: true },
   { number: '04', label: 'Wargame Photo Gallery', href: '/gallery', isSpecial: true },
@@ -192,7 +192,7 @@ export const Navbar: React.FC = () => {
               >
                 <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-black text-white px-2.5 sm:px-3 py-1 font-pixel text-[10px] sm:text-xs tracking-wider uppercase mb-2 shadow-[2px_2px_0px_#000]">
                   <Terminal className="w-3 h-3 text-[#C3FF16]" />
-                  <span>NATIONAL CYBER CONCLAVE // DIRECTORY</span>
+                  <span>NATIONAL CYBER SECURITY // DIRECTORY</span>
                 </div>
                 <h2 className="font-pixel font-extrabold text-2xl sm:text-4xl md:text-5xl tracking-tight text-black uppercase">
                   INDEX <span className="font-editorial italic font-normal text-pink-600">chapters</span>
@@ -305,7 +305,7 @@ export const Navbar: React.FC = () => {
             >
               <div className="paper-texture border-2 border-black p-6 w-64 shadow-[6px_6px_0px_#000] pointer-events-auto rotate-6 hover:rotate-3 transition-transform duration-200">
                 <p className="font-pixel text-[10px] uppercase tracking-wider text-gray-500 mb-2">
-                  ASTRA CONCLAVE 2026
+                  ASTRA 2026
                 </p>
                 <p className="font-pixel text-2xl font-bold uppercase leading-tight text-black">
                   OCTOBER<br />6 &amp; 7

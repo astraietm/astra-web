@@ -22,7 +22,7 @@ const GALLERY_STREAM_IMAGES = [
   },
   {
     src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80',
-    alt: 'National Cyber Security Conclave Stage',
+    alt: 'National Cyber Security Symposium Stage',
   },
   {
     src: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80',
