@@ -20,12 +20,6 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class User(AbstractUser):
-    ROLE_CHOICES = (
-        ('ADMIN', 'Admin'),
-        ('VOLUNTEER', 'Volunteer'),
-        ('USER', 'User'),
-    )
-
     username = None
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=255, blank=True)
@@ -34,7 +28,6 @@ class User(AbstractUser):
     usn = models.CharField(max_length=50, blank=True, default='')
     avatar = models.URLField(blank=True, null=True)
     google_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='USER')
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -46,12 +39,11 @@ class User(AbstractUser):
 
 class AllowedEmail(models.Model):
     """
-    Emails that are pre-authorized to have specific roles.
-    If a user logs in with this email, they typically get the assigned role.
+    Emails that are pre-authorized for staff access.
+    If a user logs in with this email, they get is_staff=True.
     """
     email = models.EmailField(unique=True)
-    role = models.CharField(max_length=20, choices=User.ROLE_CHOICES, default='VOLUNTEER')
     added_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.email} ({self.role})"
+        return self.email

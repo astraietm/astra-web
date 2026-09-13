@@ -25,7 +25,6 @@ export default function AdminSettings() {
   const [saving, setSaving] = useState(false);
   const [team, setTeam] = useState<any[]>([]);
   const [newEmail, setNewEmail] = useState("");
-  const [newRole, setNewRole] = useState("VOLUNTEER");
   const [addingMember, setAddingMember] = useState(false);
   const { showToast } = useToast();
 
@@ -65,7 +64,7 @@ export default function AdminSettings() {
     if (!newEmail) { showToast("Email is required.", "error"); return; }
     setAddingMember(true);
     try {
-      await api.post("/api/ops/team/", { email: newEmail, role: newRole });
+      await api.post("/api/ops/team/", { email: newEmail });
       showToast("Team member added!", "success");
       setNewEmail("");
       const res = await api.get("/api/ops/team/");
@@ -154,10 +153,6 @@ export default function AdminSettings() {
               onChange={(e) => setNewEmail(e.target.value)} required
               className={INPUT_CLS + " flex-1 text-xs"}
             />
-            <select value={newRole} onChange={(e) => setNewRole(e.target.value)} className={SELECT_CLS + " text-xs"}>
-              <option value="VOLUNTEER">Volunteer</option>
-              <option value="ADMIN">Admin</option>
-            </select>
             <button
               type="submit" disabled={addingMember}
               className="flex items-center gap-1 px-3 py-2 bg-[#FFE816] text-black font-pixel text-[9px] border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
@@ -173,15 +168,9 @@ export default function AdminSettings() {
                 key={member.id}
                 className="flex items-center justify-between border-2 border-white/10 p-3 hover:border-white/20 transition-colors"
               >
-                <div>
+              <div>
                   <p className="font-mono text-xs text-white">{member.email}</p>
-                  <span className={`inline-block mt-1 font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${
-                    member.role === "ADMIN"
-                      ? "bg-[#FFE816] text-black border-black"
-                      : "bg-white/10 text-white/60 border-white/20"
-                  }`}>
-                    {member.role}
-                  </span>
+                  <span className="inline-block mt-1 font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] bg-[#FFE816] text-black border-black">STAFF</span>
                 </div>
                 <button
                   onClick={() => handleRemoveMember(member.id, member.email)}

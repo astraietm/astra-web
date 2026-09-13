@@ -196,7 +196,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 )}
                 <div className="overflow-hidden">
                   <p className="font-pixel text-[9px] text-white uppercase truncate">{user.name}</p>
-                  <p className="font-mono text-[8px] text-white/40 uppercase truncate">{user.role || "STAFF"}</p>
+                  <p className="font-mono text-[8px] text-white/40 uppercase truncate">{"STAFF"}</p>
                 </div>
               </div>
             </div>

@@ -9,7 +9,6 @@ export interface User {
   name: string;
   full_name?: string;
   avatar: string;
-  role: string;
   is_staff: boolean;
   phone_number: string;
   college: string;
@@ -90,7 +89,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               name: decoded.full_name || '',
               full_name: decoded.full_name || '',
               avatar: decoded.avatar || '',
-              role: decoded.role || 'USER',
               is_staff: decoded.is_staff || false,
               phone_number: decoded.phone_number || '',
               college: decoded.college || '',

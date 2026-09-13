@@ -45,19 +45,14 @@ class SystemSettingListCreateView(APIView):
         )
         return Response({"status": "success", "message": "Settings updated"})
 
-class IsSuperAdmin(permissions.BasePermission):
-    """
-    Allocates permissions only to 'ADMIN' role users, filtering out 'VOLUNTEER'.
-    """
-    def has_permission(self, request, view):
-        return request.user and request.user.is_staff and request.user.role == 'ADMIN'
+
 
 class AllowedEmailListCreateView(generics.ListCreateAPIView):
 
     class AllowedEmailSerializer(serializers.ModelSerializer):
         class Meta:
             model = AllowedEmail
-            fields = ['id', 'email', 'role', 'added_at']
+            fields = ['id', 'email', 'added_at']
 
     queryset = AllowedEmail.objects.all().order_by('-added_at')
     serializer_class = AllowedEmailSerializer
@@ -66,11 +61,10 @@ class AllowedEmailListCreateView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         inviter = request.user
         logger.info(
-            f"[TEAM_INVITE_START] Requester={getattr(inviter, 'email', None)} (role={getattr(inviter, 'role', None)})"
+            f"[TEAM_INVITE_START] Requester={getattr(inviter, 'email', None)}"
         )
 
         raw_email = request.data.get('email', '')
-        raw_role = request.data.get('role', 'VOLUNTEER')
 
         # 1. Email validation & sanitization
         if not raw_email or not str(raw_email).strip():
@@ -90,71 +84,48 @@ class AllowedEmailListCreateView(generics.ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 2. Role validation
-        allowed_roles = [c[0] for c in User.ROLE_CHOICES if c[0] in ['ADMIN', 'VOLUNTEER']]
-        if raw_role not in allowed_roles:
-            logger.warning(f"[TEAM_INVITE_ERR] Invalid role requested: {raw_role}")
-            return Response(
-                {"error": "Invalid role permission specified.", "code": "invalid_role"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        role = raw_role
-
-        # 3. RBAC authorization: Only Superusers / Admins can invite another ADMIN
-        if role == 'ADMIN' and not (getattr(inviter, 'is_superuser', False) or getattr(inviter, 'role', '') == 'ADMIN'):
-            logger.warning(
-                f"[TEAM_INVITE_FORBIDDEN] Non-admin {inviter.email} attempted to grant ADMIN permissions."
-            )
-            return Response(
-                {"error": "You do not have permission to invite this role.", "code": "permission_denied"},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        # 4. Duplicate checks
-        # A. Already in AllowedEmail
-        if AllowedEmail.objects.filter(email=email).exists():
+        # 2. Duplicate checks
+        if AllowedEmail.objects.filter(email__iexact=email).exists():
             logger.info(f"[TEAM_INVITE_DUPLICATE] Email {email} already in AllowedEmail list")
             return Response(
                 {"error": "An invitation is already pending for this email.", "code": "already_invited"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # B. Already an active team member with matching or higher staff privileges
-        existing_user = User.objects.filter(email=email).first()
-        if existing_user and existing_user.is_staff and existing_user.role in ['ADMIN', 'VOLUNTEER']:
-            logger.info(f"[TEAM_INVITE_DUPLICATE] User {email} is already active team staff (role={existing_user.role})")
+        existing_user = User.objects.filter(email__iexact=email).first()
+        if existing_user and existing_user.is_staff:
+            logger.info(f"[TEAM_INVITE_DUPLICATE] User {email} is already staff")
             return Response(
                 {"error": "This user is already a team member.", "code": "already_member"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 5. Create AllowedEmail record
-        allowed = AllowedEmail.objects.create(email=email, role=role)
+        # 3. Create AllowedEmail record
+        allowed = AllowedEmail.objects.create(email=email)
 
-        # If user account already exists, promote role and staff privileges immediately
+        # If user account already exists, promote to staff immediately
         if existing_user:
-            existing_user.role = role
             existing_user.is_staff = True
             existing_user.save()
-            logger.info(f"[TEAM_INVITE_SUCCESS] Upgraded existing user {email} to staff role={role}")
+            logger.info(f"[TEAM_INVITE_SUCCESS] Upgraded existing user {email} to staff")
         else:
-            logger.info(f"[TEAM_INVITE_SUCCESS] Created invitation whitelist entry for {email} role={role}")
+            logger.info(f"[TEAM_INVITE_SUCCESS] Created invitation whitelist entry for {email}")
 
-        # 6. Audit Logging
+        # 4. Audit Logging
         AuditLog.objects.create(
             user=inviter,
             action="Added Team Member",
-            details=f"Email: {allowed.email}, Role: {allowed.role}",
+            details=f"Email: {allowed.email}",
             level="SUCCESS",
             ip_address=request.META.get('REMOTE_ADDR')
         )
 
-        # 7. Safe optional invitation notification
+        # 5. Safe optional invitation notification
         try:
-            subject = f"Invitation: ASTRA Collaborator ({role})"
+            subject = "Invitation: ASTRA Team Member"
             message = (
                 f"Hello,\n\n"
-                f"You have been added to the ASTRA operations team as a {role}.\n\n"
+                f"You have been added to the ASTRA operations team.\n\n"
                 f"Please access the management portal at https://astraietm.in/admin\n\n"
                 f"— ASTRA Security Systems"
             )
@@ -193,10 +164,9 @@ class AllowedEmailDeleteView(generics.DestroyAPIView):
 
         # Demote corresponding User if exists and is not superuser
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email__iexact=email)
             if not user.is_superuser:
                 user.is_staff = False
-                user.role = 'USER'
                 user.save()
                 logger.info(f"[TEAM_DELETE_DEMOTED] Demoted user {email} from staff")
         except User.DoesNotExist:
