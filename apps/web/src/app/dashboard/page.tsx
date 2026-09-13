@@ -30,10 +30,12 @@ interface Registration {
   };
 }
 
+import { TicketPass } from "@/components/events/TicketPass";
+
 export default function DashboardPage() {
   const { user, token, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [registrations, setRegistrations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function DashboardPage() {
         <div className="mb-8">
           <StickerBadge color="pink" rotation={-2}>YOUR PROFILE</StickerBadge>
           <h1 className="font-pixel text-3xl sm:text-4xl font-extrabold uppercase text-black mt-3">
-            MY REGISTRATIONS
+            MY EVENT PASSES
           </h1>
           <p className="font-editorial italic text-xl text-gray-700 mt-1">
             Welcome back, {user?.name || user?.email}
@@ -86,7 +88,7 @@ export default function DashboardPage() {
               <img src={user.avatar} alt="" className="w-14 h-14 rounded-full border-2 border-black shadow-[2px_2px_0px_#000]" />
             )}
             <div>
-              <p className="font-display font-bold text-lg text-black">{user?.name}</p>
+              <p className="font-display font-bold text-lg text-black">{user?.name || user?.full_name}</p>
               <p className="font-mono text-xs text-gray-600">{user?.email}</p>
               {user?.college && <p className="font-mono text-xs text-gray-500">{user.college}</p>}
             </div>
@@ -117,7 +119,7 @@ export default function DashboardPage() {
           </PixelFrame>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-8">
           {registrations.map((reg) => (
             <motion.div
               key={reg.id}
@@ -125,60 +127,7 @@ export default function DashboardPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <PixelFrame dotGrid cornerAccent className="p-0 overflow-hidden">
-                <div className="flex flex-col sm:flex-row">
-                  {/* QR Code */}
-                  {reg.qr_code && (
-                    <div className="sm:w-40 flex items-center justify-center p-4 bg-white border-b-2 sm:border-b-0 sm:border-r-2 border-black">
-                      <img src={reg.qr_code} alt="QR Ticket" className="w-32 h-32" />
-                    </div>
-                  )}
-
-                  {/* Details */}
-                  <div className="flex-1 p-5">
-                    <div className="flex items-center gap-2 mb-2">
-                      <StickerBadge
-                        color={reg.status === "REGISTERED" ? "lime" : reg.status === "ATTENDED" ? "mint" : "yellow"}
-                        rotation={-2}
-                      >
-                        {reg.status}
-                      </StickerBadge>
-                      {reg.payment_details && (
-                        <span className={`font-mono text-[10px] px-2 py-0.5 border border-black ${
-                          reg.payment_details.status === "SUCCESS" ? "bg-emerald-100 text-emerald-800" : "bg-yellow-100 text-yellow-800"
-                        }`}>
-                          PAYMENT: {reg.payment_details.status}
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="font-pixel text-lg font-bold uppercase text-black mb-1">
-                      {reg.event_details.title}
-                    </h3>
-
-                    <div className="flex flex-wrap gap-3 text-xs font-mono text-gray-600 mb-2">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {new Date(reg.event_details.event_date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5" /> {reg.event_details.venue}
-                      </span>
-                    </div>
-
-                    {reg.team_name && (
-                      <p className="font-mono text-xs text-gray-500">
-                        Team: <strong>{reg.team_name}</strong>
-                        {reg.team_members && ` — ${reg.team_members}`}
-                      </p>
-                    )}
-
-                    <p className="font-mono text-[10px] text-gray-400 mt-2">
-                      Registered: {new Date(reg.timestamp).toLocaleString("en-IN")}
-                    </p>
-                  </div>
-                </div>
-              </PixelFrame>
+              <TicketPass registration={reg} showPrintButton={true} />
             </motion.div>
           ))}
         </div>

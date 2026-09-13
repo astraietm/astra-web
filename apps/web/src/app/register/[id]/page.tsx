@@ -11,6 +11,8 @@ import api, { API_URL } from "@/lib/api";
 import { ArrowLeft, Loader2, Users, CreditCard, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
+import { TicketPass } from "@/components/events/TicketPass";
+
 export default function RegisterPage() {
   const params = useParams();
   const router = useRouter();
@@ -180,35 +182,32 @@ export default function RegisterPage() {
 
   if (success && registration) {
     return (
-      <div className="min-h-screen pt-28 pb-16 px-4">
-        <div className="max-w-lg mx-auto">
-          <PixelFrame dotGrid cornerAccent className="p-8 text-center">
-            <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto mb-4" />
-            <h1 className="font-pixel text-2xl font-bold uppercase text-black mb-2">REGISTRATION CONFIRMED</h1>
-            <p className="font-sans text-sm text-gray-700 mb-4">
-              You are registered for <strong>{event?.title}</strong>.
+      <div className="min-h-screen pt-28 pb-16 px-4 bg-graph-paper">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <div className="text-center">
+            <CheckCircle2 className="w-14 h-14 text-emerald-600 mx-auto mb-2" />
+            <h1 className="font-pixel text-2xl font-bold uppercase text-black mb-1">REGISTRATION CONFIRMED!</h1>
+            <p className="font-sans text-sm text-gray-700">
+              Your official ticket pass for <strong>{event?.title}</strong> has been generated below.
             </p>
-            {registration.qr_code && (
-              <div className="my-4">
-                <img src={registration.qr_code} alt="QR Ticket" className="w-48 h-48 mx-auto border-2 border-black shadow-[3px_3px_0px_#000]" />
-                <p className="font-mono text-[10px] text-gray-500 mt-2">Show this QR at the venue</p>
-              </div>
-            )}
-            <div className="flex gap-3 justify-center mt-6">
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[2px_2px_0px_#000]"
-              >
-                My Registrations →
-              </Link>
-              <Link
-                href="/events"
-                className="px-4 py-2 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_#000]"
-              >
-                Back to Events
-              </Link>
-            </div>
-          </PixelFrame>
+          </div>
+
+          <TicketPass registration={{ ...registration, event_details: registration.event_details || event }} showPrintButton={true} />
+
+          <div className="flex gap-4 justify-center pt-2 print:hidden">
+            <Link
+              href="/dashboard"
+              className="px-6 py-2.5 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000]"
+            >
+              My Dashboard →
+            </Link>
+            <Link
+              href="/events"
+              className="px-6 py-2.5 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-100 transition-colors shadow-[3px_3px_0px_#000]"
+            >
+              Browse Events
+            </Link>
+          </div>
         </div>
       </div>
     );

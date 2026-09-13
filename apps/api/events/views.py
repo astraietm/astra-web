@@ -49,6 +49,9 @@ class RegistrationCreateView(generics.CreateAPIView):
         
         # Automatically set user from JWT
         instance = serializer.save(user=self.request.user)
+        if not instance.event.requires_payment:
+            instance.status = 'REGISTERED'
+            instance.save()
         # Send registration email with ticket
         send_registration_email(instance)
 
