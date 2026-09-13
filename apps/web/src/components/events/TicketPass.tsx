@@ -70,7 +70,110 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
     : "TBA";
 
   const handlePrint = () => {
-    window.print();
+    if (!ticketRef.current) {
+      window.print();
+      return;
+    }
+
+    const printFrame = document.createElement("iframe");
+    printFrame.style.position = "fixed";
+    printFrame.style.right = "0";
+    printFrame.style.bottom = "0";
+    printFrame.style.width = "0";
+    printFrame.style.height = "0";
+    printFrame.style.border = "0";
+    printFrame.style.visibility = "hidden";
+    document.body.appendChild(printFrame);
+
+    const frameDoc = printFrame.contentWindow?.document;
+    if (!frameDoc) {
+      window.print();
+      return;
+    }
+
+    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+      .map((el) => el.outerHTML)
+      .join("\n");
+
+    const ticketHtml = ticketRef.current.outerHTML;
+
+    frameDoc.open();
+    frameDoc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>ASTRA Ticket Pass #${registration.id}</title>
+          <meta charset="utf-8" />
+          ${styles}
+          <style>
+            @page {
+              size: A4 portrait;
+              margin: 10mm;
+            }
+            *, *::before, *::after {
+              box-sizing: border-box !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            html, body {
+              background: #ffffff !important;
+              color: #000000 !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              width: 100% !important;
+              height: auto !important;
+              display: flex !important;
+              justify-content: center !important;
+              align-items: flex-start !important;
+            }
+            .print-container {
+              width: 100% !important;
+              max-width: 680px !important;
+              margin: 10px auto !important;
+              padding: 0 !important;
+              box-shadow: none !important;
+            }
+            .print\\:hidden {
+              display: none !important;
+            }
+            .ticket-body-grid {
+              display: grid !important;
+              grid-template-columns: 2fr 1fr !important;
+              border-top: none !important;
+            }
+            .ticket-left-side {
+              grid-column: span 1 / span 1 !important;
+              border-right: 4px solid #000000 !important;
+              border-bottom: none !important;
+            }
+            .ticket-right-side {
+              grid-column: span 1 / span 1 !important;
+              border-top: none !important;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-container">
+            ${ticketHtml}
+          </div>
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                window.focus();
+                window.print();
+              }, 300);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    frameDoc.close();
+
+    setTimeout(() => {
+      if (document.body.contains(printFrame)) {
+        document.body.removeChild(printFrame);
+      }
+    }, 3000);
   };
 
   return (
@@ -95,7 +198,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
       <div
         ref={ticketRef}
         id={`ticket-pass-${registration.id}`}
-        className="bg-white border-4 border-black text-black shadow-[6px_6px_0px_#000] overflow-hidden print:shadow-none print:border-2"
+        className="print-target-ticket bg-white border-4 border-black text-black shadow-[6px_6px_0px_#000] overflow-hidden print:shadow-none print:border-2"
       >
         {/* Ticket Top Banner */}
         <div className="bg-black text-white px-6 py-4 flex flex-wrap items-center justify-between border-b-4 border-black gap-2">
@@ -122,9 +225,9 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
         </div>
 
         {/* Pass Body (Grid layout) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y-4 md:divide-y-0 md:divide-x-4 divide-black">
+        <div className="ticket-body-grid grid grid-cols-1 sm:grid-cols-3 divide-y-4 sm:divide-y-0 sm:divide-x-4 divide-black">
           {/* Left Column (2 Cols wide on desktop): Event & Attendee info */}
-          <div className="md:col-span-2 p-6 space-y-5">
+          <div className="ticket-left-side col-span-1 sm:col-span-2 p-6 space-y-5">
             {/* Event Name & Category */}
             <div>
               <span className="inline-block px-2 py-0.5 bg-black text-white font-pixel text-[9px] uppercase tracking-wider mb-1">
@@ -210,7 +313,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
           </div>
 
           {/* Right Column (1 Col wide): QR Code Stub */}
-          <div className="p-6 bg-gray-50 flex flex-col items-center justify-between text-center space-y-4">
+          <div className="ticket-right-side col-span-1 p-6 bg-gray-50 flex flex-col items-center justify-between text-center space-y-4">
             <div className="w-full">
               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-black text-white font-mono text-[9px] uppercase font-bold mb-3">
                 <ShieldCheck className="w-3 h-3 text-th-lime" /> SCAN FOR ENTRY
