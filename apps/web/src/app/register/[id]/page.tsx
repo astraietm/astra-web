@@ -161,10 +161,7 @@ export default function RegisterPage() {
               if (verifyRes.data.success) {
                 setRegistration(verifyRes.data.registration);
                 setSuccess(true);
-                showToast("Payment verified! Forwarding to your registered tickets...", "success");
-                setTimeout(() => {
-                  router.push("/dashboard");
-                }, 1200);
+                showToast("Payment verified! Registration successful.", "success");
               }
             } catch {
               showToast("Payment verification failed.", "error");
@@ -208,10 +205,7 @@ export default function RegisterPage() {
       });
       setRegistration(res.data);
       setSuccess(true);
-      showToast("Registration confirmed! Forwarding to your registered tickets...", "success");
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 1200);
+      showToast("Registration successful!", "success");
     } catch (err: any) {
       showToast(err.response?.data?.error || "Registration failed.", "error");
     } finally {
@@ -235,7 +229,7 @@ export default function RegisterPage() {
             <CheckCircle2 className="w-14 h-14 text-emerald-600 mx-auto mb-2" />
             <h1 className="font-pixel text-2xl font-bold uppercase text-black mb-1">REGISTRATION CONFIRMED!</h1>
             <p className="font-sans text-sm text-gray-700">
-              Your official ticket pass for <strong>{event?.title}</strong> has been generated below. Redirecting to your dashboard...
+              Your official ticket pass for <strong>{event?.title}</strong> has been generated below.
             </p>
           </div>
 
