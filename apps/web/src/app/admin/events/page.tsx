@@ -2,7 +2,23 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { Plus, Edit, Loader2, RefreshCcw, Save, X } from "lucide-react";
+import { CalendarDays, Loader2, RefreshCcw } from "lucide-react";
+
+function CategoryBadge({ category }: { category: string }) {
+  const colors: Record<string, string> = {
+    KEYNOTE:       "bg-[#FFE816] text-black border-black",
+    WORKSHOP:      "bg-[#C3FF16] text-black border-black",
+    "FLAGSHIP CTF":"bg-[#F79CFF] text-black border-black",
+    "RESEARCH EXPO":"bg-[#97F8B7] text-black border-black",
+    "GRAND FINALE":"bg-[#E8CCFF] text-black border-black",
+  };
+  const cls = colors[category?.toUpperCase()] ?? "bg-white/10 text-white border-white/20";
+  return (
+    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${cls}`}>
+      {category}
+    </span>
+  );
+}
 
 export default function AdminEvents() {
   const [events, setEvents] = useState<any[]>([]);
@@ -32,43 +48,99 @@ export default function AdminEvents() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-display font-bold text-white">Events</h1>
-        <button onClick={handleSync} disabled={syncing}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50">
-          {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4" />}
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black shadow-[3px_3px_0px_#000]">
+            <CalendarDays className="w-4 h-4 text-black" />
+          </div>
+          <div>
+            <h1 className="font-pixel text-xl font-bold text-white uppercase">Events</h1>
+            <p className="font-mono text-[10px] text-white/30 uppercase">{events.length} events</p>
+          </div>
+        </div>
+        <button
+          onClick={handleSync}
+          disabled={syncing}
+          className="flex items-center gap-2 px-4 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {syncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCcw className="w-3.5 h-3.5" />}
           Sync Events
         </button>
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-gray-500" /></div>
+        <div className="flex flex-col items-center justify-center py-24 gap-3">
+          <Loader2 className="w-6 h-6 animate-spin text-[#FFE816]" />
+          <span className="font-pixel text-[10px] text-white/30 uppercase animate-pulse">Loading...</span>
+        </div>
       ) : (
         <div className="grid gap-4">
-          {events.map((event: any) => (
-            <div key={event.id} className="bg-[#111318] border border-white/5 rounded-xl p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/10 text-blue-400 font-medium">{event.category}</span>
-                    {event.requires_payment && <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-500/10 text-yellow-400">₹{event.payment_amount}</span>}
-                    {event.is_team_event && <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/10 text-purple-400">Team</span>}
-                  </div>
-                  <h3 className="text-lg font-display font-bold text-white">{event.title}</h3>
-                  <p className="text-sm text-gray-400 mt-1">{event.description?.substring(0, 120)}...</p>
-                  <div className="flex flex-wrap gap-4 mt-3 text-xs text-gray-500">
-                    <span>📅 {new Date(event.event_date).toLocaleDateString()}</span>
-                    <span>📍 {event.venue}</span>
-                    <span>👥 {event.registration_count || 0}/{event.registration_limit} registered</span>
-                    <span className={event.is_registration_open ? 'text-emerald-400' : 'text-red-400'}>
-                      {event.is_registration_open ? '✅ Open' : '🚫 Closed'}
+          {events.map((event: any) => {
+            const pct = event.registration_limit
+              ? Math.min(100, Math.round((event.registration_count || 0) / event.registration_limit * 100))
+              : 0;
+            return (
+              <div
+                key={event.id}
+                className="border-2 border-white/20 bg-[#161622] p-5 shadow-[4px_4px_0px_rgba(255,255,255,0.06)] hover:shadow-[6px_6px_0px_rgba(255,255,255,0.08)] transition-shadow"
+              >
+                <div className="flex flex-col sm:flex-row items-start gap-4">
+                  {/* Date block */}
+                  <div className="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 bg-[#FFE816] border-2 border-black shadow-[2px_2px_0px_#000] text-black">
+                    <span className="font-pixel text-xs font-bold leading-none">
+                      {event.event_date ? new Date(event.event_date).toLocaleDateString("en-US", { day: "2-digit" }) : "--"}
                     </span>
+                    <span className="font-pixel text-[8px] uppercase">
+                      {event.event_date ? new Date(event.event_date).toLocaleDateString("en-US", { month: "short" }) : "OCT"}
+                    </span>
+                  </div>
+
+                  {/* Body */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <CategoryBadge category={event.category} />
+                      {event.requires_payment && (
+                        <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border border-[#FFE816] text-[#FFE816] shadow-[1px_1px_0px_rgba(255,232,22,0.3)]">
+                          ₹{event.payment_amount}
+                        </span>
+                      )}
+                      {event.is_team_event && (
+                        <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border border-[#E8CCFF] text-[#E8CCFF]">
+                          Team
+                        </span>
+                      )}
+                      <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border ml-auto ${event.is_registration_open ? "border-[#C3FF16] text-[#C3FF16]" : "border-red-400 text-red-400"}`}>
+                        {event.is_registration_open ? "● Open" : "○ Closed"}
+                      </span>
+                    </div>
+
+                    <h3 className="font-pixel text-sm text-white font-bold mb-1 leading-tight">{event.title}</h3>
+                    <p className="font-mono text-[10px] text-white/40 mb-3 line-clamp-2">{event.description?.substring(0, 120)}</p>
+
+                    <div className="flex flex-wrap gap-4 text-[10px] font-mono text-white/30 mb-3">
+                      <span>📍 {event.venue}</span>
+                      <span>👥 {event.registration_count || 0} / {event.registration_limit}</span>
+                    </div>
+
+                    {/* Capacity bar */}
+                    <div className="h-1.5 bg-white/10 border border-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-[#C3FF16] transition-all"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <p className="font-pixel text-[8px] text-white/20 mt-1">{pct}% capacity</p>
                   </div>
                 </div>
               </div>
+            );
+          })}
+          {events.length === 0 && (
+            <div className="border-2 border-white/10 p-16 text-center">
+              <p className="font-pixel text-[10px] text-white/20 uppercase">No events found.</p>
             </div>
-          ))}
-          {events.length === 0 && <div className="text-center py-20 text-gray-500">No events found.</div>}
+          )}
         </div>
       )}
     </div>

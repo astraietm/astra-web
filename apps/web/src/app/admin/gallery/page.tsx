@@ -2,7 +2,10 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { Upload, Trash2, Loader2, Plus } from "lucide-react";
+import { Image as ImageIcon, Loader2, Plus, Trash2 } from "lucide-react";
+
+const INPUT_CLS = "w-full px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-[#FFE816] transition-colors";
+const SELECT_CLS = "px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-sm text-white font-mono focus:outline-none focus:border-[#FFE816] transition-colors";
 
 export default function AdminGallery() {
   const [items, setItems] = useState<any[]>([]);
@@ -14,7 +17,8 @@ export default function AdminGallery() {
   const { showToast } = useToast();
 
   const fetchGallery = async () => {
-    try { const res = await api.get("/api/gallery/"); setItems(res.data); } catch {} finally { setLoading(false); }
+    try { const res = await api.get("/api/gallery/"); setItems(res.data); }
+    catch {} finally { setLoading(false); }
   };
 
   useEffect(() => { fetchGallery(); }, []);
@@ -34,44 +38,95 @@ export default function AdminGallery() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this photo?")) return;
-    try { await api.delete(`/api/gallery/${id}/`); showToast("Photo deleted.", "success"); fetchGallery(); }
+    try { await api.delete(`/api/gallery/${id}/`); showToast("Deleted.", "success"); fetchGallery(); }
     catch { showToast("Failed to delete.", "error"); }
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-display font-bold text-white mb-6">Gallery Management</h1>
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center justify-center w-9 h-9 bg-[#F79CFF] border-2 border-black shadow-[3px_3px_0px_#000]">
+          <ImageIcon className="w-4 h-4 text-black" />
+        </div>
+        <div>
+          <h1 className="font-pixel text-xl font-bold text-white uppercase">Gallery</h1>
+          <p className="font-mono text-[10px] text-white/30 uppercase">{items.length} photos</p>
+        </div>
+      </div>
 
-      <div className="bg-[#111318] border border-white/5 rounded-xl p-5 mb-6">
-        <h2 className="text-sm font-medium text-white mb-4">Add New Photo</h2>
+      {/* Add form */}
+      <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5 mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <Plus className="w-4 h-4 text-[#FFE816]" />
+          <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Add New Photo</span>
+        </div>
         <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3">
-          <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)}
-            className="flex-1 px-3 py-2 bg-[#090A0F] border border-white/10 rounded-lg text-sm text-white" />
-          <select value={category} onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2 bg-[#090A0F] border border-white/10 rounded-lg text-sm text-white">
-            <option value="other">Other</option><option value="ctf">CTF</option><option value="workshops">Workshops</option>
-            <option value="seminars">Seminars</option><option value="hackathons">Hackathons</option>
+          <input
+            type="text" placeholder="Photo title" value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className={INPUT_CLS + " flex-1"}
+          />
+          <select value={category} onChange={(e) => setCategory(e.target.value)} className={SELECT_CLS}>
+            <option value="other">Other</option>
+            <option value="ctf">CTF</option>
+            <option value="workshops">Workshops</option>
+            <option value="seminars">Seminars</option>
+            <option value="hackathons">Hackathons</option>
           </select>
-          <input type="url" placeholder="Image URL" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)}
-            className="flex-1 px-3 py-2 bg-[#090A0F] border border-white/10 rounded-lg text-sm text-white" />
-          <button type="submit" disabled={uploading}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50">
-            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add
+          <input
+            type="url" placeholder="https://image-url.com/photo.jpg" value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            className={INPUT_CLS + " flex-1"}
+          />
+          <button
+            type="submit" disabled={uploading}
+            className="flex items-center gap-2 px-5 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap"
+          >
+            {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+            Add Photo
           </button>
         </form>
       </div>
 
-      {loading ? <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-gray-500" /></div> : (
+      {/* Grid */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-24 gap-3">
+          <Loader2 className="w-6 h-6 animate-spin text-[#FFE816]" />
+          <span className="font-pixel text-[10px] text-white/30 uppercase animate-pulse">Loading...</span>
+        </div>
+      ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((item: any) => (
-            <div key={item.id} className="bg-[#111318] border border-white/5 rounded-xl overflow-hidden">
-              <div className="aspect-[4/3] bg-gray-900"><img src={item.image_url} alt={item.title} className="w-full h-full object-cover" /></div>
-              <div className="p-3 flex items-center justify-between">
-                <div><p className="text-sm text-white font-medium">{item.title}</p><p className="text-xs text-gray-500">{item.category}</p></div>
-                <button onClick={() => handleDelete(item.id)} className="p-1.5 text-gray-400 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
+            <div
+              key={item.id}
+              className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] overflow-hidden group"
+            >
+              <div className="aspect-[4/3] bg-[#0C0C14] overflow-hidden">
+                <img
+                  src={item.image_url} alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-3 border-t-2 border-white/10 flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-pixel text-[10px] text-white uppercase truncate">{item.title}</p>
+                  <p className="font-mono text-[9px] text-white/30 uppercase">{item.category}</p>
+                </div>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="flex-shrink-0 flex items-center justify-center w-7 h-7 border-2 border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-400 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
           ))}
+          {items.length === 0 && (
+            <div className="col-span-3 border-2 border-white/10 p-16 text-center">
+              <p className="font-pixel text-[10px] text-white/20 uppercase">No photos yet.</p>
+            </div>
+          )}
         </div>
       )}
     </div>
