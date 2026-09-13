@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { CalendarDays, Loader2, RefreshCcw } from "lucide-react";
+import { CalendarDays, Loader2, RefreshCcw, Plus } from "lucide-react";
+import AddEventModal from "@/components/admin/AddEventModal";
 
 function CategoryBadge({ category }: { category: string }) {
   const colors: Record<string, string> = {
@@ -24,6 +25,7 @@ export default function AdminEvents() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { showToast } = useToast();
 
   const fetchEvents = async () => {
@@ -59,15 +61,30 @@ export default function AdminEvents() {
             <p className="font-mono text-[10px] text-white/30 uppercase">{events.length} events</p>
           </div>
         </div>
-        <button
-          onClick={handleSync}
-          disabled={syncing}
-          className="flex items-center gap-2 px-4 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {syncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCcw className="w-3.5 h-3.5" />}
-          Sync Events
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#C3FF16] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Add Event
+          </button>
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="flex items-center gap-2 px-4 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {syncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCcw className="w-3.5 h-3.5" />}
+            Sync Events
+          </button>
+        </div>
       </div>
+
+      <AddEventModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={fetchEvents}
+      />
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
