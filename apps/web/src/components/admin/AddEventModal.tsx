@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { X, Plus, Loader2, Calendar, MapPin, DollarSign, Users, Sparkles, Image as ImageIcon } from "lucide-react";
+import { X, Plus, Edit2, Loader2 } from "lucide-react";
 
 interface AddEventModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  eventToEdit?: any;
 }
 
 const CATEGORIES = ["KEYNOTE", "WORKSHOP", "FLAGSHIP CTF", "RESEARCH EXPO", "GRAND FINALE", "COMPETITION", "OTHER"];
@@ -16,28 +17,54 @@ const CATEGORIES = ["KEYNOTE", "WORKSHOP", "FLAGSHIP CTF", "RESEARCH EXPO", "GRA
 const INPUT_CLS = "w-full px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-xs text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-[#FFE816] transition-colors";
 const SELECT_CLS = "w-full px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-xs text-white font-mono focus:outline-none focus:border-[#FFE816] transition-colors";
 
-export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventModalProps) {
+const DEFAULT_FORM = {
+  title: "",
+  category: "WORKSHOP",
+  venue: "",
+  event_date: new Date().toISOString().slice(0, 16),
+  time: "10:00 AM",
+  duration: "2 Hours",
+  registration_limit: 100,
+  is_registration_open: true,
+  requires_payment: false,
+  payment_amount: "0.00",
+  is_team_event: false,
+  team_size_min: 1,
+  team_size_max: 4,
+  image: "",
+  description: "",
+  prize: "",
+};
+
+export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit }: AddEventModalProps) {
   const { showToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState(DEFAULT_FORM);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "WORKSHOP",
-    venue: "",
-    event_date: new Date().toISOString().slice(0, 16),
-    time: "10:00 AM",
-    duration: "2 Hours",
-    registration_limit: 100,
-    is_registration_open: true,
-    requires_payment: false,
-    payment_amount: "0.00",
-    is_team_event: false,
-    team_size_min: 1,
-    team_size_max: 4,
-    image: "",
-    description: "",
-    prize: "",
-  });
+  useEffect(() => {
+    if (eventToEdit) {
+      setFormData({
+        title: eventToEdit.title || "",
+        category: eventToEdit.category || "WORKSHOP",
+        venue: eventToEdit.venue || "",
+        event_date: eventToEdit.event_date ? new Date(eventToEdit.event_date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
+        time: eventToEdit.time || "10:00 AM",
+        duration: eventToEdit.duration || "2 Hours",
+        registration_limit: eventToEdit.registration_limit || 100,
+        is_registration_open: eventToEdit.is_registration_open ?? true,
+        requires_payment: eventToEdit.requires_payment ?? false,
+        payment_amount: eventToEdit.payment_amount || "0.00",
+        is_team_event: eventToEdit.is_team_event ?? false,
+        team_size_min: eventToEdit.team_size_min || 1,
+        team_size_max: eventToEdit.team_size_max || 4,
+        image: eventToEdit.image || "",
+        description: eventToEdit.description || "",
+        prize: eventToEdit.prize || "",
+      });
+    } else {
+      setFormData(DEFAULT_FORM);
+    }
+  }, [eventToEdit, isOpen]);
 
   if (!isOpen) return null;
 
@@ -69,17 +96,25 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
         event_date: new Date(formData.event_date).toISOString(),
       };
 
-      await api.post("/api/operations/events/", payload);
-      showToast("Event created successfully!", "success");
+      if (eventToEdit?.id) {
+        await api.patch(`/api/operations/events/${eventToEdit.id}/`, payload);
+        showToast("Event updated successfully!", "success");
+      } else {
+        await api.post("/api/operations/events/", payload);
+        showToast("Event created successfully!", "success");
+      }
+
       onSuccess();
       onClose();
     } catch (err: any) {
-      const msg = err.response?.data?.error || err.response?.data?.detail || "Failed to create event.";
+      const msg = err.response?.data?.error || err.response?.data?.detail || "Failed to save event.";
       showToast(msg, "error");
     } finally {
       setSubmitting(false);
     }
   };
+
+  const isEditing = !!eventToEdit;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
@@ -88,11 +123,15 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
         <div className="flex items-center justify-between pb-4 border-b-2 border-white/10 mb-6">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-8 h-8 bg-[#FFE816] border-2 border-black shadow-[2px_2px_0px_#000]">
-              <Plus className="w-4 h-4 text-black" />
+              {isEditing ? <Edit2 className="w-4 h-4 text-black" /> : <Plus className="w-4 h-4 text-black" />}
             </div>
             <div>
-              <h2 className="font-pixel text-base font-bold text-white uppercase">Add New Event</h2>
-              <p className="font-mono text-[9px] text-white/40 uppercase">Create event entry for ASTRA 2026</p>
+              <h2 className="font-pixel text-base font-bold text-white uppercase">
+                {isEditing ? `Edit Event: ${eventToEdit.title}` : "Add New Event"}
+              </h2>
+              <p className="font-mono text-[9px] text-white/40 uppercase">
+                {isEditing ? "Modify event configuration" : "Create event entry for ASTRA 2026"}
+              </p>
             </div>
           </div>
           <button
@@ -175,7 +214,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
             </div>
           </div>
 
-          {/* Limit & Image URL */}
+          {/* Limit, Registration Status & Image URL */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Registration Limit</label>
@@ -201,8 +240,23 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
             </div>
           </div>
 
-          {/* Toggles: Payment & Team */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-2 border-white/10 p-3 bg-[#0C0C14]">
+          {/* Toggles: Open Status, Payment & Team */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-2 border-white/10 p-3 bg-[#0C0C14]">
+            {/* Registration Open Toggle */}
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer mb-2">
+                <input
+                  type="checkbox"
+                  name="is_registration_open"
+                  checked={formData.is_registration_open}
+                  onChange={handleChange}
+                  className="w-4 h-4 accent-[#C3FF16]"
+                />
+                <span className="font-pixel text-[9px] text-white uppercase">Registration Open</span>
+              </label>
+              <p className="font-mono text-[8px] text-white/30">Allow users to register</p>
+            </div>
+
             {/* Payment Toggle */}
             <div>
               <label className="flex items-center gap-2 cursor-pointer mb-2">
@@ -213,7 +267,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
                   onChange={handleChange}
                   className="w-4 h-4 accent-[#FFE816]"
                 />
-                <span className="font-pixel text-[9px] text-white uppercase">Requires Fee / Paid Event</span>
+                <span className="font-pixel text-[9px] text-white uppercase">Requires Fee</span>
               </label>
               {formData.requires_payment && (
                 <div className="flex items-center gap-2 mt-1">
@@ -239,7 +293,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
                   name="is_team_event"
                   checked={formData.is_team_event}
                   onChange={handleChange}
-                  className="w-4 h-4 accent-[#C3FF16]"
+                  className="w-4 h-4 accent-[#E8CCFF]"
                 />
                 <span className="font-pixel text-[9px] text-white uppercase">Team Event</span>
               </label>
@@ -252,7 +306,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
                     value={formData.team_size_min}
                     onChange={handleChange}
                     min={1}
-                    className={INPUT_CLS + " w-16"}
+                    className={INPUT_CLS + " w-14"}
                   />
                   <span className="font-mono text-[9px] text-white/40">Max:</span>
                   <input
@@ -261,7 +315,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
                     value={formData.team_size_max}
                     onChange={handleChange}
                     min={1}
-                    className={INPUT_CLS + " w-16"}
+                    className={INPUT_CLS + " w-14"}
                   />
                 </div>
               )}
@@ -308,8 +362,14 @@ export default function AddEventModal({ isOpen, onClose, onSuccess }: AddEventMo
               disabled={submitting}
               className="flex items-center gap-2 px-5 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
             >
-              {submitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
-              Create Event
+              {submitting ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : isEditing ? (
+                <Edit2 className="w-3.5 h-3.5" />
+              ) : (
+                <Plus className="w-3.5 h-3.5" />
+              )}
+              {isEditing ? "Save Changes" : "Create Event"}
             </button>
           </div>
         </form>
