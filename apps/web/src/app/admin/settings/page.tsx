@@ -170,11 +170,16 @@ export default function AdminSettings() {
               >
               <div>
                   <p className="font-mono text-xs text-white">{member.email}</p>
-                  <span className="inline-block mt-1 font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] bg-[#FFE816] text-black border-black">STAFF</span>
+                  <span className={`inline-block mt-1 font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${
+                    member.is_superuser
+                      ? "bg-[#FF4444] text-white border-red-700"
+                      : "bg-[#FFE816] text-black border-black"
+                  }`}>{member.is_superuser ? "SUPERUSER" : "STAFF"}</span>
                 </div>
                 <button
                   onClick={() => handleRemoveMember(member.id, member.email)}
-                  className="flex items-center justify-center w-7 h-7 border-2 border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-400 transition-colors"
+                  disabled={member.is_superuser}
+                  className="flex items-center justify-center w-7 h-7 border-2 border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-400 transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
