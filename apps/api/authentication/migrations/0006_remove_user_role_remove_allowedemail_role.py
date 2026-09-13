@@ -1,10 +1,9 @@
 from django.db import migrations, connection
 
 
-def safe_remove_field(apps, schema_editor):
+def safe_remove_columns(apps, schema_editor):
     """Remove role columns only if they exist (handles case where SQL was run manually)."""
     with connection.cursor() as cursor:
-        # Check if role column exists on authentication_user
         cursor.execute("""
             SELECT column_name FROM information_schema.columns 
             WHERE table_name = 'authentication_user' AND column_name = 'role'
@@ -12,7 +11,6 @@ def safe_remove_field(apps, schema_editor):
         if cursor.fetchone():
             cursor.execute('ALTER TABLE authentication_user DROP COLUMN role')
         
-        # Check if role column exists on authentication_allowedemail
         cursor.execute("""
             SELECT column_name FROM information_schema.columns 
             WHERE table_name = 'authentication_allowedemail' AND column_name = 'role'
@@ -28,5 +26,21 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(safe_remove_field, migrations.RunPython.noop),
+        migrations.SeparateDatabaseAndState(
+            # Update Django's internal state so it knows role fields are gone
+            state_operations=[
+                migrations.RemoveField(
+                    model_name='user',
+                    field_name='role',
+                ),
+                migrations.RemoveField(
+                    model_name='allowedemail',
+                    field_name='role',
+                ),
+            ],
+            # Safely drop columns at DB level (no-op if already dropped)
+            database_operations=[
+                migrations.RunPython(safe_remove_columns, migrations.RunPython.noop),
+            ],
+        ),
     ]
