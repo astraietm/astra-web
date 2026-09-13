@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef } from "react";
-import { Printer, Calendar, MapPin, Clock, User, Phone, GraduationCap, Building2, Users, ShieldCheck, Ticket } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Printer, Calendar, MapPin, Clock, User, Phone, GraduationCap, Building2, Users, ShieldCheck, Ticket, Download, Loader2 } from "lucide-react";
 import { StickerBadge } from "@/components/ui/StickerBadge";
+import { toPng } from "html-to-image";
 
 export interface TicketPassProps {
   registration: {
@@ -43,6 +44,7 @@ export interface TicketPassProps {
 
 export function TicketPass({ registration, showPrintButton = true, compact = false }: TicketPassProps) {
   const ticketRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
 
   const event = registration.event_details || {
     id: 0,
@@ -68,6 +70,35 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
         year: "numeric",
       })
     : "TBA";
+
+  const handleDownloadImage = async () => {
+    if (!ticketRef.current) return;
+    setDownloading(true);
+    try {
+      const dataUrl = await toPng(ticketRef.current, {
+        cacheBust: true,
+        quality: 1.0,
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+      });
+
+      const cleanTitle = (event.title || "Ticket").replace(/[^a-zA-Z0-9]/g, "_");
+      const filename = `ASTRA-Ticket-${registration.id}-${cleanTitle}.png`;
+
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("Failed to generate ticket image:", err);
+      // Fall back to print if image generation encounters any issue
+      handlePrint();
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const handlePrint = () => {
     if (!ticketRef.current) {
@@ -180,17 +211,35 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
     <div className="w-full max-w-2xl mx-auto my-4">
       {/* Print Trigger Header */}
       {showPrintButton && (
-        <div className="flex items-center justify-between mb-3 px-1 print:hidden">
+        <div className="flex flex-wrap items-center justify-between mb-3 px-1 gap-2 print:hidden">
           <span className="font-mono text-xs text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
             <Ticket className="w-4 h-4 text-black" /> Digital Entry Pass
           </span>
-          <button
-            onClick={handlePrint}
-            type="button"
-            className="flex items-center gap-2 px-3 py-1.5 bg-black text-white font-mono text-xs font-bold uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[2px_2px_0px_#000]"
-          >
-            <Printer className="w-3.5 h-3.5" /> Print / Save PDF
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleDownloadImage}
+              disabled={downloading}
+              type="button"
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-black text-white font-mono text-xs font-bold uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[2px_2px_0px_#000] disabled:opacity-50"
+            >
+              {downloading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving PNG...
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" /> Download Image (PNG)
+                </>
+              )}
+            </button>
+            <button
+              onClick={handlePrint}
+              type="button"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white text-black font-mono text-xs font-bold uppercase border-2 border-black hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_#000]"
+            >
+              <Printer className="w-3.5 h-3.5" /> Print PDF
+            </button>
+          </div>
         </div>
       )}
 
