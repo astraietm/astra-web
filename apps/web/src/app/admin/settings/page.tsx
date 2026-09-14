@@ -181,10 +181,6 @@ export default function AdminSettings() {
               ))}
             </div>
           </div>
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* Academic Options Management (Depts & Semesters) */}
           <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5">
