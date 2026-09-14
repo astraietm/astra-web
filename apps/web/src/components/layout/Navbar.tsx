@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
 import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings, Ticket, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 
@@ -29,6 +29,52 @@ export const Navbar: React.FC = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { user, setIsLoginModalOpen, setIsProfileModalOpen, logout } = useAuth();
+  const { scrollY } = useScroll();
+
+  const [windowWidth, setWindowWidth] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth;
+    }
+    return 1200;
+  });
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Raw scroll progress clamped [0, 1] over 420px of scroll
+  const rawProgress = useTransform(scrollY, [0, 420], [0, 1], { clamp: true });
+
+  // Spring physics damping to smooth out mouse wheel steps & jitter into buttery fluid motion
+  const smoothProgress = useSpring(rawProgress, {
+    stiffness: 90,
+    damping: 22,
+    mass: 0.35,
+    restDelta: 0.0001,
+  });
+
+  // Perfectly synchronized translation from top-center to top-left
+  const x = useTransform(smoothProgress, (progress) => {
+    if (pathname !== '/') return 0;
+    const leftPadding = windowWidth >= 768 ? 32 : windowWidth >= 640 ? 24 : 16;
+    const centerOffset = windowWidth / 2 - leftPadding - 58;
+    return (1 - progress) * centerOffset;
+  });
+
+  // Vertical placement: place button down below the ticker banner at scrollY=0 (64px down),
+  // and smoothly glide up into top-left dock position as user scrolls
+  const y = useTransform(smoothProgress, (progress) => {
+    if (pathname !== '/') return 0;
+    return (1 - progress) * 64;
+  });
+
+  // Perfectly synchronized 360-degree rotation (0 -> -360)
+  const rotate = useTransform(smoothProgress, (progress) => {
+    if (pathname !== '/') return 0;
+    return progress * -360;
+  });
 
   const userDropdownRef = React.useRef<HTMLDivElement>(null);
 
@@ -92,48 +138,30 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* ─── 1. FLOATING TOP NAVIGATION BAR ─── */}
-      <header className="fixed top-3 left-3 right-3 sm:top-5 sm:left-6 sm:right-6 z-[80] flex items-center justify-between select-none pointer-events-none">
-        {/* Left: Index Button & Brand */}
-        <div className="flex items-center gap-2 sm:gap-3 pointer-events-auto">
-          <button
-            id="nav-index-btn"
-            type="button"
-            onClick={toggleMenu}
-            className={`group relative flex items-center gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 border-2 border-black font-editorial italic text-sm sm:text-lg tracking-wide shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] transition-[transform,box-shadow,background-color,color] duration-160 ease-[var(--ease-out)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] cursor-pointer ${
-              menuOpen
-                ? 'bg-[#F79CFF] text-black hover:bg-black hover:text-white'
-                : 'bg-black text-white hover:bg-th-yellow hover:text-black hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#000]'
-            }`}
-            aria-label={menuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-            aria-expanded={menuOpen}
-          >
-            <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${menuOpen ? 'bg-red-500' : 'bg-emerald-400'}`} />
-              <span className={`relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 ${menuOpen ? 'bg-red-600' : 'bg-emerald-400'}`} />
-            </span>
-            <span className="font-bold tracking-wide">
-              {menuOpen ? 'CLOSE ✕' : 'INDEX'}
-            </span>
-          </button>
+      {/* ─── 1. TINKERHUB SIGNATURE INDEX BUTTON (Centered at Hero top, Rotates 360 & Docks to Top-Left on Scroll) ─── */}
+      <motion.div
+        style={{ x, y, rotate }}
+        className="fixed z-[80] pointer-events-auto top-4 left-4 sm:top-6 sm:left-6 md:left-8"
+      >
+        <button
+          id="nav-index-btn"
+          type="button"
+          onClick={toggleMenu}
+          className={`font-anton uppercase tracking-normal cursor-pointer flex items-center justify-center leading-none px-6 py-2.5 sm:px-7 sm:py-2.5 text-[18px] sm:text-[20px] min-w-[108px] sm:min-w-[118px] transition-colors ${
+            menuOpen
+              ? 'bg-[#F79CFF] text-black hover:underline'
+              : 'bg-black text-white hover:underline'
+          }`}
+          aria-label={menuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? 'CLOSE ✕' : 'INDEX'}
+        </button>
+      </motion.div>
 
-          <Link
-            href="/"
-            onClick={() => { if (menuOpen) closeMenu(); }}
-            className="flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 shadow-[2px_2px_0px_#000] hover:bg-th-yellow transition-colors"
-          >
-            <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-black" />
-            <span className="font-pixel text-[10px] sm:text-[11px] font-bold text-black uppercase tracking-wider">
-              ASTRA 2026
-            </span>
-            <span className="hidden md:inline font-mono text-[9px] text-gray-500 uppercase">
-              // KMCT CALICUT
-            </span>
-          </Link>
-        </div>
-
-        {/* Right: Auth & Profile Buttons */}
-        <div className="flex items-center gap-2 pointer-events-auto">
+      {/* ─── 2. FLOATING TOP-RIGHT USER CONTROLS DOCK ─── */}
+      {!menuOpen && (
+        <div className="fixed top-4 right-4 sm:top-6 sm:right-6 md:right-8 z-[80] pointer-events-auto flex items-center gap-2">
           {user ? (
             <div className="flex items-center gap-2 relative" ref={userDropdownRef}>
               {/* Quick Access: My Passes */}
@@ -239,7 +267,7 @@ export const Navbar: React.FC = () => {
             </button>
           )}
         </div>
-      </header>
+      )}
 
       {/* ─── 2. FULL-SCREEN EDITORIAL INDEX OVERLAY ─── */}
       <AnimatePresence>
