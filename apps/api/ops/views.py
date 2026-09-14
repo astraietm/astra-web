@@ -5,22 +5,52 @@ from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.db.models import Q
 import threading
 import logging
 from .models import AuditLog, SystemSetting, Notification
 from .serializers import AuditLogSerializer, SystemSettingSerializer, NotificationSerializer
 from authentication.models import User, AllowedEmail
+from core.permissions import IsAdminUser
 
 logger = logging.getLogger(__name__)
 
-class IsAdminUser(permissions.BasePermission):
-    def has_permission(self, request, view):
-        return request.user and request.user.is_staff
-
 class AuditLogListView(generics.ListAPIView):
-    queryset = AuditLog.objects.all().order_by('-timestamp')
     serializer_class = AuditLogSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def get_queryset(self):
+        qs = AuditLog.objects.all().order_by('-timestamp')
+        
+        level = self.request.query_params.get('level')
+        if level and level.upper() != 'ALL':
+            qs = qs.filter(level__iexact=level)
+            
+        search = self.request.query_params.get('search')
+        if search and search.strip():
+            term = search.strip()
+            qs = qs.filter(
+                Q(action__icontains=term) |
+                Q(details__icontains=term) |
+                Q(user__email__icontains=term) |
+                Q(ip_address__icontains=term)
+            )
+            
+        return qs[:250]
+
+class AuditLogClearView(APIView):
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+
+    def delete(self, request):
+        count, _ = AuditLog.objects.all().delete()
+        AuditLog.objects.create(
+            user=request.user,
+            action="Cleared System Logs",
+            details=f"Purged {count} log entries.",
+            level="WARN",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        return Response({"status": "success", "message": f"Cleared {count} log entries."})
 
 class SystemSettingListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
@@ -45,36 +75,38 @@ class SystemSettingListCreateView(APIView):
         )
         return Response({"status": "success", "message": "Settings updated"})
 
-class IsSuperAdmin(permissions.BasePermission):
+
+
+class TeamListView(APIView):
     """
-    Allocates permissions only to 'ADMIN' role users, filtering out 'VOLUNTEER'.
+    GET  /api/ops/team/  → all users with is_superuser=True or is_staff=True
+    POST /api/ops/team/  → whitelist email + promote user if exists
     """
-    def has_permission(self, request, view):
-        return request.user and request.user.is_staff and request.user.role == 'ADMIN'
-
-class AllowedEmailListCreateView(generics.ListCreateAPIView):
-
-    class AllowedEmailSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = AllowedEmail
-            fields = ['id', 'email', 'role', 'added_at']
-
-    queryset = AllowedEmail.objects.all().order_by('-added_at')
-    serializer_class = AllowedEmailSerializer
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
-    def create(self, request, *args, **kwargs):
+    def get(self, request):
+        team_users = User.objects.filter(
+            Q(is_staff=True) | Q(is_superuser=True)
+        ).distinct().order_by('date_joined')
+
+        data = [
+            {
+                'id': u.id,
+                'email': u.email,
+                'added_at': u.date_joined,
+                'is_superuser': u.is_superuser,
+                'is_staff': u.is_staff,
+                'groups': list(u.groups.values_list('name', flat=True)),
+            }
+            for u in team_users
+        ]
+        return Response(data)
+
+    def post(self, request):
         inviter = request.user
-        logger.info(
-            f"[TEAM_INVITE_START] Requester={getattr(inviter, 'email', None)} (role={getattr(inviter, 'role', None)})"
-        )
-
         raw_email = request.data.get('email', '')
-        raw_role = request.data.get('role', 'VOLUNTEER')
 
-        # 1. Email validation & sanitization
         if not raw_email or not str(raw_email).strip():
-            logger.warning("[TEAM_INVITE_ERR] Empty email address provided")
             return Response(
                 {"error": "Please enter a valid email address.", "code": "empty_email"},
                 status=status.HTTP_400_BAD_REQUEST
@@ -84,128 +116,102 @@ class AllowedEmailListCreateView(generics.ListCreateAPIView):
         try:
             validate_email(email)
         except ValidationError:
-            logger.warning(f"[TEAM_INVITE_ERR] Invalid email syntax: {email}")
             return Response(
                 {"error": "Please enter a valid email address.", "code": "invalid_email"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 2. Role validation
-        allowed_roles = [c[0] for c in User.ROLE_CHOICES if c[0] in ['ADMIN', 'VOLUNTEER']]
-        if raw_role not in allowed_roles:
-            logger.warning(f"[TEAM_INVITE_ERR] Invalid role requested: {raw_role}")
-            return Response(
-                {"error": "Invalid role permission specified.", "code": "invalid_role"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        role = raw_role
-
-        # 3. RBAC authorization: Only Superusers / Admins can invite another ADMIN
-        if role == 'ADMIN' and not (getattr(inviter, 'is_superuser', False) or getattr(inviter, 'role', '') == 'ADMIN'):
-            logger.warning(
-                f"[TEAM_INVITE_FORBIDDEN] Non-admin {inviter.email} attempted to grant ADMIN permissions."
-            )
-            return Response(
-                {"error": "You do not have permission to invite this role.", "code": "permission_denied"},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        # 4. Duplicate checks
-        # A. Already in AllowedEmail
-        if AllowedEmail.objects.filter(email=email).exists():
-            logger.info(f"[TEAM_INVITE_DUPLICATE] Email {email} already in AllowedEmail list")
-            return Response(
-                {"error": "An invitation is already pending for this email.", "code": "already_invited"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # B. Already an active team member with matching or higher staff privileges
-        existing_user = User.objects.filter(email=email).first()
-        if existing_user and existing_user.is_staff and existing_user.role in ['ADMIN', 'VOLUNTEER']:
-            logger.info(f"[TEAM_INVITE_DUPLICATE] User {email} is already active team staff (role={existing_user.role})")
+        # Check if already a staff / superuser / admin group user
+        existing_user = User.objects.filter(email__iexact=email).first()
+        if existing_user and (existing_user.is_staff or existing_user.is_superuser or existing_user.groups.filter(name__iexact='Admin').exists()):
             return Response(
                 {"error": "This user is already a team member.", "code": "already_member"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 5. Create AllowedEmail record
-        allowed = AllowedEmail.objects.create(email=email, role=role)
+        # Add to whitelist (ignore duplicate)
+        AllowedEmail.objects.get_or_create(email=email)
 
-        # If user account already exists, promote role and staff privileges immediately
+        # Promote existing user immediately
         if existing_user:
-            existing_user.role = role
             existing_user.is_staff = True
             existing_user.save()
-            logger.info(f"[TEAM_INVITE_SUCCESS] Upgraded existing user {email} to staff role={role}")
+            logger.info(f"[TEAM_INVITE_SUCCESS] Upgraded existing user {email} to staff")
         else:
-            logger.info(f"[TEAM_INVITE_SUCCESS] Created invitation whitelist entry for {email} role={role}")
+            logger.info(f"[TEAM_INVITE_SUCCESS] Whitelisted {email} for staff on first login")
 
-        # 6. Audit Logging
         AuditLog.objects.create(
             user=inviter,
             action="Added Team Member",
-            details=f"Email: {allowed.email}, Role: {allowed.role}",
+            details=f"Email: {email}",
             level="SUCCESS",
             ip_address=request.META.get('REMOTE_ADDR')
         )
 
-        # 7. Safe optional invitation notification
+        # Send invite email
         try:
-            subject = f"Invitation: ASTRA Collaborator ({role})"
-            message = (
-                f"Hello,\n\n"
-                f"You have been added to the ASTRA operations team as a {role}.\n\n"
-                f"Please access the management portal at https://astraietm.in/admin\n\n"
-                f"— ASTRA Security Systems"
-            )
             send_mail(
-                subject=subject,
-                message=message,
+                subject="Invitation: ASTRA Team Member",
+                message=(
+                    f"Hello,\n\nYou have been added to the ASTRA operations team.\n\n"
+                    f"Please access the management portal at https://astraietm.in/admin\n\n"
+                    f"— ASTRA Security Systems"
+                ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=True
             )
         except Exception as mail_err:
-            logger.debug(f"[TEAM_INVITE_MAIL_SKIP] Notification email not dispatched: {mail_err}")
+            logger.debug(f"[TEAM_INVITE_MAIL_SKIP] {mail_err}")
 
-        serializer = self.get_serializer(allowed)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            {"email": email, "added_at": existing_user.date_joined if existing_user else None},
+            status=status.HTTP_201_CREATED
+        )
 
-class AllowedEmailDeleteView(generics.DestroyAPIView):
-    queryset = AllowedEmail.objects.all()
+class TeamDeleteView(APIView):
+    """
+    DELETE /api/ops/team/<user_id>/  → revoke staff/admin status from user + remove from whitelist
+    """
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        email = instance.email
+    def delete(self, request, pk):
         inviter = request.user
 
-        # Prevent admin from locking themselves out
-        if email.lower() == getattr(inviter, 'email', '').lower():
-            logger.warning(f"[TEAM_DELETE_BLOCKED] Admin {email} attempted self-deletion")
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Prevent self-removal
+        if user.pk == inviter.pk:
             return Response(
                 {"error": "You cannot remove your own administrator account.", "code": "self_delete_forbidden"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Delete whitelist entry
-        self.perform_destroy(instance)
+        # Prevent removing superusers
+        if user.is_superuser:
+            return Response(
+                {"error": "Cannot remove a superuser account.", "code": "superuser_protected"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        # Demote corresponding User if exists and is not superuser
-        try:
-            user = User.objects.get(email=email)
-            if not user.is_superuser:
-                user.is_staff = False
-                user.role = 'USER'
-                user.save()
-                logger.info(f"[TEAM_DELETE_DEMOTED] Demoted user {email} from staff")
-        except User.DoesNotExist:
-            pass
+        # Revoke staff and admin groups
+        user.is_staff = False
+        admin_groups = user.groups.filter(name__iexact='Admin')
+        if admin_groups.exists():
+            user.groups.remove(*admin_groups)
+        user.save()
+        logger.info(f"[TEAM_DELETE_DEMOTED] Demoted user {user.email} from staff/admin")
+
+        # Also remove from whitelist if present
+        AllowedEmail.objects.filter(email__iexact=user.email).delete()
 
         AuditLog.objects.create(
             user=inviter,
             action="Removed Team Member",
-            details=f"Email: {email}",
+            details=f"Email: {user.email}",
             level="WARN",
             ip_address=request.META.get('REMOTE_ADDR')
         )
@@ -252,8 +258,11 @@ class PublicConfigView(APIView):
 
     def get(self, request):
         settings_qs = SystemSetting.objects.all()
-        # Return all settings - in production, filter to only safe keys like 'maintenanceMode'
         data = {s.key: s.value for s in settings_qs}
+        if "departments" not in data or not data["departments"]:
+            data["departments"] = ["CSE", "CY", "EC", "EEE", "ME", "CE", "AD", "MCA", "BSH", "Other"]
+        if "semesters" not in data or not data["semesters"]:
+            data["semesters"] = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "PG", "Faculty", "Other"]
         return Response(data)
 
 

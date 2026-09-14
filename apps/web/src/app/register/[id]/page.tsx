@@ -8,8 +8,10 @@ import { StickerBadge } from "@/components/ui/StickerBadge";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
 import api, { API_URL } from "@/lib/api";
-import { ArrowLeft, Loader2, Users, CreditCard, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Loader2, Users, CreditCard, CheckCircle2, X } from "lucide-react";
 import Link from "next/link";
+
+import { TicketPass } from "@/components/events/TicketPass";
 
 export default function RegisterPage() {
   const params = useParams();
@@ -22,6 +24,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [registration, setRegistration] = useState<any>(null);
 
   // Form fields
@@ -29,8 +32,32 @@ export default function RegisterPage() {
   const [teamMembers, setTeamMembers] = useState("");
   const [phone, setPhone] = useState(user?.phone_number || "");
   const [college, setCollege] = useState(user?.college || "");
-  const [department, setDepartment] = useState("");
-  const [yearOfStudy, setYearOfStudy] = useState("");
+  const [department, setDepartment] = useState(user?.department || "");
+  const [yearOfStudy, setYearOfStudy] = useState(user?.semester || "");
+
+  const [departments, setDepartments] = useState<string[]>([
+    "CSE", "CY", "EC", "EEE", "ME", "CE", "AD", "MCA", "BSH", "Other"
+  ]);
+  const [semesters, setSemesters] = useState<string[]>([
+    "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "PG", "Faculty", "Other"
+  ]);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const res = await api.get("/api/ops/public-config/");
+        if (res.data.departments && Array.isArray(res.data.departments)) {
+          setDepartments(res.data.departments);
+        }
+        if (res.data.semesters && Array.isArray(res.data.semesters)) {
+          setSemesters(res.data.semesters);
+        }
+      } catch {
+        // preserve defaults
+      }
+    };
+    fetchOptions();
+  }, []);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -51,6 +78,8 @@ export default function RegisterPage() {
     if (user) {
       setPhone(user.phone_number || "");
       setCollege(user.college || "");
+      setDepartment(user.department || "");
+      setYearOfStudy(user.semester || "");
     }
   }, [user]);
 
@@ -65,13 +94,27 @@ export default function RegisterPage() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user || !token) {
       requireLogin({
         label: "Register for event",
-        run: () => handleSubmit(e),
+        run: () => setShowConfirmModal(true),
+      });
+      return;
+    }
+
+    setShowConfirmModal(true);
+  };
+
+  const executeRegistration = async () => {
+    setShowConfirmModal(false);
+
+    if (!user || !token) {
+      requireLogin({
+        label: "Register for event",
+        run: () => executeRegistration(),
       });
       return;
     }
@@ -180,35 +223,28 @@ export default function RegisterPage() {
 
   if (success && registration) {
     return (
-      <div className="min-h-screen pt-28 pb-16 px-4">
-        <div className="max-w-lg mx-auto">
-          <PixelFrame dotGrid cornerAccent className="p-8 text-center">
-            <CheckCircle2 className="w-16 h-16 text-emerald-600 mx-auto mb-4" />
-            <h1 className="font-pixel text-2xl font-bold uppercase text-black mb-2">REGISTRATION CONFIRMED</h1>
-            <p className="font-sans text-sm text-gray-700 mb-4">
-              You are registered for <strong>{event?.title}</strong>.
-            </p>
-            {registration.qr_code && (
-              <div className="my-4">
-                <img src={registration.qr_code} alt="QR Ticket" className="w-48 h-48 mx-auto border-2 border-black" />
-                <p className="font-mono text-[10px] text-gray-500 mt-2">Show this QR at the venue</p>
-              </div>
-            )}
-            <div className="flex gap-3 justify-center mt-6">
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors"
-              >
-                My Registrations →
-              </Link>
-              <Link
-                href="/events"
-                className="px-4 py-2 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-100 transition-colors"
-              >
-                Back to Events
-              </Link>
-            </div>
-          </PixelFrame>
+      <div className="min-h-screen pt-28 pb-16 px-4 bg-graph-paper">
+        <div className="max-w-2xl mx-auto space-y-6">
+          <div className="text-center">
+            <CheckCircle2 className="w-14 h-14 text-emerald-600 mx-auto mb-2" />
+          </div>
+
+          <TicketPass registration={{ ...registration, event_details: registration.event_details || event }} showPrintButton={true} />
+
+          <div className="flex gap-4 justify-center pt-2 print:hidden">
+            <Link
+              href="/dashboard"
+              className="px-6 py-2.5 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors"
+            >
+              Go to My Registrations →
+            </Link>
+            <Link
+              href="/events"
+              className="px-6 py-2.5 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-100 transition-colors"
+            >
+              Browse Events
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -235,7 +271,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Phone *</label>
@@ -249,21 +285,22 @@ export default function RegisterPage() {
               </div>
               <div>
                 <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Department</label>
-                <input type="text" value={department} onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow" />
+                <select value={department} onChange={(e) => setDepartment(e.target.value)}
+                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow bg-white">
+                  <option value="">Select Dept</option>
+                  {departments.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
               </div>
               <div>
-                <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Year of Study</label>
+                <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Semester / Year</label>
                 <select value={yearOfStudy} onChange={(e) => setYearOfStudy(e.target.value)}
                   className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow bg-white">
-                  <option value="">Select</option>
-                  <option value="1st Year">1st Year</option>
-                  <option value="2nd Year">2nd Year</option>
-                  <option value="3rd Year">3rd Year</option>
-                  <option value="4th Year">4th Year</option>
-                  <option value="PG">PG</option>
-                  <option value="Faculty">Faculty</option>
-                  <option value="Other">Other</option>
+                  <option value="">Select Sem</option>
+                  {semesters.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -295,12 +332,95 @@ export default function RegisterPage() {
               ) : event?.requires_payment ? (
                 <><CreditCard className="w-4 h-4" /> PAY ₹{event.payment_amount} &amp; REGISTER</>
               ) : (
-                "CONFIRM REGISTRATION →"
+                "REVIEW & CONFIRM REGISTRATION →"
               )}
             </button>
           </form>
         </PixelFrame>
       </div>
+
+      {/* Registration Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-white border-4 border-black p-6 shadow-[8px_8px_0px_#000] text-black">
+            <div className="bg-black text-white px-4 py-3 -mx-6 -mt-6 mb-4 flex items-center justify-between">
+              <h2 className="font-pixel text-sm font-bold uppercase tracking-wider text-th-yellow">
+                CONFIRM TICKET REGISTRATION
+              </h2>
+              <button onClick={() => setShowConfirmModal(false)} className="text-white/60 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="font-sans text-xs text-gray-600 mb-4">
+              Please review your details before finalizing registration.
+            </p>
+
+            {/* Details Summary Card */}
+            <div className="bg-gray-50 border-2 border-black p-4 space-y-3 font-mono text-xs mb-6">
+              <div className="border-b border-black/20 pb-2">
+                <span className="text-[9px] uppercase text-gray-500 block">Event</span>
+                <span className="font-bold text-sm text-black block">{event?.title}</span>
+                <span className="text-[10px] text-gray-600">
+                  {event?.event_date ? new Date(event.event_date).toLocaleDateString("en-IN") : "TBA"} • {event?.venue}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div>
+                  <span className="text-[9px] uppercase text-gray-500 block">Registrant Name</span>
+                  <span className="font-bold text-black">{user?.name || user?.full_name || "Attendee"}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] uppercase text-gray-500 block">Phone</span>
+                  <span className="font-bold text-black">{phone}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] uppercase text-gray-500 block">College</span>
+                  <span className="font-bold text-black truncate block">{college}</span>
+                </div>
+                <div>
+                  <span className="text-[9px] uppercase text-gray-500 block">Dept &amp; Semester</span>
+                  <span className="font-bold text-black">{department || "—"} ({yearOfStudy || "—"})</span>
+                </div>
+              </div>
+
+              {event?.is_team_event && teamName && (
+                <div className="pt-2 border-t border-black/20 text-[11px]">
+                  <span className="text-[9px] uppercase text-gray-500 block">Team</span>
+                  <span className="font-bold text-black">Team {teamName}</span>
+                  {teamMembers && <span className="text-[10px] text-gray-600 block">Members: {teamMembers}</span>}
+                </div>
+              )}
+
+              <div className="pt-2 border-t border-black/20 flex justify-between items-center text-xs">
+                <span className="font-bold uppercase text-gray-700">Registration Fee:</span>
+                <span className="font-bold text-black text-sm">
+                  {event?.requires_payment ? `₹${event.payment_amount}` : "FREE"}
+                </span>
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="flex-1 px-4 py-3 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-100 transition-colors shadow-[3px_3px_0px_#000]"
+              >
+                ← Edit Details
+              </button>
+              <button
+                type="button"
+                onClick={executeRegistration}
+                className="flex-1 px-4 py-3 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000]"
+              >
+                {event?.requires_payment ? `PROCEED TO PAY ₹${event.payment_amount} →` : "YES, CONFIRM →"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

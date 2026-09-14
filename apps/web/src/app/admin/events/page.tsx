@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { CalendarDays, Loader2, RefreshCcw } from "lucide-react";
+import { CalendarDays, Loader2, RefreshCcw, Plus, Edit2, Trash2 } from "lucide-react";
+import AddEventModal from "@/components/admin/AddEventModal";
 
 function CategoryBadge({ category }: { category: string }) {
   const colors: Record<string, string> = {
@@ -24,6 +25,8 @@ export default function AdminEvents() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<any>(null);
   const { showToast } = useToast();
 
   const fetchEvents = async () => {
@@ -46,6 +49,27 @@ export default function AdminEvents() {
     finally { setSyncing(false); }
   };
 
+  const handleEditClick = (event: any) => {
+    setEditingEvent(event);
+    setIsAddModalOpen(true);
+  };
+
+  const handleAddNewClick = () => {
+    setEditingEvent(null);
+    setIsAddModalOpen(true);
+  };
+
+  const handleDeleteEvent = async (id: number, title: string) => {
+    if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+    try {
+      await api.delete(`/api/operations/events/${id}/`);
+      showToast("Event deleted.", "success");
+      fetchEvents();
+    } catch (err: any) {
+      showToast(err.response?.data?.error || "Failed to delete event.", "error");
+    }
+  };
+
   return (
     <div>
       {/* Header */}
@@ -59,15 +83,34 @@ export default function AdminEvents() {
             <p className="font-mono text-[10px] text-white/30 uppercase">{events.length} events</p>
           </div>
         </div>
-        <button
-          onClick={handleSync}
-          disabled={syncing}
-          className="flex items-center gap-2 px-4 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {syncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCcw className="w-3.5 h-3.5" />}
-          Sync Events
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleAddNewClick}
+            className="flex items-center gap-2 px-4 py-2 bg-[#C3FF16] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Add Event
+          </button>
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="flex items-center gap-2 px-4 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {syncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCcw className="w-3.5 h-3.5" />}
+            Sync Events
+          </button>
+        </div>
       </div>
+
+      <AddEventModal
+        isOpen={isAddModalOpen}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setEditingEvent(null);
+        }}
+        onSuccess={fetchEvents}
+        eventToEdit={editingEvent}
+      />
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
@@ -110,9 +153,27 @@ export default function AdminEvents() {
                           Team
                         </span>
                       )}
-                      <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border ml-auto ${event.is_registration_open ? "border-[#C3FF16] text-[#C3FF16]" : "border-red-400 text-red-400"}`}>
+                      <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border ${event.is_registration_open ? "border-[#C3FF16] text-[#C3FF16]" : "border-red-400 text-red-400"}`}>
                         {event.is_registration_open ? "● Open" : "○ Closed"}
                       </span>
+
+                      {/* Action buttons: Edit & Delete */}
+                      <div className="flex items-center gap-1.5 ml-auto">
+                        <button
+                          onClick={() => handleEditClick(event)}
+                          className="flex items-center gap-1 px-2.5 py-1 bg-[#FFE816] text-black font-pixel text-[8px] uppercase border border-black shadow-[1px_1px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                        >
+                          <Edit2 className="w-3 h-3" />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteEvent(event.id, event.title)}
+                          className="flex items-center justify-center w-6 h-6 border border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-400 transition-colors"
+                          title="Delete Event"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
 
                     <h3 className="font-pixel text-sm text-white font-bold mb-1 leading-tight">{event.title}</h3>

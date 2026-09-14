@@ -7,6 +7,7 @@ from .models import Registration, Event
 from .serializers import RegistrationSerializer, EventSerializer
 from .utils import send_registration_email
 from django.db.models import Q
+from core.permissions import IsAdminUser
 
 class EventListView(generics.ListAPIView):
     queryset = Event.objects.all()
@@ -48,6 +49,9 @@ class RegistrationCreateView(generics.CreateAPIView):
         
         # Automatically set user from JWT
         instance = serializer.save(user=self.request.user)
+        if not instance.event.requires_payment:
+            instance.status = 'REGISTERED'
+            instance.save()
         # Send registration email with ticket
         send_registration_email(instance)
 
@@ -66,7 +70,7 @@ class RegistrationCreateView(generics.CreateAPIView):
         if now < event.registration_start:
              return Response({"error": f"Registration starts on {event.registration_start}."}, status=status.HTTP_400_BAD_REQUEST)
         
-        if now > event.registration_end:
+        if event.registration_end > event.registration_start and now > event.registration_end:
              return Response({"error": "Registration deadline has passed."}, status=status.HTTP_400_BAD_REQUEST)
 
         current_count = event.registrations.count()
@@ -93,11 +97,11 @@ class MyRegistrationsView(generics.ListAPIView):
         ).order_by('-timestamp')
 
 class VerifyTokenView(APIView):
-    # Depending on requirements, this might need Admin permission
-    # per USER request "Admin QR Scan Support", this should ideally be protected.
-    # But for simplicity or if the scanner app just has the link, we can keep it open or require Admin.
-    # Let's keep it AllowAny for now for easy testing, but in production, we'd use IsAdminUser.
-    permission_classes = [permissions.AllowAny] 
+    """
+    Verify and accept ticket entry pass (QR scan).
+    Strictly requires authenticated staff/superuser credentials.
+    """
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
 
     def get(self, request, token):
         registration = get_object_or_404(Registration, token=token)
@@ -124,12 +128,12 @@ class VerifyTokenView(APIView):
 class AdminRegistrationsView(generics.ListAPIView):
     queryset = Registration.objects.all().order_by('-timestamp')
     serializer_class = RegistrationSerializer
-    permission_classes = [permissions.IsAdminUser] # Restrict to staff/admins
+    permission_classes = [IsAdminUser] # Restrict to staff/admins
 
 class AdminEventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('-created_at')
     serializer_class = EventSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminUser]
 
 # Payment Views
 import razorpay
@@ -186,7 +190,7 @@ class CreatePaymentOrderView(APIView):
         if now < event.registration_start:
             return Response({"error": f"Registration starts on {event.registration_start}."}, status=status.HTTP_400_BAD_REQUEST)
         
-        if now > event.registration_end:
+        if event.registration_end > event.registration_start and now > event.registration_end:
             return Response({"error": "Registration deadline has passed."}, status=status.HTTP_400_BAD_REQUEST)
         
         current_count = event.registrations.count()
@@ -310,7 +314,7 @@ class VerifyPaymentView(APIView):
             return Response({"error": f"Verification error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ClearRegistrationsView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminUser]
 
     def delete(self, request):
         try:
@@ -326,7 +330,7 @@ class ClearRegistrationsView(APIView):
 
 class SyncEventsView(APIView):
     """Manually trigger event synchronization from management command"""
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdminUser]
     
     def post(self, request):
         try:

@@ -87,3 +87,65 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Print Styles for Ticket Pass */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .print-target-ticket,
+  .print-target-ticket * {
+    visibility: visible !important;
+  }
+
+  .print-target-ticket {
+    position: absolute !important;
+    left: 50% !important;
+    top: 10px !important;
+    transform: translateX(-50%) !important;
+    width: 100% !important;
+    max-width: 680px !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: 3px solid #000000 !important;
+    background: #ffffff !important;
+    page-break-inside: avoid !important;
+  }
+
+  .ticket-body-grid {
+    display: grid !important;
+    grid-template-columns: 2fr 1fr !important;
+  }
+
+  .ticket-left-side {
+    grid-column: span 1 / span 1 !important;
+    border-right: 4px solid #000000 !important;
+    border-bottom: none !important;
+  }
+
+  .ticket-right-side {
+    grid-column: span 1 / span 1 !important;
+    border-top: none !important;
+  }
+
+  .print-target-ticket .print\:hidden,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+}

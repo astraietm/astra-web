@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import Link from "next/link";
-import { LayoutDashboard, Users, CalendarDays, Image, Loader2, ArrowRight } from "lucide-react";
+import { LayoutDashboard, Users, CalendarDays, Image, Loader2, ArrowRight, Plus } from "lucide-react";
+import AddEventModal from "@/components/admin/AddEventModal";
 
 interface Stats {
   totalEvents: number;
@@ -39,25 +40,27 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({ totalEvents: 0, totalRegistrations: 0, totalGalleryItems: 0 });
   const [loading, setLoading] = useState(true);
   const [recentRegistrations, setRecentRegistrations] = useState<any[]>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const [eventsRes, regsRes, galleryRes] = await Promise.all([
+        api.get("/api/events/"),
+        api.get("/api/admin-registrations/"),
+        api.get("/api/gallery/"),
+      ]);
+      setStats({
+        totalEvents: eventsRes.data.length,
+        totalRegistrations: Array.isArray(regsRes.data) ? regsRes.data.length : regsRes.data?.results?.length || 0,
+        totalGalleryItems: galleryRes.data.length,
+      });
+      const regs = Array.isArray(regsRes.data) ? regsRes.data : regsRes.data?.results || [];
+      setRecentRegistrations(regs.slice(0, 8));
+    } catch { /* silently fail */ }
+    finally { setLoading(false); }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [eventsRes, regsRes, galleryRes] = await Promise.all([
-          api.get("/api/events/"),
-          api.get("/api/admin-registrations/"),
-          api.get("/api/gallery/"),
-        ]);
-        setStats({
-          totalEvents: eventsRes.data.length,
-          totalRegistrations: Array.isArray(regsRes.data) ? regsRes.data.length : regsRes.data?.results?.length || 0,
-          totalGalleryItems: galleryRes.data.length,
-        });
-        const regs = Array.isArray(regsRes.data) ? regsRes.data : regsRes.data?.results || [];
-        setRecentRegistrations(regs.slice(0, 8));
-      } catch { /* silently fail */ }
-      finally { setLoading(false); }
-    };
     fetchData();
   }, []);
 
@@ -70,15 +73,30 @@ export default function AdminDashboard() {
   return (
     <div>
       {/* ── Page header ── */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black">
-          <LayoutDashboard className="w-4 h-4 text-black" />
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black">
+            <LayoutDashboard className="w-4 h-4 text-black" />
+          </div>
+          <div>
+            <h1 className="font-pixel text-xl font-bold text-white uppercase tracking-wide">Dashboard</h1>
+            <p className="font-editorial italic text-xs text-white/40">ASTRA 2026 Control Center</p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-pixel text-xl font-bold text-white uppercase tracking-wide">Dashboard</h1>
-          <p className="font-editorial italic text-xs text-white/40">ASTRA 2026 Control Center</p>
-        </div>
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-[#C3FF16] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Add Event
+        </button>
       </div>
+
+      <AddEventModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={fetchData}
+      />
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">

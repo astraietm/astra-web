@@ -172,9 +172,36 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
+        'db': {
+            'class': 'ops.log_handler.DBLogHandler',
+            'level': 'INFO',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console', 'db'],
+            'level': 'WARN',
+            'propagate': False,
+        },
+        'authentication': {
+            'handlers': ['console', 'db'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'events': {
+            'handlers': ['console', 'db'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'ops': {
+            'handlers': ['console', 'db'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
     'root': {
-        'handlers': ['console'],
+        'handlers': ['console', 'db'],
         'level': 'INFO',
     },
 }

@@ -41,38 +41,38 @@ class GoogleLoginView(APIView):
 
             # Use sub (unique google ID) or email
             google_id = idinfo['sub']
-            email = idinfo['email']
+            email = idinfo['email'].lower().strip()
             name = idinfo.get('name', '')
             picture = idinfo.get('picture', '')
 
             # Get or Create User
             try:
-                user = User.objects.get(email=email)
+                user = User.objects.get(email__iexact=email)
                 # Update info if changed or missing
                 if not user.google_id:
                     user.google_id = google_id
                 if picture and user.avatar != picture:
                     user.avatar = picture
                 
-                # Check for role update (if added to allowed list after creation)
+                # Check if user should be staff (if added to allowed list or is superuser / in Admin group)
                 from .models import AllowedEmail
                 try:
-                    allowed = AllowedEmail.objects.get(email=email)
-                    user.role = allowed.role
-                    user.is_staff = True  # Grant access to admin panel
+                    AllowedEmail.objects.get(email__iexact=email)
+                    user.is_staff = True
                 except AllowedEmail.DoesNotExist:
-                    pass # Keep existing role
+                    pass  # Keep existing is_staff status
+
+                if user.is_superuser or user.groups.filter(name__iexact='Admin').exists():
+                    user.is_staff = True
 
                 user.save()
             except User.DoesNotExist:
                 # Check whitelist for new users
                 from .models import AllowedEmail
-                role = 'USER'
                 is_staff = False
                 
                 try:
-                    allowed = AllowedEmail.objects.get(email=email)
-                    role = allowed.role
+                    AllowedEmail.objects.get(email__iexact=email)
                     is_staff = True
                 except AllowedEmail.DoesNotExist:
                     pass
@@ -82,9 +82,10 @@ class GoogleLoginView(APIView):
                     full_name=name,
                     google_id=google_id,
                     avatar=picture,
-                    role=role,
                     is_staff=is_staff
                 )
+
+            is_admin_access = bool(user.is_staff or user.is_superuser or user.groups.filter(name__iexact='Admin').exists())
 
             # Generate JWT
             refresh = RefreshToken.for_user(user)
@@ -92,8 +93,8 @@ class GoogleLoginView(APIView):
             refresh['email'] = user.email
             refresh['full_name'] = user.full_name
             refresh['avatar'] = user.avatar
-            refresh['role'] = user.role
-            refresh['is_staff'] = user.is_staff
+            refresh['is_staff'] = is_admin_access
+            refresh['is_superuser'] = user.is_superuser
             refresh['phone_number'] = user.phone_number
             refresh['college'] = user.college
             refresh['usn'] = user.usn
@@ -105,8 +106,8 @@ class GoogleLoginView(APIView):
                     'email': user.email,
                     'name': user.full_name,
                     'avatar': user.avatar,
-                    'role': user.role,
-                    'is_staff': user.is_staff,
+                    'is_staff': is_admin_access,
+                    'is_superuser': user.is_superuser,
                     'phone_number': user.phone_number,
                     'college': user.college,
                     'usn': user.usn
@@ -126,3 +127,4 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+

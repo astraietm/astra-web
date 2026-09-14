@@ -156,13 +156,9 @@ export default function EventsPage() {
       try {
         const res = await api.get("/api/events/");
         const mapped = (res.data as BackendEvent[]).map(mapBackendEvent);
-        if (mapped.length > 0) {
-          setEvents(mapped);
-        } else {
-          setEvents(getFallbackEvents());
-        }
+        setEvents(mapped);
       } catch {
-        setEvents(getFallbackEvents());
+        setEvents([]);
       } finally {
         setLoading(false);
       }
@@ -179,32 +175,17 @@ export default function EventsPage() {
       return;
     }
 
-    requireLogin({
-      label: `Register for ${event.title}`,
-      run: async (activeToken: string) => {
-        if (event.requiresPayment) {
-          // Redirect to dedicated registration page for payment events
+    if (!user) {
+      requireLogin({
+        label: `Register for ${event.title}`,
+        run: () => {
           window.location.href = `/register/${event.backendId}`;
-          return;
-        }
+        },
+      });
+      return;
+    }
 
-        setRegistering(event.backendId!);
-        try {
-          await api.post("/api/register/", { event: event.backendId }, {
-            headers: { Authorization: `Bearer ${activeToken}` },
-          });
-          showToast(`Successfully registered for ${event.title}!`, "success");
-          // Refresh events to update counts
-          const res = await api.get("/api/events/");
-          setEvents((res.data as BackendEvent[]).map(mapBackendEvent));
-        } catch (err: any) {
-          const msg = err.response?.data?.error || "Registration failed. Please try again.";
-          showToast(msg, "error");
-        } finally {
-          setRegistering(null);
-        }
-      },
-    });
+    window.location.href = `/register/${event.backendId}`;
   };
 
   return (
@@ -527,98 +508,4 @@ export default function EventsPage() {
   );
 }
 
-// Fallback events when API is unavailable
-function getFallbackEvents(): DisplayEvent[] {
-  return [
-    {
-      id: "ev-keynote",
-      day: "DAY 1",
-      date: "OCT 06",
-      time: "09:30 AM — 11:00 AM IST",
-      title: "Sovereign Digital Frontiers: Zero-Day Threat Landscapes",
-      category: "KEYNOTE",
-      venue: "Main Auditorium, KMCT Campus",
-      type: "IN-PERSON",
-      badgeColor: "yellow",
-      description: "Inaugural keynote with national cyber defense chiefs dissecting AI-augmented offensive vectors and sovereign cybersecurity resilience.",
-      highlights: ["Keynote address by CERT-In & Defense advisors", "Official inauguration of ASTRA 2026", "Release of collegiate threat intelligence paper"],
-      registrationStatus: "OPEN",
-      isTeamEvent: false, teamSizeMin: 1, teamSizeMax: 1,
-      requiresPayment: false, paymentAmount: "0",
-      isRegistrationOpen: true, registrationLimit: 100, registrationCount: 0,
-      prize: "",
-    },
-    {
-      id: "ev-workshop",
-      day: "DAY 1",
-      date: "OCT 06",
-      time: "11:30 AM — 02:00 PM IST",
-      title: "Advanced Binary Exploitation & Memory Corruption with Ghidra",
-      category: "WORKSHOP",
-      venue: "Advanced Computing Lab 1, Dept of Cyber Security",
-      type: "IN-PERSON",
-      badgeColor: "lime",
-      description: "Hands-on masterclass dissecting Linux x86_64 ELF binaries, bypassing modern mitigations.",
-      highlights: ["Mentored by senior RE analysts", "Live vulnerability solving scoreboard", "Certificate of Mastery"],
-      registrationStatus: "FEW SLOTS",
-      isTeamEvent: false, teamSizeMin: 1, teamSizeMax: 1,
-      requiresPayment: false, paymentAmount: "0",
-      isRegistrationOpen: true, registrationLimit: 60, registrationCount: 52,
-      prize: "",
-    },
-    {
-      id: "ev-ctf",
-      day: "DAY 1",
-      date: "OCT 06",
-      time: "03:00 PM — OCT 07 03:00 PM",
-      title: "ASTRA 24-Hour National CTF: Jeopardy & Attack/Defense Arena",
-      category: "FLAGSHIP CTF",
-      venue: "Cyber Arena & Global Remote Portal",
-      type: "HYBRID",
-      badgeColor: "pink",
-      description: "24-hour national jeopardy and attack-defense wargames with live scoring, bounties, and midnight pizza.",
-      highlights: ["₹60,000+ bounty pool", "Attack/Defense + Jeopardy format", "24H dedicated arena"],
-      registrationStatus: "OPEN",
-      isTeamEvent: true, teamSizeMin: 1, teamSizeMax: 4,
-      requiresPayment: false, paymentAmount: "0",
-      isRegistrationOpen: true, registrationLimit: 200, registrationCount: 87,
-      prize: "₹60,000+",
-    },
-    {
-      id: "ev-expo",
-      day: "DAY 2",
-      date: "OCT 07",
-      time: "10:00 AM — 01:30 PM IST",
-      title: "National Cyber Security Project Exhibition & Paper Presentation",
-      category: "RESEARCH EXPO",
-      venue: "Innovation Gallery, KMCT Institute",
-      type: "IN-PERSON",
-      badgeColor: "mint",
-      description: "Present your research papers and security projects to the national jury panel.",
-      highlights: ["National jury evaluation", "Best Paper & Project awards", "Publication opportunity"],
-      registrationStatus: "OPEN",
-      isTeamEvent: false, teamSizeMin: 1, teamSizeMax: 1,
-      requiresPayment: false, paymentAmount: "0",
-      isRegistrationOpen: true, registrationLimit: 100, registrationCount: 34,
-      prize: "",
-    },
-    {
-      id: "ev-finale",
-      day: "DAY 2",
-      date: "OCT 07",
-      time: "04:00 PM — 06:30 PM IST",
-      title: "Valedictory, Bounty Prize Distribution & Cyber Networking",
-      category: "GRAND FINALE",
-      venue: "Main Auditorium, KMCT Campus",
-      type: "IN-PERSON",
-      badgeColor: "lilac",
-      description: "Closing ceremony with prize distribution, CTF leaderboard reveal, and networking.",
-      highlights: ["CTF bounty prize distribution", "Best performer awards", "Networking session"],
-      registrationStatus: "OPEN",
-      isTeamEvent: false, teamSizeMin: 1, teamSizeMax: 1,
-      requiresPayment: false, paymentAmount: "0",
-      isRegistrationOpen: true, registrationLimit: 500, registrationCount: 0,
-      prize: "",
-    },
-  ];
-}
+
