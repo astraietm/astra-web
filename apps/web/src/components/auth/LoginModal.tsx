@@ -44,12 +44,12 @@ const LoginModal: React.FC = () => {
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          className="relative w-full max-w-sm bg-white border-2 border-black shadow-[6px_6px_0px_#000] overflow-hidden"
+          className="relative w-full max-w-sm bg-white border-2 border-black overflow-hidden"
         >
           <div className="p-8 text-center relative">
             <div className="relative z-10">
               <motion.div
-                className="w-16 h-16 bg-[#F0F0FA] border-2 border-black flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0px_#000]"
+                className="w-16 h-16 bg-[#F0F0FA] border-2 border-black flex items-center justify-center mx-auto mb-6"
                 animate={
                   isAuthenticating
                     ? {

@@ -11,7 +11,7 @@ function StatusBadge({ status }: { status: string }) {
     CANCELLED:  "bg-red-400 text-black border-black",
   };
   return (
-    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${map[status] ?? "bg-white/10 text-white border-white/20"}`}>
+    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border ${map[status] ?? "bg-white/10 text-white border-white/20"}`}>
       {status}
     </span>
   );
@@ -45,7 +45,7 @@ export default function AdminRegistrations() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 bg-[#C3FF16] border-2 border-black shadow-[3px_3px_0px_#000]">
+          <div className="flex items-center justify-center w-9 h-9 bg-[#C3FF16] border-2 border-black">
             <Users className="w-4 h-4 text-black" />
           </div>
           <div>
@@ -72,7 +72,7 @@ export default function AdminRegistrations() {
           <span className="font-pixel text-[10px] text-white/30 uppercase animate-pulse">Loading...</span>
         </div>
       ) : (
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)]">
+        <div className="border-2 border-white/20 bg-[#161622]">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>

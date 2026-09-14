@@ -70,7 +70,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className={`flex items-start gap-3 p-4 bg-white border-2 border-black shadow-[3px_3px_0px_#000] ${getBorderColor(toast.type)} border-l-4`}
+              className={`flex items-start gap-3 p-4 bg-white border-2 border-black ${getBorderColor(toast.type)} border-l-4`}
             >
               {getIcon(toast.type)}
               <p className="flex-1 text-sm font-sans text-black">{toast.message}</p>

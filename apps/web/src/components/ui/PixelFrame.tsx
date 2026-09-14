@@ -28,7 +28,7 @@ export const PixelFrame: React.FC<PixelFrameProps> = ({
 
   return (
     <div
-      className={`relative border-2 border-black bg-white shadow-[4px_4px_0px_#000] p-5 sm:p-6 transition-transform hover:-translate-y-0.5 ${className}`}
+      className={`relative border-2 border-black bg-white p-5 sm:p-6 transition-transform hover:-translate-y-0.5 ${className}`}
     >
       {/* Optional Dot Matrix Background Texture */}
       {dotGrid && (

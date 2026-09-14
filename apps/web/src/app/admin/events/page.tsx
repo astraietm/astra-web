@@ -14,7 +14,7 @@ function CategoryBadge({ category }: { category: string }) {
   };
   const cls = colors[category?.toUpperCase()] ?? "bg-white/10 text-white border-white/20";
   return (
-    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${cls}`}>
+    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border ${cls}`}>
       {category}
     </span>
   );
@@ -51,7 +51,7 @@ export default function AdminEvents() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black shadow-[3px_3px_0px_#000]">
+          <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black">
             <CalendarDays className="w-4 h-4 text-black" />
           </div>
           <div>
@@ -62,7 +62,7 @@ export default function AdminEvents() {
         <button
           onClick={handleSync}
           disabled={syncing}
-          className="flex items-center gap-2 px-4 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-4 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {syncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCcw className="w-3.5 h-3.5" />}
           Sync Events
@@ -83,11 +83,11 @@ export default function AdminEvents() {
             return (
               <div
                 key={event.id}
-                className="border-2 border-white/20 bg-[#161622] p-5 shadow-[4px_4px_0px_rgba(255,255,255,0.06)] hover:shadow-[6px_6px_0px_rgba(255,255,255,0.08)] transition-shadow"
+                className="border-2 border-white/20 bg-[#161622] p-5 hover: transition-shadow"
               >
                 <div className="flex flex-col sm:flex-row items-start gap-4">
                   {/* Date block */}
-                  <div className="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 bg-[#FFE816] border-2 border-black shadow-[2px_2px_0px_#000] text-black">
+                  <div className="flex-shrink-0 flex flex-col items-center justify-center w-14 h-14 bg-[#FFE816] border-2 border-black text-black">
                     <span className="font-pixel text-xs font-bold leading-none">
                       {event.event_date ? new Date(event.event_date).toLocaleDateString("en-US", { day: "2-digit" }) : "--"}
                     </span>
@@ -101,7 +101,7 @@ export default function AdminEvents() {
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       <CategoryBadge category={event.category} />
                       {event.requires_payment && (
-                        <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border border-[#FFE816] text-[#FFE816] shadow-[1px_1px_0px_rgba(255,232,22,0.3)]">
+                        <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border border-[#FFE816] text-[#FFE816]">
                           ₹{event.payment_amount}
                         </span>
                       )}

@@ -11,21 +11,35 @@ import { NumberCounter } from '@/components/ui/NumberCounter';
 export const ImpactSection: React.FC = () => {
   return (
     <section id="impact" className="relative overflow-hidden">
-      {/* Pink Velocity Marquee Ticker (Slow & Legible) */}
-      <VelocityMarquee
-        items={['ASTRA', 'A DECADE OF CYBER DEFENSE', 'ASTRA 2026', 'KMCT CALICUT', '1000+ DELEGATES']}
-        bgColor="#F79CFF"
-        textColor="#000000"
-        baseVelocity={0.35}
-        separator="✦"
-        className="border-y-2 border-black py-2 shadow-[0px_3px_0px_#000]"
-      />
+      {/* ── Transition Seam: Black top meeting Blue bottom with Tilted Pink Ribbon ── */}
+      <div
+        className="relative w-full overflow-hidden py-3 sm:py-4"
+        style={{ background: '#000000' }}
+      >
+        {/* Bottom 50% is blue underlay, hidden directly behind the ribbon across entire width */}
+        <div
+          className="absolute inset-x-0 bottom-0 h-[50%] pointer-events-none"
+          style={{ background: '#8EC8FF' }}
+        />
+
+        {/* Pink marquee ribbon (full-height, unclipped, tilted between the two slides) */}
+        <div className="relative z-10 w-full -rotate-1 scale-105">
+          <VelocityMarquee
+            items={['ASTRA', 'A DECADE OF CYBER DEFENSE', 'ASTRA 2026', 'KMCT CALICUT', '1000+ DELEGATES']}
+            bgColor="#F79CFF"
+            textColor="#000000"
+            baseVelocity={0.35}
+            separator="✦"
+            className="border-y-2 border-black py-2.5 shadow-[0_4px_10px_rgba(0,0,0,0.12)]"
+          />
+        </div>
+      </div>
 
       {/* Sky-blue background matching TinkerHub stats section */}
       <div
         className="relative py-16 sm:py-24 md:py-32 overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, #8EC8FF 0%, #B0D9FF 50%, #F0F0FA 100%)',
+          background: 'linear-gradient(180deg, #8EC8FF 0%, #A5D3FF 50%, #93C5FD 100%)',
         }}
       >
         <PixelDots count={8} colors={['#F79CFF', '#E8CCFF', '#FFE816']} />

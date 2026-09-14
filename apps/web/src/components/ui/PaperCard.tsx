@@ -39,13 +39,9 @@ export const PaperCard: React.FC<PaperCardProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24, rotate: rotation !== 0 ? rotation + (rotation > 0 ? 3 : -3) : 0 }}
-      whileInView={{ opacity: 1, y: 0, rotate: rotation }}
-      viewport={{ once: true, margin: '-40px' }}
       whileHover={{
         y: -4,
         rotate: rotation !== 0 ? (rotation > 0 ? rotation - 0.5 : rotation + 0.5) : 0,
-        boxShadow: '4px 8px 24px rgba(0, 0, 0, 0.12)',
       }}
       transition={{
         type: 'spring',

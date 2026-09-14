@@ -15,20 +15,10 @@ export const BrutalistCard: React.FC<BrutalistCardProps> = ({
   className = '',
   hoverEffect = true,
 }) => {
-  const accentShadows = {
-    default: 'shadow-brutal hover:shadow-brutal-lg',
-    green: 'shadow-brutal hover:shadow-brutal-green',
-    yellow: 'shadow-brutal hover:shadow-brutal-accent',
-    blue: 'shadow-brutal hover:shadow-brutal-blue',
-    magenta: 'shadow-brutal hover:shadow-brutal-magenta',
-  };
-
   return (
     <div
       className={`relative bg-surface text-foreground border-2 border-foreground p-6 sm:p-8 ${
-        accentShadows[accent]
-      } ${
-        hoverEffect ? 'transition-all duration-200 hover:-translate-y-1' : ''
+        hoverEffect ? 'transition-transform duration-200 hover:-translate-y-1' : ''
       } ${className}`}
     >
       {children}

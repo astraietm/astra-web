@@ -225,33 +225,25 @@ export default function EventsPage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
         {/* Section Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-3">
-            <StickerBadge color="pink" rotation={-2}>SCHEDULE</StickerBadge>
-            <span className="font-mono text-xs bg-black text-white px-2 py-0.5 font-bold">
-              {events.length} EVENTS
-            </span>
-          </div>
-          <h1 className="font-pixel text-3xl sm:text-5xl font-extrabold uppercase text-black">
-            EVENT SCHEDULE &amp; REGISTRATION
-          </h1>
-          <p className="font-editorial italic text-xl sm:text-2xl text-gray-700 mt-1">
-            Two days of hacking, research, and sovereign cyber defense.
+          <BlackBanner size="lg">UPCOMING SYMPOSIUM EVENTS</BlackBanner>
+          <p className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-black mt-3 font-normal leading-tight">
+            Two days of hacking, research, and sovereign cyber defense at KMCT Calicut.
           </p>
         </div>
 
         {/* Day Filter Tabs */}
-        <div className="bg-white border-2 border-black p-4 shadow-[4px_4px_0px_#000] mb-8">
+        <div className="bg-white border-2 border-black p-4 mb-8">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="font-mono text-xs font-bold text-gray-500 uppercase flex items-center gap-1 mr-1">
+            <span className="font-pixel text-[10px] text-gray-500 uppercase flex items-center gap-1 mr-1">
               <Filter className="w-3.5 h-3.5" /> DAY:
             </span>
             {days.map((day) => (
               <button
                 key={day}
                 onClick={() => setActiveDay(day)}
-                className={`relative px-3.5 py-1.5 text-xs font-display font-bold border-2 border-black uppercase transition-colors cursor-pointer select-none ${
+                className={`relative px-3.5 py-1.5 text-xs font-body font-bold border-2 border-black uppercase transition-colors cursor-pointer select-none ${
                   activeDay === day
-                    ? "bg-th-pink text-black shadow-[2px_2px_0px_#000]"
+                    ? "bg-th-pink text-black"
                     : "bg-[#F0F0FA] text-black hover:bg-gray-100"
                 }`}
               >
@@ -265,7 +257,7 @@ export default function EventsPage() {
         {loading && (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-            <span className="ml-3 font-mono text-sm text-gray-500">Loading events...</span>
+            <span className="ml-3 font-body text-sm text-gray-500 font-medium">Loading events...</span>
           </div>
         )}
 
@@ -290,22 +282,22 @@ export default function EventsPage() {
                           <StickerBadge color={event.badgeColor} rotation={-2}>
                             {event.category}
                           </StickerBadge>
-                          <span className="font-mono text-xs bg-black text-white px-2 py-0.5 font-bold">
+                          <span className="font-pixel text-[10px] bg-black text-white px-2 py-0.5 uppercase">
                             {event.day}
                           </span>
                           {event.prize && (
-                            <span className="font-mono text-xs bg-th-yellow text-black px-2 py-0.5 font-bold border border-black">
+                            <span className="font-pixel text-[10px] bg-th-yellow text-black px-2 py-0.5 border border-black uppercase">
                               🏆 {event.prize}
                             </span>
                           )}
                         </div>
-                        <h3 className="font-pixel text-xl sm:text-2xl font-bold uppercase text-black mb-2">
+                        <h3 className="font-display text-2xl sm:text-3xl font-normal uppercase text-black mb-2 leading-none">
                           {event.title}
                         </h3>
-                        <p className="font-sans text-sm text-gray-700 leading-relaxed mb-3">
+                        <p className="font-body text-sm text-gray-700 leading-relaxed mb-3">
                           {event.description}
                         </p>
-                        <div className="flex flex-wrap gap-3 text-xs font-mono text-gray-600">
+                        <div className="flex flex-wrap gap-3 text-xs font-body text-gray-600 font-medium">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5" /> {event.date}
                           </span>
@@ -326,7 +318,7 @@ export default function EventsPage() {
                       {/* Registration Actions */}
                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                         <span
-                          className={`font-pixel text-[10px] px-2 py-0.5 uppercase border border-black shadow-[1px_1px_0px_#000] ${
+                          className={`font-pixel text-[10px] px-2 py-0.5 uppercase border border-black ${
                             event.registrationStatus === "OPEN"
                               ? "bg-emerald-100 text-emerald-800"
                               : event.registrationStatus === "FEW SLOTS"
@@ -339,12 +331,12 @@ export default function EventsPage() {
                           {event.registrationStatus}
                         </span>
 
-                        <span className="font-mono text-[10px] text-gray-500">
+                        <span className="font-body text-[11px] text-gray-500 font-medium">
                           {event.registrationCount}/{event.registrationLimit} registered
                         </span>
 
                         {event.requiresPayment && (
-                          <span className="font-mono text-xs font-bold text-black flex items-center gap-1">
+                          <span className="font-body text-xs font-bold text-black flex items-center gap-1">
                             <CreditCard className="w-3 h-3" /> ₹{event.paymentAmount}
                           </span>
                         )}
@@ -353,7 +345,7 @@ export default function EventsPage() {
                           <button
                             onClick={() => handleRegister(event)}
                             disabled={registering === event.backendId}
-                            className="mt-1 px-4 py-2 bg-black text-white font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-all shadow-[2px_2px_0px_#000] disabled:opacity-50 flex items-center gap-1.5"
+                            className="mt-1 px-4 py-2 bg-black text-white font-body font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-all disabled:opacity-50 flex items-center gap-1.5"
                           >
                             {registering === event.backendId ? (
                               <>
@@ -374,7 +366,7 @@ export default function EventsPage() {
                       <div className="mt-4 pt-3 border-t border-gray-200">
                         <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                           {event.highlights.slice(0, 4).map((h, i) => (
-                            <li key={i} className="flex items-center gap-2 text-xs font-sans text-gray-700">
+                            <li key={i} className="flex items-center gap-2 text-xs font-body text-gray-700">
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                               {h}
                             </li>
@@ -392,7 +384,7 @@ export default function EventsPage() {
         {/* Empty State */}
         {!loading && filteredEvents.length === 0 && (
           <div className="text-center py-16">
-            <p className="font-pixel text-xl text-gray-400">No events found for this filter.</p>
+            <p className="font-body text-lg text-gray-500">No events found for this filter.</p>
           </div>
         )}
       </section>
@@ -401,7 +393,7 @@ export default function EventsPage() {
       <section id="pass-registration" className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
         <div className="mb-8 text-center">
           <BlackBanner size="md">SELECT YOUR EVENT ACCESS PASS</BlackBanner>
-          <p className="font-editorial italic text-2xl text-black mt-3">
+          <p className="font-serif italic text-2xl sm:text-3xl text-black mt-3 font-normal">
             Free entry for verified students and researchers. Limited on-site lab workstations.
           </p>
         </div>
@@ -411,26 +403,23 @@ export default function EventsPage() {
           <PixelFrame dotGrid cornerAccent className="flex flex-col justify-between">
             <div>
               <StickerBadge color="yellow" rotation={-2}>ALL ACCESS</StickerBadge>
-              <h3 className="font-pixel text-xl font-bold uppercase mt-3">STUDENT DELEGATE PASS</h3>
-              <p className="font-sans text-xs text-gray-700 mt-2">
+              <h3 className="font-display text-2xl sm:text-3xl uppercase mt-3 leading-none">STUDENT DELEGATE PASS</h3>
+              <p className="font-body text-xs text-gray-700 mt-2 leading-relaxed">
                 Full physical access to keynotes, research expo, keynote halls, and networking mixers.
               </p>
               <div className="my-4 pt-4 border-t border-black/10">
-                <p className="font-pixel text-3xl font-bold text-black">FREE</p>
-                <p className="font-mono text-[10px] text-gray-500">Requires valid college ID</p>
+                <p className="font-display text-4xl text-black leading-none">FREE</p>
+                <p className="font-body text-[11px] text-gray-500">Requires valid college ID</p>
               </div>
-              <ul className="space-y-2 text-xs font-sans text-gray-800 mb-6">
-                <li className="flex items-center gap-2">✓ Keynote & session access</li>
+              <ul className="space-y-2 text-xs font-body text-gray-800 mb-6">
+                <li className="flex items-center gap-2">✓ Keynote &amp; session access</li>
                 <li className="flex items-center gap-2">✓ Certificate of Participation</li>
                 <li className="flex items-center gap-2">✓ Delegate physical kit</li>
               </ul>
             </div>
             <Link
               href="/events"
-              onClick={() => {
-                /* TODO: scroll to first open free event */
-              }}
-              className="w-full text-center block px-4 py-3 bg-black text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-th-yellow hover:text-black border-2 border-black transition-colors"
+              className="w-full text-center block px-4 py-3 bg-black text-white font-body font-bold text-xs uppercase tracking-wider hover:bg-th-yellow hover:text-black border-2 border-black transition-colors"
             >
               REGISTER DELEGATE PASS →
             </Link>
@@ -441,19 +430,19 @@ export default function EventsPage() {
             <div>
               <div className="flex items-center justify-between">
                 <StickerBadge color="pink" rotation={2}>COMPETITIVE</StickerBadge>
-                <span className="font-mono text-[10px] bg-red-600 text-white px-2 py-0.5 font-bold">
+                <span className="font-pixel text-[10px] bg-red-600 text-white px-2 py-0.5 uppercase">
                   FLAGSHIP
                 </span>
               </div>
-              <h3 className="font-pixel text-xl font-bold uppercase mt-3">24H CTF SQUAD PASS</h3>
-              <p className="font-sans text-xs text-gray-700 mt-2">
+              <h3 className="font-display text-2xl sm:text-3xl uppercase mt-3 leading-none">24H CTF SQUAD PASS</h3>
+              <p className="font-body text-xs text-gray-700 mt-2 leading-relaxed">
                 Team registration (1-4 members) for the 24-hour national jeopardy &amp; attack-defense tournament.
               </p>
               <div className="my-4 pt-4 border-t border-black/10">
-                <p className="font-pixel text-3xl font-bold text-black">₹60K POOL</p>
-                <p className="font-mono text-[10px] text-gray-500">Free squad registration</p>
+                <p className="font-display text-4xl text-black leading-none">₹60K POOL</p>
+                <p className="font-body text-[11px] text-gray-500">Free squad registration</p>
               </div>
-              <ul className="space-y-2 text-xs font-sans text-gray-800 mb-6">
+              <ul className="space-y-2 text-xs font-body text-gray-800 mb-6">
                 <li className="flex items-center gap-2">✓ 24H dedicated Arena seating &amp; power</li>
                 <li className="flex items-center gap-2">✓ High-speed LAN portal credentials</li>
                 <li className="flex items-center gap-2">✓ Midnight pizza &amp; refreshment supply</li>
@@ -462,7 +451,7 @@ export default function EventsPage() {
             </div>
             <Link
               href="/events"
-              className="w-full text-center block px-4 py-3 bg-th-pink text-black font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_#000]"
+              className="w-full text-center block px-4 py-3 bg-th-pink text-black font-body font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-all"
             >
               REGISTER CTF SQUAD →
             </Link>
@@ -472,15 +461,15 @@ export default function EventsPage() {
           <PixelFrame dotGrid cornerAccent className="flex flex-col justify-between">
             <div>
               <StickerBadge color="lime" rotation={-2}>HANDS-ON</StickerBadge>
-              <h3 className="font-pixel text-xl font-bold uppercase mt-3">WORKSHOP &amp; LAB PASS</h3>
-              <p className="font-sans text-xs text-gray-700 mt-2">
+              <h3 className="font-display text-2xl sm:text-3xl uppercase mt-3 leading-none">WORKSHOP &amp; LAB PASS</h3>
+              <p className="font-body text-xs text-gray-700 mt-2 leading-relaxed">
                 Guaranteed workstation access for the Binary Reverse Engineering masterclass.
               </p>
               <div className="my-4 pt-4 border-t border-black/10">
-                <p className="font-pixel text-3xl font-bold text-black">LIMITED</p>
-                <p className="font-mono text-[10px] text-gray-500">60 Lab Workstations Only</p>
+                <p className="font-display text-4xl text-black leading-none">LIMITED</p>
+                <p className="font-body text-[11px] text-gray-500">60 Lab Workstations Only</p>
               </div>
-              <ul className="space-y-2 text-xs font-sans text-gray-800 mb-6">
+              <ul className="space-y-2 text-xs font-body text-gray-800 mb-6">
                 <li className="flex items-center gap-2">✓ Pre-configured Ghidra / GDB lab rig</li>
                 <li className="flex items-center gap-2">✓ Exploitation challenge targets</li>
                 <li className="flex items-center gap-2">✓ Verified skill certification</li>
@@ -488,7 +477,7 @@ export default function EventsPage() {
             </div>
             <Link
               href="/events"
-              className="w-full text-center block px-4 py-3 bg-black text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-th-lime hover:text-black border-2 border-black transition-colors"
+              className="w-full text-center block px-4 py-3 bg-black text-white font-body font-bold text-xs uppercase tracking-wider hover:bg-th-lime hover:text-black border-2 border-black transition-colors"
             >
               RESERVE LAB WORKSTATION →
             </Link>
@@ -515,7 +504,7 @@ export default function EventsPage() {
                 <p>✉️ Email: cybersecurity@kmct.edu.in</p>
               </div>
             </div>
-            <div className="border-2 border-black p-6 bg-[#F0F0FA] flex flex-col justify-between shadow-[3px_3px_0px_#000]">
+            <div className="border-2 border-black p-6 bg-[#F0F0FA] flex flex-col justify-between">
               <div>
                 <p className="font-mono text-xs font-bold uppercase text-black mb-2">
                   NEED SPONSORSHIP OR HOSTEL ACCOMMODATION?

@@ -97,7 +97,7 @@ export default function AdminSettings() {
     <div>
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black shadow-[3px_3px_0px_#000]">
+        <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black">
           <SettingsIcon className="w-4 h-4 text-black" />
         </div>
         <div>
@@ -108,7 +108,7 @@ export default function AdminSettings() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* System Settings */}
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5">
+        <div className="border-2 border-white/20 bg-[#161622] p-5">
           <div className="flex items-center gap-2 mb-5 pb-4 border-b-2 border-white/10">
             <SettingsIcon className="w-4 h-4 text-[#FFE816]" />
             <span className="font-pixel text-[10px] text-white uppercase tracking-wider">System Settings</span>
@@ -132,7 +132,7 @@ export default function AdminSettings() {
             <button
               onClick={handleSaveSettings}
               disabled={saving}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 mt-4 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 mt-4 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Save Settings
@@ -141,7 +141,7 @@ export default function AdminSettings() {
         </div>
 
         {/* Team Management */}
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5">
+        <div className="border-2 border-white/20 bg-[#161622] p-5">
           <div className="flex items-center gap-2 mb-5 pb-4 border-b-2 border-white/10">
             <Users className="w-4 h-4 text-[#FFE816]" />
             <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Team Management</span>
@@ -160,7 +160,7 @@ export default function AdminSettings() {
             </select>
             <button
               type="submit" disabled={addingMember}
-              className="flex items-center gap-1 px-3 py-2 bg-[#FFE816] text-black font-pixel text-[9px] border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-2 bg-[#FFE816] text-black font-pixel text-[9px] border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
             >
               {addingMember ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
             </button>
@@ -175,7 +175,7 @@ export default function AdminSettings() {
               >
                 <div>
                   <p className="font-mono text-xs text-white">{member.email}</p>
-                  <span className={`inline-block mt-1 font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${
+                  <span className={`inline-block mt-1 font-pixel text-[8px] uppercase px-1.5 py-0.5 border ${
                     member.role === "ADMIN"
                       ? "bg-[#FFE816] text-black border-black"
                       : "bg-white/10 text-white/60 border-white/20"

@@ -13,7 +13,7 @@ function PriorityBadge({ priority }: { priority: string }) {
     SUCCESS: "bg-[#C3FF16] text-black border-black",
   };
   return (
-    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${map[priority] ?? "bg-white/10 text-white border-white/20"}`}>
+    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border ${map[priority] ?? "bg-white/10 text-white border-white/20"}`}>
       {priority}
     </span>
   );
@@ -53,7 +53,7 @@ export default function AdminNotifications() {
     <div>
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black shadow-[3px_3px_0px_#000]">
+        <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black">
           <Bell className="w-4 h-4 text-black" />
         </div>
         <div>
@@ -64,7 +64,7 @@ export default function AdminNotifications() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Compose */}
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5">
+        <div className="border-2 border-white/20 bg-[#161622] p-5">
           <div className="flex items-center gap-2 mb-5 pb-4 border-b-2 border-white/10">
             <Send className="w-4 h-4 text-[#FFE816]" />
             <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Compose Broadcast</span>
@@ -101,7 +101,7 @@ export default function AdminNotifications() {
               </div>
             </div>
             <button type="submit" disabled={sending}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50">
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50">
               {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               Send Broadcast
             </button>
@@ -109,7 +109,7 @@ export default function AdminNotifications() {
         </div>
 
         {/* History */}
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)]">
+        <div className="border-2 border-white/20 bg-[#161622]">
           <div className="px-5 py-4 border-b-2 border-white/10 flex items-center gap-2">
             <Bell className="w-4 h-4 text-white/40" />
             <span className="font-pixel text-[10px] text-white uppercase tracking-wider">History</span>

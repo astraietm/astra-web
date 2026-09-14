@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }}
     >
       {/* ─── HEADER ─── */}
-      <header className="h-14 sticky top-0 z-50 flex items-center justify-between px-4 border-b-2 border-white/20 bg-[#0C0C14]/95 backdrop-blur-md shadow-[0px_2px_0px_rgba(255,255,255,0.08)]">
+      <header className="h-14 sticky top-0 z-50 flex items-center justify-between px-4 border-b-2 border-white/20 bg-[#0C0C14]/95 backdrop-blur-md">
         {/* Left */}
         <div className="flex items-center gap-3">
           <button
@@ -69,7 +69,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Menu className="w-4 h-4" />
           </button>
           <Link href="/admin" className="flex items-center gap-2 group">
-            <div className="flex items-center justify-center w-7 h-7 bg-[#FFE816] border-2 border-black shadow-[2px_2px_0px_#000]">
+            <div className="flex items-center justify-center w-7 h-7 bg-[#FFE816] border-2 border-black">
               <Shield className="w-3.5 h-3.5 text-black" />
             </div>
             <span className="font-pixel text-[11px] font-bold text-white uppercase tracking-wider group-hover:text-[#FFE816] transition-colors">
@@ -164,7 +164,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     group flex items-center gap-3 px-3 py-2.5 text-xs font-mono uppercase tracking-wide
                     border-2 transition-all duration-100 relative
                     ${isActive
-                      ? "border-[#FFE816] bg-[#FFE816] text-black shadow-[3px_3px_0px_rgba(255,232,22,0.3)]"
+                      ? "border-[#FFE816] bg-[#FFE816] text-black"
                       : "border-transparent text-white/50 hover:border-white/30 hover:text-white hover:bg-white/5"
                     }
                   `}

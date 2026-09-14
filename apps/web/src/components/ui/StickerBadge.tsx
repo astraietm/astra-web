@@ -33,7 +33,7 @@ export const StickerBadge: React.FC<StickerBadgeProps> = ({
 }) => {
   return (
     <span
-      className={`inline-block font-pixel font-bold uppercase tracking-wider border-2 border-black text-black shadow-brutal-sm transition-[transform,box-shadow] duration-200 ease-[var(--ease-spring,cubic-bezier(0.34,1.56,0.64,1))] select-none cursor-default hover:rotate-0 hover:scale-105 hover:-translate-y-0.5 hover:shadow-brutal active:scale-95 ${colorMap[color]} ${sizeMap[size]} ${className}`}
+      className={`inline-block font-pixel font-bold uppercase tracking-wider border-2 border-black text-black transition-transform duration-200 ease-[var(--ease-spring,cubic-bezier(0.34,1.56,0.64,1))] select-none cursor-default hover:rotate-0 hover:scale-105 hover:-translate-y-0.5 active:scale-95 ${colorMap[color]} ${sizeMap[size]} ${className}`}
       style={{ transform: `rotate(${rotation}deg)` }}
       onMouseEnter={(e) => {
         (e.currentTarget as HTMLElement).style.transform = 'rotate(0deg) translateY(-2px) scale(1.05)';

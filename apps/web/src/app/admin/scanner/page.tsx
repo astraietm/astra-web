@@ -29,7 +29,7 @@ export default function AdminScanner() {
     <div>
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 bg-[#97F8B7] border-2 border-black shadow-[3px_3px_0px_#000]">
+        <div className="flex items-center justify-center w-9 h-9 bg-[#97F8B7] border-2 border-black">
           <QrCode className="w-4 h-4 text-black" />
         </div>
         <div>
@@ -40,7 +40,7 @@ export default function AdminScanner() {
 
       <div className="max-w-xl">
         {/* Verifier panel */}
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-6 mb-4">
+        <div className="border-2 border-white/20 bg-[#161622] p-6 mb-4">
           <div className="flex items-center gap-2 mb-5 pb-4 border-b-2 border-white/10">
             <div className="w-2 h-2 rounded-full bg-[#C3FF16] animate-pulse" />
             <span className="font-pixel text-[10px] text-white/60 uppercase tracking-widest">Verification Terminal Online</span>
@@ -61,7 +61,7 @@ export default function AdminScanner() {
             <button
               onClick={handleVerify}
               disabled={verifying}
-              className="flex items-center gap-2 px-5 py-3 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap"
+              className="flex items-center gap-2 px-5 py-3 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap"
             >
               {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
               Verify
@@ -72,8 +72,8 @@ export default function AdminScanner() {
           {result && (
             <div className={`mt-5 border-2 p-4 ${
               result.error
-                ? "border-red-500/50 bg-red-500/5 shadow-[3px_3px_0px_rgba(239,68,68,0.2)]"
-                : "border-[#C3FF16]/50 bg-[#C3FF16]/5 shadow-[3px_3px_0px_rgba(195,255,22,0.2)]"
+                ? "border-red-500/50 bg-red-500/5"
+                : "border-[#C3FF16]/50 bg-[#C3FF16]/5"
             }`}>
               {result.error ? (
                 <div className="flex items-center gap-3">
@@ -111,7 +111,7 @@ export default function AdminScanner() {
                     {result.status && (
                       <div className="flex gap-3 pt-2 border-t border-white/10">
                         <span className="text-white/30 w-20 flex-shrink-0">Status</span>
-                        <span className="font-pixel text-[9px] bg-[#C3FF16] text-black px-2 py-0.5 border border-black shadow-[1px_1px_0px_#000]">
+                        <span className="font-pixel text-[9px] bg-[#C3FF16] text-black px-2 py-0.5 border border-black">
                           {result.status}
                         </span>
                       </div>

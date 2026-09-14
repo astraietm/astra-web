@@ -17,11 +17,11 @@ export default function NotFound() {
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
           <Link href="/"
-            className="px-6 py-3 bg-black text-white font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000]">
+            className="px-6 py-3 bg-black text-white font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-colors">
             BACK TO HOME →
           </Link>
           <Link href="/events"
-            className="px-6 py-3 bg-white text-black font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-gray-100 transition-colors shadow-[3px_3px_0px_#000]">
+            className="px-6 py-3 bg-white text-black font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-gray-100 transition-colors">
             VIEW EVENTS
           </Link>
         </div>

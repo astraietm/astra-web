@@ -49,7 +49,7 @@ export const DotMatrixDisplay: React.FC<DotMatrixDisplayProps> = ({
 
   return (
     <div
-      className={`inline-flex items-center gap-3 px-3 py-1.5 border-2 rounded-none font-mono text-xs shadow-[2px_2px_0px_#000] select-none ${styles.container} ${className}`}
+      className={`inline-flex items-center gap-3 px-3 py-1.5 border-2 rounded-none font-mono text-xs select-none ${styles.container} ${className}`}
     >
       {/* Blinking Matrix Status Dot */}
       <span className="relative flex h-2 w-2">

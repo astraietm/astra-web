@@ -10,6 +10,7 @@ import {
   useAnimationFrame,
   useMotionValue,
   useReducedMotion,
+  wrap,
 } from 'framer-motion';
 
 interface VelocityMarqueeProps {
@@ -18,8 +19,12 @@ interface VelocityMarqueeProps {
   bgColor?: string;
   textColor?: string;
   separator?: string;
+  fontClass?: string;
   className?: string;
 }
+
+const SPAN_COUNT = 6;
+const SPAN_PERCENT = 100 / SPAN_COUNT;
 
 export const VelocityMarquee: React.FC<VelocityMarqueeProps> = ({
   items,
@@ -27,6 +32,7 @@ export const VelocityMarquee: React.FC<VelocityMarqueeProps> = ({
   bgColor = '#F79CFF',
   textColor = '#000000',
   separator = '✦',
+  fontClass = 'font-serif text-lg sm:text-2xl md:text-3xl tracking-wide',
   className = '',
 }) => {
   const prefersReduced = useReducedMotion();
@@ -43,20 +49,16 @@ export const VelocityMarquee: React.FC<VelocityMarqueeProps> = ({
     clamp: false,
   });
 
-  const x = useTransform(baseX, (v) => `${v % 50}%`);
+  // Seamless mathematical wrap across exactly one span width
+  const x = useTransform(baseX, (v) => `${wrap(-SPAN_PERCENT * 2, -SPAN_PERCENT, v)}%`);
 
-  const directionFactor = useRef<number>(1);
   useAnimationFrame((t, delta) => {
     if (prefersReduced || isHovered) return;
-    let moveBy = directionFactor.current * baseVelocity * (delta / 1000) * 5;
-
-    if (velocityFactor.get() < 0) {
-      directionFactor.current = -1;
-    } else if (velocityFactor.get() > 0) {
-      directionFactor.current = 1;
+    let moveBy = baseVelocity * (delta / 1000) * 5;
+    const vf = velocityFactor.get();
+    if (vf !== 0) {
+      moveBy += moveBy * Math.min(Math.abs(vf), 2.5);
     }
-
-    moveBy += directionFactor.current * moveBy * Math.min(velocityFactor.get(), 2);
     baseX.set(baseX.get() - moveBy);
   });
 
@@ -73,18 +75,11 @@ export const VelocityMarquee: React.FC<VelocityMarqueeProps> = ({
         className="inline-flex py-2 will-change-transform"
         style={{ x: prefersReduced ? 0 : x }}
       >
-        <span className="inline-block font-mono font-bold text-xs sm:text-sm md:text-base uppercase tracking-widest px-6">
-          {content}
-        </span>
-        <span className="inline-block font-mono font-bold text-xs sm:text-sm md:text-base uppercase tracking-widest px-6">
-          {content}
-        </span>
-        <span className="inline-block font-mono font-bold text-xs sm:text-sm md:text-base uppercase tracking-widest px-6">
-          {content}
-        </span>
-        <span className="inline-block font-mono font-bold text-xs sm:text-sm md:text-base uppercase tracking-widest px-6">
-          {content}
-        </span>
+        {Array.from({ length: SPAN_COUNT }).map((_, idx) => (
+          <span key={idx} className={`inline-block uppercase px-6 select-none ${fontClass}`}>
+            {content}
+          </span>
+        ))}
       </motion.div>
     </div>
   );

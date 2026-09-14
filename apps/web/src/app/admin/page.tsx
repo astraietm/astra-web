@@ -13,7 +13,7 @@ interface Stats {
 
 // ── Shared brutalist primitives ───────────────────────────────────────────────
 const AdminCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] ${className}`}>
+  <div className={`border-2 border-white/20 bg-[#161622] ${className}`}>
     {children}
   </div>
 );
@@ -29,7 +29,7 @@ function StatusBadge({ status }: { status: string }) {
     CANCELLED:  "bg-red-400 text-black border-black",
   };
   return (
-    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${map[status] ?? "bg-white/10 text-white border-white/20"}`}>
+    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border ${map[status] ?? "bg-white/10 text-white border-white/20"}`}>
       {status}
     </span>
   );
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
     <div>
       {/* ── Page header ── */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black shadow-[3px_3px_0px_#000]">
+        <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black">
           <LayoutDashboard className="w-4 h-4 text-black" />
         </div>
         <div>
@@ -92,10 +92,10 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             {kpis.map((kpi) => (
               <Link key={kpi.label} href={kpi.href}>
-                <AdminCard className="p-5 group hover:shadow-[6px_6px_0px_rgba(255,255,255,0.1)] transition-shadow cursor-pointer">
+                <AdminCard className="p-5 group hover: transition-shadow cursor-pointer">
                   <div className="flex items-start justify-between mb-4">
                     <div
-                      className="flex items-center justify-center w-9 h-9 border-2 border-black shadow-[2px_2px_0px_#000]"
+                      className="flex items-center justify-center w-9 h-9 border-2 border-black"
                       style={{ backgroundColor: kpi.accent }}
                     >
                       <kpi.icon className="w-4 h-4 text-black" />

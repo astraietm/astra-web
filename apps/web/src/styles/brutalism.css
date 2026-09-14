@@ -1,48 +1,37 @@
 /* TinkerHub-inspired Editorial Brutalist Styles */
 
-/* ========== Hard Offset Shadows ========== */
-.shadow-brutal-sm {
-  box-shadow: 2px 2px 0px 0px var(--color-shadow);
-}
-
-.shadow-brutal {
-  box-shadow: 4px 4px 0px 0px var(--color-shadow);
-}
-
-.shadow-brutal-lg {
-  box-shadow: 8px 8px 0px 0px var(--color-shadow);
-}
-
+/* ========== Hard Offset Shadows (Disabled) ========== */
+.shadow-brutal-sm,
+.shadow-brutal,
+.shadow-brutal-lg,
 .shadow-brutal-xl {
-  box-shadow: 12px 12px 0px 0px var(--color-shadow);
+  box-shadow: none !important;
 }
 
 /* ========== Mechanical Press ========== */
 .pressable-brutal {
   transition:
-    transform var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)),
-    box-shadow var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+    transform var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
 }
 
 @media (hover: hover) and (pointer: fine) {
   .pressable-brutal:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px 0px var(--color-shadow);
   }
 }
 
 .pressable-brutal:active {
   transform: translate(2px, 2px) scale(0.98);
-  box-shadow: 1px 1px 0px 0px var(--color-shadow);
 }
 
-/* ========== Graph Paper Background (TinkerHub signature) ========== */
+/* ========== Graph Paper Background (Configurable Grid) ========== */
 .bg-graph-paper {
-  background-color: var(--color-background);
+  background-color: #FFFFFF;
   background-image:
-    linear-gradient(to right, rgba(180, 180, 220, 0.25) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(180, 180, 220, 0.25) 1px, transparent 1px);
-  background-size: 24px 24px;
+    linear-gradient(to right, rgba(0, 0, 0, var(--bg-grid-opacity, 0.035)) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, var(--bg-grid-opacity, 0.035)) 1px, transparent 1px);
+  background-size: var(--bg-grid-size, 62px) var(--bg-grid-size, 62px);
+  background-attachment: fixed;
 }
 
 /* ========== Paper Texture Card ========== */
@@ -50,20 +39,18 @@
   background-color: #FAFAFA;
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23fafafa'/%3E%3Crect width='1' height='1' fill='%23f0f0f0' opacity='0.3'/%3E%3C/svg%3E");
-  box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: none !important;
   transition:
-    transform var(--duration-normal, 220ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)),
-    box-shadow var(--duration-normal, 220ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+    transform var(--duration-normal, 220ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
 }
 
-/* ========== Gingham / Checkered Pattern ========== */
+/* ========== Gingham / Checkered Pattern (TinkerHub authentic) ========== */
 .bg-gingham {
-  background-color: #B8D4FF;
+  background-color: #ffffff;
   background-image:
-    linear-gradient(45deg, rgba(255, 255, 255, 0.5) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.5) 75%),
-    linear-gradient(45deg, rgba(255, 255, 255, 0.5) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.5) 75%);
-  background-size: 40px 40px;
-  background-position: 0 0, 20px 20px;
+    linear-gradient(90deg, rgba(74, 158, 255, 0.45) 50%, transparent 50%),
+    linear-gradient(rgba(74, 158, 255, 0.45) 50%, transparent 50%);
+  background-size: 36px 36px;
 }
 
 /* ========== Black Angled Banner / Stamp ========== */
@@ -72,11 +59,12 @@
   background-color: #000000;
   color: #FFFFFF;
   padding: 0.75rem 2rem;
-  font-family: var(--font-pixel);
-  font-weight: 700;
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+  line-height: 1;
   transform: skewX(-2deg);
   transition:
     transform var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)),
@@ -104,23 +92,22 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   border: 2px solid #000;
-  box-shadow: 2px 2px 0px 0px #000;
+  box-shadow: none !important;
   transform: rotate(-2deg);
   transition:
-    transform var(--duration-normal, 220ms) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
-    box-shadow var(--duration-fast, 160ms) var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+    transform var(--duration-normal, 220ms) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
 }
 
 @media (hover: hover) and (pointer: fine) {
   .sticker-badge:hover {
     transform: rotate(0deg) translateY(-2px) scale(1.04);
-    box-shadow: 3px 3px 0px 0px #000;
+    box-shadow: none !important;
   }
 }
 
 .sticker-badge:active {
   transform: rotate(0deg) translateY(1px) scale(0.97);
-  box-shadow: 1px 1px 0px 0px #000;
+  box-shadow: none !important;
 }
 
 .sticker-yellow { background-color: var(--color-yellow); color: #000; }

@@ -25,7 +25,7 @@ export const Eyebrow: React.FC<EyebrowProps> = ({
 
   return (
     <div
-      className={`inline-flex items-center gap-2 font-mono text-xs font-semibold tracking-wider uppercase px-2.5 py-1 bg-surface-elevated/80 border ${accentColors[accent]} shadow-sm ${className}`}
+      className={`inline-flex items-center gap-2 font-mono text-xs font-semibold tracking-wider uppercase px-2.5 py-1 bg-surface-elevated/80 border ${accentColors[accent]} ${className}`}
     >
       <span className="inline-block w-1.5 h-1.5 bg-current animate-pulse" />
       <span>{children}</span>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
+@import '../styles/fonts.css';
 @import '../styles/tokens.css';
 @import '../styles/brutalism.css';
 
@@ -7,19 +7,22 @@
 @tailwind utilities;
 
 @layer base {
-  * {
+  *, *::before, *::after {
     box-sizing: border-box;
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
 
   html {
-    scroll-behavior: smooth;
+    overflow-x: clip;
+    /* Lenis handles smooth scrolling */
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-sans);
-    overflow-x: hidden;
+    font-family: var(--font-body);
+    overflow-x: clip;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -33,21 +36,43 @@
 }
 
 @layer utilities {
-  /* Font Family Utilities */
-  .font-editorial {
-    font-family: var(--font-editorial);
-  }
-
-  .font-pixel {
-    font-family: var(--font-pixel);
+  /* Centralized Typography Classes */
+  .font-anton {
+    font-family: var(--font-anton);
   }
 
   .font-display {
     font-family: var(--font-display);
   }
 
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+
+  .font-serif-italic {
+    font-family: var(--font-serif);
+    font-style: italic;
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .font-pixel {
+    font-family: var(--font-pixel);
+  }
+
   .font-mono {
     font-family: var(--font-mono);
+  }
+
+  /* Backward Compatibility Aliases */
+  .font-editorial {
+    font-family: var(--font-serif);
+  }
+
+  .font-sans {
+    font-family: var(--font-body);
   }
 }
 

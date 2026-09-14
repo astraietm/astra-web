@@ -1,13 +1,15 @@
 :root {
   /* TinkerHub-inspired palette for ASTRA 2026 */
-  --color-background: #F0F0FA;
+  --color-background: #FFFFFF;
   --color-foreground: #0A0A0A;
   --color-surface: #FFFFFF;
   --color-surface-elevated: #F5F5FF;
   --color-muted: #E8E8F0;
   --color-muted-foreground: #6B6B80;
   --color-border: #0A0A0A;
-  --color-shadow: #0A0A0A;
+  --color-shadow: transparent;
+  --bg-grid-size: 62px;
+  --bg-grid-opacity: 0.025;
 
   /* TinkerHub Sticker Accent Palette */
   --color-pink: #F79CFF;
@@ -25,12 +27,16 @@
   --color-accent-blue: #2563EB;
   --color-accent-magenta: #EC4899;
 
-  /* Typography Families */
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Typography Families (Centralized Reference System) */
+  --font-anton: 'Anton', 'Bebas Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-anton);
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-editorial: var(--font-serif);
+  --font-body: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: var(--font-body);
+  --font-pixel: 'SF Pixelate', 'Pixelify Sans', monospace;
   --font-mono: 'JetBrains Mono', 'Space Mono', Menlo, Consolas, monospace;
-  --font-editorial: 'Instrument Serif', 'Georgia', 'Times New Roman', serif;
-  --font-pixel: 'Pixelify Sans', 'Courier New', monospace;
+  --font-gothic: 'UnifrakturCook', serif;
 
   /* Spacing Scale */
   --space-xs: 0.25rem;

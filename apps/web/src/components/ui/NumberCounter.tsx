@@ -7,6 +7,7 @@ interface NumberCounterProps {
   suffix?: string;
   duration?: number;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const NumberCounter: React.FC<NumberCounterProps> = ({
@@ -14,6 +15,7 @@ export const NumberCounter: React.FC<NumberCounterProps> = ({
   suffix = '',
   duration = 1400,
   className = '',
+  style,
 }) => {
   const [count, setCount] = useState(0);
   const elementRef = useRef<HTMLSpanElement>(null);
@@ -62,17 +64,16 @@ export const NumberCounter: React.FC<NumberCounterProps> = ({
   }, [target, duration]);
 
   const formattedDisplay = () => {
-    if (suffix.includes('K')) {
-      // If target is in thousands, format nicely
-      const kVal = (count / 1000).toFixed(count >= 1000 && count % 1000 === 0 ? 0 : 0);
-      return `${count >= 1000 ? Math.floor(count / 1000) : count}${suffix}`;
-    }
     return `${count}${suffix}`;
   };
 
   return (
-    <span ref={elementRef} className={`font-display font-extrabold text-foreground ${className}`}>
-      {hasAnimated.current ? formattedDisplay() : `${Math.floor(target >= 1000 ? target / 1000 : target)}${suffix}`}
+    <span
+      ref={elementRef}
+      className={`inline-block ${className}`}
+      style={style}
+    >
+      {hasAnimated.current ? formattedDisplay() : `${count}${suffix}`}
     </span>
   );
 };

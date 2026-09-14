@@ -190,20 +190,20 @@ export default function RegisterPage() {
             </p>
             {registration.qr_code && (
               <div className="my-4">
-                <img src={registration.qr_code} alt="QR Ticket" className="w-48 h-48 mx-auto border-2 border-black shadow-[3px_3px_0px_#000]" />
+                <img src={registration.qr_code} alt="QR Ticket" className="w-48 h-48 mx-auto border-2 border-black" />
                 <p className="font-mono text-[10px] text-gray-500 mt-2">Show this QR at the venue</p>
               </div>
             )}
             <div className="flex gap-3 justify-center mt-6">
               <Link
                 href="/dashboard"
-                className="px-4 py-2 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[2px_2px_0px_#000]"
+                className="px-4 py-2 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors"
               >
                 My Registrations →
               </Link>
               <Link
                 href="/events"
-                className="px-4 py-2 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_#000]"
+                className="px-4 py-2 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-100 transition-colors"
               >
                 Back to Events
               </Link>
@@ -240,22 +240,22 @@ export default function RegisterPage() {
               <div>
                 <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Phone *</label>
                 <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required
-                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow" />
+                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow" />
               </div>
               <div>
                 <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">College *</label>
                 <input type="text" value={college} onChange={(e) => setCollege(e.target.value)} required
-                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow" />
+                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow" />
               </div>
               <div>
                 <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Department</label>
                 <input type="text" value={department} onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow" />
+                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow" />
               </div>
               <div>
                 <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">Year of Study</label>
                 <select value={yearOfStudy} onChange={(e) => setYearOfStudy(e.target.value)}
-                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow bg-white">
+                  className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow bg-white">
                   <option value="">Select</option>
                   <option value="1st Year">1st Year</option>
                   <option value="2nd Year">2nd Year</option>
@@ -275,7 +275,7 @@ export default function RegisterPage() {
                     <Users className="w-3.5 h-3.5" /> Team Name *
                   </label>
                   <input type="text" value={teamName} onChange={(e) => setTeamName(e.target.value)} required
-                    className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow" />
+                    className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow" />
                 </div>
                 <div>
                   <label className="font-mono text-xs font-bold uppercase text-gray-700 mb-1 block">
@@ -283,13 +283,13 @@ export default function RegisterPage() {
                   </label>
                   <textarea value={teamMembers} onChange={(e) => setTeamMembers(e.target.value)} rows={3}
                     placeholder="Name 1, Name 2, Name 3"
-                    className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm shadow-[2px_2px_0px_#000] focus:outline-none focus:ring-2 focus:ring-th-yellow resize-none" />
+                    className="w-full px-3 py-2.5 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow resize-none" />
                 </div>
               </>
             )}
 
             <button type="submit" disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black text-white font-display font-bold text-sm uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000] disabled:opacity-50">
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black text-white font-display font-bold text-sm uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-colors disabled:opacity-50">
               {submitting ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> PROCESSING...</>
               ) : event?.requires_payment ? (

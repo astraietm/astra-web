@@ -27,14 +27,14 @@ export const PartnersSection: React.FC = () => {
                   key={partner.abbrev}
                   className="flex items-center justify-center h-14 sm:h-16 px-6 border border-gray-200 bg-white"
                 >
-                  <span className="font-display font-bold text-sm sm:text-base text-black tracking-wider uppercase">
+                  <span className="font-display text-lg sm:text-xl text-black tracking-wider uppercase leading-none">
                     {partner.abbrev}
                   </span>
                 </div>
               ))}
             </div>
             <div className="border-t border-gray-200 pt-3">
-              <p className="font-editorial italic text-sm text-gray-400">
+              <p className="font-serif italic text-base text-gray-500 font-normal">
                 Funding partners
               </p>
             </div>
@@ -48,14 +48,14 @@ export const PartnersSection: React.FC = () => {
                   key={partner.abbrev}
                   className="flex items-center justify-center h-14 sm:h-16 px-6 border border-gray-200 bg-white"
                 >
-                  <span className="font-display font-bold text-sm sm:text-base text-black tracking-wider uppercase">
+                  <span className="font-display text-lg sm:text-xl text-black tracking-wider uppercase leading-none">
                     {partner.abbrev}
                   </span>
                 </div>
               ))}
             </div>
             <div className="border-t border-gray-200 pt-3">
-              <p className="font-editorial italic text-sm text-gray-400">
+              <p className="font-serif italic text-base text-gray-500 font-normal">
                 Institutional partners
               </p>
             </div>

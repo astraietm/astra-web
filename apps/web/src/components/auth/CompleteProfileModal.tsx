@@ -64,7 +64,7 @@ const CompleteProfileModal: React.FC = () => {
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          className="relative w-full max-w-md bg-white border-2 border-black shadow-[6px_6px_0px_#000] overflow-hidden"
+          className="relative w-full max-w-md bg-white border-2 border-black overflow-hidden"
         >
           <div className="bg-black text-white p-4 flex items-center justify-between">
             <h2 className="font-pixel text-sm font-bold uppercase tracking-wider">
@@ -92,7 +92,7 @@ const CompleteProfileModal: React.FC = () => {
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+91 98765 43210"
                 required
-                className="w-full px-4 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow shadow-[2px_2px_0px_#000]"
+                className="w-full px-4 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow"
               />
             </div>
 
@@ -106,7 +106,7 @@ const CompleteProfileModal: React.FC = () => {
                 onChange={(e) => setCollege(e.target.value)}
                 placeholder="KMCT Institute of Emerging Technology"
                 required
-                className="w-full px-4 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow shadow-[2px_2px_0px_#000]"
+                className="w-full px-4 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow"
               />
             </div>
 
@@ -119,14 +119,14 @@ const CompleteProfileModal: React.FC = () => {
                 value={usn}
                 onChange={(e) => setUsn(e.target.value)}
                 placeholder="Optional"
-                className="w-full px-4 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow shadow-[2px_2px_0px_#000]"
+                className="w-full px-4 py-3 border-2 border-black font-sans text-sm focus:outline-none focus:ring-2 focus:ring-th-yellow"
               />
             </div>
 
             <button
               type="submit"
               disabled={saving}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black text-white font-display font-bold text-sm uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000] disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black text-white font-display font-bold text-sm uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-colors disabled:opacity-50"
             >
               {saving ? (
                 <>

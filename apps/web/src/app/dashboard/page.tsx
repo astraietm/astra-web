@@ -83,7 +83,7 @@ export default function DashboardPage() {
         <PixelFrame dotGrid cornerAccent className="p-6 mb-8">
           <div className="flex items-center gap-4">
             {user?.avatar && (
-              <img src={user.avatar} alt="" className="w-14 h-14 rounded-full border-2 border-black shadow-[2px_2px_0px_#000]" />
+              <img src={user.avatar} alt="" className="w-14 h-14 rounded-full border-2 border-black" />
             )}
             <div>
               <p className="font-display font-bold text-lg text-black">{user?.name}</p>
@@ -110,7 +110,7 @@ export default function DashboardPage() {
             </p>
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000]"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors"
             >
               <ArrowRight className="w-4 h-4" /> Browse Events
             </Link>

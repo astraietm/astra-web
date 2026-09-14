@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { StickerBadge } from "@/components/ui/StickerBadge";
+import { BlackBanner } from "@/components/ui/BlackBanner";
 import { PixelFrame } from "@/components/ui/PixelFrame";
 import { ImageStreamHero } from "@/components/ui/image-stream-hero";
 import api from "@/lib/api";
@@ -74,20 +75,16 @@ export default function GalleryPage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-28 pb-16">
         {/* Image Stream Hero */}
         {streamImages.length > 0 && (
-          <div className="relative rounded-2xl border-2 border-black overflow-hidden shadow-[6px_6px_0px_#000] bg-white mb-10">
+          <div className="relative rounded-2xl border-2 border-black overflow-hidden bg-white mb-10">
             <div className="p-6 sm:p-8 border-b-2 border-black bg-[#FAFAFC] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <StickerBadge color="yellow" rotation={-2}>WARGAME STREAM</StickerBadge>
-                  <span className="font-mono text-xs bg-black text-white px-2 py-0.5 font-bold">LIVE DISPATCH</span>
-                </div>
-                <h1 className="font-pixel text-3xl sm:text-5xl font-extrabold uppercase text-black">ARENA MOMENTS &amp; MEDIA</h1>
-                <p className="font-editorial italic text-xl sm:text-2xl text-gray-700 mt-1">
+                <BlackBanner size="md">WARGAME PHOTO ARCHIVE</BlackBanner>
+                <p className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-black mt-3 font-normal leading-tight">
                   Visual dispatches from the 24-hour CTF battle, hands-on labs, and keynotes.
                 </p>
               </div>
               <div className="flex-shrink-0">
-                <span className="font-mono text-xs text-gray-600 bg-white border-2 border-black px-3 py-1.5 shadow-[2px_2px_0px_#000]">
+                <span className="font-pixel text-[10px] sm:text-xs text-gray-700 bg-white border-2 border-black px-3 py-1.5 uppercase">
                   TOTAL CAPTURES: {items.length} VERIFIED
                 </span>
               </div>
@@ -99,19 +96,19 @@ export default function GalleryPage() {
         )}
 
         {/* Category Filters */}
-        <div className="bg-white border-2 border-black p-4 shadow-[4px_4px_0px_#000] mb-8">
+        <div className="bg-white border-2 border-black p-4 mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-mono text-xs font-bold text-gray-500 uppercase flex items-center gap-1 mr-1">
+              <span className="font-pixel text-[10px] text-gray-500 uppercase flex items-center gap-1 mr-1">
                 <Filter className="w-3.5 h-3.5" /> Category:
               </span>
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`relative px-3.5 py-1.5 text-xs font-display font-bold border-2 border-black uppercase transition-colors cursor-pointer select-none ${
+                  className={`relative px-3.5 py-1.5 text-xs font-body font-bold border-2 border-black uppercase transition-colors cursor-pointer select-none ${
                     activeCategory === cat
-                      ? "bg-th-pink text-black shadow-[2px_2px_0px_#000]"
+                      ? "bg-th-pink text-black"
                       : "bg-[#F0F0FA] text-black hover:bg-gray-100"
                   }`}
                 >
@@ -119,13 +116,13 @@ export default function GalleryPage() {
                 </button>
               ))}
             </div>
-            <span className="font-mono text-xs text-gray-500">
-              Showing {filteredItems.length} of {items.length} Photos
+            <span className="font-body text-xs text-gray-500 font-medium">
+              Showing {filteredItems.length} verified capture{filteredItems.length !== 1 ? "s" : ""}
             </span>
           </div>
         </div>
 
-        {/* Loading */}
+        {/* Loading State */}
         {loading && (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
@@ -154,10 +151,10 @@ export default function GalleryPage() {
                       </div>
                     </div>
                     <div className="p-5 bg-white space-y-2">
-                      <h2 className="font-display font-bold text-lg sm:text-xl text-black group-hover:text-th-pink transition-colors">
+                      <h2 className="font-display text-2xl uppercase text-black group-hover:text-th-pink transition-colors leading-none">
                         {item.title}
                       </h2>
-                      <div className="pt-2 border-t border-gray-200 flex items-center gap-1.5 text-xs font-mono text-green-700 font-semibold">
+                      <div className="pt-2 border-t border-gray-200 flex items-center gap-1.5 text-[10px] font-pixel text-green-700 uppercase tracking-wider">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>Verified Capture</span>
                       </div>
@@ -180,7 +177,7 @@ export default function GalleryPage() {
               Join 500+ researchers, ethical hackers, and security engineers at KMCT Campus, Calicut.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
-              <Link href="/events" className="px-6 py-3.5 bg-black text-white font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-all shadow-[3px_3px_0px_#000]">
+              <Link href="/events" className="px-6 py-3.5 bg-black text-white font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-all">
                 VIEW EVENTS SCHEDULE &amp; PASSES →
               </Link>
             </div>

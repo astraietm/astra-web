@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { ReactLenis } from 'lenis/react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from '@/lib/auth-context';
 import { SystemProvider } from '@/lib/system-context';
@@ -12,16 +13,27 @@ const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env
 
 export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <AuthProvider>
-        <SystemProvider>
-          <ToastProvider>
-            {children}
-            <LoginModal />
-            <CompleteProfileModal />
-          </ToastProvider>
-        </SystemProvider>
-      </AuthProvider>
-    </GoogleOAuthProvider>
+    <ReactLenis
+      root
+      options={{
+        lerp: 0.1,
+        duration: 1.2,
+        smoothWheel: true,
+        autoToggle: true,
+        anchors: true,
+      }}
+    >
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <AuthProvider>
+          <SystemProvider>
+            <ToastProvider>
+              {children}
+              <LoginModal />
+              <CompleteProfileModal />
+            </ToastProvider>
+          </SystemProvider>
+        </AuthProvider>
+      </GoogleOAuthProvider>
+    </ReactLenis>
   );
 };

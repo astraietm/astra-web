@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
               ASTRA 2026
             </span>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-gray-500">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-body text-gray-600 font-medium">
             <Link href="/about" className="hover:text-black transition-colors">About</Link>
             <Link href="/contact" className="hover:text-black transition-colors">Contact</Link>
             <Link href="/events" className="hover:text-black transition-colors">Events</Link>
@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
           </div>
         </div>
         <div className="text-center">
-          <p className="font-mono text-xs sm:text-sm text-gray-400 tracking-wide">
+          <p className="font-body text-xs sm:text-sm text-gray-500 tracking-wide font-medium">
             crafted @ dept. of cyber security, kmct &lt;3
           </p>
         </div>

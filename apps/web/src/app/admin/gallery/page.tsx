@@ -46,7 +46,7 @@ export default function AdminGallery() {
     <div>
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 bg-[#F79CFF] border-2 border-black shadow-[3px_3px_0px_#000]">
+        <div className="flex items-center justify-center w-9 h-9 bg-[#F79CFF] border-2 border-black">
           <ImageIcon className="w-4 h-4 text-black" />
         </div>
         <div>
@@ -56,7 +56,7 @@ export default function AdminGallery() {
       </div>
 
       {/* Add form */}
-      <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5 mb-8">
+      <div className="border-2 border-white/20 bg-[#161622] p-5 mb-8">
         <div className="flex items-center gap-2 mb-4">
           <Plus className="w-4 h-4 text-[#FFE816]" />
           <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Add New Photo</span>
@@ -81,7 +81,7 @@ export default function AdminGallery() {
           />
           <button
             type="submit" disabled={uploading}
-            className="flex items-center gap-2 px-5 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap"
           >
             {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
             Add Photo
@@ -100,7 +100,7 @@ export default function AdminGallery() {
           {items.map((item: any) => (
             <div
               key={item.id}
-              className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] overflow-hidden group"
+              className="border-2 border-white/20 bg-[#161622] overflow-hidden group"
             >
               <div className="aspect-[4/3] bg-[#0C0C14] overflow-hidden">
                 <img

@@ -68,7 +68,7 @@ export const StoriesSection: React.FC = () => {
             <BlackBanner size="md">
               STORIES FROM THE ARENA
             </BlackBanner>
-            <p className="font-editorial italic text-2xl text-black mt-3">
+            <p className="font-serif italic text-2xl sm:text-3xl text-black mt-3 font-normal">
               Moments of high-stakes exploitation, defense drills, and breakthroughs.
             </p>
           </div>
@@ -83,7 +83,7 @@ export const StoriesSection: React.FC = () => {
         </div>
 
         {/* ── Dynamic 3D Image Corridor Element ── */}
-        <div className="relative mb-12 rounded-xl border-2 border-black overflow-hidden shadow-[6px_6px_0px_#000] bg-white">
+        <div className="relative mb-12 rounded-xl border-2 border-black overflow-hidden bg-white">
           <ImageStreamHero
             images={GALLERY_STREAM_IMAGES}
             cards={8}
@@ -96,25 +96,25 @@ export const StoriesSection: React.FC = () => {
                 <StickerBadge color="yellow" rotation={-2}>
                   WARGAME GALLERY STREAM
                 </StickerBadge>
-                <span className="font-mono text-xs bg-black text-white px-2.5 py-1 font-bold">
+                <span className="font-pixel text-[10px] bg-black text-white px-2.5 py-1 uppercase">
                   24H ARENA LOG
                 </span>
               </div>
-              <div className="text-center pointer-events-auto bg-white/80 backdrop-blur-sm border border-black p-4 max-w-md mx-auto shadow-[3px_3px_0px_#000]">
-                <p className="font-pixel text-xs text-gray-600 uppercase tracking-wider">
+              <div className="text-center pointer-events-auto bg-white/80 backdrop-blur-sm border border-black p-4 max-w-md mx-auto">
+                <p className="font-pixel text-[10px] text-gray-600 uppercase tracking-wider">
                   [ IMMERSIVE DISPATCH ]
                 </p>
-                <p className="font-editorial italic text-xl sm:text-2xl text-black">
+                <p className="font-serif italic text-xl sm:text-2xl text-black font-normal">
                   Watch the corridor of hackers, solvers, and cyber architects.
                 </p>
                 <Link
                   href="/events"
-                  className="inline-block mt-2 font-mono text-xs font-bold text-black hover:underline"
+                  className="inline-block mt-2 font-body text-xs font-bold text-black hover:underline"
                 >
                   View Full Oct 6-7 Schedule →
                 </Link>
               </div>
-              <div className="flex justify-between items-center text-[11px] font-mono text-black/70 pointer-events-auto">
+              <div className="flex justify-between items-center text-[11px] font-pixel text-black/80 pointer-events-auto uppercase">
                 <span>✦ 500+ CAPTURED FLAGS</span>
                 <span>✦ KMCT IETM CALICUT</span>
               </div>
@@ -127,7 +127,7 @@ export const StoriesSection: React.FC = () => {
           {MOMENTS.map((item, index) => (
             <div
               key={index}
-              className="group relative border-2 border-black bg-white shadow-[4px_4px_0px_#000] overflow-hidden transition-[transform,box-shadow] duration-200 ease-[var(--ease-out)] hover:translate-x-1 hover:-translate-y-1 hover:shadow-[7px_7px_0px_#000] cursor-pointer"
+              className="group relative border-2 border-black bg-white overflow-hidden transition-[transform] duration-200 ease-[var(--ease-out)] hover:translate-x-1 hover:-translate-y-1 cursor-pointer"
             >
               {/* Photo */}
               <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 border-b-2 border-black">
@@ -148,18 +148,18 @@ export const StoriesSection: React.FC = () => {
               {/* Card Footer Content */}
               <div className="p-4 bg-white">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-mono text-[10px] text-gray-500 font-bold uppercase">
+                  <span className="font-pixel text-[9px] text-gray-500 uppercase tracking-wider">
                     FIELD DISPATCH
                   </span>
-                  <span className="font-mono text-[10px] text-green-700 font-semibold flex items-center gap-1.5">
+                  <span className="font-pixel text-[9px] text-green-700 uppercase tracking-wider flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse-led" />
                     VERIFIED
                   </span>
                 </div>
-                <h3 className="font-display font-bold text-base sm:text-lg text-black group-hover:text-th-pink transition-colors duration-160">
+                <h3 className="font-display font-normal text-xl sm:text-2xl text-black group-hover:text-th-pink transition-colors duration-160 uppercase leading-tight">
                   {item.title}
                 </h3>
-                <p className="font-editorial italic text-sm text-gray-600 mt-0.5">
+                <p className="font-serif italic text-base text-gray-600 mt-0.5 font-normal">
                   {item.speaker}
                 </p>
               </div>
@@ -171,7 +171,7 @@ export const StoriesSection: React.FC = () => {
         <div className="mt-10 text-center">
           <Link
             href="/gallery"
-            className="inline-block px-6 py-3 bg-black text-white font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black active:scale-[0.98] transition-[background-color,color,transform,box-shadow] duration-160 ease-[var(--ease-out)] shadow-[3px_3px_0px_#000]"
+            className="inline-block px-7 py-3.5 bg-black text-white font-display text-base uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black active:scale-[0.98] transition-[background-color,color,transform] duration-160 ease-[var(--ease-out)]"
           >
             VIEW FULL PHOTO GALLERY (8 CAPTURES) →
           </Link>
