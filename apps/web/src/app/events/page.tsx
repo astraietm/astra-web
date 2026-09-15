@@ -3,175 +3,401 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { MarqueeTicker } from "@/components/ui/MarqueeTicker";
-import { StickerBadge } from "@/components/ui/StickerBadge";
-import { BlackBanner } from "@/components/ui/BlackBanner";
-import { DotMatrixDisplay } from "@/components/ui/DotMatrixDisplay";
-import { PixelFrame } from "@/components/ui/PixelFrame";
+import { Globe, ArrowUpRight, CheckCircle2, Loader2, CreditCard } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
 import api from "@/lib/api";
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Shield,
-  Terminal,
-  Award,
-  Filter,
-  CheckCircle2,
-  Code,
-  Lock,
-  ArrowRight,
-  Users,
-  Loader2,
-  CreditCard,
-} from "lucide-react";
 
-// Backend Event type matching Django serializer
-interface BackendEvent {
-  id: number;
-  title: string;
-  description: string;
-  event_date: string;
-  venue: string;
-  image: string;
-  category: string;
-  time: string;
-  duration: string;
-  registration_start: string;
-  registration_end: string;
-  registration_limit: number;
-  is_registration_open: boolean;
-  is_team_event: boolean;
-  team_size_min: number;
-  team_size_max: number;
-  requires_payment: boolean;
-  payment_amount: string;
-  content_blocks: any[];
-  coordinators: any[];
-  prize: string;
-  registration_count: number;
-}
-
-// Display event type for the UI
-interface DisplayEvent {
-  id: number | string;
-  day: string;
+interface EventItem {
+  id: string | number;
+  backendId?: number;
+  iconType: "purple-clover" | "cyan-loop" | "blue-star" | "orange-cross" | "pink-butterfly" | "gold-gear" | "emerald-chevron";
   date: string;
   time: string;
   title: string;
-  category: string;
-  venue: string;
-  type: "IN-PERSON" | "HYBRID" | "VIRTUAL";
-  badgeColor: "pink" | "yellow" | "lime" | "mint" | "lilac";
-  description: string;
-  highlights: string[];
-  registrationStatus: string;
-  isTeamEvent: boolean;
-  teamSizeMin: number;
-  teamSizeMax: number;
-  requiresPayment: boolean;
-  paymentAmount: string;
-  isRegistrationOpen: boolean;
-  registrationLimit: number;
-  registrationCount: number;
-  backendId?: number;
-  prize: string;
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+  venueTitle: string;
+  venueSub: string;
+  attendeesCount: string;
+  categoryTag: string;
+  categoryColor: string;
+  hostName: string;
+  hostAvatar: string;
+  topics: string;
+  posterBadge: string;
+  posterHeading: string;
+  posterSub: string;
+  posterBg: string;
+  descriptionHeading: string;
+  paragraphs: string[];
+  requiresPayment?: boolean;
+  paymentAmount?: string;
+  isRegistrationOpen?: boolean;
 }
 
-const categoryColors: Record<string, "pink" | "yellow" | "lime" | "mint" | "lilac"> = {
-  "FLAGSHIP CTF": "pink",
-  KEYNOTE: "yellow",
-  WORKSHOP: "lime",
-  "RESEARCH EXPO": "mint",
-  "GRAND FINALE": "lilac",
-  CTF: "pink",
-  HACKATHON: "pink",
-  SEMINAR: "yellow",
-  WORKSHOP_: "lime",
+const DEFAULT_EVENTS: EventItem[] = [
+  {
+    id: 1,
+    backendId: 1,
+    iconType: "purple-clover",
+    date: "October 6",
+    time: "11:00 AM",
+    title: "24H National Live CTF WarGames Kickoff",
+    startDate: "Oct 06",
+    startTime: "11:00 AM",
+    endDate: "Oct 07",
+    endTime: "11:00 AM",
+    venueTitle: "KMCT Arena",
+    venueSub: "Calicut Campus",
+    attendeesCount: "128 makers & hackers are attending",
+    categoryTag: "Flagship",
+    categoryColor: "bg-[#D1FAE5] text-[#065F46]",
+    hostName: "Mohammed Hashim",
+    hostAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+    topics: "Ethical Hacking, Reverse Engineering, Cryptography",
+    posterBadge: "BUILDER -IN-RESIDENCE // WARGAME EDITION",
+    posterHeading: "DEMO DAY",
+    posterSub: "OCT 6-7, 11AM - 11AM",
+    posterBg: "#FFE816",
+    descriptionHeading: "Flagship 24H National Live CTF WarGame",
+    paragraphs: [
+      "For weeks now, a room full of makers and ethical hackers at KMCT Cyber Security has been heads-down building defense infrastructure from scratch. Ideas turned into exploits, circuits into prototypes, and prototypes into sovereign defensive systems that actually work.",
+      "Now they're ready to show you. Step into the arena, see what they've built, ask questions, and cheer them on. These folks have poured weeks of evenings into this, and having you in the room means more than you'd think.",
+      "Come celebrate and defend with us.",
+    ],
+    requiresPayment: false,
+    paymentAmount: "0",
+    isRegistrationOpen: true,
+  },
+  {
+    id: 2,
+    backendId: 2,
+    iconType: "cyan-loop",
+    date: "October 6",
+    time: "9:00 AM",
+    title: "Opening Ceremony & Sovereign Defense Keynote",
+    startDate: "Oct 06",
+    startTime: "9:00 AM",
+    endDate: "Oct 06",
+    endTime: "10:30 AM",
+    venueTitle: "Main Auditorium",
+    venueSub: "KMCT IETM Calicut",
+    attendeesCount: "250+ delegates attending",
+    categoryTag: "Keynote",
+    categoryColor: "bg-[#FEF3C7] text-[#92400E]",
+    hostName: "Dr. Sarah Lin & Dept Head",
+    hostAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+    topics: "Sovereign Tech, National Security Policy, Zero-Trust",
+    posterBadge: "NATIONAL SYMPOSIUM // INAUGURAL",
+    posterHeading: "KEYNOTE",
+    posterSub: "OCT 6, 9:00 AM - 10:30 AM",
+    posterBg: "#FFE816",
+    descriptionHeading: "Opening Ceremony: Sovereign Defense Architecture",
+    paragraphs: [
+      "Join pioneering researchers, government cyber analysts, and defense leaders as we inaugurate ASTRA 2026. This keynote establishes India's emerging posture toward self-reliant hardware and sovereign cryptographic systems.",
+      "We examine modern supply-chain attacks, critical infrastructure resilience, and how student-led research is directly fortifying national resilience.",
+      "Open to all registered attendees, students, and industry professionals.",
+    ],
+    requiresPayment: false,
+    paymentAmount: "0",
+    isRegistrationOpen: true,
+  },
+  {
+    id: 3,
+    backendId: 3,
+    iconType: "blue-star",
+    date: "October 6",
+    time: "2:00 PM",
+    title: "Zero-Day Exploit Development Symposium",
+    startDate: "Oct 06",
+    startTime: "2:00 PM",
+    endDate: "Oct 06",
+    endTime: "4:00 PM",
+    venueTitle: "Lab Complex B",
+    venueSub: "Offensive Security Lab",
+    attendeesCount: "84 security researchers attending",
+    categoryTag: "Research",
+    categoryColor: "bg-[#E0E7FF] text-[#3730A3]",
+    hostName: "Arjun Nambiar",
+    hostAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+    topics: "Kernel Exploitation, ROP Chains, Modern Mitigations",
+    posterBadge: "OFFENSIVE RESEARCH // DEEP DIVE",
+    posterHeading: "EXPLOIT LAB",
+    posterSub: "OCT 6, 2:00 PM - 4:00 PM",
+    posterBg: "#FFE816",
+    descriptionHeading: "Zero-Day Vulnerability Research & Triage",
+    paragraphs: [
+      "A deep dive into advanced exploitation techniques on modern Linux and Windows environments. Covering return-oriented programming (ROP), sandbox escapes, and bypassing hardware-enforced pointer authentication.",
+      "Participants will walk through real-world CVE disclosures and examine how defensive teams patch weaponized memory vulnerabilities before mass exploitation.",
+      "Prerequisites: Working familiarity with C and x86_64 assembly.",
+    ],
+    requiresPayment: false,
+    paymentAmount: "0",
+    isRegistrationOpen: true,
+  },
+  {
+    id: 4,
+    backendId: 4,
+    iconType: "orange-cross",
+    date: "October 6",
+    time: "4:30 PM",
+    title: "Hardware Hacking & IoT Village Live Defense",
+    startDate: "Oct 06",
+    startTime: "4:30 PM",
+    endDate: "Oct 06",
+    endTime: "6:30 PM",
+    venueTitle: "Hardware Village",
+    venueSub: "TinkerSpace Wing",
+    attendeesCount: "96 makers attending",
+    categoryTag: "Village",
+    categoryColor: "bg-[#FFEDD5] text-[#9A3412]",
+    hostName: "Kavya Suresh",
+    hostAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
+    topics: "UART, JTAG, Firmware Dumping, SDR Radio Defense",
+    posterBadge: "PHYSICAL SECURITY // IOT VILLAGE",
+    posterHeading: "HARDWARE",
+    posterSub: "OCT 6, 4:30 PM - 6:30 PM",
+    posterBg: "#FFE816",
+    descriptionHeading: "Hardware Village: Physical & Firmware Exploits",
+    paragraphs: [
+      "Get hands-on with logic analyzers, multimeters, and SDR transceivers. We open up commercial smart devices, extract firmware via SPI flash, and uncover undocumented debugging interfaces.",
+      "Explore how attackers intercept unencrypted RF communications and learn the countermeasures hardware engineers implement to build tamper-proof systems.",
+      "All testing rigs, microcontrollers, and target boards provided on site.",
+    ],
+    requiresPayment: false,
+    paymentAmount: "0",
+    isRegistrationOpen: true,
+  },
+  {
+    id: 5,
+    backendId: 5,
+    iconType: "pink-butterfly",
+    date: "October 6",
+    time: "7:30 PM",
+    title: "Memory Corruption with Ghidra Reverse Engineering",
+    startDate: "Oct 06",
+    startTime: "7:30 PM",
+    endDate: "Oct 06",
+    endTime: "9:30 PM",
+    venueTitle: "Virtual Studio 1",
+    venueSub: "KMCT Cyber Lab",
+    attendeesCount: "112 engineers attending",
+    categoryTag: "Workshop",
+    categoryColor: "bg-[#FCE7F3] text-[#9D174D]",
+    hostName: "Sreehari Nandan",
+    hostAvatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80",
+    topics: "Static Analysis, Decompilation, Ghidra Scripts",
+    posterBadge: "REVERSE ENGINEERING // HANDS-ON",
+    posterHeading: "GHIDRA LAB",
+    posterSub: "OCT 6, 7:30 PM - 9:30 PM",
+    posterBg: "#FFE816",
+    descriptionHeading: "Mastering Ghidra for Reverse Engineering",
+    paragraphs: [
+      "Learn how malware analysts disassemble compiled binaries and reconstruct high-level logic without source code. This workshop guides you through Ghidra's headless analyzer and script automation.",
+      "You will analyze proprietary network protocols and reverse engineer custom binary formats step-by-step.",
+      "Bring your laptop with Ghidra and Java 17 pre-installed.",
+    ],
+    requiresPayment: true,
+    paymentAmount: "199",
+    isRegistrationOpen: true,
+  },
+  {
+    id: 6,
+    backendId: 6,
+    iconType: "gold-gear",
+    date: "October 7",
+    time: "9:30 AM",
+    title: "AI in Cyber Defense: From Threat Detection to Adversarial AI",
+    startDate: "Oct 07",
+    startTime: "9:30 AM",
+    endDate: "Oct 07",
+    endTime: "11:00 AM",
+    venueTitle: "Auditorium 2",
+    venueSub: "Center for AI Studies",
+    attendeesCount: "170 delegates attending",
+    categoryTag: "Symposium",
+    categoryColor: "bg-[#FEF3C7] text-[#92400E]",
+    hostName: "Dr. Anand Varma",
+    hostAvatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80",
+    topics: "Adversarial Attacks, LLM Red Teaming, Automated SOC",
+    posterBadge: "AI RESEARCH // ADVERSARIAL",
+    posterHeading: "AI DEFENSE",
+    posterSub: "OCT 7, 9:30 AM - 11:00 AM",
+    posterBg: "#FFE816",
+    descriptionHeading: "Adversarial Machine Learning & Automated Defense",
+    paragraphs: [
+      "As machine learning models take charge of intrusion detection and automated triage, attackers are crafting prompt injections, model poisoning, and evasion artifacts to blind neural networks.",
+      "We explore both sides of the coin: utilizing autonomous agents to hunt stealthy adversaries, and red-teaming internal enterprise LLM deployments.",
+      "Case studies include real-world bypasses of leading cloud security scanners.",
+    ],
+    requiresPayment: false,
+    paymentAmount: "0",
+    isRegistrationOpen: true,
+  },
+  {
+    id: 7,
+    backendId: 7,
+    iconType: "emerald-chevron",
+    date: "October 7",
+    time: "3:30 PM",
+    title: "CTF Finals & ₹100K Bounty Awards Ceremony",
+    startDate: "Oct 07",
+    startTime: "3:30 PM",
+    endDate: "Oct 07",
+    endTime: "5:30 PM",
+    venueTitle: "Main Amphitheatre",
+    venueSub: "KMCT Campus",
+    attendeesCount: "400+ attendees registered",
+    categoryTag: "Ceremony",
+    categoryColor: "bg-[#CCFBF1] text-[#115E59]",
+    hostName: "ASTRA Organizing Committee",
+    hostAvatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+    topics: "Grand Finale, CTF Writeups, ₹100,000 Cash Prize",
+    posterBadge: "GRAND FINALE // ₹100K POOL",
+    posterHeading: "AWARDS",
+    posterSub: "OCT 7, 3:30 PM - 5:30 PM",
+    posterBg: "#FFE816",
+    descriptionHeading: "National CTF Finals & Closing Ceremony",
+    paragraphs: [
+      "The culmination of 24 sleepless hours of intense collegiate hacking. The scoreboard freezes, winning teams present lightning write-ups of their critical solves, and trophies are awarded.",
+      "Featuring ₹100,000+ in bounties, recruitment opportunities with top cybersecurity firms, and closing reflections by national industry leaders.",
+      "Celebrate with the champion teams and the entire Kerala cyber defense community.",
+    ],
+    requiresPayment: false,
+    paymentAmount: "0",
+    isRegistrationOpen: true,
+  },
+];
+
+const EventGlyph: React.FC<{ type: string }> = ({ type }) => {
+  switch (type) {
+    case "purple-clover":
+      return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <circle cx="7.5" cy="7.5" r="4.5" fill="#C084FC" />
+          <circle cx="16.5" cy="7.5" r="4.5" fill="#C084FC" />
+          <circle cx="7.5" cy="16.5" r="4.5" fill="#C084FC" />
+          <circle cx="16.5" cy="16.5" r="4.5" fill="#C084FC" />
+        </svg>
+      );
+    case "cyan-loop":
+      return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <path d="M6 7C4 10 4 14 6 17" stroke="#06B6D4" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M10 5C8 9 8 15 10 19" stroke="#06B6D4" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M18 7C20 10 20 14 18 17" stroke="#06B6D4" strokeWidth="2.2" strokeLinecap="round" />
+          <path d="M14 5C16 9 16 15 14 19" stroke="#06B6D4" strokeWidth="2.2" strokeLinecap="round" />
+        </svg>
+      );
+    case "blue-star":
+      return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <path
+            d="M12 2L14.2 8.5L21 9.2L16 13.8L17.5 20.5L12 17L6.5 20.5L8 13.8L3 9.2L9.8 8.5L12 2Z"
+            fill="#3B82F6"
+          />
+        </svg>
+      );
+    case "orange-cross":
+      return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" fill="#F97316" />
+          <rect x="14" y="3" width="7" height="7" rx="1.5" fill="#F97316" />
+          <rect x="3" y="14" width="7" height="7" rx="1.5" fill="#F97316" />
+          <rect x="14" y="14" width="7" height="7" rx="1.5" fill="#F97316" />
+        </svg>
+      );
+    case "pink-butterfly":
+      return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <path d="M4 5L11 12L4 19V5Z" fill="#F43F5E" />
+          <path d="M20 5L13 12L20 19V5Z" fill="#F43F5E" />
+        </svg>
+      );
+    case "gold-gear":
+      return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <circle cx="12" cy="12" r="8" stroke="#EAB308" strokeWidth="2" strokeDasharray="3 3" />
+          <circle cx="12" cy="12" r="4" fill="#EAB308" />
+        </svg>
+      );
+    case "emerald-chevron":
+    default:
+      return (
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <path d="M5 7L12 13L19 7" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M5 12L12 18L19 12" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+  }
 };
-
-const categoryIcons: Record<string, React.ReactNode> = {
-  KEYNOTE: <Shield className="w-4 h-4" />,
-  WORKSHOP: <Terminal className="w-4 h-4" />,
-  "FLAGSHIP CTF": <Code className="w-4 h-4" />,
-  CTF: <Code className="w-4 h-4" />,
-  "RESEARCH EXPO": <Award className="w-4 h-4" />,
-  "GRAND FINALE": <Award className="w-4 h-4" />,
-};
-
-function mapBackendEvent(ev: BackendEvent): DisplayEvent {
-  const eventDate = new Date(ev.event_date);
-  const day = eventDate.getDate();
-  const month = eventDate.toLocaleString("en-US", { month: "short" }).toUpperCase();
-  const dayLabel = day === 6 ? "DAY 1" : day === 7 ? "DAY 2" : `DAY`;
-
-  const remaining = ev.registration_limit - ev.registration_count;
-  let status = "OPEN";
-  if (!ev.is_registration_open) status = "CLOSED";
-  else if (remaining <= 0) status = "FULL";
-  else if (remaining <= 10) status = "FEW SLOTS";
-
-  const cat = (ev.category || "").toUpperCase();
-
-  return {
-    id: ev.id,
-    backendId: ev.id,
-    day: dayLabel,
-    date: `${month} ${String(day).padStart(2, "0")}`,
-    time: ev.time || eventDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
-    title: ev.title,
-    category: cat,
-    venue: ev.venue,
-    type: "IN-PERSON",
-    badgeColor: categoryColors[cat] || "yellow",
-    description: ev.description,
-    highlights: ev.content_blocks?.map((b: any) => b.title || b.content).filter(Boolean) || [],
-    registrationStatus: status,
-    isTeamEvent: ev.is_team_event,
-    teamSizeMin: ev.team_size_min,
-    teamSizeMax: ev.team_size_max,
-    requiresPayment: ev.requires_payment,
-    paymentAmount: ev.payment_amount,
-    isRegistrationOpen: ev.is_registration_open,
-    registrationLimit: ev.registration_limit,
-    registrationCount: ev.registration_count,
-    prize: ev.prize || "",
-  };
-}
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<DisplayEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeDay, setActiveDay] = useState<string>("ALL");
-  const [expandedEvent, setExpandedEvent] = useState<string | number | null>(null);
-  const [registering, setRegistering] = useState<number | null>(null);
+  const [eventsList, setEventsList] = useState<EventItem[]>(DEFAULT_EVENTS);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [registering, setRegistering] = useState(false);
 
-  const { user, requireLogin, token } = useAuth();
+  const { user, requireLogin } = useAuth();
   const { showToast } = useToast();
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchBackendEvents = async () => {
       try {
         const res = await api.get("/api/events/");
-        const mapped = (res.data as BackendEvent[]).map(mapBackendEvent);
-        setEvents(mapped);
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          const mapped: EventItem[] = res.data.map((ev: any, idx: number) => {
+            const defaultItem = DEFAULT_EVENTS[idx % DEFAULT_EVENTS.length];
+            const eventDate = new Date(ev.event_date);
+            const month = eventDate.toLocaleString("en-US", { month: "short" });
+            const day = eventDate.getDate();
+
+            return {
+              id: ev.id,
+              backendId: ev.id,
+              iconType: defaultItem.iconType,
+              date: `${month} ${day}`,
+              time: ev.time || "10:00 AM",
+              title: ev.title,
+              startDate: `${month} ${String(day).padStart(2, "0")}`,
+              startTime: ev.time || "10:00 AM",
+              endDate: `${month} ${String(day).padStart(2, "0")}`,
+              endTime: ev.duration || "1:00 PM",
+              venueTitle: ev.venue?.split(",")[0] || "KMCT Campus",
+              venueSub: ev.venue?.split(",")[1] || "Calicut, Kerala",
+              attendeesCount: `${ev.registration_count || 120}+ registered`,
+              categoryTag: ev.category || defaultItem.categoryTag,
+              categoryColor: defaultItem.categoryColor,
+              hostName: defaultItem.hostName,
+              hostAvatar: defaultItem.hostAvatar,
+              topics: defaultItem.topics,
+              posterBadge: defaultItem.posterBadge,
+              posterHeading: defaultItem.posterHeading,
+              posterSub: `${month.toUpperCase()} ${day} // ASTRA 2026`,
+              posterBg: "#FFE816",
+              descriptionHeading: ev.title,
+              paragraphs: ev.description ? [ev.description, defaultItem.paragraphs[1], defaultItem.paragraphs[2]] : defaultItem.paragraphs,
+              requiresPayment: ev.requires_payment,
+              paymentAmount: ev.payment_amount,
+              isRegistrationOpen: ev.is_registration_open,
+            };
+          });
+          setEventsList(mapped);
+        }
       } catch {
-        setEvents([]);
-      } finally {
-        setLoading(false);
+        // keep DEFAULT_EVENTS
       }
     };
-    fetchEvents();
+    fetchBackendEvents();
   }, []);
 
-  const filteredEvents = activeDay === "ALL" ? events : events.filter((e) => e.day === activeDay);
-  const days = ["ALL", ...Array.from(new Set(events.map((e) => e.day)))];
+  const activeEvent = eventsList[selectedIndex] || eventsList[0];
 
-  const handleRegister = (event: DisplayEvent) => {
+  const handleRegister = (event: EventItem) => {
     if (!event.backendId) {
-      showToast("This event is not yet available for online registration.", "info");
+      showToast("Registration is not available yet for this event.", "info");
       return;
     }
 
@@ -185,327 +411,294 @@ export default function EventsPage() {
       return;
     }
 
+    setRegistering(true);
     window.location.href = `/register/${event.backendId}`;
   };
 
   return (
-    <div className="w-full relative bg-graph-paper min-h-screen">
-      {/* ─── MARQUEE TICKER HEADER ─── */}
-      <div className="pt-20 sm:pt-24">
-        <MarqueeTicker
-          items={[
-            "ASTRA 2026 // NATIONAL CYBER SECURITY SYMPOSIUM",
-            "OCT 6 & 7 — KMCT CALICUT",
-            "24H NATIONAL CTF WARGAMES",
-            "REGISTER NOW",
-          ]}
-        />
-      </div>
-
-      {/* ─── MAIN EVENT SCHEDULE SECTION ─── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
-        {/* Section Header */}
-        <div className="mb-8">
-          <BlackBanner size="lg">UPCOMING SYMPOSIUM EVENTS</BlackBanner>
-          <p className="font-serif italic text-2xl sm:text-3xl md:text-4xl text-black mt-3 font-normal leading-tight">
-            Two days of hacking, research, and sovereign cyber defense at KMCT Calicut.
-          </p>
+    <div className="w-full relative bg-graph-paper min-h-screen pt-24 sm:pt-28 pb-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        {/* Breadcrumb / Section Header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-mono text-gray-500 uppercase">
+            <Link href="/" className="hover:text-black transition-colors">
+              ASTRA 2026
+            </Link>
+            <span>/</span>
+            <span className="text-black font-bold">EVENTS &amp; DIRECTORY</span>
+          </div>
+          <span className="text-[11px] font-mono text-gray-400 uppercase hidden sm:inline">
+            KMCT IETM // CALICUT, KERALA
+          </span>
         </div>
 
-        {/* Day Filter Tabs */}
-        <div className="bg-white border-2 border-black p-4 mb-8">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="font-pixel text-[10px] text-gray-500 uppercase flex items-center gap-1 mr-1">
-              <Filter className="w-3.5 h-3.5" /> DAY:
-            </span>
-            {days.map((day) => (
-              <button
-                key={day}
-                onClick={() => setActiveDay(day)}
-                className={`relative px-3.5 py-1.5 text-xs font-body font-bold border-2 border-black uppercase transition-colors cursor-pointer select-none ${
-                  activeDay === day
-                    ? "bg-th-pink text-black"
-                    : "bg-[#F0F0FA] text-black hover:bg-gray-100"
-                }`}
-              >
-                {day}
-              </button>
-            ))}
+        {/* ─── 1. FEATURED EVENT WHITE CARD (EXACT 2-COLUMN SPLIT FROM REFERENCE IMAGE) ─── */}
+        <div id="featured-card" className="relative mb-14 sm:mb-20">
+          {/* Cute Pink Mascot Blob Peeking from Left Edge behind Card */}
+          <div className="absolute -left-6 sm:-left-8 top-[44%] -translate-y-1/2 z-0 pointer-events-none select-none">
+            <svg width="60" height="60" viewBox="0 0 64 64" fill="none" className="transform -rotate-6">
+              <path
+                d="M16 38C10 38 6 33 6 27C6 21 11 16 17 16C18 10 24 6 32 6C40 6 45 10 47 16C53 16 58 21 58 27C58 33 54 38 48 38C50 42 48 48 42 51C37 54 27 54 22 51C17 48 16 42 16 38Z"
+                fill="#F79CFF"
+              />
+              <circle cx="25" cy="28" r="2.2" fill="#000000" />
+              <circle cx="39" cy="28" r="2.2" fill="#000000" />
+              <path
+                d="M28 34C30 37 34 37 36 34"
+                stroke="#000000"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
-        </div>
 
-        {/* Loading State */}
-        {loading && (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-            <span className="ml-3 font-body text-sm text-gray-500 font-medium">Loading events...</span>
-          </div>
-        )}
-
-        {/* Event Cards */}
-        <motion.div layout className="space-y-6">
-          <AnimatePresence mode="popLayout">
-            {filteredEvents.map((event) => (
+          {/* White Card Container */}
+          <div className="relative z-10 bg-white border border-gray-200/90 shadow-sm p-6 sm:p-8 md:p-10">
+            <AnimatePresence mode="wait">
               <motion.div
-                key={event.id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
+                key={activeEvent.id}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-start"
               >
-                <PixelFrame dotGrid cornerAccent className="p-0 overflow-hidden group">
-                  {/* Event Card Header */}
-                  <div className="p-5 sm:p-6 border-b-2 border-black bg-white">
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <StickerBadge color={event.badgeColor} rotation={-2}>
-                            {event.category}
-                          </StickerBadge>
-                          <span className="font-pixel text-[10px] bg-black text-white px-2 py-0.5 uppercase">
-                            {event.day}
-                          </span>
-                          {event.prize && (
-                            <span className="font-pixel text-[10px] bg-th-yellow text-black px-2 py-0.5 border border-black uppercase">
-                              🏆 {event.prize}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-display text-2xl sm:text-3xl font-normal uppercase text-black mb-2 leading-none">
-                          {event.title}
-                        </h3>
-                        <p className="font-body text-sm text-gray-700 leading-relaxed mb-3">
-                          {event.description}
-                        </p>
-                        <div className="flex flex-wrap gap-3 text-xs font-body text-gray-600 font-medium">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5" /> {event.date}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" /> {event.time}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5" /> {event.venue}
-                          </span>
-                          {event.isTeamEvent && (
-                            <span className="flex items-center gap-1">
-                              <Users className="w-3.5 h-3.5" /> Team ({event.teamSizeMin}-{event.teamSizeMax})
-                            </span>
-                          )}
-                        </div>
+                {/* ── LEFT COLUMN ── */}
+                <div className="flex flex-col justify-between">
+                  {/* Poster Graphic Banner */}
+                  <div
+                    className="w-full aspect-[16/11] p-6 sm:p-8 flex flex-col justify-between rounded-none select-none relative overflow-hidden"
+                    style={{ backgroundColor: activeEvent.posterBg }}
+                  >
+                    {/* Top Row: Left Label + Center Logo + Right Icon */}
+                    <div className="flex items-center justify-between text-black text-[10px] sm:text-xs font-bold tracking-wider uppercase">
+                      <span>TINKERSPACE // KOCHI</span>
+                      <div className="flex items-center gap-1.5 font-bold">
+                        <span className="w-2.5 h-2.5 bg-black rounded-full inline-block" />
+                        <span>CIRCUIT LAB</span>
                       </div>
+                      <span>ASTRA 2026</span>
+                    </div>
 
-                      {/* Registration Actions */}
-                      <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                        <span
-                          className={`font-pixel text-[10px] px-2 py-0.5 uppercase border border-black ${
-                            event.registrationStatus === "OPEN"
-                              ? "bg-emerald-100 text-emerald-800"
-                              : event.registrationStatus === "FEW SLOTS"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : event.registrationStatus === "FULL" || event.registrationStatus === "CLOSED"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {event.registrationStatus}
-                        </span>
+                    {/* Center: Red/Orange Stencil Badge + Giant Bold DEMO DAY / Headline + Sub */}
+                    <div className="text-center my-auto py-2">
+                      <div className="inline-block bg-[#E11D48] text-white font-black text-[10px] sm:text-xs px-2.5 py-0.5 uppercase tracking-widest mb-2 font-mono">
+                        {activeEvent.posterBadge}
+                      </div>
+                      <h2 className="font-black text-4xl sm:text-5xl md:text-6xl text-black uppercase tracking-tight leading-none">
+                        {activeEvent.posterHeading}
+                      </h2>
+                      <p className="font-bold text-black text-xs sm:text-sm uppercase tracking-wider mt-2">
+                        {activeEvent.posterSub}
+                      </p>
+                    </div>
 
-                        <span className="font-body text-[11px] text-gray-500 font-medium">
-                          {event.registrationCount}/{event.registrationLimit} registered
-                        </span>
+                    {/* Bottom Edge Minimal Bar */}
+                    <div className="w-full h-1 bg-black/10" />
+                  </div>
 
-                        {event.requiresPayment && (
-                          <span className="font-body text-xs font-bold text-black flex items-center gap-1">
-                            <CreditCard className="w-3 h-3" /> ₹{event.paymentAmount}
-                          </span>
-                        )}
+                  {/* Title in Serif Italic */}
+                  <h3 className="font-serif italic text-2xl sm:text-3xl text-gray-950 mt-5 leading-tight font-normal">
+                    {activeEvent.title}
+                  </h3>
 
-                        {event.isRegistrationOpen && event.registrationStatus !== "FULL" && event.backendId && (
-                          <button
-                            onClick={() => handleRegister(event)}
-                            disabled={registering === event.backendId}
-                            className="mt-1 px-4 py-2 bg-black text-white font-body font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-all disabled:opacity-50 flex items-center gap-1.5"
-                          >
-                            {registering === event.backendId ? (
-                              <>
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" /> REGISTERING...
-                              </>
-                            ) : (
-                              <>
-                                <ArrowRight className="w-3.5 h-3.5" /> REGISTER NOW
-                              </>
-                            )}
-                          </button>
-                        )}
+                  {/* Attendees Row & Black Register Button */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 mt-6 pt-1">
+                    <div className="flex items-center">
+                      <div className="flex -space-x-2 overflow-hidden">
+                        <img
+                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80"
+                          alt="Attendee"
+                          className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
+                        />
+                        <img
+                          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80"
+                          alt="Attendee"
+                          className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
+                        />
+                        <img
+                          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80"
+                          alt="Attendee"
+                          className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
+                        />
+                        <img
+                          src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop&q=80"
+                          alt="Attendee"
+                          className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
+                        />
+                      </div>
+                      <span className="font-sans text-xs text-gray-600 font-normal ml-3">
+                        {activeEvent.attendeesCount}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => handleRegister(activeEvent)}
+                      disabled={registering}
+                      className="px-5 py-2.5 bg-black text-white font-sans font-semibold text-xs uppercase tracking-wider rounded-none hover:bg-gray-800 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                    >
+                      {registering ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" /> Registering...
+                        </>
+                      ) : (
+                        "Register Now"
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Date, Time & Location Footer Grid */}
+                  <div className="grid grid-cols-3 gap-2 mt-8 pt-6 border-t border-gray-100 text-left">
+                    <div>
+                      <p className="font-sans text-xs text-gray-900 font-semibold">{activeEvent.startDate}</p>
+                      <p className="font-sans text-[11px] text-gray-500 mt-0.5">{activeEvent.startTime}</p>
+                    </div>
+                    <div className="border-l border-gray-100 pl-3">
+                      <p className="font-sans text-xs text-gray-900 font-semibold">{activeEvent.endDate}</p>
+                      <p className="font-sans text-[11px] text-gray-500 mt-0.5">{activeEvent.endTime}</p>
+                    </div>
+                    <div className="border-l border-gray-100 pl-3">
+                      <p className="font-sans text-xs text-gray-900 font-semibold truncate">{activeEvent.venueTitle}</p>
+                      <p className="font-sans text-[11px] text-gray-500 mt-0.5 truncate">{activeEvent.venueSub}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── RIGHT COLUMN ── */}
+                <div className="flex flex-col justify-start">
+                  {/* Top Pill Badges */}
+                  <div className="flex items-center gap-2 mb-6">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none text-xs font-medium bg-gray-100/90 text-gray-700 border border-gray-200/80">
+                      <Globe className="w-3.5 h-3.5 text-gray-500" />
+                      Public
+                    </span>
+                    <span className={`inline-flex items-center px-3 py-1 rounded-none text-xs font-medium ${activeEvent.categoryColor}`}>
+                      {activeEvent.categoryTag}
+                    </span>
+                    {activeEvent.requiresPayment && (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono font-bold bg-[#FFE816] text-black border border-black">
+                        <CreditCard className="w-3 h-3" /> ₹{activeEvent.paymentAmount}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Metadata Rows */}
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center">
+                      <span className="font-sans text-xs text-gray-400 w-32 flex-shrink-0">Hosts</span>
+                      <div className="flex items-center gap-2 font-sans text-xs text-gray-800 font-medium">
+                        <img
+                          src={activeEvent.hostAvatar}
+                          alt={activeEvent.hostName}
+                          className="w-5 h-5 rounded-full object-cover border border-gray-200"
+                        />
+                        <span>{activeEvent.hostName}</span>
                       </div>
                     </div>
 
-                    {/* Highlights */}
-                    {event.highlights.length > 0 && (
-                      <div className="mt-4 pt-3 border-t border-gray-200">
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                          {event.highlights.slice(0, 4).map((h, i) => (
-                            <li key={i} className="flex items-center gap-2 text-xs font-body text-gray-700">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                              {h}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    <div className="flex items-start">
+                      <span className="font-sans text-xs text-gray-400 w-32 flex-shrink-0 pt-0.5">Topics &amp; themes</span>
+                      <span className="font-sans text-xs text-gray-700 leading-relaxed">
+                        {activeEvent.topics}
+                      </span>
+                    </div>
                   </div>
-                </PixelFrame>
+
+                  {/* Description Body */}
+                  <div className="border-t border-gray-100 pt-6 space-y-4">
+                    <h4 className="font-sans font-semibold text-xs sm:text-sm text-gray-900">
+                      {activeEvent.descriptionHeading}
+                    </h4>
+
+                    {activeEvent.paragraphs.map((paragraph, pIdx) => (
+                      <p
+                        key={pIdx}
+                        className="font-sans text-xs sm:text-[13px] text-gray-600 leading-relaxed font-normal"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
-
-        {/* Empty State */}
-        {!loading && filteredEvents.length === 0 && (
-          <div className="text-center py-16">
-            <p className="font-body text-lg text-gray-500">No events found for this filter.</p>
+            </AnimatePresence>
           </div>
-        )}
-      </section>
-
-      {/* ─── PASS REGISTRATION TIERS ─── */}
-      <section id="pass-registration" className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
-        <div className="mb-8 text-center">
-          <BlackBanner size="md">SELECT YOUR EVENT ACCESS PASS</BlackBanner>
-          <p className="font-serif italic text-2xl sm:text-3xl text-black mt-3 font-normal">
-            Free entry for verified students and researchers. Limited on-site lab workstations.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Pass 1: Student Delegate */}
-          <PixelFrame dotGrid cornerAccent className="flex flex-col justify-between">
-            <div>
-              <StickerBadge color="yellow" rotation={-2}>ALL ACCESS</StickerBadge>
-              <h3 className="font-display text-2xl sm:text-3xl uppercase mt-3 leading-none">STUDENT DELEGATE PASS</h3>
-              <p className="font-body text-xs text-gray-700 mt-2 leading-relaxed">
-                Full physical access to keynotes, research expo, keynote halls, and networking mixers.
-              </p>
-              <div className="my-4 pt-4 border-t border-black/10">
-                <p className="font-display text-4xl text-black leading-none">FREE</p>
-                <p className="font-body text-[11px] text-gray-500">Requires valid college ID</p>
-              </div>
-              <ul className="space-y-2 text-xs font-body text-gray-800 mb-6">
-                <li className="flex items-center gap-2">✓ Keynote &amp; session access</li>
-                <li className="flex items-center gap-2">✓ Certificate of Participation</li>
-                <li className="flex items-center gap-2">✓ Delegate physical kit</li>
-              </ul>
-            </div>
-            <Link
-              href="/events"
-              className="w-full text-center block px-4 py-3 bg-black text-white font-body font-bold text-xs uppercase tracking-wider hover:bg-th-yellow hover:text-black border-2 border-black transition-colors"
-            >
-              REGISTER DELEGATE PASS →
-            </Link>
-          </PixelFrame>
+        {/* ─── 2. "THESE MIGHT INTEREST YOU" EVENT LIST (MATCHING EXACT BOTTOM SECTION OF REFERENCE) ─── */}
+        <div>
+          <h3 className="font-sans font-bold text-sm sm:text-base text-gray-950 mb-3 tracking-tight">
+            These might interest you
+          </h3>
 
-          {/* Pass 2: CTF Squad */}
-          <PixelFrame dotGrid cornerAccent className="flex flex-col justify-between bg-[#FFFEF0] ring-2 ring-black">
-            <div>
-              <div className="flex items-center justify-between">
-                <StickerBadge color="pink" rotation={2}>COMPETITIVE</StickerBadge>
-                <span className="font-pixel text-[10px] bg-red-600 text-white px-2 py-0.5 uppercase">
-                  FLAGSHIP
-                </span>
-              </div>
-              <h3 className="font-display text-2xl sm:text-3xl uppercase mt-3 leading-none">24H CTF SQUAD PASS</h3>
-              <p className="font-body text-xs text-gray-700 mt-2 leading-relaxed">
-                Team registration (1-4 members) for the 24-hour national jeopardy &amp; attack-defense tournament.
-              </p>
-              <div className="my-4 pt-4 border-t border-black/10">
-                <p className="font-display text-4xl text-black leading-none">₹60K POOL</p>
-                <p className="font-body text-[11px] text-gray-500">Free squad registration</p>
-              </div>
-              <ul className="space-y-2 text-xs font-body text-gray-800 mb-6">
-                <li className="flex items-center gap-2">✓ 24H dedicated Arena seating &amp; power</li>
-                <li className="flex items-center gap-2">✓ High-speed LAN portal credentials</li>
-                <li className="flex items-center gap-2">✓ Midnight pizza &amp; refreshment supply</li>
-                <li className="flex items-center gap-2">✓ Direct bounty eligibility</li>
-              </ul>
-            </div>
-            <Link
-              href="/events"
-              className="w-full text-center block px-4 py-3 bg-th-pink text-black font-body font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-all"
-            >
-              REGISTER CTF SQUAD →
-            </Link>
-          </PixelFrame>
+          <div className="bg-white border border-gray-200/90 divide-y divide-gray-100 shadow-xs">
+            {eventsList.map((item, index) => {
+              const isSelected = selectedIndex === index;
 
-          {/* Pass 3: Workshop */}
-          <PixelFrame dotGrid cornerAccent className="flex flex-col justify-between">
-            <div>
-              <StickerBadge color="lime" rotation={-2}>HANDS-ON</StickerBadge>
-              <h3 className="font-display text-2xl sm:text-3xl uppercase mt-3 leading-none">WORKSHOP &amp; LAB PASS</h3>
-              <p className="font-body text-xs text-gray-700 mt-2 leading-relaxed">
-                Guaranteed workstation access for the Binary Reverse Engineering masterclass.
-              </p>
-              <div className="my-4 pt-4 border-t border-black/10">
-                <p className="font-display text-4xl text-black leading-none">LIMITED</p>
-                <p className="font-body text-[11px] text-gray-500">60 Lab Workstations Only</p>
-              </div>
-              <ul className="space-y-2 text-xs font-body text-gray-800 mb-6">
-                <li className="flex items-center gap-2">✓ Pre-configured Ghidra / GDB lab rig</li>
-                <li className="flex items-center gap-2">✓ Exploitation challenge targets</li>
-                <li className="flex items-center gap-2">✓ Verified skill certification</li>
-              </ul>
-            </div>
-            <Link
-              href="/events"
-              className="w-full text-center block px-4 py-3 bg-black text-white font-body font-bold text-xs uppercase tracking-wider hover:bg-th-lime hover:text-black border-2 border-black transition-colors"
-            >
-              RESERVE LAB WORKSTATION →
-            </Link>
-          </PixelFrame>
-        </div>
-      </section>
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    setSelectedIndex(index);
+                    const el = document.getElementById("featured-card");
+                    if (el) {
+                      el.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                  }}
+                  className={`group flex items-center justify-between py-3.5 sm:py-4 px-4 sm:px-6 hover:bg-gray-50/80 cursor-pointer transition-colors duration-150 ${
+                    isSelected ? "bg-amber-50/25" : ""
+                  }`}
+                >
+                  {/* Left: Event Glyph */}
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0 mr-4 sm:mr-6">
+                    <EventGlyph type={item.iconType} />
+                  </div>
 
-      {/* ─── VENUE & CONTACT ─── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-6 pb-16">
-        <PixelFrame dotGrid cornerAccent className="p-8 sm:p-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <StickerBadge color="yellow" rotation={-2}>VENUE &amp; LOGISTICS</StickerBadge>
-              <h3 className="font-pixel text-2xl sm:text-3xl font-bold uppercase mt-3">
-                KMCT INSTITUTE OF EMERGING TECHNOLOGY &amp; MANAGEMENT
-              </h3>
-              <p className="font-editorial italic text-xl text-gray-800 mt-2">
-                Department of Cyber Security, Manassery PO, Mukkam, Calicut, Kerala — 673602.
-              </p>
-              <div className="space-y-2 font-mono text-xs text-gray-600 mt-4">
-                <p>📍 28 km from Calicut Railway Station (CLT)</p>
-                <p>✈️ 35 km from Calicut International Airport (CCJ)</p>
-                <p>📞 Coordinator Hotline: +91 94470 00000 / 0495 2288500</p>
-                <p>✉️ Email: cybersecurity@kmct.edu.in</p>
-              </div>
-            </div>
-            <div className="border-2 border-black p-6 bg-[#F0F0FA] flex flex-col justify-between">
-              <div>
-                <p className="font-mono text-xs font-bold uppercase text-black mb-2">
-                  NEED SPONSORSHIP OR HOSTEL ACCOMMODATION?
-                </p>
-                <p className="font-sans text-xs text-gray-700 mb-4">
-                  Outstation collegiate teams can request hostel accommodation on campus during the 24-hour CTF period.
-                </p>
-              </div>
-              <Link
-                href="/contact"
-                className="inline-block text-center px-4 py-3 bg-black text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-th-yellow hover:text-black border-2 border-black transition-colors"
-              >
-                REQUEST ACCOMMODATION / DETAILS →
-              </Link>
-            </div>
+                  {/* Date */}
+                  <div className="w-28 sm:w-36 flex-shrink-0">
+                    <span className="font-sans text-xs sm:text-sm text-gray-900 font-medium">
+                      {item.date}
+                    </span>
+                  </div>
+
+                  {/* Time */}
+                  <div className="w-20 sm:w-24 flex-shrink-0 hidden xs:block">
+                    <span className="font-sans text-[11px] sm:text-xs text-gray-400 font-normal">
+                      {item.time}
+                    </span>
+                  </div>
+
+                  {/* Title in Serif Italic */}
+                  <div className="flex-grow min-w-0 pr-4">
+                    <span
+                      className={`font-serif italic text-base sm:text-lg md:text-xl truncate block font-normal transition-colors ${
+                        isSelected ? "text-black font-medium" : "text-gray-900 group-hover:text-black"
+                      }`}
+                    >
+                      {item.title}
+                    </span>
+                  </div>
+
+                  {/* Right: Diagonal Arrow */}
+                  <div className="flex-shrink-0 text-gray-400 group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
+                    <ArrowUpRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </PixelFrame>
-      </section>
+
+          {/* Bottom Footer Info */}
+          <div className="pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs">
+            <span className="font-sans text-gray-500 font-medium">
+              ASTRA 2026 — Official Symposium Schedule &amp; Pass Allocation
+            </span>
+            <span className="font-mono text-[11px] text-gray-400">
+              Department of Cyber Security — KMCT IETM, Calicut
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
-
-

@@ -1,568 +1,446 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Globe, ArrowUpRight } from 'lucide-react';
 
-interface EventItem {
-  id: string;
-  iconType: 'purple-clover' | 'cyan-loop' | 'blue-star' | 'orange-cross' | 'pink-butterfly' | 'gold-gear' | 'emerald-chevron';
-  date: string;
-  time: string;
-  title: string;
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-  venueTitle: string;
-  venueSub: string;
-  attendeesCount: string;
-  categoryTag: string;
-  categoryColor: string;
-  hostName: string;
-  hostAvatar: string;
-  topics: string;
-  posterBadge: string;
-  posterHeading: string;
-  posterSub: string;
-  posterBg: string;
-  descriptionHeading: string;
-  paragraphs: string[];
-}
-
-const EVENTS_DATA: EventItem[] = [
+const events = [
   {
-    id: 'ctf-wargame',
-    iconType: 'purple-clover',
-    date: 'October 6',
-    time: '11:00 AM',
-    title: '24H National Live CTF WarGames Kickoff',
-    startDate: 'Oct 06',
-    startTime: '11:00 AM',
-    endDate: 'Oct 07',
-    endTime: '11:00 AM',
-    venueTitle: 'KMCT Arena',
-    venueSub: 'Calicut Campus',
-    attendeesCount: '128 makers & hackers are attending',
-    categoryTag: 'Flagship',
-    categoryColor: 'bg-[#D1FAE5] text-[#065F46]',
-    hostName: 'Mohammed Hashim',
-    hostAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
-    topics: 'Ethical Hacking, Reverse Engineering, Cryptography',
-    posterBadge: 'BUILDER -IN-RESIDENCE // WARGAME EDITION',
-    posterHeading: 'DEMO DAY',
-    posterSub: 'OCT 6-7, 11AM - 11AM',
-    posterBg: '#FFE816',
-    descriptionHeading: 'Flagship 24H National Live CTF WarGame',
-    paragraphs: [
-      'For weeks now, a room full of makers and ethical hackers at KMCT Cyber Security has been heads-down building defense infrastructure from scratch. Ideas turned into exploits, circuits into prototypes, and prototypes into sovereign defensive systems that actually work.',
-      "Now they're ready to show you. Step into the arena, see what they've built, ask questions, and cheer them on. These folks have poured weeks of evenings into this, and having you in the room means more than you'd think.",
-      'Come celebrate and defend with us.',
-    ],
-  },
-  {
-    id: 'keynote',
-    iconType: 'cyan-loop',
+    iconType: 'cyan-butterfly',
     date: 'October 6',
     time: '9:00 AM',
     title: 'Opening Ceremony & Sovereign Defense Keynote',
-    startDate: 'Oct 06',
-    startTime: '9:00 AM',
-    endDate: 'Oct 06',
-    endTime: '10:30 AM',
-    venueTitle: 'Main Auditorium',
-    venueSub: 'KMCT IETM Calicut',
-    attendeesCount: '250+ delegates attending',
-    categoryTag: 'Keynote',
-    categoryColor: 'bg-[#FEF3C7] text-[#92400E]',
-    hostName: 'Dr. Sarah Lin & Dept Head',
-    hostAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
-    topics: 'Sovereign Tech, National Security Policy, Zero-Trust',
-    posterBadge: 'NATIONAL SYMPOSIUM // INAUGURAL',
-    posterHeading: 'KEYNOTE',
-    posterSub: 'OCT 6, 9:00 AM - 10:30 AM',
-    posterBg: '#FFE816',
-    descriptionHeading: 'Opening Ceremony: Sovereign Defense Architecture',
-    paragraphs: [
-      'Join pioneering researchers, government cyber analysts, and defense leaders as we inaugurate ASTRA 2026. This keynote establishes India’s emerging posture toward self-reliant hardware and sovereign cryptographic systems.',
-      'We examine modern supply-chain attacks, critical infrastructure resilience, and how student-led research is directly fortifying national resilience.',
-      'Open to all registered attendees, students, and industry professionals.',
-    ],
   },
   {
-    id: 'zero-day',
-    iconType: 'blue-star',
+    iconType: 'orange-cross',
+    date: 'October 6',
+    time: '11:00 AM',
+    title: '24H National Live CTF WarGames Kickoff',
+  },
+  {
+    iconType: 'gold-sun',
     date: 'October 6',
     time: '2:00 PM',
     title: 'Zero-Day Exploit Development Symposium',
-    startDate: 'Oct 06',
-    startTime: '2:00 PM',
-    endDate: 'Oct 06',
-    endTime: '4:00 PM',
-    venueTitle: 'Lab Complex B',
-    venueSub: 'Offensive Security Lab',
-    attendeesCount: '84 security researchers attending',
-    categoryTag: 'Research',
-    categoryColor: 'bg-[#E0E7FF] text-[#3730A3]',
-    hostName: 'Arjun Nambiar',
-    hostAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
-    topics: 'Kernel Exploitation, ROP Chains, Modern Mitigations',
-    posterBadge: 'OFFENSIVE RESEARCH // DEEP DIVE',
-    posterHeading: 'EXPLOIT LAB',
-    posterSub: 'OCT 6, 2:00 PM - 4:00 PM',
-    posterBg: '#FFE816',
-    descriptionHeading: 'Zero-Day Vulnerability Research & Triage',
-    paragraphs: [
-      'A deep dive into advanced exploitation techniques on modern Linux and Windows environments. Covering return-oriented programming (ROP), sandbox escapes, and bypassing hardware-enforced pointer authentication.',
-      'Participants will walk through real-world CVE disclosures and examine how defensive teams patch weaponized memory vulnerabilities before mass exploitation.',
-      'Prerequisites: Working familiarity with C and x86_64 assembly.',
-    ],
   },
   {
-    id: 'hardware-iot',
-    iconType: 'orange-cross',
+    iconType: 'cyan-loop',
     date: 'October 6',
     time: '4:30 PM',
     title: 'Hardware Hacking & IoT Village Live Defense',
-    startDate: 'Oct 06',
-    startTime: '4:30 PM',
-    endDate: 'Oct 06',
-    endTime: '6:30 PM',
-    venueTitle: 'Hardware Village',
-    venueSub: 'TinkerSpace Wing',
-    attendeesCount: '96 makers attending',
-    categoryTag: 'Village',
-    categoryColor: 'bg-[#FFEDD5] text-[#9A3412]',
-    hostName: 'Kavya Suresh',
-    hostAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
-    topics: 'UART, JTAG, Firmware Dumping, SDR Radio Defense',
-    posterBadge: 'PHYSICAL SECURITY // IOT VILLAGE',
-    posterHeading: 'HARDWARE',
-    posterSub: 'OCT 6, 4:30 PM - 6:30 PM',
-    posterBg: '#FFE816',
-    descriptionHeading: 'Hardware Village: Physical & Firmware Exploits',
-    paragraphs: [
-      'Get hands-on with logic analyzers, multimeters, and SDR transceivers. We open up commercial smart devices, extract firmware via SPI flash, and uncover undocumented debugging interfaces.',
-      'Explore how attackers intercept unencrypted RF communications and learn the countermeasures hardware engineers implement to build tamper-proof systems.',
-      'All testing rigs, microcontrollers, and target boards provided on site.',
-    ],
   },
   {
-    id: 'ghidra-re',
-    iconType: 'pink-butterfly',
+    iconType: 'pink-clover',
     date: 'October 6',
     time: '7:30 PM',
     title: 'Memory Corruption with Ghidra Reverse Engineering',
-    startDate: 'Oct 06',
-    startTime: '7:30 PM',
-    endDate: 'Oct 06',
-    endTime: '9:30 PM',
-    venueTitle: 'Virtual Studio 1',
-    venueSub: 'KMCT Cyber Lab',
-    attendeesCount: '112 engineers attending',
-    categoryTag: 'Workshop',
-    categoryColor: 'bg-[#FCE7F3] text-[#9D174D]',
-    hostName: 'Sreehari Nandan',
-    hostAvatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80',
-    topics: 'Static Analysis, Decompilation, Ghidra Scripts',
-    posterBadge: 'REVERSE ENGINEERING // HANDS-ON',
-    posterHeading: 'GHIDRA LAB',
-    posterSub: 'OCT 6, 7:30 PM - 9:30 PM',
-    posterBg: '#FFE816',
-    descriptionHeading: 'Mastering Ghidra for Reverse Engineering',
-    paragraphs: [
-      'Learn how malware analysts disassemble compiled binaries and reconstruct high-level logic without source code. This workshop guides you through Ghidra’s headless analyzer and script automation.',
-      'You will analyze proprietary network protocols and reverse engineer custom binary formats step-by-step.',
-      'Bring your laptop with Ghidra and Java 17 pre-installed.',
-    ],
   },
   {
-    id: 'ai-defense',
     iconType: 'gold-gear',
+    date: 'October 6',
+    time: '11:00 PM',
+    title: 'Midnight Threat Hunting & Memory Forensics Drill',
+  },
+  {
+    iconType: 'purple-star',
     date: 'October 7',
     time: '9:30 AM',
     title: 'AI in Cyber Defense: From Threat Detection to Adversarial AI',
-    startDate: 'Oct 07',
-    startTime: '9:30 AM',
-    endDate: 'Oct 07',
-    endTime: '11:00 AM',
-    venueTitle: 'Auditorium 2',
-    venueSub: 'Center for AI Studies',
-    attendeesCount: '170 delegates attending',
-    categoryTag: 'Symposium',
-    categoryColor: 'bg-[#FEF3C7] text-[#92400E]',
-    hostName: 'Dr. Anand Varma',
-    hostAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
-    topics: 'Adversarial Attacks, LLM Red Teaming, Automated SOC',
-    posterBadge: 'AI RESEARCH // ADVERSARIAL',
-    posterHeading: 'AI DEFENSE',
-    posterSub: 'OCT 7, 9:30 AM - 11:00 AM',
-    posterBg: '#FFE816',
-    descriptionHeading: 'Adversarial Machine Learning & Automated Defense',
-    paragraphs: [
-      'As machine learning models take charge of intrusion detection and automated triage, attackers are crafting prompt injections, model poisoning, and evasion artifacts to blind neural networks.',
-      'We explore both sides of the coin: utilizing autonomous agents to hunt stealthy adversaries, and red-teaming internal enterprise LLM deployments.',
-      'Case studies include real-world bypasses of leading cloud security scanners.',
-    ],
   },
   {
-    id: 'ctf-finals',
-    iconType: 'emerald-chevron',
+    iconType: 'cyan-loop',
+    date: 'October 7',
+    time: '11:30 AM',
+    title: 'Bug Bounty Royale: Sovereign Target Assessment',
+  },
+  {
+    iconType: 'green-chevron',
+    date: 'October 7',
+    time: '1:30 PM',
+    title: 'Red vs Blue Team Infrastructure Wargame Simulation',
+  },
+  {
+    iconType: 'green-square',
     date: 'October 7',
     time: '3:30 PM',
     title: 'CTF Finals & ₹100K Bounty Awards Ceremony',
-    startDate: 'Oct 07',
-    startTime: '3:30 PM',
-    endDate: 'Oct 07',
-    endTime: '5:30 PM',
-    venueTitle: 'Main Amphitheatre',
-    venueSub: 'KMCT Campus',
-    attendeesCount: '400+ attendees registered',
-    categoryTag: 'Ceremony',
-    categoryColor: 'bg-[#CCFBF1] text-[#115E59]',
-    hostName: 'ASTRA Organizing Committee',
-    hostAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
-    topics: 'Grand Finale, CTF Writeups, ₹100,000 Cash Prize',
-    posterBadge: 'GRAND FINALE // ₹100K POOL',
-    posterHeading: 'AWARDS',
-    posterSub: 'OCT 7, 3:30 PM - 5:30 PM',
-    posterBg: '#FFE816',
-    descriptionHeading: 'National CTF Finals & Closing Ceremony',
-    paragraphs: [
-      'The culmination of 24 sleepless hours of intense collegiate hacking. The scoreboard freezes, winning teams present lightning write-ups of their critical solves, and trophies are awarded.',
-      'Featuring ₹100,000+ in bounties, recruitment opportunities with top cybersecurity firms, and closing reflections by national industry leaders.',
-      'Celebrate with the champion teams and the entire Kerala cyber defense community.',
-    ],
   },
 ];
 
 const EventGlyph: React.FC<{ type: string }> = ({ type }) => {
   switch (type) {
-    case 'purple-clover':
+    case 'cyan-butterfly':
       return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
-          <circle cx="7.5" cy="7.5" r="4.5" fill="#C084FC" />
-          <circle cx="16.5" cy="7.5" r="4.5" fill="#C084FC" />
-          <circle cx="7.5" cy="16.5" r="4.5" fill="#C084FC" />
-          <circle cx="16.5" cy="16.5" r="4.5" fill="#C084FC" />
-        </svg>
-      );
-    case 'cyan-loop':
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
-          <path d="M6 7C4 10 4 14 6 17" stroke="#06B6D4" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M10 5C8 9 8 15 10 19" stroke="#06B6D4" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M18 7C20 10 20 14 18 17" stroke="#06B6D4" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M14 5C16 9 16 15 14 19" stroke="#06B6D4" strokeWidth="2.2" strokeLinecap="round" />
-        </svg>
-      );
-    case 'blue-star':
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
-          <path
-            d="M12 2L14.2 8.5L21 9.2L16 13.8L17.5 20.5L12 17L6.5 20.5L8 13.8L3 9.2L9.8 8.5L12 2Z"
-            fill="#3B82F6"
-          />
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <path d="M3 4.5L11 12L3 19.5V4.5Z" fill="#00D8F6" />
+          <path d="M21 4.5L13 12L21 19.5V4.5Z" fill="#00D8F6" />
         </svg>
       );
     case 'orange-cross':
       return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
-          <rect x="3" y="3" width="7" height="7" rx="1.5" fill="#F97316" />
-          <rect x="14" y="3" width="7" height="7" rx="1.5" fill="#F97316" />
-          <rect x="3" y="14" width="7" height="7" rx="1.5" fill="#F97316" />
-          <rect x="14" y="14" width="7" height="7" rx="1.5" fill="#F97316" />
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <rect x="3" y="3" width="7.5" height="7.5" rx="1.5" fill="#F97316" />
+          <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5" fill="#F97316" />
+          <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5" fill="#F97316" />
+          <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5" fill="#F97316" />
         </svg>
       );
-    case 'pink-butterfly':
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
-          <path d="M4 5L11 12L4 19V5Z" fill="#F43F5E" />
-          <path d="M20 5L13 12L20 19V5Z" fill="#F43F5E" />
-        </svg>
-      );
+    case 'gold-sun':
     case 'gold-gear':
       return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
-          <circle cx="12" cy="12" r="8" stroke="#EAB308" strokeWidth="2" strokeDasharray="3 3" />
-          <circle cx="12" cy="12" r="4" fill="#EAB308" />
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <circle cx="12" cy="12" r="9" stroke="#EAB308" strokeWidth="1.5" />
+          <circle cx="12" cy="12" r="6" stroke="#EAB308" strokeWidth="1.5" />
+          <circle cx="12" cy="12" r="3" stroke="#EAB308" strokeWidth="1.5" />
         </svg>
       );
-    case 'emerald-chevron':
+    case 'cyan-loop':
+      return (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <path d="M7 5C4.5 9 4.5 15 7 19" stroke="#00D8F6" strokeWidth="2" strokeLinecap="round" />
+          <path d="M10 3C7 8 7 16 10 21" stroke="#00D8F6" strokeWidth="2" strokeLinecap="round" />
+          <path d="M17 5C19.5 9 19.5 15 17 19" stroke="#00D8F6" strokeWidth="2" strokeLinecap="round" />
+          <path d="M14 3C17 8 17 16 14 21" stroke="#00D8F6" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      );
+    case 'pink-clover':
+      return (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <circle cx="8" cy="8" r="4" fill="#F472B6" />
+          <circle cx="16" cy="8" r="4" fill="#F472B6" />
+          <circle cx="8" cy="16" r="4" fill="#F472B6" />
+          <circle cx="16" cy="16" r="4" fill="#F472B6" />
+        </svg>
+      );
+    case 'purple-star':
+      return (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <path d="M12 2C12 7.5 16.5 12 22 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 2 12C7.5 12 12 7.5 12 2Z" fill="#7C4DFF" />
+        </svg>
+      );
+    case 'green-square':
+    case 'green-chevron':
     default:
       return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
-          <path d="M5 7L12 13L19 7" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M5 12L12 18L19 12" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="flex-shrink-0">
+          <path d="M4 6L12 13L20 6" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M4 12L12 19L20 12" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       );
   }
 };
 
-export const EventsSection: React.FC = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const activeEvent = EVENTS_DATA[selectedIndex] || EVENTS_DATA[0];
+/* Floating Event Flyer Card matching TinkerHub hover style */
+interface EventFlyerConfig {
+  bg: string;
+  pillBg: string;
+  pillText: string;
+  pillLabel: string;
+  badge: string;
+  illustration: React.ReactNode;
+}
+
+const FLYER_CONFIGS: Record<number, EventFlyerConfig> = {
+  0: {
+    bg: '#1E3A8A',
+    pillBg: '#FFE816',
+    pillText: '#000000',
+    pillLabel: 'KEYNOTE // OPENING',
+    badge: 'ASTRA 2026 // CALICUT',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#F8FAFC" rx="4" />
+        <path d="M34 14 L50 20 V36 C50 48 34 54 34 54 C34 54 18 48 18 36 V20 Z" fill="#1E3A8A" opacity="0.12" />
+        <path d="M34 14 L50 20 V36 C50 48 34 54 34 54 C34 54 18 48 18 36 V20 Z" stroke="#1E3A8A" strokeWidth="2.5" />
+        <circle cx="34" cy="34" r="8" fill="#00D2EA" />
+        <path d="M34 26 V42 M26 34 H42" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  1: {
+    bg: '#18181B',
+    pillBg: '#FF8C00',
+    pillText: '#000000',
+    pillLabel: '24H LIVE CTF WARGAME',
+    badge: 'FLAGSHIP // ₹100K PRIZE',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#27272A" rx="4" />
+        <rect x="8" y="12" width="52" height="38" rx="3" fill="#09090B" stroke="#3F3F46" strokeWidth="1.5" />
+        <path d="M16 22 L24 28 L16 34" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="28" y1="34" x2="38" y2="34" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" />
+        <rect x="22" y="52" width="24" height="4" rx="1" fill="#52525B" />
+      </svg>
+    ),
+  },
+  2: {
+    bg: '#78350F',
+    pillBg: '#FBBF24',
+    pillText: '#000000',
+    pillLabel: 'ZERO-DAY SYMPOSIUM',
+    badge: 'RESEARCH // DEFENSE',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#FFFBEB" rx="4" />
+        <circle cx="34" cy="34" r="22" stroke="#D97706" strokeWidth="2" strokeDasharray="4 3" />
+        <circle cx="34" cy="34" r="14" fill="#D97706" opacity="0.15" />
+        <circle cx="34" cy="34" r="6" fill="#B45309" />
+        <line x1="34" y1="8" x2="34" y2="60" stroke="#B45309" strokeWidth="1.5" />
+        <line x1="8" y1="34" x2="60" y2="34" stroke="#B45309" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  3: {
+    bg: '#064E3B',
+    pillBg: '#34D399',
+    pillText: '#000000',
+    pillLabel: 'HARDWARE VILLAGE',
+    badge: 'SDR & IOT DEFENSE',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#ECFDF5" rx="4" />
+        <rect x="18" y="18" width="32" height="32" rx="2" fill="#065F46" stroke="#047857" strokeWidth="2" />
+        <circle cx="34" cy="34" r="7" fill="#34D399" />
+        <line x1="12" y1="24" x2="18" y2="24" stroke="#047857" strokeWidth="2" strokeLinecap="round" />
+        <line x1="12" y1="34" x2="18" y2="34" stroke="#047857" strokeWidth="2" strokeLinecap="round" />
+        <line x1="12" y1="44" x2="18" y2="44" stroke="#047857" strokeWidth="2" strokeLinecap="round" />
+        <line x1="50" y1="24" x2="56" y2="24" stroke="#047857" strokeWidth="2" strokeLinecap="round" />
+        <line x1="50" y1="34" x2="56" y2="34" stroke="#047857" strokeWidth="2" strokeLinecap="round" />
+        <line x1="50" y1="44" x2="56" y2="44" stroke="#047857" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  4: {
+    bg: '#1D4ED8',
+    pillBg: '#F43F5E',
+    pillText: '#FFFFFF',
+    pillLabel: 'MAKER WORKSHOP',
+    badge: 'GHIDRA // REVERSE ENG',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#EFF6FF" rx="4" />
+        <rect x="14" y="16" width="40" height="28" rx="2" fill="#1E40AF" />
+        <line x1="20" y1="24" x2="48" y2="24" stroke="#93C5FD" strokeWidth="2" strokeLinecap="round" />
+        <line x1="20" y1="30" x2="40" y2="30" stroke="#93C5FD" strokeWidth="2" strokeLinecap="round" />
+        <line x1="20" y1="36" x2="34" y2="36" stroke="#F43F5E" strokeWidth="2" strokeLinecap="round" />
+        <path d="M42 42 L52 54 L56 50 L46 38 Z" fill="#F43F5E" />
+      </svg>
+    ),
+  },
+  5: {
+    bg: '#311042',
+    pillBg: '#C084FC',
+    pillText: '#000000',
+    pillLabel: 'MIDNIGHT FORENSICS',
+    badge: 'NIGHT DRILL // LIVE',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#FAF5FF" rx="4" />
+        <circle cx="34" cy="34" r="20" fill="#3B0764" />
+        <circle cx="34" cy="34" r="14" stroke="#C084FC" strokeWidth="1.5" strokeDasharray="3 3" />
+        <line x1="34" y1="34" x2="44" y2="24" stroke="#F472B6" strokeWidth="2" strokeLinecap="round" />
+        <circle cx="44" cy="24" r="3" fill="#F472B6" />
+      </svg>
+    ),
+  },
+  6: {
+    bg: '#4C1D95',
+    pillBg: '#E8CCFF',
+    pillText: '#000000',
+    pillLabel: 'AI WEDNESDAY // GPT-6',
+    badge: 'ADVERSARIAL RESEARCH',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#F3E8FF" rx="4" />
+        <circle cx="24" cy="24" r="6" fill="#7C3AED" />
+        <circle cx="44" cy="24" r="6" fill="#7C3AED" />
+        <circle cx="34" cy="44" r="6" fill="#7C3AED" />
+        <line x1="24" y1="24" x2="44" y2="24" stroke="#7C3AED" strokeWidth="2" />
+        <line x1="24" y1="24" x2="34" y2="44" stroke="#7C3AED" strokeWidth="2" />
+        <line x1="44" y1="24" x2="34" y2="44" stroke="#7C3AED" strokeWidth="2" />
+        <circle cx="34" cy="31" r="3" fill="#E8CCFF" />
+      </svg>
+    ),
+  },
+  7: {
+    bg: '#881337',
+    pillBg: '#FDA4AF',
+    pillText: '#000000',
+    pillLabel: 'BUG BOUNTY ROYALE',
+    badge: 'LIVE TARGET HUNT',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#FFF1F2" rx="4" />
+        <circle cx="34" cy="34" r="20" stroke="#BE123C" strokeWidth="2" />
+        <circle cx="34" cy="34" r="12" stroke="#BE123C" strokeWidth="2" />
+        <circle cx="34" cy="34" r="5" fill="#BE123C" />
+        <line x1="10" y1="34" x2="58" y2="34" stroke="#BE123C" strokeWidth="1.5" />
+        <line x1="34" y1="10" x2="34" y2="58" stroke="#BE123C" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  8: {
+    bg: '#0F172A',
+    pillBg: '#4ADE80',
+    pillText: '#000000',
+    pillLabel: 'RED VS BLUE WARGAME',
+    badge: 'INFRASTRUCTURE ATTACK',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#F8FAFC" rx="4" />
+        <path d="M22 18 L34 46 L26 48 L22 18 Z" fill="#EF4444" />
+        <path d="M46 18 L34 46 L42 48 L46 18 Z" fill="#3B82F6" />
+        <circle cx="34" cy="46" r="4" fill="#0F172A" />
+      </svg>
+    ),
+  },
+  9: {
+    bg: '#713F12',
+    pillBg: '#FACC15',
+    pillText: '#000000',
+    pillLabel: 'AWARDS CEREMONY',
+    badge: '₹100,000 BOUNTY POOL',
+    illustration: (
+      <svg width="68" height="68" viewBox="0 0 68 68" fill="none">
+        <rect width="68" height="68" fill="#FEFCE8" rx="4" />
+        <path d="M24 16 H44 V28 C44 34 39.5 39 34 39 C28.5 39 24 34 24 28 Z" fill="#EAB308" stroke="#A16207" strokeWidth="1.5" />
+        <path d="M24 20 H18 C16 20 16 26 20 28 L24 28" stroke="#A16207" strokeWidth="1.5" />
+        <path d="M44 20 H50 C52 20 52 26 48 28 L44 28" stroke="#A16207" strokeWidth="1.5" />
+        <rect x="30" y="39" width="8" height="10" fill="#CA8A04" />
+        <rect x="22" y="49" width="24" height="5" rx="1" fill="#854D0E" />
+      </svg>
+    ),
+  },
+};
+
+const EventFlyerCard: React.FC<{ index: number; title: string }> = ({ index, title }) => {
+  const config = FLYER_CONFIGS[index] || FLYER_CONFIGS[0];
 
   return (
-    <section id="events" className="relative py-14 sm:py-20 bg-graph-paper overflow-hidden">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        {/* ─── 1. FEATURED EVENT WHITE CARD (EXACT 2-COLUMN SPLIT FROM REFERENCE IMAGE) ─── */}
-        <div className="relative mb-14 sm:mb-20">
-          {/* Cute Pink Mascot Blob Peeking from Left Edge behind Card */}
-          <div className="absolute -left-6 sm:-left-8 top-[44%] -translate-y-1/2 z-0 pointer-events-none select-none">
-            <svg width="60" height="60" viewBox="0 0 64 64" fill="none" className="transform -rotate-6">
-              <path
-                d="M16 38C10 38 6 33 6 27C6 21 11 16 17 16C18 10 24 6 32 6C40 6 45 10 47 16C53 16 58 21 58 27C58 33 54 38 48 38C50 42 48 48 42 51C37 54 27 54 22 51C17 48 16 42 16 38Z"
-                fill="#F79CFF"
-              />
-              <circle cx="25" cy="28" r="2.2" fill="#000000" />
-              <circle cx="39" cy="28" r="2.2" fill="#000000" />
-              <path
-                d="M28 34C30 37 34 37 36 34"
-                stroke="#000000"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
+    <div
+      className="w-[280px] h-[170px] sm:w-[310px] sm:h-[185px] p-3.5 flex flex-col justify-between rounded-sm border border-black/25 shadow-2xl"
+      style={{ backgroundColor: config.bg }}
+    >
+      {/* Top Banner Row matching TinkerHub sticker styling */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="bg-black/90 text-white font-anton text-[10px] sm:text-[11px] px-2 py-0.5 uppercase tracking-wider">
+          {config.badge}
+        </div>
+        <div
+          className="font-anton text-[9px] sm:text-[10px] px-2 py-0.5 uppercase tracking-wider rounded-none font-bold"
+          style={{ backgroundColor: config.pillBg, color: config.pillText }}
+        >
+          {config.pillLabel}
+        </div>
+      </div>
 
-          {/* White Card Container */}
-          <div className="relative z-10 bg-white border border-gray-200/90 shadow-sm p-6 sm:p-8 md:p-10">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeEvent.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-                className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-start"
-              >
-                {/* ── LEFT COLUMN ── */}
-                <div className="flex flex-col justify-between">
-                  {/* Poster Graphic Banner */}
-                  <div
-                    className="w-full aspect-[16/11] p-6 sm:p-8 flex flex-col justify-between rounded-none select-none relative overflow-hidden"
-                    style={{ backgroundColor: activeEvent.posterBg }}
-                  >
-                    {/* Top Row: Left Label + Center Logo + Right Icon */}
-                    <div className="flex items-center justify-between text-black text-[10px] sm:text-xs font-bold tracking-wider uppercase">
-                      <span>TINKERSPACE // KOCHI</span>
-                      <div className="flex items-center gap-1.5 font-bold">
-                        <span className="w-2.5 h-2.5 bg-black rounded-full inline-block" />
-                        <span>CIRCUIT LAB</span>
-                      </div>
-                      <span>ASTRA 2026</span>
-                    </div>
+      {/* Center Illustration + Graphic Frame */}
+      <div className="flex items-center gap-3.5 my-auto px-1">
+        <div className="flex-shrink-0 border border-black/20 shadow-md">
+          {config.illustration}
+        </div>
+        <div className="min-w-0 flex-grow">
+          <p className="font-anton text-white text-sm sm:text-base leading-tight uppercase tracking-tight line-clamp-2">
+            {title}
+          </p>
+          <p className="font-body text-[10px] text-white/70 mt-1 uppercase tracking-wider">
+            KMCT CAMPUS // 2026
+          </p>
+        </div>
+      </div>
 
-                    {/* Center: Red/Orange Stencil Badge + Giant Bold DEMO DAY / Headline + Sub */}
-                    <div className="text-center my-auto py-2">
-                      <div className="inline-block bg-[#E11D48] text-white font-black text-[10px] sm:text-xs px-2.5 py-0.5 uppercase tracking-widest mb-2 font-mono">
-                        {activeEvent.posterBadge}
-                      </div>
-                      <h2 className="font-black text-4xl sm:text-5xl md:text-6xl text-black uppercase tracking-tight leading-none">
-                        {activeEvent.posterHeading}
-                      </h2>
-                      <p className="font-bold text-black text-xs sm:text-sm uppercase tracking-wider mt-2">
-                        {activeEvent.posterSub}
-                      </p>
-                    </div>
+      {/* Bottom Action Footer matching Image */}
+      <div className="flex items-center justify-between pt-1.5 border-t border-white/15">
+        <span className="font-mono text-[9px] text-white/60 tracking-wider">
+          ADMIT ONE // REGISTER
+        </span>
+        <span className="font-body font-bold text-[10px] text-white flex items-center gap-1 uppercase">
+          EXPLORE →
+        </span>
+      </div>
+    </div>
+  );
+};
 
-                    {/* Bottom Edge Minimal Bar */}
-                    <div className="w-full h-1 bg-black/10" />
-                  </div>
-
-                  {/* Title in Serif Italic */}
-                  <h3 className="font-serif italic text-2xl sm:text-3xl text-gray-950 mt-5 leading-tight font-normal">
-                    {activeEvent.title}
-                  </h3>
-
-                  {/* Attendees Row & Black Register Button */}
-                  <div className="flex flex-wrap items-center justify-between gap-4 mt-6 pt-1">
-                    <div className="flex items-center">
-                      <div className="flex -space-x-2 overflow-hidden">
-                        <img
-                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80"
-                          alt="Attendee"
-                          className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
-                        />
-                        <img
-                          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&auto=format&fit=crop&q=80"
-                          alt="Attendee"
-                          className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
-                        />
-                        <img
-                          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&auto=format&fit=crop&q=80"
-                          alt="Attendee"
-                          className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
-                        />
-                        <img
-                          src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=60&auto=format&fit=crop&q=80"
-                          alt="Attendee"
-                          className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
-                        />
-                      </div>
-                      <span className="font-sans text-xs text-gray-600 font-normal ml-3">
-                        {activeEvent.attendeesCount}
-                      </span>
-                    </div>
-
-                    <Link
-                      href="/events"
-                      className="px-5 py-2.5 bg-black text-white font-sans font-semibold text-xs uppercase tracking-wider rounded-none hover:bg-gray-800 transition-colors cursor-pointer"
-                    >
-                      Register Now
-                    </Link>
-                  </div>
-
-                  {/* Date, Time & Location Footer Grid */}
-                  <div className="grid grid-cols-3 gap-2 mt-8 pt-6 border-t border-gray-100 text-left">
-                    <div>
-                      <p className="font-sans text-xs text-gray-900 font-semibold">{activeEvent.startDate}</p>
-                      <p className="font-sans text-[11px] text-gray-500 mt-0.5">{activeEvent.startTime}</p>
-                    </div>
-                    <div className="border-l border-gray-100 pl-3">
-                      <p className="font-sans text-xs text-gray-900 font-semibold">{activeEvent.endDate}</p>
-                      <p className="font-sans text-[11px] text-gray-500 mt-0.5">{activeEvent.endTime}</p>
-                    </div>
-                    <div className="border-l border-gray-100 pl-3">
-                      <p className="font-sans text-xs text-gray-900 font-semibold truncate">{activeEvent.venueTitle}</p>
-                      <p className="font-sans text-[11px] text-gray-500 mt-0.5 truncate">{activeEvent.venueSub}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ── RIGHT COLUMN ── */}
-                <div className="flex flex-col justify-start">
-                  {/* Top Pill Badges */}
-                  <div className="flex items-center gap-2 mb-6">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-none text-xs font-medium bg-gray-100/90 text-gray-700 border border-gray-200/80">
-                      <Globe className="w-3.5 h-3.5 text-gray-500" />
-                      Public
-                    </span>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-none text-xs font-medium ${activeEvent.categoryColor}`}>
-                      {activeEvent.categoryTag}
-                    </span>
-                  </div>
-
-                  {/* Metadata Rows */}
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-center">
-                      <span className="font-sans text-xs text-gray-400 w-32 flex-shrink-0">Hosts</span>
-                      <div className="flex items-center gap-2 font-sans text-xs text-gray-800 font-medium">
-                        <img
-                          src={activeEvent.hostAvatar}
-                          alt={activeEvent.hostName}
-                          className="w-5 h-5 rounded-full object-cover border border-gray-200"
-                        />
-                        <span>{activeEvent.hostName}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start">
-                      <span className="font-sans text-xs text-gray-400 w-32 flex-shrink-0 pt-0.5">Topics & themes</span>
-                      <span className="font-sans text-xs text-gray-700 leading-relaxed">
-                        {activeEvent.topics}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Description Body */}
-                  <div className="border-t border-gray-100 pt-6 space-y-4">
-                    <h4 className="font-sans font-semibold text-xs sm:text-sm text-gray-900">
-                      {activeEvent.descriptionHeading}
-                    </h4>
-
-                    {activeEvent.paragraphs.map((paragraph, pIdx) => (
-                      <p
-                        key={pIdx}
-                        className="font-sans text-xs sm:text-[13px] text-gray-600 leading-relaxed font-normal"
-                      >
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+export const EventsSection: React.FC = () => {
+  return (
+    <section id="events" className="relative py-16 sm:py-24 bg-graph-paper overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Black Tilted Banner Heading matching TinkerHub */}
+        <div className="mb-7 sm:mb-9">
+          <div className="inline-block bg-black text-white font-anton text-3xl sm:text-4xl md:text-[42px] px-7 py-2.5 sm:px-9 sm:py-3 rotate-[-2deg] uppercase tracking-normal leading-none shadow-md">
+            UPCOMING EVENTS
           </div>
         </div>
 
-        {/* ─── 2. "THESE MIGHT INTEREST YOU" EVENT LIST (MATCHING EXACT BOTTOM SECTION OF REFERENCE) ─── */}
-        <div>
-          <h3 className="font-sans font-bold text-sm sm:text-base text-gray-950 mb-3 tracking-tight">
-            These might interest you
-          </h3>
-
-          <div className="bg-white border border-gray-200/90 divide-y divide-gray-100 shadow-xs">
-            {EVENTS_DATA.map((item, index) => {
-              const isSelected = selectedIndex === index;
-
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => {
-                    setSelectedIndex(index);
-                    const el = document.getElementById('events');
-                    if (el) {
-                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                  }}
-                  className={`group flex items-center justify-between py-3.5 sm:py-4 px-4 sm:px-6 hover:bg-gray-50/80 cursor-pointer transition-colors duration-150 ${
-                    isSelected ? 'bg-amber-50/25' : ''
-                  }`}
-                >
-                  {/* Left: Event Glyph */}
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center flex-shrink-0 mr-4 sm:mr-6">
-                    <EventGlyph type={item.iconType} />
-                  </div>
-
-                  {/* Date */}
-                  <div className="w-28 sm:w-36 flex-shrink-0">
-                    <span className="font-sans text-xs sm:text-sm text-gray-900 font-medium">
-                      {item.date}
-                    </span>
-                  </div>
-
-                  {/* Time */}
-                  <div className="w-20 sm:w-24 flex-shrink-0 hidden xs:block">
-                    <span className="font-sans text-[11px] sm:text-xs text-gray-400 font-normal">
-                      {item.time}
-                    </span>
-                  </div>
-
-                  {/* Title in Serif Italic */}
-                  <div className="flex-grow min-w-0 pr-4">
-                    <span
-                      className={`font-serif italic text-base sm:text-lg md:text-xl truncate block font-normal transition-colors ${
-                        isSelected ? 'text-black font-medium' : 'text-gray-900 group-hover:text-black'
-                      }`}
-                    >
-                      {item.title}
-                    </span>
-                  </div>
-
-                  {/* Right: Diagonal Arrow */}
-                  <div className="flex-shrink-0 text-gray-400 group-hover:text-black group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform">
-                    <ArrowUpRight className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* View Full Schedule Link */}
-          <div className="pt-4 flex justify-between items-center text-xs">
+        {/* Seamless Event Boxes with Low Opacity Border — matching reference */}
+        <div className="-space-y-[1px]">
+          {events.map((event, index) => (
             <Link
+              key={index}
               href="/events"
-              className="font-sans font-semibold text-gray-600 hover:text-black hover:underline transition-colors inline-flex items-center gap-1 uppercase tracking-wider"
+              className="group relative flex items-center justify-between gap-3 sm:gap-4 py-3.5 sm:py-4.5 px-4 sm:px-9 bg-white border border-black/[0.08] hover:border-black/[0.24] hover:bg-[#FAFAFA] hover:z-10 transition-all duration-150"
             >
-              Browse Full ASTRA 2026 Schedule →
+              <div className="flex items-center gap-3.5 sm:gap-6 flex-grow min-w-0">
+                {/* Geometric Glyph Logo */}
+                <div className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center flex-shrink-0 transition-transform duration-150 group-hover:scale-105">
+                  <EventGlyph type={event.iconType} />
+                </div>
+
+                {/* Event Info: Stacked date and title on mobile, inline on sm+ */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-6 flex-grow min-w-0">
+                  {/* Date & Time */}
+                  <div className="flex-shrink-0 flex items-baseline gap-2 sm:w-44 md:w-52">
+                    <span className="font-body text-[13.5px] sm:text-[15.5px] text-gray-950 font-semibold tracking-tight">
+                      {event.date}
+                    </span>
+                    <span className="font-body text-[11px] sm:text-[12px] text-gray-400 font-normal uppercase tracking-wider leading-none">
+                      {event.time}
+                    </span>
+                  </div>
+
+                  {/* Event Title */}
+                  <span className="font-serif italic text-[16px] sm:text-[19.5px] md:text-[21px] text-gray-950 truncate pr-2 sm:pr-4 font-normal tracking-tight">
+                    {event.title}
+                  </span>
+                </div>
+              </div>
+
+              {/* Floating Hover Flyer Poster */}
+              <div
+                className="absolute right-14 top-1/2 -translate-y-1/2 z-40 pointer-events-none opacity-0 scale-95 translate-x-2 rotate-[2deg] group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 group-hover:rotate-[2.5deg] transition-all duration-200 ease-out hidden md:block"
+                style={{ filter: 'drop-shadow(0 16px 26px rgba(0, 0, 0, 0.22))' }}
+              >
+                <EventFlyerCard index={index} title={event.title} />
+              </div>
+
+              {/* Diagonal Arrow */}
+              <div className="flex-shrink-0 text-gray-900 transition-transform duration-150 group-hover:translate-x-1 group-hover:-translate-y-1">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="7" y1="17" x2="17" y2="7" />
+                  <polyline points="7 7 17 7 17 17" />
+                </svg>
+              </div>
             </Link>
-            <span className="font-mono text-[11px] text-gray-400">
-              KMCT Institute of Emerging Technology and Management, Calicut
-            </span>
-          </div>
+          ))}
+        </div>
+
+        {/* View All — reference: small plain text link bottom-left */}
+        <div className="pt-5">
+          <Link
+            href="/events"
+            className="inline-block px-4 py-1.5 bg-white text-gray-900 font-body font-semibold text-[12px] uppercase tracking-wider border border-black hover:bg-black hover:text-white transition-colors"
+          >
+            VIEW ALL
+          </Link>
         </div>
       </div>
     </section>
