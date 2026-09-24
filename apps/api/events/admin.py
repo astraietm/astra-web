@@ -15,7 +15,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     actions = ['export_as_csv', 'resend_confirmation_email']
 
     def resend_confirmation_email(self, request, queryset):
-        from .emails import send_registration_email
+        from .utils import send_registration_email
         count = 0
         for registration in queryset:
             if send_registration_email(registration):

@@ -1,7 +1,6 @@
 from rest_framework import generics, status, permissions, serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -148,19 +147,19 @@ class TeamListView(APIView):
             ip_address=request.META.get('REMOTE_ADDR')
         )
 
-        # Send invite email
         try:
-            send_mail(
-                subject="Invitation: ASTRA Team Member",
-                message=(
+            import resend
+            resend.api_key = settings.RESEND_API_KEY
+            resend.Emails.send({
+                "from": settings.DEFAULT_FROM_EMAIL,
+                "to": [email],
+                "subject": "Invitation: ASTRA Team Member",
+                "text": (
                     f"Hello,\n\nYou have been added to the ASTRA operations team.\n\n"
                     f"Please access the management portal at https://astraietm.in/admin\n\n"
                     f"— ASTRA Security Systems"
                 ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=True
-            )
+            })
         except Exception as mail_err:
             logger.debug(f"[TEAM_INVITE_MAIL_SKIP] {mail_err}")
 
@@ -236,7 +235,15 @@ class NotificationListCreateView(generics.ListCreateAPIView):
         
         if recipient_list:
             try:
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list, fail_silently=False)
+                import resend
+                resend.api_key = settings.RESEND_API_KEY
+                for recipient in recipient_list:
+                    resend.Emails.send({
+                        "from": settings.DEFAULT_FROM_EMAIL,
+                        "to": [recipient],
+                        "subject": subject,
+                        "text": message,
+                    })
                 AuditLog.objects.create(
                     user=self.request.user,
                     action=f"Sent Notification Blast: {subject}",
@@ -289,31 +296,24 @@ class PublicContactView(APIView):
                         ip_address=remote_addr
                     )
                     
-                    # 2. Prepare Email
+                    # 2. Send contact message via Resend HTTP API
                     subject = f"Astra Secure Uplink: Message from {name}"
                     body = f"Astra Contact Form Submission\n\nUser: {name}\nEmail: {email}\n\nMessage:\n{message}"
-                    
-                    host_user = getattr(settings, 'EMAIL_HOST_USER', None)
-                    recipients = ['contact@astraietm.in']
-                    if host_user:
-                        recipients.append(host_user)
-                    
-                    # Log attempt to console for Render logs visibility
-                    print(f"DEBUG: Attempting to send email via {settings.EMAIL_HOST}:{settings.EMAIL_PORT} (User: {host_user})")
-                    
-                    send_mail(
-                        subject,
-                        body,
-                        settings.DEFAULT_FROM_EMAIL,
-                        recipients,
-                        fail_silently=False
-                    )
-                    
+
+                    import resend
+                    resend.api_key = settings.RESEND_API_KEY
+                    resend.Emails.send({
+                        "from": settings.DEFAULT_FROM_EMAIL,
+                        "to": ["contact@astraietm.in"],
+                        "reply_to": email,
+                        "subject": subject,
+                        "text": body,
+                    })
+
                     # 3. Update Log on Success
                     log_entry.details += "\nStatus: EMAIL_SENT"
                     log_entry.level = "SUCCESS"
                     log_entry.save()
-                    print(f"DEBUG: Email sent successfully to {recipients}")
                     
                 except Exception as b_err:
                     error_msg = f"Transmission Error: {str(b_err)}"
