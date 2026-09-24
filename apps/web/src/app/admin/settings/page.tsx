@@ -69,9 +69,7 @@ export default function AdminSettings() {
         departments,
         semesters,
       };
-      for (const [key, value] of Object.entries(payload)) {
-        await api.post("/api/ops/settings/", { key, value, description: key });
-      }
+      await api.post("/api/ops/settings/", payload);
       showToast("Settings and Academic Options saved!", "success");
     } catch { showToast("Failed to save settings.", "error"); }
     finally { setSaving(false); }
