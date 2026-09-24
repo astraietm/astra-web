@@ -113,12 +113,41 @@ class VerifyTokenView(APIView):
                 "message": "QR Code has already been used.",
                 "registrant": RegistrationSerializer(registration).data
             }, status=status.HTTP_200_OK) # Return 200 so frontend scanner handles it gracefully
-        
-        # Mark as attended
+
+        mark_used = request.query_params.get('mark_used', '').lower() in ['true', '1', 'yes']
+
+        if mark_used:
+            # Mark as attended
+            registration.status = 'ATTENDED'
+            registration.is_used = True
+            registration.save()
+            return Response({
+                "valid": True,
+                "message": "Verification successful! Access Granted.",
+                "registrant": RegistrationSerializer(registration).data
+            }, status=status.HTTP_200_OK)
+
+        # By default (or for check_only), return valid status without modifying DB
+        return Response({
+            "valid": True,
+            "message": "Ticket is valid.",
+            "registrant": RegistrationSerializer(registration).data
+        }, status=status.HTTP_200_OK)
+
+    def post(self, request, token):
+        registration = get_object_or_404(Registration, token=token)
+
+        if registration.status == 'ATTENDED' or registration.is_used:
+            return Response({
+                "valid": False,
+                "message": "QR Code has already been used.",
+                "registrant": RegistrationSerializer(registration).data
+            }, status=status.HTTP_200_OK)
+
         registration.status = 'ATTENDED'
         registration.is_used = True
         registration.save()
-        
+
         return Response({
             "valid": True,
             "message": "Verification successful! Access Granted.",
