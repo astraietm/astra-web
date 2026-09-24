@@ -10,13 +10,13 @@ import logging
 from .models import AuditLog, SystemSetting, Notification
 from .serializers import AuditLogSerializer, SystemSettingSerializer, NotificationSerializer
 from authentication.models import User, AllowedEmail
-from core.permissions import IsAdminUser
+from core.permissions import IsAdminUser, IsSuperUser
 
 logger = logging.getLogger(__name__)
 
 class AuditLogListView(generics.ListAPIView):
     serializer_class = AuditLogSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def get_queryset(self):
         qs = AuditLog.objects.all().order_by('-timestamp')
@@ -38,7 +38,7 @@ class AuditLogListView(generics.ListAPIView):
         return qs[:250]
 
 class AuditLogClearView(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def delete(self, request):
         count, _ = AuditLog.objects.all().delete()
@@ -52,7 +52,7 @@ class AuditLogClearView(APIView):
         return Response({"status": "success", "message": f"Cleared {count} log entries."})
 
 class SystemSettingListCreateView(APIView):
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def get(self, request):
         settings_qs = SystemSetting.objects.all()
@@ -81,7 +81,7 @@ class TeamListView(APIView):
     GET  /api/ops/team/  → all users with is_superuser=True, is_staff=True, or Admin group
     POST /api/ops/team/  → whitelist email + promote user if exists
     """
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def get(self, request):
         team_users = User.objects.filter(
@@ -172,7 +172,7 @@ class TeamDeleteView(APIView):
     """
     DELETE /api/ops/team/<user_id>/  → revoke staff/admin status from user + remove from whitelist
     """
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def delete(self, request, pk):
         inviter = request.user
@@ -219,7 +219,7 @@ class TeamDeleteView(APIView):
 class NotificationListCreateView(generics.ListCreateAPIView):
     queryset = Notification.objects.all().order_by('-created_at')
     serializer_class = NotificationSerializer
-    permission_classes = [permissions.IsAuthenticated, IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def perform_create(self, serializer):
         notification = serializer.save(sent_by=self.request.user)

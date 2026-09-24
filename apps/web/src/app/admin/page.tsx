@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import Link from "next/link";
-import { LayoutDashboard, Users, CalendarDays, Image, Loader2, ArrowRight, Plus } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { LayoutDashboard, Users, CalendarDays, Image, Loader2, ArrowRight, Plus, QrCode, ShieldCheck } from "lucide-react";
 import AddEventModal from "@/components/admin/AddEventModal";
 
 interface Stats {
@@ -37,38 +38,59 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function AdminDashboard() {
+  const { user } = useAuth();
   const [stats, setStats] = useState<Stats>({ totalEvents: 0, totalRegistrations: 0, totalGalleryItems: 0 });
   const [loading, setLoading] = useState(true);
   const [recentRegistrations, setRecentRegistrations] = useState<any[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  const isSuperUser = Boolean(user?.is_superuser);
+
   const fetchData = async () => {
     try {
-      const [eventsRes, regsRes, galleryRes] = await Promise.all([
-        api.get("/api/events/"),
-        api.get("/api/admin-registrations/"),
-        api.get("/api/gallery/"),
-      ]);
-      setStats({
-        totalEvents: eventsRes.data.length,
-        totalRegistrations: Array.isArray(regsRes.data) ? regsRes.data.length : regsRes.data?.results?.length || 0,
-        totalGalleryItems: galleryRes.data.length,
-      });
-      const regs = Array.isArray(regsRes.data) ? regsRes.data : regsRes.data?.results || [];
-      setRecentRegistrations(regs.slice(0, 8));
+      if (isSuperUser) {
+        const [eventsRes, regsRes, galleryRes] = await Promise.all([
+          api.get("/api/events/"),
+          api.get("/api/admin-registrations/"),
+          api.get("/api/gallery/"),
+        ]);
+        setStats({
+          totalEvents: eventsRes.data.length,
+          totalRegistrations: Array.isArray(regsRes.data) ? regsRes.data.length : regsRes.data?.results?.length || 0,
+          totalGalleryItems: galleryRes.data.length,
+        });
+        const regs = Array.isArray(regsRes.data) ? regsRes.data : regsRes.data?.results || [];
+        setRecentRegistrations(regs.slice(0, 8));
+      } else {
+        const [eventsRes, galleryRes] = await Promise.all([
+          api.get("/api/events/"),
+          api.get("/api/gallery/"),
+        ]);
+        setStats({
+          totalEvents: eventsRes.data.length,
+          totalRegistrations: 0,
+          totalGalleryItems: galleryRes.data.length,
+        });
+      }
     } catch { /* silently fail */ }
     finally { setLoading(false); }
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [isSuperUser]);
 
-  const kpis = [
-    { label: "Total Events",   value: stats.totalEvents,        icon: CalendarDays, accent: "#FFE816", href: "/admin/events" },
-    { label: "Registrations",  value: stats.totalRegistrations, icon: Users,        accent: "#C3FF16", href: "/admin/registrations" },
-    { label: "Gallery Items",  value: stats.totalGalleryItems,  icon: Image,        accent: "#F79CFF", href: "/admin/gallery" },
-  ];
+  const kpis = isSuperUser
+    ? [
+        { label: "Total Events",   value: stats.totalEvents,        icon: CalendarDays, accent: "#FFE816", href: "/admin/events" },
+        { label: "Registrations",  value: stats.totalRegistrations, icon: Users,        accent: "#C3FF16", href: "/admin/registrations" },
+        { label: "Gallery Items",  value: stats.totalGalleryItems,  icon: Image,        accent: "#F79CFF", href: "/admin/gallery" },
+      ]
+    : [
+        { label: "Total Events",   value: stats.totalEvents,        icon: CalendarDays, accent: "#FFE816", href: "/admin/events" },
+        { label: "Gallery Items",  value: stats.totalGalleryItems,  icon: Image,        accent: "#F79CFF", href: "/admin/gallery" },
+        { label: "Ticket Scanner", value: "ONLINE",                 icon: QrCode,       accent: "#97F8B7", href: "/admin/scanner" },
+      ];
 
   return (
     <div>
@@ -79,8 +101,12 @@ export default function AdminDashboard() {
             <LayoutDashboard className="w-4 h-4 text-black" />
           </div>
           <div>
-            <h1 className="font-pixel text-xl font-bold text-white uppercase tracking-wide">Dashboard</h1>
-            <p className="font-editorial italic text-xs text-white/40">ASTRA 2026 Control Center</p>
+            <h1 className="font-pixel text-xl font-bold text-white uppercase tracking-wide">
+              {isSuperUser ? "Admin Dashboard" : "Staff Portal"}
+            </h1>
+            <p className="font-editorial italic text-xs text-white/40">
+              {isSuperUser ? "ASTRA 2026 Control Center" : "ASTRA 2026 Operations Console"}
+            </p>
           </div>
         </div>
         <button
@@ -127,47 +153,108 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          {/* ── Recent Registrations ── */}
-          <SectionTitle>// Recent Registrations</SectionTitle>
-          <AdminCard>
-            <div className="border-b-2 border-white/10 px-4 py-3 flex items-center justify-between">
-              <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Latest Activity</span>
-              <Link href="/admin/registrations" className="font-mono text-[10px] text-[#FFE816] uppercase hover:underline">
-                View All →
-              </Link>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="border-b-2 border-white/10 bg-white/[0.02]">
-                    {["#", "User", "Event", "Status", "Date"].map((h) => (
-                      <th key={h} className="text-left p-3 font-pixel text-[9px] text-white/40 uppercase tracking-wider">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentRegistrations.map((reg: any, i) => (
-                    <tr key={reg.id} className={`border-b border-white/5 hover:bg-white/[0.03] transition-colors ${i % 2 === 0 ? "" : "bg-white/[0.015]"}`}>
-                      <td className="p-3 font-mono text-white/30">#{reg.id}</td>
-                      <td className="p-3 font-mono text-white">{reg.user_email || reg.user_name || `User #${reg.user}`}</td>
-                      <td className="p-3 text-white/60 max-w-[180px] truncate">{reg.event_details?.title || `Event #${reg.event}`}</td>
-                      <td className="p-3"><StatusBadge status={reg.status} /></td>
-                      <td className="p-3 font-mono text-white/30">{new Date(reg.timestamp).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                  {recentRegistrations.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="p-10 text-center font-pixel text-[10px] text-white/20 uppercase">
-                        No registrations yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </AdminCard>
+          {/* ── SuperUser: Recent Registrations / Staff: Quick Actions ── */}
+          {isSuperUser ? (
+            <>
+              <SectionTitle>// Recent Registrations</SectionTitle>
+              <AdminCard>
+                <div className="border-b-2 border-white/10 px-4 py-3 flex items-center justify-between">
+                  <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Latest Activity</span>
+                  <Link href="/admin/registrations" className="font-mono text-[10px] text-[#FFE816] uppercase hover:underline">
+                    View All →
+                  </Link>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b-2 border-white/10 bg-white/[0.02]">
+                        {["#", "User", "Event", "Status", "Date"].map((h) => (
+                          <th key={h} className="text-left p-3 font-pixel text-[9px] text-white/40 uppercase tracking-wider">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentRegistrations.map((reg: any, i) => (
+                        <tr key={reg.id} className={`border-b border-white/5 hover:bg-white/[0.03] transition-colors ${i % 2 === 0 ? "" : "bg-white/[0.015]"}`}>
+                          <td className="p-3 font-mono text-white/30">#{reg.id}</td>
+                          <td className="p-3 font-mono text-white">{reg.user_email || reg.user_name || `User #${reg.user}`}</td>
+                          <td className="p-3 text-white/60 max-w-[180px] truncate">{reg.event_details?.title || `Event #${reg.event}`}</td>
+                          <td className="p-3"><StatusBadge status={reg.status} /></td>
+                          <td className="p-3 font-mono text-white/30">{new Date(reg.timestamp).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                      {recentRegistrations.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="p-10 text-center font-pixel text-[10px] text-white/20 uppercase">
+                            No registrations yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </AdminCard>
+            </>
+          ) : (
+            <>
+              <SectionTitle>// Operations Quick Launch</SectionTitle>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Link href="/admin/events">
+                  <AdminCard className="p-6 group hover:border-[#FFE816] transition-colors">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-8 h-8 bg-[#FFE816] border border-black flex items-center justify-center">
+                        <CalendarDays className="w-4 h-4 text-black" />
+                      </div>
+                      <h3 className="font-pixel text-sm text-white uppercase">Events Manager</h3>
+                    </div>
+                    <p className="font-mono text-xs text-white/50 mb-4">
+                      Create, update, or edit details for ASTRA fest events.
+                    </p>
+                    <span className="font-mono text-[10px] text-[#FFE816] uppercase group-hover:underline">
+                      Open Events →
+                    </span>
+                  </AdminCard>
+                </Link>
+
+                <Link href="/admin/gallery">
+                  <AdminCard className="p-6 group hover:border-[#F79CFF] transition-colors">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-8 h-8 bg-[#F79CFF] border border-black flex items-center justify-center">
+                        <Image className="w-4 h-4 text-black" />
+                      </div>
+                      <h3 className="font-pixel text-sm text-white uppercase">Media Gallery</h3>
+                    </div>
+                    <p className="font-mono text-xs text-white/50 mb-4">
+                      Upload event photos, highlight banners, and media assets.
+                    </p>
+                    <span className="font-mono text-[10px] text-[#F79CFF] uppercase group-hover:underline">
+                      Open Gallery →
+                    </span>
+                  </AdminCard>
+                </Link>
+
+                <Link href="/admin/scanner">
+                  <AdminCard className="p-6 group hover:border-[#97F8B7] transition-colors">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-8 h-8 bg-[#97F8B7] border border-black flex items-center justify-center">
+                        <QrCode className="w-4 h-4 text-black" />
+                      </div>
+                      <h3 className="font-pixel text-sm text-white uppercase">QR Gate Scanner</h3>
+                    </div>
+                    <p className="font-mono text-xs text-white/50 mb-4">
+                      Verify ticket tokens and grant attendee entry at event gates.
+                    </p>
+                    <span className="font-mono text-[10px] text-[#97F8B7] uppercase group-hover:underline">
+                      Open Scanner →
+                    </span>
+                  </AdminCard>
+                </Link>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
   );
 }
+

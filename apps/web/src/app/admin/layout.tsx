@@ -11,13 +11,13 @@ import {
 
 const SIDEBAR_LINKS = [
   { href: "/admin",                  label: "Dashboard",      icon: LayoutDashboard, badge: "01" },
-  { href: "/admin/registrations",    label: "Registrations",  icon: Users,           badge: "02" },
-  { href: "/admin/events",           label: "Events",         icon: CalendarDays,    badge: "03" },
-  { href: "/admin/gallery",          label: "Gallery",        icon: Image,           badge: "04" },
-  { href: "/admin/scanner",          label: "Scanner",        icon: QrCode,          badge: "05" },
-  { href: "/admin/notifications",    label: "Notifications",  icon: Bell,            badge: "06" },
-  { href: "/admin/logs",             label: "Audit Logs",     icon: FileText,        badge: "07" },
-  { href: "/admin/settings",         label: "Settings",       icon: Settings,        badge: "08" },
+  { href: "/admin/events",           label: "Events",         icon: CalendarDays,    badge: "02" },
+  { href: "/admin/gallery",          label: "Gallery",        icon: Image,           badge: "03" },
+  { href: "/admin/scanner",          label: "Scanner",        icon: QrCode,          badge: "04" },
+  { href: "/admin/registrations",    label: "Registrations",  icon: Users,           badge: "05", superuserOnly: true },
+  { href: "/admin/notifications",    label: "Notifications",  icon: Bell,            badge: "06", superuserOnly: true },
+  { href: "/admin/logs",             label: "Audit Logs",     icon: FileText,        badge: "07", superuserOnly: true },
+  { href: "/admin/settings",         label: "Settings",       icon: Settings,        badge: "08", superuserOnly: true },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -28,10 +28,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const hasAdminAccess = Boolean(user && (user.is_staff || user.is_superuser));
+  const isSuperuserRoute = ["/admin/registrations", "/admin/notifications", "/admin/logs", "/admin/settings"].some(
+    r => pathname === r || pathname?.startsWith(r + "/")
+  );
 
   useEffect(() => {
-    if (!loading && !hasAdminAccess) router.push("/");
-  }, [hasAdminAccess, loading, router]);
+    if (!loading) {
+      if (!hasAdminAccess) {
+        router.push("/");
+      } else if (isSuperuserRoute && !user?.is_superuser) {
+        router.push("/admin");
+      }
+    }
+  }, [hasAdminAccess, isSuperuserRoute, loading, router, user]);
 
   useEffect(() => { setIsMobileOpen(false); }, [pathname]);
 
@@ -47,7 +56,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
     </div>
   );
-  if (!hasAdminAccess) return null;
+  if (!hasAdminAccess || (isSuperuserRoute && !user?.is_superuser)) return null;
+
+  const visibleLinks = SIDEBAR_LINKS.filter(link => !link.superuserOnly || user?.is_superuser);
+
 
   return (
     <div
@@ -154,7 +166,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
           {/* Nav links */}
           <nav className="flex-1 py-3 overflow-y-auto space-y-0.5 px-2">
-            {SIDEBAR_LINKS.map((link) => {
+            {visibleLinks.map((link) => {
               const isActive =
                 pathname === link.href ||
                 (link.href !== "/admin" && pathname?.startsWith(link.href));

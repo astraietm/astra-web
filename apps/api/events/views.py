@@ -7,7 +7,7 @@ from .models import Registration, Event
 from .serializers import RegistrationSerializer, EventSerializer
 from .utils import send_registration_email
 from django.db.models import Q
-from core.permissions import IsAdminUser
+from core.permissions import IsAdminUser, IsSuperUser
 
 class EventListView(generics.ListAPIView):
     queryset = Event.objects.all()
@@ -101,7 +101,7 @@ class VerifyTokenView(APIView):
     # per USER request "Admin QR Scan Support", this should ideally be protected.
     # But for simplicity or if the scanner app just has the link, we can keep it open or require Admin.
     # Let's keep it AllowAny for now for easy testing, but in production, we'd use IsAdminUser.
-    permission_classes = [permissions.AllowAny] 
+    permission_classes = [permissions.IsAuthenticated, IsAdminUser] 
 
     def get(self, request, token):
         registration = get_object_or_404(Registration, token=token)
@@ -157,7 +157,7 @@ class VerifyTokenView(APIView):
 class AdminRegistrationsView(generics.ListAPIView):
     queryset = Registration.objects.all().order_by('-timestamp')
     serializer_class = RegistrationSerializer
-    permission_classes = [IsAdminUser] # Restrict to staff/admins
+    permission_classes = [IsSuperUser] # Restrict to superusers
 
 class AdminEventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('-created_at')
@@ -343,7 +343,7 @@ class VerifyPaymentView(APIView):
             return Response({"error": f"Verification error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ClearRegistrationsView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsSuperUser]
 
     def delete(self, request):
         try:
