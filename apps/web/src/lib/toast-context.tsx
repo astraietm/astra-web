@@ -73,15 +73,15 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-5 sm:bottom-6 right-4 sm:right-6 z-[9999] pointer-events-none flex flex-col gap-2.5 max-w-sm sm:max-w-md w-full">
+      <div className="fixed top-24 right-4 sm:right-6 z-[9999] pointer-events-none flex flex-col gap-2.5 max-w-sm sm:max-w-md w-full">
         <AnimatePresence mode="popLayout">
           {toasts.map((toast) => (
             <motion.div
               key={toast.id}
               layout
-              initial={{ opacity: 0, y: 20, scale: 0.94 }}
+              initial={{ opacity: 0, y: -20, scale: 0.94 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.94 }}
+              exit={{ opacity: 0, y: -10, scale: 0.94 }}
               transition={{ type: 'spring', stiffness: 400, damping: 28 }}
               className="pointer-events-auto flex items-center gap-3 p-3.5 sm:p-4 bg-white/95 backdrop-blur-md rounded-2xl border border-neutral-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.12)] text-neutral-900"
             >

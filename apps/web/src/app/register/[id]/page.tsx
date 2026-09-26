@@ -29,8 +29,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { TicketPass } from "@/components/events/TicketPass";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use";
 
 export default function RegisterPage() {
+  const { width, height } = useWindowSize();
   const params = useParams();
   const router = useRouter();
   const eventId = params?.id as string;
@@ -305,14 +308,33 @@ export default function RegisterPage() {
   if (success && registration) {
     return (
       <div className="relative min-h-screen pt-24 sm:pt-28 pb-24 px-4 bg-neutral-50/60 font-sans overflow-hidden">
+        <Confetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={400}
+          gravity={0.15}
+          style={{ zIndex: 50 }}
+        />
+        
         {/* Subtle Ambient Glow */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-400/10 rounded-full blur-[140px] pointer-events-none" />
 
-        <div className="relative max-w-2xl mx-auto space-y-6">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, type: "spring", bounce: 0.4 }}
+          className="relative max-w-2xl mx-auto space-y-6"
+        >
           <div className="text-center space-y-2">
-            <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", bounce: 0.6 }}
+              className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm"
+            >
               <CheckCircle2 className="w-8 h-8" />
-            </div>
+            </motion.div>
             <h1 className="text-2xl sm:text-3xl font-bold text-neutral-950 tracking-tight">
               Registration Confirmed!
             </h1>
@@ -341,7 +363,7 @@ export default function RegisterPage() {
               <span>Explore More Events</span>
             </Link>
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
