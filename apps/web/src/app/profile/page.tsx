@@ -15,7 +15,7 @@ import {
   GraduationCap,
   Hash,
   ArrowLeft,
-  ArrowRight,
+  ChevronRight,
   CheckCircle2,
   Loader2,
   Save,
@@ -24,7 +24,6 @@ import {
   Calendar,
   Sparkles,
 } from "lucide-react";
-import { MarqueeTicker } from "@/components/ui/MarqueeTicker";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -147,10 +146,10 @@ export default function ProfilePage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center bg-graph-paper">
+      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center bg-neutral-50">
         <div className="flex flex-col items-center space-y-4">
-          <Loader2 className="w-10 h-10 animate-spin text-black" />
-          <p className="font-mono text-sm uppercase tracking-widest text-neutral-600">
+          <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
+          <p className="font-sans text-xs uppercase tracking-widest text-neutral-500 font-medium">
             Loading Account Details...
           </p>
         </div>
@@ -161,159 +160,147 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="w-full relative bg-graph-paper min-h-screen pb-24">
-      {/* ─── MARQUEE TICKER HEADER ─── */}
-      <div className="pt-20 sm:pt-24">
-        <MarqueeTicker
-          items={[
-            "ASTRA 2026 // PARTICIPANT ACCOUNT",
-            "OCT 6 & 7 — KMCT CALICUT",
-            "MANAGE PROFILE & INSTITUTIONAL AFFILIATION",
-            "OFFICIAL CREDENTIALS",
-          ]}
-        />
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        {/* Navigation Bar */}
-        <div className="flex items-center justify-between gap-4 mb-6 sm:mb-8 pb-4 border-b-2 border-black/20">
+    <div className="w-full relative bg-neutral-50/60 min-h-screen pt-24 sm:pt-28 pb-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Navigation & Breadcrumb */}
+        <div className="flex items-center justify-between gap-4 mb-6 sm:mb-8">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 bg-white border-2 border-black px-3.5 py-1.5 font-mono text-xs font-bold uppercase hover:bg-[#FFE816] transition-colors shadow-[2px_2px_0px_#000] select-none"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-neutral-200 bg-white text-xs font-medium text-neutral-700 hover:border-neutral-300 hover:bg-neutral-50 transition-all shadow-sm select-none"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-3.5 h-3.5" />
             <span>My Passes</span>
           </Link>
 
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-xs font-bold text-gray-500 uppercase">
-              ACCOUNT SETTINGS
-            </span>
-          </div>
+          <span className="text-xs font-medium text-neutral-400 tracking-wide uppercase">
+            Account Settings
+          </span>
         </div>
 
         {/* Page Title & Intro */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="font-mono text-xs font-bold bg-[#FFE816] text-black border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
-              PARTICIPANT PROFILE
-            </span>
-            <span className="font-mono text-xs bg-black text-white px-2 py-0.5 font-bold uppercase">
-              ASTRA 2026
-            </span>
+        <div className="mb-8 sm:mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 text-white text-xs font-medium shadow-sm mb-3">
+            <Sparkles className="w-3 h-3 text-amber-300" />
+            <span>Participant Profile</span>
           </div>
 
-          <h1 className="font-anton text-4xl sm:text-6xl uppercase text-black tracking-tight leading-none mb-3">
-            YOUR PROFILE &amp; PREFERENCES
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950">
+            Account &amp; Preferences
           </h1>
 
-          <p className="font-editorial italic text-xl sm:text-2xl text-gray-700 max-w-2xl">
-            Verify and maintain your contact, college, and academic details for seamless event entry and certificate issuance.
+          <p className="text-sm sm:text-base text-neutral-500 mt-2 max-w-2xl leading-relaxed">
+            Manage your personal details, contact number, and institutional affiliation for seamless event entry and certificate issuance.
           </p>
         </div>
 
-        {/* ─── TWO-COLUMN MODERN EDITORIAL LAYOUT ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* ─── TWO-COLUMN MODERN LAYOUT ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
           {/* ── 1. LEFT COLUMN: IDENTITY CARD (4 COLS) ── */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:col-span-4 space-y-6"
+            transition={{ duration: 0.25 }}
+            className="lg:col-span-4 space-y-4"
           >
             {/* Identity Card */}
-            <div className="bg-white border-2 border-black shadow-[6px_6px_0px_#000] p-6 space-y-5">
+            <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-sm p-6 space-y-5">
               <div className="flex items-start gap-4">
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   {user.avatar ? (
                     <img
                       src={user.avatar}
                       alt={user.name || "User Avatar"}
-                      className="w-16 h-16 border-2 border-black object-cover shadow-[2px_2px_0px_#FFE816]"
+                      className="w-14 h-14 rounded-full object-cover ring-2 ring-neutral-100 shadow-sm"
                     />
                   ) : (
-                    <div className="w-16 h-16 bg-[#0C0C14] border-2 border-black flex items-center justify-center text-white">
-                      <User className="w-8 h-8" />
+                    <div className="w-14 h-14 rounded-full bg-neutral-900 ring-2 ring-neutral-100 flex items-center justify-center text-white">
+                      <User className="w-6 h-6" />
                     </div>
                   )}
-                  <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-black" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full ring-2 ring-white" />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="mb-1">
                     {user.is_staff ? (
-                      <span className="font-pixel text-[8px] bg-[#FFE816] text-black px-1.5 py-0.5 font-bold uppercase tracking-wider">
-                        STAFF // ORGANIZER
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                        Staff Admin
                       </span>
                     ) : (
-                      <span className="font-pixel text-[8px] bg-black text-white px-1.5 py-0.5 font-bold uppercase tracking-wider">
-                        ATTENDEE
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-neutral-100 text-neutral-700">
+                        Attendee
                       </span>
                     )}
                   </div>
-                  <h3 className="font-anton text-xl uppercase text-black leading-tight truncate">
+                  <h3 className="font-semibold text-base sm:text-lg text-neutral-900 leading-snug truncate">
                     {user.name || user.full_name || "Participant"}
                   </h3>
-                  <p className="font-mono text-xs text-gray-500 truncate mt-0.5">
+                  <p className="text-xs text-neutral-500 truncate mt-0.5">
                     {user.email}
                   </p>
                 </div>
               </div>
 
               {/* Verified Account Indicator */}
-              <div className="bg-[#FAF9F6] border border-black p-3 flex items-center gap-2.5">
+              <div className="bg-emerald-50/60 border border-emerald-100 rounded-xl p-3 flex items-center gap-3">
                 <ShieldCheck className="w-5 h-5 text-emerald-600 flex-shrink-0" />
                 <div>
-                  <p className="font-mono text-[11px] font-bold text-black uppercase leading-tight">
+                  <p className="text-xs font-semibold text-emerald-950 leading-tight">
                     Verified Google Account
                   </p>
-                  <p className="font-mono text-[10px] text-gray-500 leading-tight mt-0.5">
+                  <p className="text-[11px] text-emerald-700/80 leading-tight mt-0.5">
                     Primary email authenticated
                   </p>
                 </div>
               </div>
 
               {/* Profile Completion Meter */}
-              <div className="border-t-2 border-black/10 pt-4 space-y-2">
-                <div className="flex items-center justify-between font-mono text-xs">
-                  <span className="font-bold text-black uppercase">Profile Status</span>
-                  <span className="font-bold text-black">{percentage}%</span>
+              <div className="border-t border-neutral-100 pt-4 space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-neutral-700">Profile Completion</span>
+                  <span className="font-semibold text-neutral-900">{percentage}%</span>
                 </div>
-                <div className="w-full bg-[#E5E5F0] border border-black h-2 overflow-hidden">
+                <div className="w-full bg-neutral-100 rounded-full h-2 overflow-hidden">
                   <motion.div
-                    className="bg-[#FFE816] h-full"
+                    className="bg-neutral-900 h-full rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${percentage}%` }}
-                    transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
                   />
                 </div>
-                <p className="font-mono text-[10px] text-gray-500">
+                <p className="text-[11px] text-neutral-500 leading-relaxed">
                   {percentage === 100
-                    ? "✓ All required profile details are complete."
-                    : "* Please ensure phone & college are saved to register for events."}
+                    ? "All required profile details are complete."
+                    : "Please ensure your phone number and college are saved to register for events."}
                 </p>
               </div>
 
               {/* Quick Navigation Links */}
-              <div className="border-t-2 border-black/10 pt-4 space-y-2">
+              <div className="border-t border-neutral-100 pt-4 space-y-1.5">
                 <Link
                   href="/dashboard"
-                  className="flex items-center justify-between p-2.5 bg-[#FAF9F6] border border-black text-xs font-mono font-bold uppercase hover:bg-[#C3FF16] transition-colors group"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 text-xs font-medium text-neutral-800 transition-colors group"
                 >
-                  <span className="flex items-center gap-2">
-                    <Ticket className="w-3.5 h-3.5" /> My Event Passes
+                  <span className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-neutral-100 text-neutral-700 flex items-center justify-center group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                      <Ticket className="w-3.5 h-3.5" />
+                    </div>
+                    <span>My Event Passes</span>
                   </span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-0.5 transition-all" />
                 </Link>
 
                 <Link
                   href="/events"
-                  className="flex items-center justify-between p-2.5 bg-[#FAF9F6] border border-black text-xs font-mono font-bold uppercase hover:bg-th-yellow transition-colors group"
+                  className="flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 text-xs font-medium text-neutral-800 transition-colors group"
                 >
-                  <span className="flex items-center gap-2">
-                    <Calendar className="w-3.5 h-3.5" /> Browse Events
+                  <span className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-neutral-100 text-neutral-700 flex items-center justify-center group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                      <Calendar className="w-3.5 h-3.5" />
+                    </div>
+                    <span>Browse Events</span>
                   </span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-0.5 transition-all" />
                 </Link>
               </div>
             </div>
@@ -321,114 +308,111 @@ export default function ProfilePage() {
 
           {/* ── 2. RIGHT COLUMN: PROFILE EDIT FORM (8 COLS) ── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.1 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
             className="lg:col-span-8"
           >
             <form
               onSubmit={handleSubmit}
-              className="bg-white border-2 border-black shadow-[6px_6px_0px_#000] p-6 sm:p-8 space-y-6"
+              className="bg-white rounded-2xl border border-neutral-200/80 shadow-sm p-6 sm:p-8 space-y-6"
             >
-              <div className="border-b-2 border-black pb-4 flex items-center justify-between">
-                <div>
-                  <h2 className="font-anton text-2xl uppercase text-black leading-tight">
-                    Edit Personal Information
-                  </h2>
-                  <p className="font-mono text-xs text-gray-600 mt-1">
-                    Keep your institutional credentials updated for symposium accreditation.
-                  </p>
-                </div>
-                <Sparkles className="w-5 h-5 text-black hidden sm:block" />
+              <div className="border-b border-neutral-100 pb-4">
+                <h2 className="text-xl font-bold text-neutral-950 tracking-tight">
+                  Edit Personal Information
+                </h2>
+                <p className="text-xs text-neutral-500 mt-1">
+                  Keep your institutional credentials updated for symposium accreditation and certificates.
+                </p>
               </div>
 
               {/* Section 1: Contact Details */}
               <div className="space-y-4">
-                <h4 className="font-mono text-xs font-bold uppercase text-black flex items-center gap-1.5 pb-1 border-b border-black/10">
-                  <User className="w-3.5 h-3.5 text-black" /> Personal &amp; Contact Details
-                </h4>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5 pb-1">
+                  <User className="w-3.5 h-3.5 text-neutral-500" /> Personal &amp; Contact Details
+                </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Full Name */}
                   <div>
-                    <label className="block font-mono text-xs font-bold text-black uppercase mb-1.5">
-                      Full Name *
+                    <label className="block text-xs font-medium text-neutral-700 mb-1.5">
+                      Full Name <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                       <input
                         type="text"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         required
-                        placeholder="Your Full Name"
-                        className="w-full pl-10 pr-3.5 py-2.5 border-2 border-black font-sans text-sm text-black placeholder:text-gray-400 focus:outline-none focus:bg-[#FFFEE5] transition-colors"
+                        placeholder="Your full name"
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all"
                       />
                     </div>
                   </div>
 
                   {/* Phone Number */}
                   <div>
-                    <label className="block font-mono text-xs font-bold text-black uppercase mb-1.5">
-                      Phone Number *
+                    <label className="block text-xs font-medium text-neutral-700 mb-1.5">
+                      Phone Number <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                       <input
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         required
                         placeholder="10-digit mobile number"
-                        className="w-full pl-10 pr-3.5 py-2.5 border-2 border-black font-mono text-sm text-black placeholder:text-gray-400 focus:outline-none focus:bg-[#FFFEE5] transition-colors"
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all"
                       />
                     </div>
-                    <span className="font-mono text-[10px] text-gray-500 mt-1 block">
-                      Used for SMS entry verification &amp; coordinator calls.
+                    <span className="text-[11px] text-neutral-400 mt-1 block">
+                      Used for event entry verification and coordination.
                     </span>
                   </div>
                 </div>
 
                 {/* Email (Readonly) */}
                 <div>
-                  <label className="block font-mono text-xs font-bold text-black uppercase mb-1.5">
+                  <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                     <input
                       type="email"
                       value={user.email}
                       disabled
-                      className="w-full pl-10 pr-3.5 py-2.5 border-2 border-black/40 bg-gray-100 font-mono text-sm text-gray-600 cursor-not-allowed select-none"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-neutral-200/70 bg-neutral-50 text-sm text-neutral-500 cursor-not-allowed select-none"
                     />
                   </div>
-                  <span className="font-mono text-[10px] text-gray-500 mt-1 block">
-                    Linked to your Google Single Sign-On account.
+                  <span className="text-[11px] text-neutral-400 mt-1 block">
+                    Linked to your authenticated Google account.
                   </span>
                 </div>
               </div>
 
               {/* Section 2: Academic & Institutional Information */}
               <div className="space-y-4 pt-2">
-                <h4 className="font-mono text-xs font-bold uppercase text-black flex items-center gap-1.5 pb-1 border-b border-black/10">
-                  <Building className="w-3.5 h-3.5 text-black" /> Academic &amp; Institution Details
-                </h4>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400 flex items-center gap-1.5 pb-1">
+                  <Building className="w-3.5 h-3.5 text-neutral-500" /> Academic &amp; Institution Details
+                </h3>
 
                 {/* College / Institution */}
                 <div>
-                  <label className="block font-mono text-xs font-bold text-black uppercase mb-1.5">
-                    College / University / Institution *
+                  <label className="block text-xs font-medium text-neutral-700 mb-1.5">
+                    College / University / Institution <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                     <input
                       type="text"
                       value={college}
                       onChange={(e) => setCollege(e.target.value)}
                       required
                       placeholder="e.g. KMCT Institute of Emerging Technology and Management"
-                      className="w-full pl-10 pr-3.5 py-2.5 border-2 border-black font-sans text-sm text-black placeholder:text-gray-400 focus:outline-none focus:bg-[#FFFEE5] transition-colors"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all"
                     />
                   </div>
                 </div>
@@ -436,15 +420,15 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Department */}
                   <div>
-                    <label className="block font-mono text-xs font-bold text-black uppercase mb-1.5">
+                    <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                       Department / Branch
                     </label>
                     <div className="relative">
-                      <GraduationCap className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                      <GraduationCap className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
                       <select
                         value={department}
                         onChange={(e) => setDepartment(e.target.value)}
-                        className="w-full pl-10 pr-8 py-2.5 border-2 border-black bg-white font-mono text-sm text-black focus:outline-none focus:bg-[#FFFEE5] transition-colors cursor-pointer appearance-none"
+                        className="w-full pl-10 pr-8 py-2.5 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all cursor-pointer appearance-none"
                       >
                         <option value="">Select Department</option>
                         {departments.map((dept) => (
@@ -453,7 +437,7 @@ export default function ProfilePage() {
                           </option>
                         ))}
                       </select>
-                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-xs">
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400 text-xs">
                         ▼
                       </div>
                     </div>
@@ -461,15 +445,15 @@ export default function ProfilePage() {
 
                   {/* Semester */}
                   <div>
-                    <label className="block font-mono text-xs font-bold text-black uppercase mb-1.5">
+                    <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                       Semester / Year
                     </label>
                     <div className="relative">
-                      <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                      <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
                       <select
                         value={semester}
                         onChange={(e) => setSemester(e.target.value)}
-                        className="w-full pl-10 pr-8 py-2.5 border-2 border-black bg-white font-mono text-sm text-black focus:outline-none focus:bg-[#FFFEE5] transition-colors cursor-pointer appearance-none"
+                        className="w-full pl-10 pr-8 py-2.5 rounded-xl border border-neutral-200 bg-white text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all cursor-pointer appearance-none"
                       >
                         <option value="">Select Semester</option>
                         {semesters.map((sem) => (
@@ -478,7 +462,7 @@ export default function ProfilePage() {
                           </option>
                         ))}
                       </select>
-                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-xs">
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400 text-xs">
                         ▼
                       </div>
                     </div>
@@ -487,30 +471,30 @@ export default function ProfilePage() {
 
                 {/* USN / Roll Number */}
                 <div>
-                  <label className="block font-mono text-xs font-bold text-black uppercase mb-1.5">
+                  <label className="block text-xs font-medium text-neutral-700 mb-1.5">
                     USN / University Registration Number
                   </label>
                   <div className="relative">
-                    <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                     <input
                       type="text"
                       value={usn}
                       onChange={(e) => setUsn(e.target.value)}
                       placeholder="e.g. KMC22CS042"
-                      className="w-full pl-10 pr-3.5 py-2.5 border-2 border-black font-mono text-sm text-black placeholder:text-gray-400 focus:outline-none focus:bg-[#FFFEE5] transition-colors"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-neutral-200 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all"
                     />
                   </div>
-                  <span className="font-mono text-[10px] text-gray-500 mt-1 block">
-                    Printed on your verified certificates and KTU activity point credentials.
+                  <span className="text-[11px] text-neutral-400 mt-1 block">
+                    Will appear on verified certificates and activity credentials.
                   </span>
                 </div>
               </div>
 
               {/* Submit / Action Bar */}
-              <div className="pt-4 border-t-2 border-black flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="pt-4 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <Link
                   href="/dashboard"
-                  className="font-mono text-xs uppercase font-bold text-gray-600 hover:text-black transition-colors"
+                  className="text-xs font-medium text-neutral-500 hover:text-neutral-900 transition-colors"
                 >
                   Cancel &amp; Return
                 </Link>
@@ -519,12 +503,12 @@ export default function ProfilePage() {
                   <AnimatePresence>
                     {savedSuccess && (
                       <motion.span
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={{ opacity: 0, x: -6 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0 }}
-                        className="font-mono text-xs font-bold text-emerald-700 flex items-center gap-1.5"
+                        className="text-xs font-medium text-emerald-600 flex items-center gap-1.5"
                       >
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Saved!
+                        <CheckCircle2 className="w-4 h-4" /> Changes Saved
                       </motion.span>
                     )}
                   </AnimatePresence>
@@ -532,17 +516,17 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="w-full sm:w-auto px-8 py-3 bg-[#FFE816] text-black font-display font-bold text-xs sm:text-sm uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer select-none"
+                    className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-neutral-900 text-white font-medium text-xs sm:text-sm tracking-wide hover:bg-black transition-all shadow-sm hover:shadow active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer select-none"
                   >
                     {saving ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Saving Changes...</span>
+                        <span>Saving...</span>
                       </>
                     ) : (
                       <>
                         <Save className="w-4 h-4" />
-                        <span>Save Profile Changes</span>
+                        <span>Save Changes</span>
                       </>
                     )}
                   </button>
