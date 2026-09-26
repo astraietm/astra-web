@@ -193,9 +193,8 @@ export default function EventsPage() {
       <div className="pt-20 sm:pt-24">
         <MarqueeTicker
           items={[
-            "ASTRA 2026 // NATIONAL CYBER SECURITY SYMPOSIUM",
+            "ASTRA 2026 //  CYBER SECURITY ASSOCIATION",
             "OCT 6 & 7 — KMCT CALICUT",
-            "24H NATIONAL CTF WARGAMES",
             "REGISTER NOW",
           ]}
         />
