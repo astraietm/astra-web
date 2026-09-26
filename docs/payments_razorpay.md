@@ -65,8 +65,8 @@ Add these to your `.env` file (both local and production):
 
 ```env
 # Razorpay Configuration
-RAZORPAY_KEY_ID=rzp_test_SSIQ6xSAP4EYAX
-RAZORPAY_KEY_SECRET=0ngdUqSTUqIreIj6vRaBHg8N
+RAZORPAY_KEY_ID=rzp_test_your_key_id_here
+RAZORPAY_KEY_SECRET=your_key_secret_here
 ```
 
 **IMPORTANT**: 

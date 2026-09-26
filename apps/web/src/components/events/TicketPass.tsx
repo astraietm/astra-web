@@ -60,7 +60,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
   const ticketRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
 
-  const event = registration.event_details || {
+  const event = registration?.event_details || {
     id: 0,
     title: "ASTRA Event Pass",
     category: "EVENT",
@@ -69,12 +69,12 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
     time: "TBA",
   };
 
-  const name = registration.user_name || "Attendee";
-  const email = registration.user_email || "";
-  const phone = registration.phone_number || registration.user_phone || "N/A";
-  const college = registration.college || registration.user_college || "N/A";
-  const dept = registration.department || "N/A";
-  const year = registration.year_of_study || "N/A";
+  const name = registration?.user_name || "Attendee";
+  const email = registration?.user_email || "";
+  const phone = registration?.phone_number || registration?.user_phone || "N/A";
+  const college = registration?.college || registration?.user_college || "N/A";
+  const dept = registration?.department || "N/A";
+  const year = registration?.year_of_study || "N/A";
 
   const formattedDate = event.event_date
     ? new Date(event.event_date).toLocaleDateString("en-IN", {
@@ -103,8 +103,9 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
         backgroundColor: "#ffffff",
       });
 
+      const passId = registration?.id != null ? String(registration.id) : "0";
       const cleanTitle = (event.title || "Ticket").replace(/[^a-zA-Z0-9]/g, "_");
-      const filename = `ASTRA-Pass-${registration.id}-${cleanTitle}.png`;
+      const filename = `ASTRA-Pass-${passId}-${cleanTitle}.png`;
 
       const link = document.createElement("a");
       link.download = filename;
@@ -153,7 +154,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
       <!DOCTYPE html>
       <html>
         <head>
-          <title>ASTRA Ticket Pass #${registration.id}</title>
+          <title>ASTRA Ticket Pass #${registration?.id ?? ""}</title>
           <meta charset="utf-8" />
           ${styles}
           <style>
@@ -259,7 +260,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
       {/* Main Printable Pass Container */}
       <div
         ref={ticketRef}
-        id={`ticket-pass-${registration.id}`}
+        id={`ticket-pass-${registration?.id ?? "0"}`}
         className="print-target-ticket bg-white rounded-3xl border border-neutral-200/90 shadow-xl shadow-neutral-900/5 overflow-hidden text-neutral-900 print:shadow-none print:border print:rounded-2xl"
       >
         {/* Ticket Top Banner */}
@@ -276,17 +277,17 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
           <div className="flex items-center gap-2">
             <span
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
-                registration.status === "ATTENDED"
+                registration?.status === "ATTENDED"
                   ? "bg-blue-500/15 text-blue-300 border-blue-500/30"
-                  : registration.status === "REGISTERED"
+                  : registration?.status === "REGISTERED"
                   ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
                   : "bg-amber-500/15 text-amber-300 border-amber-500/30"
               }`}
             >
-              {registration.status}
+              {registration?.status || "PENDING"}
             </span>
             <span className="text-xs font-medium text-neutral-400 bg-neutral-900 px-2.5 py-0.5 rounded-full border border-neutral-800">
-              #{registration.id.toString().padStart(4, "0")}
+              #{registration?.id != null ? String(registration.id).padStart(4, "0") : "0000"}
             </span>
           </div>
         </div>

@@ -21,8 +21,16 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+**/.env
+**/.env.*
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
 !.env.example
+!**/.env.example
 !.env.*.example
+!**/.env.*.example
 
 # Python
 __pycache__/
