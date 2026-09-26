@@ -8,7 +8,7 @@ import { PixelFrame } from "@/components/ui/PixelFrame";
 import { StickerBadge } from "@/components/ui/StickerBadge";
 import { useAuth } from "@/lib/auth-context";
 import api from "@/lib/api";
-import { Calendar, MapPin, Loader2, QrCode, Ticket, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, Loader2, QrCode, Ticket, ArrowRight, User } from "lucide-react";
 
 interface Registration {
   id: number;
@@ -83,15 +83,25 @@ export default function DashboardPage() {
 
         {/* User Info Card */}
         <PixelFrame dotGrid cornerAccent className="p-6 mb-8">
-          <div className="flex items-center gap-4">
-            {user?.avatar && (
-              <img src={user.avatar} alt="" className="w-14 h-14 rounded-full border-2 border-black shadow-[2px_2px_0px_#000]" />
-            )}
-            <div>
-              <p className="font-display font-bold text-lg text-black">{user?.name || user?.full_name}</p>
-              <p className="font-mono text-xs text-gray-600">{user?.email}</p>
-              {user?.college && <p className="font-mono text-xs text-gray-500">{user.college}</p>}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              {user?.avatar && (
+                <img src={user.avatar} alt="" className="w-14 h-14 rounded-full border-2 border-black shadow-[2px_2px_0px_#000]" />
+              )}
+              <div>
+                <p className="font-display font-bold text-lg text-black">{user?.name || user?.full_name}</p>
+                <p className="font-mono text-xs text-gray-600">{user?.email}</p>
+                {user?.college && <p className="font-mono text-xs text-gray-500">{user.college}</p>}
+              </div>
             </div>
+
+            <Link
+              href="/profile"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border-2 border-black font-mono text-xs font-bold uppercase hover:bg-th-yellow transition-colors shadow-[2px_2px_0px_#000] self-start sm:self-auto"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Edit Profile</span>
+            </Link>
           </div>
         </PixelFrame>
 

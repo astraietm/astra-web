@@ -282,12 +282,10 @@ export const Navbar: React.FC = () => {
                         <ArrowRight className="w-3.5 h-3.5 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                       </Link>
 
-                      <button
-                        onClick={() => {
-                          setUserDropdownOpen(false);
-                          setIsProfileModalOpen(true);
-                        }}
-                        className="w-full group flex items-center justify-between p-2.5 bg-white border border-black/10 hover:border-black hover:bg-th-yellow transition-colors text-left cursor-pointer"
+                      <Link
+                        href="/profile"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="w-full group flex items-center justify-between p-2.5 bg-white border border-black/10 hover:border-black hover:bg-th-yellow transition-colors text-left"
                       >
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 bg-[#F79CFF] border border-black flex items-center justify-center flex-shrink-0 shadow-[1px_1px_0px_#000]">
@@ -303,7 +301,7 @@ export const Navbar: React.FC = () => {
                           </div>
                         </div>
                         <ArrowRight className="w-3.5 h-3.5 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-                      </button>
+                      </Link>
 
                       {user.is_staff && (
                         <Link

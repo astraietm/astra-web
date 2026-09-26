@@ -133,7 +133,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (pendingAction) {
         if (!userData.phone_number || !userData.college) {
-          setIsProfileModalOpen(true);
+          if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/profile')) {
+            window.location.href = '/profile';
+          }
         } else {
           pendingAction.run(access);
           setPendingAction(null);
@@ -148,7 +150,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (user) {
         if (!user.phone_number || !user.college) {
           setPendingAction(action);
-          setIsProfileModalOpen(true);
+          if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/profile')) {
+            window.location.href = '/profile';
+          }
         } else if (token) {
           action.run(token);
         }
