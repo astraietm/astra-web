@@ -33,11 +33,13 @@ module.exports = {
         'admin-accent': '#3b82f6',
       },
       fontFamily: {
-        display: ['var(--font-display)', 'Space Grotesk', 'system-ui', 'sans-serif'],
-        sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'Anton', 'Space Grotesk', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', 'General Sans', 'Inter', 'system-ui', 'sans-serif'],
+        general: ['var(--font-general)', 'General Sans', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'JetBrains Mono', 'monospace'],
         editorial: ['var(--font-editorial)', 'Instrument Serif', 'Georgia', 'serif'],
-        pixel: ['var(--font-pixel)', 'Pixelify Sans', 'Courier New', 'monospace'],
+        pixel: ['var(--font-pixel)', 'SF Pixelate', 'Pixelify Sans', 'Courier New', 'monospace'],
+        anton: ['var(--font-anton)', 'Anton', 'sans-serif'],
       },
       boxShadow: {
         'brutal-sm': '2px 2px 0px 0px var(--color-shadow, #000)',

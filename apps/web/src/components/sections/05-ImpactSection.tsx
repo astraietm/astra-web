@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { VelocityMarquee } from '@/components/motion/VelocityMarquee';
 import { DraggableSticker } from '@/components/motion/DraggableSticker';
 import { PaperCard } from '@/components/ui/PaperCard';
-import { PixelDots } from '@/components/visual/PixelDots';
 import { NumberCounter } from '@/components/ui/NumberCounter';
 
 export const ImpactSection: React.FC = () => {
@@ -25,11 +24,9 @@ export const ImpactSection: React.FC = () => {
       <div
         className="relative py-16 sm:py-24 md:py-32 overflow-hidden"
         style={{
-          background: 'linear-gradient(180deg, #8EC8FF 0%, #B0D9FF 50%, #F0F0FA 100%)',
+          background: 'linear-gradient(180deg, #8EC8FF 0%, #B0D9FF 50%, #FFFFFF 100%)',
         }}
       >
-        <PixelDots count={8} colors={['#F79CFF', '#E8CCFF', '#FFE816']} />
-
         <div className="max-w-5xl mx-auto px-4 sm:px-8 md:px-12 relative z-10">
           {/* Flowing Narrative Stats — TinkerHub signature */}
           <PaperCard size="lg" className="text-center shadow-[6px_6px_0px_#000] sm:shadow-[8px_8px_0px_#000] border-2 border-black p-5 sm:p-8 md:p-12">

@@ -1,6 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Pixelify+Sans:wght@400;500;600;700&display=swap');
 @import '../styles/tokens.css';
 @import '../styles/brutalism.css';
+
+@font-face {
+  font-family: 'SF Pixelate';
+  src: url('/fonts/sf_pixelate.woff2') format('woff2'),
+       url('/fonts/sf_pixelate.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pixelate';
+  src: url('/fonts/sf_pixelate.woff2') format('woff2'),
+       url('/fonts/sf_pixelate.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -48,6 +67,14 @@
 
   .font-mono {
     font-family: var(--font-mono);
+  }
+
+  .font-anton {
+    font-family: var(--font-anton);
+  }
+
+  .font-general {
+    font-family: var(--font-general);
   }
 }
 

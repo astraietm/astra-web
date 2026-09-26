@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   motion,
   useScroll,
@@ -39,28 +39,26 @@ export const VelocityMarquee: React.FC<VelocityMarqueeProps> = ({
     stiffness: 300,
   });
 
-  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 2], {
-    clamp: false,
+  // Calculate wrapped x strictly between -50% and 0% for a seamless infinite loop
+  const x = useTransform(baseX, (v) => {
+    const m = ((v % 50) - 50) % 50;
+    return `${m === -50 ? 0 : m}%`;
   });
 
-  const x = useTransform(baseX, (v) => `${v % 50}%`);
-
-  const directionFactor = useRef<number>(1);
   useAnimationFrame((t, delta) => {
     if (prefersReduced || isHovered) return;
-    let moveBy = directionFactor.current * baseVelocity * (delta / 1000) * 5;
 
-    if (velocityFactor.get() < 0) {
-      directionFactor.current = -1;
-    } else if (velocityFactor.get() > 0) {
-      directionFactor.current = 1;
-    }
+    // Smoothly boost speed on scroll in natural reading direction
+    const velocity = Math.abs(smoothVelocity.get());
+    const boost = Math.min(velocity / 400, 3);
+    const moveBy = baseVelocity * (delta / 16) * 0.09 * (1 + boost);
 
-    moveBy += directionFactor.current * moveBy * Math.min(velocityFactor.get(), 2);
     baseX.set(baseX.get() - moveBy);
   });
 
-  const content = items.join(`  ${separator}  `) + `  ${separator}  `;
+  // Substantial content repeated so neither track ever runs dry
+  const singleUnit = items.join(`  ${separator}  `) + `  ${separator}  `;
+  const repeatedContent = Array(4).fill(singleUnit).join('');
 
   return (
     <div
@@ -71,19 +69,15 @@ export const VelocityMarquee: React.FC<VelocityMarqueeProps> = ({
     >
       <motion.div
         className="inline-flex py-2 will-change-transform"
-        style={{ x: prefersReduced ? 0 : x }}
+        style={{ x: prefersReduced ? '0%' : x }}
       >
-        <span className="inline-block font-mono font-bold text-xs sm:text-sm md:text-base uppercase tracking-widest px-6">
-          {content}
+        {/* Track 1: covers 0% to 50% */}
+        <span className="inline-block font-editorial text-lg sm:text-2xl md:text-3xl uppercase tracking-wider px-4">
+          {repeatedContent}
         </span>
-        <span className="inline-block font-mono font-bold text-xs sm:text-sm md:text-base uppercase tracking-widest px-6">
-          {content}
-        </span>
-        <span className="inline-block font-mono font-bold text-xs sm:text-sm md:text-base uppercase tracking-widest px-6">
-          {content}
-        </span>
-        <span className="inline-block font-mono font-bold text-xs sm:text-sm md:text-base uppercase tracking-widest px-6">
-          {content}
+        {/* Track 2: identical clone covering 50% to 100% for 0ms seam */}
+        <span className="inline-block font-editorial text-lg sm:text-2xl md:text-3xl uppercase tracking-wider px-4">
+          {repeatedContent}
         </span>
       </motion.div>
     </div>

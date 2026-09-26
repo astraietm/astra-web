@@ -80,7 +80,7 @@ export const JourneySection: React.FC = () => {
           className="relative will-change-transform flex justify-center items-center w-full"
         >
           <div
-            className="w-[320px] h-[480px] sm:w-[520px] sm:h-[580px] md:w-[680px] md:h-[680px] rounded-[100px] sm:rounded-full transition-transform duration-500 hover:scale-[1.02]"
+            className="w-[280px] xs:w-[320px] h-[450px] xs:h-[480px] sm:w-[520px] sm:h-[580px] md:w-[680px] md:h-[680px] rounded-[60px] xs:rounded-[100px] sm:rounded-full transition-transform duration-500 hover:scale-[1.02]"
             style={{
               background: 'radial-gradient(circle at 40% 40%, #D4A843 0%, #E8A070 25%, #F79CFF 55%, #E8CCFF 80%, #B8C8FF 100%)',
               boxShadow: '0 0 80px rgba(212, 168, 67, 0.25), 0 0 140px rgba(247, 156, 255, 0.15)',

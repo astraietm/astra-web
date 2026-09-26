@@ -1,6 +1,6 @@
 :root {
   /* TinkerHub-inspired palette for ASTRA 2026 */
-  --color-background: #F0F0FA;
+  --color-background: #FFFFFF;
   --color-foreground: #0A0A0A;
   --color-surface: #FFFFFF;
   --color-surface-elevated: #F5F5FF;
@@ -26,11 +26,13 @@
   --color-accent-magenta: #EC4899;
 
   /* Typography Families */
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Anton', 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'General Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-general: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Space Mono', Menlo, Consolas, monospace;
   --font-editorial: 'Instrument Serif', 'Georgia', 'Times New Roman', serif;
-  --font-pixel: 'Pixelify Sans', 'Courier New', monospace;
+  --font-pixel: 'SF Pixelate', 'Pixelify Sans', 'Courier New', monospace;
+  --font-anton: 'Anton', sans-serif;
 
   /* Spacing Scale */
   --space-xs: 0.25rem;

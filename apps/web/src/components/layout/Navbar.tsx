@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings, Ticket, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
+import { useLenis } from 'lenis/react';
 
 interface NavLink {
   label: string;
@@ -16,12 +17,11 @@ interface NavLink {
 
 const navigationLinks: NavLink[] = [
   { number: '01', label: 'ASTRA Overview', href: '/' },
-  { number: '02', label: 'Stories from the Arena', href: '/#stories' },
-  { number: '03', label: 'Upcoming Events (Oct 6-7)', href: '/events', isSpecial: true },
-  { number: '04', label: 'Wargame Photo Gallery', href: '/gallery', isSpecial: true },
-  { number: '05', label: 'About ASTRA', href: '/about' },
-  { number: '06', label: 'Contact', href: '/contact' },
-  { number: '07', label: 'My Registrations', href: '/dashboard', isSpecial: true },
+  { number: '02', label: 'Upcoming Events (Oct 6-7)', href: '/events', isSpecial: true },
+  { number: '03', label: 'Wargame Photo Gallery', href: '/gallery', isSpecial: true },
+  { number: '04', label: 'About ASTRA', href: '/about' },
+  { number: '05', label: 'Contact', href: '/contact' },
+  { number: '06', label: 'My Registrations', href: '/dashboard', isSpecial: true },
 ];
 
 export const Navbar: React.FC = () => {
@@ -29,8 +29,17 @@ export const Navbar: React.FC = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { user, setIsLoginModalOpen, setIsProfileModalOpen, logout } = useAuth();
+  const lenis = useLenis();
 
   const userDropdownRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (menuOpen) {
+      lenis?.stop();
+    } else {
+      lenis?.start();
+    }
+  }, [menuOpen, lenis]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -76,7 +85,11 @@ export const Navbar: React.FC = () => {
       if (e) e.preventDefault();
       const el = document.getElementById(id);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
+        if (lenis) {
+          lenis.scrollTo(el, { offset: -60, duration: 1.2 });
+        } else {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
       }
       if (menuOpen) closeMenu();
     } else {
@@ -100,19 +113,20 @@ export const Navbar: React.FC = () => {
             id="nav-index-btn"
             type="button"
             onClick={toggleMenu}
-            className={`group relative flex items-center gap-2 px-3.5 py-1.5 sm:px-5 sm:py-2.5 border-2 border-black font-editorial italic text-sm sm:text-lg tracking-wide shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] transition-[transform,box-shadow,background-color,color] duration-160 ease-[var(--ease-out)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_#000] cursor-pointer ${
-              menuOpen
-                ? 'bg-[#F79CFF] text-black hover:bg-black hover:text-white'
-                : 'bg-black text-white hover:bg-th-yellow hover:text-black hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#000]'
-            }`}
+            className="group relative flex items-center justify-center px-6 py-1.5 sm:px-7 sm:py-2 bg-black transition-opacity duration-150 hover:opacity-90 active:scale-[0.98] cursor-pointer select-none rounded-none"
             aria-label={menuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             aria-expanded={menuOpen}
           >
-            <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${menuOpen ? 'bg-red-500' : 'bg-emerald-400'}`} />
-              <span className={`relative inline-flex rounded-full h-2 w-2 sm:h-2.5 sm:w-2.5 ${menuOpen ? 'bg-red-600' : 'bg-emerald-400'}`} />
-            </span>
-            <span className="font-bold tracking-wide">
+            <span
+              className="uppercase inline-block"
+              style={{
+                fontFamily: "'Anton', sans-serif",
+                fontWeight: 400,
+                fontSize: '20px',
+                lineHeight: '28px',
+                color: 'rgb(255, 255, 255)',
+              }}
+            >
               {menuOpen ? 'CLOSE ✕' : 'INDEX'}
             </span>
           </button>
@@ -120,7 +134,7 @@ export const Navbar: React.FC = () => {
           <Link
             href="/"
             onClick={() => { if (menuOpen) closeMenu(); }}
-            className="flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 shadow-[2px_2px_0px_#000] hover:bg-th-yellow transition-colors"
+            className="flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 hover:bg-th-yellow transition-colors"
           >
             <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-black" />
             <span className="font-pixel text-[10px] sm:text-[11px] font-bold text-black uppercase tracking-wider">
@@ -140,7 +154,7 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/dashboard"
                 onClick={() => { if (menuOpen) closeMenu(); }}
-                className="flex items-center gap-1.5 bg-[#C3FF16] text-black border-2 border-black px-2.5 py-1 sm:px-3.5 sm:py-1.5 font-mono text-[10px] sm:text-xs font-bold uppercase shadow-[2px_2px_0px_#000] hover:bg-th-yellow transition-colors"
+                className="flex items-center gap-1.5 bg-[#C3FF16] text-black border-2 border-black px-2.5 py-1 sm:px-3.5 sm:py-1.5 font-mono text-[10px] sm:text-xs font-bold uppercase hover:bg-th-yellow transition-colors"
               >
                 <Ticket className="w-3.5 h-3.5" />
                 <span className="hidden xs:inline">My Passes</span>
@@ -149,7 +163,7 @@ export const Navbar: React.FC = () => {
               {/* User Dropdown Toggle */}
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 font-mono text-[10px] font-bold uppercase shadow-[2px_2px_0px_#000] hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 font-mono text-[10px] font-bold uppercase hover:bg-gray-100 transition-colors"
               >
                 {user.avatar ? (
                   <img src={user.avatar} alt="" className="w-4 h-4 rounded-full border border-black object-cover" />
@@ -232,10 +246,11 @@ export const Navbar: React.FC = () => {
                 if (menuOpen) closeMenu();
                 setIsLoginModalOpen(true);
               }}
-              className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md border-2 border-black px-3 py-1.5 sm:px-4 sm:py-2 font-display font-bold text-xs uppercase shadow-[2px_2px_0px_#000] hover:bg-th-yellow hover:text-black transition-colors"
+              className="flex items-center gap-1.5 bg-th-yellow text-black border-2 border-black px-3 py-1.5 sm:px-4 sm:py-2 font-display font-normal text-xs uppercase shadow-none hover:bg-black hover:text-white transition-colors"
+              style={{ boxShadow: 'none', textShadow: 'none' }}
             >
               <User className="w-3.5 h-3.5" />
-              <span>Sign In</span>
+              <span style={{ textShadow: 'none', fontWeight: 400 }}>SIGN IN</span>
             </button>
           )}
         </div>
@@ -256,7 +271,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={closeMenu}
-                className="hidden sm:flex items-center gap-1.5 bg-white border-2 border-black px-3.5 py-2 font-mono text-xs font-bold uppercase shadow-[2px_2px_0px_#000] hover:bg-th-yellow transition-colors cursor-pointer"
+                className="hidden sm:flex items-center gap-1.5 bg-white border-2 border-black px-3.5 py-2 font-mono text-xs font-bold uppercase hover:bg-th-yellow transition-colors cursor-pointer"
               >
                 <span>[ ESC TO CLOSE ]</span>
               </button>
