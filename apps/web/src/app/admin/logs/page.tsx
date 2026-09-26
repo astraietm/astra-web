@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
@@ -10,28 +11,50 @@ import {
   Info,
   Search,
   RefreshCw,
-  Trash2,
   X,
   Copy,
   Check,
-  Terminal,
 } from "lucide-react";
 
 function LevelBadge({ level }: { level: string }) {
-  const map: Record<string, { cls: string; icon: React.ReactNode }> = {
-    SUCCESS: { cls: "bg-[#C3FF16] text-black border-black", icon: <CheckCircle2 className="w-3 h-3" /> },
-    ERROR: { cls: "bg-red-400 text-black border-black", icon: <AlertTriangle className="w-3 h-3" /> },
-    WARN: { cls: "bg-[#FFE816] text-black border-black", icon: <AlertTriangle className="w-3 h-3" /> },
-    INFO: { cls: "bg-[#97F8B7] text-black border-black", icon: <Info className="w-3 h-3" /> },
+  const map: Record<string, { bg: string; text: string; border: string; icon: React.ReactNode }> = {
+    SUCCESS: {
+      bg: "bg-emerald-500/10",
+      text: "text-emerald-400",
+      border: "border-emerald-500/20",
+      icon: <CheckCircle2 className="w-3 h-3" />,
+    },
+    ERROR: {
+      bg: "bg-red-500/10",
+      text: "text-red-400",
+      border: "border-red-500/20",
+      icon: <AlertTriangle className="w-3 h-3" />,
+    },
+    WARN: {
+      bg: "bg-amber-500/10",
+      text: "text-amber-400",
+      border: "border-amber-500/20",
+      icon: <AlertTriangle className="w-3 h-3" />,
+    },
+    INFO: {
+      bg: "bg-blue-500/10",
+      text: "text-blue-400",
+      border: "border-blue-500/20",
+      icon: <Info className="w-3 h-3" />,
+    },
   };
   const normalizedLevel = (level || "INFO").toUpperCase();
-  const { cls, icon } = map[normalizedLevel] ?? {
-    cls: "bg-white/10 text-white border-white/20",
+  const current = map[normalizedLevel] ?? {
+    bg: "bg-neutral-800",
+    text: "text-neutral-300",
+    border: "border-neutral-700",
     icon: <Info className="w-3 h-3" />,
   };
   return (
-    <span className={`inline-flex items-center gap-1 font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${cls}`}>
-      {icon}
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${current.bg} ${current.text} ${current.border}`}
+    >
+      {current.icon}
       {normalizedLevel}
     </span>
   );
@@ -48,22 +71,25 @@ export default function AdminLogs() {
   const [selectedLog, setSelectedLog] = useState<any | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const fetchLogs = useCallback(async (isSilent = false) => {
-    if (!isSilent) setRefreshing(true);
-    try {
-      const params = new URLSearchParams();
-      if (selectedLevel !== "ALL") params.append("level", selectedLevel);
-      if (searchQuery.trim()) params.append("search", searchQuery.trim());
+  const fetchLogs = useCallback(
+    async (isSilent = false) => {
+      if (!isSilent) setRefreshing(true);
+      try {
+        const params = new URLSearchParams();
+        if (selectedLevel !== "ALL") params.append("level", selectedLevel);
+        if (searchQuery.trim()) params.append("search", searchQuery.trim());
 
-      const res = await api.get(`/api/ops/logs/?${params.toString()}`);
-      setLogs(Array.isArray(res.data) ? res.data : res.data?.results || []);
-    } catch {
-      if (!isSilent) showToast("Failed to load audit logs.", "error");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [selectedLevel, searchQuery, showToast]);
+        const res = await api.get(`/api/ops/logs/?${params.toString()}`);
+        setLogs(Array.isArray(res.data) ? res.data : res.data?.results || []);
+      } catch {
+        if (!isSilent) showToast("Failed to fetch system logs.", "error");
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [selectedLevel, searchQuery, showToast]
+  );
 
   useEffect(() => {
     fetchLogs();
@@ -73,253 +99,173 @@ export default function AdminLogs() {
     if (!autoRefresh) return;
     const interval = setInterval(() => {
       fetchLogs(true);
-    }, 10000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [autoRefresh, fetchLogs]);
 
-  const handleClearLogs = async () => {
-    if (!confirm("Are you sure you want to purge all system audit logs?")) return;
-    try {
-      await api.delete("/api/ops/logs/clear/");
-      showToast("Audit logs purged successfully.", "success");
-      fetchLogs();
-    } catch {
-      showToast("Failed to clear logs.", "error");
-    }
-  };
-
-  const copyLogDetail = (text: string) => {
-    navigator.clipboard.writeText(text);
+  const handleCopyDetails = () => {
+    if (!selectedLog) return;
+    navigator.clipboard.writeText(JSON.stringify(selectedLog, null, 2));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+    showToast("Log details copied to clipboard.", "success");
   };
 
+  const levels = ["ALL", "INFO", "SUCCESS", "WARN", "ERROR"];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-neutral-800/80">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 bg-[#E8CCFF] border-2 border-black shadow-[3px_3px_0px_#000]">
-            <Terminal className="w-5 h-5 text-black" />
+          <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white text-neutral-950 shadow-sm">
+            <FileText className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-pixel text-xl font-bold text-white uppercase tracking-wide">Django System Audit Logs</h1>
-            <p className="font-mono text-[11px] text-white/40 uppercase">
-              {logs.length} Log Entries Recorded in Database
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              Audit Logs &amp; Events
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-400 mt-0.5">
+              Live telemetry and operational audit trails
             </p>
           </div>
         </div>
 
-        {/* Action Toolbar */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
-            type="button"
-            className={`px-3 py-1.5 font-mono text-xs font-bold uppercase border-2 border-black transition-colors shadow-[2px_2px_0px_#000] flex items-center gap-1.5 ${
-              autoRefresh ? "bg-th-lime text-black" : "bg-white/10 text-white hover:bg-white/20"
+            className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+              autoRefresh
+                ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
+                : "border-neutral-800 bg-neutral-900 text-neutral-400 hover:text-white"
             }`}
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${autoRefresh ? "animate-spin" : ""}`} />
-            {autoRefresh ? "Auto (10s)" : "Auto Off"}
+            {autoRefresh ? "● Live Stream On" : "○ Live Stream Off"}
           </button>
-
           <button
             onClick={() => fetchLogs()}
             disabled={refreshing}
-            type="button"
-            className="px-3 py-1.5 bg-[#FFE816] text-black font-mono text-xs font-bold uppercase border-2 border-black hover:bg-yellow-300 transition-colors shadow-[2px_2px_0px_#000] flex items-center gap-1.5 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-neutral-800 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-medium transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? "animate-spin" : ""}`} />
-            Refresh
-          </button>
-
-          <button
-            onClick={handleClearLogs}
-            type="button"
-            className="px-3 py-1.5 bg-red-500 text-white font-mono text-xs font-bold uppercase border-2 border-black hover:bg-red-600 transition-colors shadow-[2px_2px_0px_#000] flex items-center gap-1.5"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            Clear Logs
+            <span>Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* Filter & Search Controls */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-[#161622] p-4 border-2 border-white/15 shadow-[4px_4px_0px_rgba(255,255,255,0.06)]">
-        {/* Search */}
-        <div className="sm:col-span-2 relative">
-          <Search className="w-4 h-4 text-white/40 absolute left-3 top-3" />
-          <input
-            type="text"
-            placeholder="Search action, details, user, IP..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-black/40 border-2 border-white/20 text-white font-mono text-xs placeholder:text-white/30 focus:outline-none focus:border-[#FFE816]"
-          />
+      {/* Controls Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        {/* Level Filter Pills */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {levels.map((lvl) => (
+            <button
+              key={lvl}
+              onClick={() => setSelectedLevel(lvl)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                selectedLevel === lvl
+                  ? "bg-white text-neutral-950 shadow-sm font-semibold"
+                  : "bg-neutral-900 text-neutral-400 hover:text-white border border-neutral-800"
+              }`}
+            >
+              {lvl}
+            </button>
+          ))}
         </div>
 
-        {/* Level Dropdown */}
-        <div>
-          <select
-            value={selectedLevel}
-            onChange={(e) => setSelectedLevel(e.target.value)}
-            className="w-full px-3 py-2 bg-black/40 border-2 border-white/20 text-white font-mono text-xs focus:outline-none focus:border-[#FFE816]"
-          >
-            <option value="ALL">All Levels</option>
-            <option value="INFO">INFO</option>
-            <option value="SUCCESS">SUCCESS</option>
-            <option value="WARN">WARN</option>
-            <option value="ERROR">ERROR</option>
-          </select>
+        {/* Search */}
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
+          <input
+            type="text"
+            placeholder="Search action, actor, message..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-neutral-950/80 border border-neutral-800 rounded-xl text-xs sm:text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-neutral-600 transition-all"
+          />
         </div>
       </div>
 
       {/* Logs Table */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-24 gap-3 bg-[#161622] border-2 border-white/15">
-          <Loader2 className="w-8 h-8 animate-spin text-[#FFE816]" />
-          <span className="font-pixel text-xs text-white/40 uppercase animate-pulse">
-            Fetching Logs from DB...
-          </span>
+        <div className="flex flex-col items-center justify-center py-24 gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-white" />
+          <span className="text-xs text-neutral-400">Loading audit records...</span>
         </div>
       ) : (
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] overflow-hidden">
+        <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/50 backdrop-blur-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b-2 border-white/15 bg-white/[0.04]">
-                  {["Level", "Action / Module", "Log Details", "User / Actor", "IP Address", "Timestamp", "View"].map((h) => (
+                <tr className="border-b border-neutral-800 bg-neutral-950/40">
+                  {["Timestamp", "Level", "Action", "Actor", "Details"].map((h) => (
                     <th
                       key={h}
-                      className="text-left p-3 font-pixel text-[9px] text-white/50 uppercase tracking-wider whitespace-nowrap"
+                      className="text-left p-3.5 text-xs font-medium text-neutral-400 uppercase tracking-wider"
                     >
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
-                {logs.map((log: any, i) => (
+              <tbody className="divide-y divide-neutral-800/60 font-mono">
+                {logs.map((log: any) => (
                   <tr
                     key={log.id}
                     onClick={() => setSelectedLog(log)}
-                    className={`border-b border-white/5 cursor-pointer hover:bg-white/[0.06] transition-colors ${
-                      i % 2 === 0 ? "" : "bg-white/[0.015]"
-                    }`}
+                    className="hover:bg-neutral-800/30 transition-colors cursor-pointer"
                   >
-                    <td className="p-3 whitespace-nowrap">
+                    <td className="p-3.5 text-neutral-400 whitespace-nowrap text-[11px]">
+                      {new Date(log.timestamp || log.created_at).toLocaleString()}
+                    </td>
+                    <td className="p-3.5">
                       <LevelBadge level={log.level} />
                     </td>
-                    <td className="p-3 font-pixel text-[10px] text-white uppercase tracking-wide whitespace-nowrap">
-                      {log.action}
-                    </td>
-                    <td className="p-3 font-mono text-white/60 max-w-xs truncate">
-                      {log.details || "—"}
-                    </td>
-                    <td className="p-3 font-mono text-white/50 whitespace-nowrap">
-                      {log.user_email || log.user || "System"}
-                    </td>
-                    <td className="p-3 font-mono text-white/40 whitespace-nowrap">
-                      {log.ip_address || "—"}
-                    </td>
-                    <td className="p-3 font-mono text-white/40 whitespace-nowrap">
-                      {log.timestamp ? new Date(log.timestamp).toLocaleString("en-IN") : "—"}
-                    </td>
-                    <td className="p-3 font-mono text-[10px] text-[#FFE816] hover:underline whitespace-nowrap">
-                      Details →
-                    </td>
+                    <td className="p-3.5 font-semibold text-white">{log.action || "EVENT"}</td>
+                    <td className="p-3.5 text-neutral-300">{log.actor || log.user || "System"}</td>
+                    <td className="p-3.5 text-neutral-400 max-w-xs truncate">{log.message || log.details}</td>
                   </tr>
                 ))}
                 {logs.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="p-16 text-center font-pixel text-xs text-white/30 uppercase">
-                      No matching log entries found in Database.
+                    <td colSpan={5} className="p-12 text-center text-xs text-neutral-500 font-sans">
+                      No logs found matching criteria.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-
-          <div className="px-4 py-3 border-t-2 border-white/10 flex items-center justify-between font-pixel text-[10px] text-white/40 uppercase">
-            <span>Showing {logs.length} entries</span>
-            <span>Database Backend: Active</span>
-          </div>
         </div>
       )}
 
-      {/* Log Details Modal */}
+      {/* Log Detail Modal */}
       {selectedLog && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="relative w-full max-w-2xl bg-[#161622] border-4 border-white p-6 shadow-[10px_10px_0px_#000] text-white space-y-4 max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b-2 border-white/20 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md overflow-y-auto">
+          <div className="relative w-full max-w-xl rounded-2xl border border-neutral-800 bg-neutral-900 shadow-2xl p-6">
+            <div className="flex items-center justify-between pb-3 border-b border-neutral-800 mb-4">
               <div className="flex items-center gap-2">
                 <LevelBadge level={selectedLog.level} />
-                <h3 className="font-pixel text-sm font-bold uppercase text-white tracking-wider">
-                  {selectedLog.action}
-                </h3>
+                <h3 className="text-sm font-semibold text-white">{selectedLog.action}</h3>
               </div>
               <button
                 onClick={() => setSelectedLog(null)}
-                className="text-white/60 hover:text-white transition-colors"
+                className="p-1.5 rounded-lg border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Metadata Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-black/40 p-3 border-2 border-white/10 font-mono text-xs">
-              <div>
-                <span className="text-[9px] uppercase text-white/40 block">Log ID</span>
-                <span className="font-bold text-white">#{selectedLog.id}</span>
-              </div>
-              <div>
-                <span className="text-[9px] uppercase text-white/40 block">Actor</span>
-                <span className="font-bold text-white truncate block">
-                  {selectedLog.user_email || selectedLog.user || "System"}
-                </span>
-              </div>
-              <div>
-                <span className="text-[9px] uppercase text-white/40 block">IP Address</span>
-                <span className="font-bold text-white">{selectedLog.ip_address || "N/A"}</span>
-              </div>
-              <div>
-                <span className="text-[9px] uppercase text-white/40 block">Timestamp</span>
-                <span className="font-bold text-white text-[10px]">
-                  {selectedLog.timestamp ? new Date(selectedLog.timestamp).toLocaleString("en-IN") : "N/A"}
-                </span>
-              </div>
+            <div className="bg-neutral-950 p-4 rounded-xl border border-neutral-800 text-xs text-neutral-300 font-mono overflow-x-auto max-h-80">
+              <pre>{JSON.stringify(selectedLog, null, 2)}</pre>
             </div>
 
-            {/* Full Message / Payload Text */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-pixel text-[10px] text-white/50 uppercase tracking-wider">
-                  Raw Log Record Details
-                </span>
-                <button
-                  onClick={() => copyLogDetail(selectedLog.details || "")}
-                  type="button"
-                  className="flex items-center gap-1 font-mono text-[10px] text-[#FFE816] hover:underline"
-                >
-                  {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                  {copied ? "Copied!" : "Copy"}
-                </button>
-              </div>
-              <pre className="p-4 bg-black border-2 border-white/20 font-mono text-xs text-emerald-400 whitespace-pre-wrap break-words max-h-72 overflow-y-auto leading-relaxed shadow-inner">
-                {selectedLog.details || "No additional payload details recorded."}
-              </pre>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end gap-3 pt-4 mt-4 border-t border-neutral-800">
               <button
-                type="button"
-                onClick={() => setSelectedLog(null)}
-                className="px-5 py-2 bg-white text-black font-display font-bold text-xs uppercase border-2 border-black hover:bg-gray-200 transition-colors shadow-[2px_2px_0px_#000]"
+                onClick={handleCopyDetails}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-neutral-950 hover:bg-neutral-100 text-xs font-semibold tracking-wide transition-all shadow-sm cursor-pointer"
               >
-                Close
+                {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copied ? "Copied" : "Copy Payload"}</span>
               </button>
             </div>
           </div>

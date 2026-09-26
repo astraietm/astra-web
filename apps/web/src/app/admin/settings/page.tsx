@@ -1,19 +1,35 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { Settings as SettingsIcon, Save, Loader2, UserPlus, Trash2, Users, BookOpen, Plus, X } from "lucide-react";
+import {
+  Settings as SettingsIcon,
+  Save,
+  Loader2,
+  UserPlus,
+  Trash2,
+  Users,
+  BookOpen,
+  Plus,
+  X,
+  Shield,
+} from "lucide-react";
 
-const INPUT_CLS = "w-full px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-[#FFE816] transition-colors";
-
-function BrutalToggle({ value, onChange }: { value: boolean; onChange: () => void }) {
+function ModernToggle({ value, onChange }: { value: boolean; onChange: () => void }) {
   return (
     <button
       type="button"
       onClick={onChange}
-      className={`relative w-12 h-6 border-2 transition-colors ${value ? "bg-[#C3FF16] border-[#C3FF16]" : "bg-[#0C0C14] border-white/30"}`}
+      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+        value ? "bg-emerald-500" : "bg-neutral-800"
+      }`}
     >
-      <div className={`absolute top-0.5 w-4 h-4 border-2 transition-all ${value ? "left-[calc(100%-1.125rem)] bg-black border-black" : "left-0.5 bg-white/50 border-white/30"}`} />
+      <span
+        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+          value ? "translate-x-5" : "translate-x-0"
+        }`}
+      />
     </button>
   );
 }
@@ -44,7 +60,9 @@ export default function AdminSettings() {
         ]);
         const settingsMap: Record<string, any> = {};
         if (Array.isArray(settingsRes.data)) {
-          settingsRes.data.forEach((s: any) => { settingsMap[s.key] = s.value; });
+          settingsRes.data.forEach((s: any) => {
+            settingsMap[s.key] = s.value;
+          });
         } else {
           Object.assign(settingsMap, settingsRes.data);
         }
@@ -56,7 +74,10 @@ export default function AdminSettings() {
           setSemesters(settingsMap.semesters);
         }
         setTeam(Array.isArray(teamRes.data) ? teamRes.data : teamRes.data?.results || []);
-      } catch {} finally { setLoading(false); }
+      } catch {
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
@@ -70,9 +91,12 @@ export default function AdminSettings() {
         semesters,
       };
       await api.post("/api/ops/settings/", payload);
-      showToast("Settings and Academic Options saved!", "success");
-    } catch { showToast("Failed to save settings.", "error"); }
-    finally { setSaving(false); }
+      showToast("Settings and Academic Options saved successfully!", "success");
+    } catch {
+      showToast("Failed to save settings.", "error");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleAddDepartment = (e: React.FormEvent) => {
@@ -88,7 +112,7 @@ export default function AdminSettings() {
   };
 
   const handleRemoveDepartment = (deptToRemove: string) => {
-    setDepartments(departments.filter(d => d !== deptToRemove));
+    setDepartments(departments.filter((d) => d !== deptToRemove));
   };
 
   const handleAddSemester = (e: React.FormEvent) => {
@@ -104,12 +128,15 @@ export default function AdminSettings() {
   };
 
   const handleRemoveSemester = (semToRemove: string) => {
-    setSemesters(semesters.filter(s => s !== semToRemove));
+    setSemesters(semesters.filter((s) => s !== semToRemove));
   };
 
   const handleAddTeamMember = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newEmail) { showToast("Email is required.", "error"); return; }
+    if (!newEmail) {
+      showToast("Email is required.", "error");
+      return;
+    }
     setAddingMember(true);
     try {
       await api.post("/api/ops/team/", { email: newEmail });
@@ -118,8 +145,13 @@ export default function AdminSettings() {
       const res = await api.get("/api/ops/team/");
       setTeam(Array.isArray(res.data) ? res.data : res.data?.results || []);
     } catch (err: any) {
-      showToast(err.response?.data?.error || err.response?.data?.email?.[0] || "Failed to add.", "error");
-    } finally { setAddingMember(false); }
+      showToast(
+        err.response?.data?.error || err.response?.data?.email?.[0] || "Failed to add.",
+        "error"
+      );
+    } finally {
+      setAddingMember(false);
+    }
   };
 
   const handleRemoveMember = async (id: number, email: string) => {
@@ -133,45 +165,64 @@ export default function AdminSettings() {
     }
   };
 
-  if (loading) return (
-    <div className="flex flex-col items-center justify-center py-24 gap-3">
-      <Loader2 className="w-6 h-6 animate-spin text-[#FFE816]" />
-      <span className="font-pixel text-[10px] text-white/30 uppercase animate-pulse">Loading...</span>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-white" />
+        <span className="text-xs text-neutral-400 uppercase tracking-widest font-medium">
+          Loading settings...
+        </span>
+      </div>
+    );
+  }
 
   return (
-    <div>
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 bg-[#FFE816] border-2 border-black shadow-[3px_3px_0px_#000]">
-          <SettingsIcon className="w-4 h-4 text-black" />
+      <div className="flex items-center gap-3 pb-2 border-b border-neutral-800/80">
+        <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white text-neutral-950 shadow-sm">
+          <SettingsIcon className="w-5 h-5" />
         </div>
         <div>
-          <h1 className="font-pixel text-xl font-bold text-white uppercase">Settings</h1>
-          <p className="font-mono text-[10px] text-white/30 uppercase">System Configuration & Academic Options</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            System Settings
+          </h1>
+          <p className="text-xs sm:text-sm text-neutral-400 mt-0.5">
+            Configure global toggles, academic options, and team permissions
+          </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* System Settings & Academic Options */}
         <div className="space-y-6">
-          <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b-2 border-white/10">
-              <SettingsIcon className="w-4 h-4 text-[#FFE816]" />
-              <span className="font-pixel text-[10px] text-white uppercase tracking-wider">System Settings</span>
-            </div>
-            <div className="space-y-4">
+          {/* General Toggles */}
+          <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/50 backdrop-blur-xl p-6 shadow-sm">
+            <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+              <SettingsIcon className="w-4 h-4 text-white" /> General Controls
+            </h2>
+            <div className="space-y-3">
               {[
-                { key: "maintenanceMode", label: "Maintenance Mode", desc: "Disable public access to the site" },
-                { key: "registrationOpen",  label: "Registration Open",  desc: "Allow new event registrations" },
+                {
+                  key: "maintenanceMode",
+                  label: "Maintenance Mode",
+                  desc: "Temporarily disable public access to the registration portal",
+                },
+                {
+                  key: "registrationOpen",
+                  label: "Global Registration Open",
+                  desc: "Allow attendees to create new event registrations",
+                },
               ].map(({ key, label, desc }) => (
-                <div key={key} className="flex items-center justify-between border-2 border-white/10 p-3 hover:border-white/20 transition-colors">
-                  <div>
-                    <p className="font-pixel text-[10px] text-white uppercase">{label}</p>
-                    <p className="font-mono text-[9px] text-white/30 mt-0.5">{desc}</p>
+                <div
+                  key={key}
+                  className="flex items-center justify-between rounded-xl border border-neutral-800/80 bg-neutral-950/50 p-4 transition-colors"
+                >
+                  <div className="pr-4">
+                    <p className="text-xs font-semibold text-white">{label}</p>
+                    <p className="text-[11px] text-neutral-400 mt-0.5 leading-relaxed">{desc}</p>
                   </div>
-                  <BrutalToggle
+                  <ModernToggle
                     value={!!settings[key]}
                     onChange={() => setSettings({ ...settings, [key]: !settings[key] })}
                   />
@@ -181,41 +232,42 @@ export default function AdminSettings() {
           </div>
 
           {/* Academic Options Management (Depts & Semesters) */}
-          <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5">
-            <div className="flex items-center gap-2 mb-5 pb-4 border-b-2 border-white/10">
-              <BookOpen className="w-4 h-4 text-[#C3FF16]" />
-              <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Academic Options (Registration Dropdowns)</span>
-            </div>
+          <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/50 backdrop-blur-xl p-6 shadow-sm">
+            <h2 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-white" /> Academic Options &amp; Branches
+            </h2>
 
             {/* Department Options */}
             <div className="mb-6">
-              <label className="font-pixel text-[9px] text-white/70 uppercase mb-2 block">Departments</label>
+              <label className="text-xs font-medium text-neutral-300 mb-2 block">
+                Departments / Branches
+              </label>
               <form onSubmit={handleAddDepartment} className="flex gap-2 mb-3">
                 <input
                   type="text"
                   placeholder="e.g. CSE, CY, EC, AI"
                   value={newDept}
                   onChange={(e) => setNewDept(e.target.value)}
-                  className={INPUT_CLS + " flex-1 text-xs"}
+                  className="flex-1 px-3.5 py-2 bg-neutral-950/80 border border-neutral-800 rounded-xl text-xs sm:text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-neutral-600 transition-all"
                 />
                 <button
                   type="submit"
-                  className="flex items-center gap-1 px-3 py-2 bg-[#C3FF16] text-black font-pixel text-[9px] border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white text-neutral-950 hover:bg-neutral-100 font-semibold text-xs tracking-wide transition-all shadow-sm cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" /> Add
                 </button>
               </form>
-              <div className="flex flex-wrap gap-1.5 p-3 border-2 border-white/10 bg-black/30 min-h-[60px]">
+              <div className="flex flex-wrap gap-2 p-3 rounded-xl border border-neutral-800/80 bg-neutral-950/50 min-h-[60px]">
                 {departments.map((d) => (
                   <span
                     key={d}
-                    className="inline-flex items-center gap-1 font-mono text-xs px-2 py-1 bg-white/10 border border-white/20 text-white"
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-neutral-800 border border-neutral-700 text-neutral-200"
                   >
                     {d}
                     <button
                       type="button"
                       onClick={() => handleRemoveDepartment(d)}
-                      className="text-white/40 hover:text-red-400 ml-0.5"
+                      className="text-neutral-400 hover:text-red-400 transition-colors ml-0.5 cursor-pointer"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -225,34 +277,36 @@ export default function AdminSettings() {
             </div>
 
             {/* Semester Options */}
-            <div className="mb-4">
-              <label className="font-pixel text-[9px] text-white/70 uppercase mb-2 block">Semesters / Years</label>
+            <div className="mb-6">
+              <label className="text-xs font-medium text-neutral-300 mb-2 block">
+                Semesters / Academic Years
+              </label>
               <form onSubmit={handleAddSemester} className="flex gap-2 mb-3">
                 <input
                   type="text"
                   placeholder="e.g. S1, S2, S3... S8"
                   value={newSem}
                   onChange={(e) => setNewSem(e.target.value)}
-                  className={INPUT_CLS + " flex-1 text-xs"}
+                  className="flex-1 px-3.5 py-2 bg-neutral-950/80 border border-neutral-800 rounded-xl text-xs sm:text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-neutral-600 transition-all"
                 />
                 <button
                   type="submit"
-                  className="flex items-center gap-1 px-3 py-2 bg-[#FFE816] text-black font-pixel text-[9px] border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white text-neutral-950 hover:bg-neutral-100 font-semibold text-xs tracking-wide transition-all shadow-sm cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" /> Add
                 </button>
               </form>
-              <div className="flex flex-wrap gap-1.5 p-3 border-2 border-white/10 bg-black/30 min-h-[60px]">
+              <div className="flex flex-wrap gap-2 p-3 rounded-xl border border-neutral-800/80 bg-neutral-950/50 min-h-[60px]">
                 {semesters.map((s) => (
                   <span
                     key={s}
-                    className="inline-flex items-center gap-1 font-mono text-xs px-2 py-1 bg-white/10 border border-white/20 text-white"
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-neutral-800 border border-neutral-700 text-neutral-200"
                   >
                     {s}
                     <button
                       type="button"
                       onClick={() => handleRemoveSemester(s)}
-                      className="text-white/40 hover:text-red-400 ml-0.5"
+                      className="text-neutral-400 hover:text-red-400 transition-colors ml-0.5 cursor-pointer"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -264,75 +318,82 @@ export default function AdminSettings() {
             <button
               onClick={handleSaveSettings}
               disabled={saving}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 mt-4 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-neutral-950 hover:bg-neutral-100 font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-sm disabled:opacity-50 cursor-pointer"
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              Save All Settings &amp; Academic Options
+              <span>Save System Settings</span>
             </button>
           </div>
         </div>
 
         {/* Team Management */}
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-5">
-          <div className="flex items-center gap-2 mb-5 pb-4 border-b-2 border-white/10">
-            <Users className="w-4 h-4 text-[#FFE816]" />
-            <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Team Management</span>
-          </div>
+        <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/50 backdrop-blur-xl p-6 shadow-sm space-y-5">
+          <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+            <Users className="w-4 h-4 text-white" /> Staff &amp; Team Management
+          </h2>
 
           {/* Add member form */}
-          <form onSubmit={handleAddTeamMember} className="flex gap-2 mb-5">
+          <form onSubmit={handleAddTeamMember} className="flex gap-2">
             <input
-              type="email" placeholder="team@email.com" value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)} required
-              className={INPUT_CLS + " flex-1 text-xs"}
+              type="email"
+              placeholder="colleague@gmail.com"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              required
+              className="flex-1 px-3.5 py-2.5 bg-neutral-950/80 border border-neutral-800 rounded-xl text-xs sm:text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-neutral-600 transition-all"
             />
             <button
-              type="submit" disabled={addingMember}
-              className="flex items-center gap-1 px-3 py-2 bg-[#FFE816] text-black font-pixel text-[9px] border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
+              type="submit"
+              disabled={addingMember}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-neutral-950 hover:bg-neutral-100 font-semibold text-xs tracking-wide transition-all shadow-sm disabled:opacity-50 cursor-pointer"
             >
-              {addingMember ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
+              {addingMember ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+              <span>Add Staff</span>
             </button>
           </form>
 
           {/* Members list */}
-          <div className="space-y-2 max-h-[320px] overflow-y-auto">
+          <div className="space-y-2.5 max-h-[480px] overflow-y-auto pr-1">
             {team.map((member: any) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between border-2 border-white/10 p-3 hover:border-white/20 transition-colors"
+                className="flex items-center justify-between rounded-xl border border-neutral-800/80 bg-neutral-950/50 p-3.5 hover:border-neutral-700 transition-colors"
               >
-                <div>
-                  <p className="font-mono text-xs text-white">{member.email}</p>
-                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                <div className="min-w-0 pr-3">
+                  <p className="text-xs font-semibold text-white truncate">{member.email}</p>
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1">
                     {member.is_superuser && (
-                      <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] bg-[#FF4444] text-white border-red-700">
-                        SUPERUSER
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-500/15 text-red-400 border border-red-500/30">
+                        Superuser
                       </span>
                     )}
                     {member.is_staff && (
-                      <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] bg-[#FFE816] text-black border-black">
-                        STAFF
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                        Staff
                       </span>
                     )}
-                    {!member.is_superuser && Array.isArray(member.groups) && member.groups.includes("Admin") && (
-                      <span className="font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] bg-[#C3FF16] text-black border-black">
-                        ADMIN GROUP
-                      </span>
-                    )}
+                    {!member.is_superuser &&
+                      Array.isArray(member.groups) &&
+                      member.groups.includes("Admin") && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                          Admin Group
+                        </span>
+                      )}
                   </div>
                 </div>
                 <button
                   onClick={() => handleRemoveMember(member.id, member.email)}
                   disabled={member.is_superuser}
-                  className="flex items-center justify-center w-7 h-7 border-2 border-red-500/30 text-red-400 hover:bg-red-500/10 hover:border-red-400 transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center w-8 h-8 rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 hover:border-red-500/40 transition-colors disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
+                  title="Remove Member"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
             {team.length === 0 && (
-              <div className="border-2 border-white/10 p-8 text-center">
-                <p className="font-pixel text-[10px] text-white/20 uppercase">No team members.</p>
+              <div className="rounded-xl border border-neutral-800 p-8 text-center">
+                <p className="text-xs text-neutral-500">No team members listed.</p>
               </div>
             )}
           </div>

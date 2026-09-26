@@ -1,18 +1,26 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { Search, Loader2, Users, Eye, X } from "lucide-react";
+import { Search, Loader2, Users, Eye, X, Phone, Mail, Building, Ticket } from "lucide-react";
 import { TicketPass } from "@/components/events/TicketPass";
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, string> = {
-    REGISTERED: "bg-[#C3FF16] text-black border-black",
-    ATTENDED:   "bg-[#97F8B7] text-black border-black",
-    CANCELLED:  "bg-red-400 text-black border-black",
+  const map: Record<string, { bg: string; text: string; border: string }> = {
+    REGISTERED: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/20" },
+    ATTENDED: { bg: "bg-blue-500/10", text: "text-blue-400", border: "border-blue-500/20" },
+    CANCELLED: { bg: "bg-red-500/10", text: "text-red-400", border: "border-red-500/20" },
+  };
+  const current = map[status] ?? {
+    bg: "bg-neutral-800",
+    text: "text-neutral-300",
+    border: "border-neutral-700",
   };
   return (
-    <span className={`font-pixel text-[8px] uppercase px-1.5 py-0.5 border shadow-[1px_1px_0px_#000] ${map[status] ?? "bg-white/10 text-white border-white/20"}`}>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${current.bg} ${current.text} ${current.border}`}
+    >
       {status}
     </span>
   );
@@ -29,147 +37,167 @@ export default function AdminRegistrations() {
     try {
       const res = await api.get("/api/admin-registrations/");
       setRegistrations(Array.isArray(res.data) ? res.data : res.data?.results || []);
-    } catch { showToast("Failed to load registrations.", "error"); }
-    finally { setLoading(false); }
+    } catch {
+      showToast("Failed to load registrations.", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { fetchRegistrations(); }, []);
+  useEffect(() => {
+    fetchRegistrations();
+  }, []);
 
   const filtered = registrations.filter((r: any) => {
     const q = search.toLowerCase();
-    return !q || (r.user_email || "").toLowerCase().includes(q) ||
+    return (
+      !q ||
+      (r.user_email || "").toLowerCase().includes(q) ||
       (r.user_name || "").toLowerCase().includes(q) ||
       (r.phone_number || r.user_phone || "").toLowerCase().includes(q) ||
       (r.college || r.user_college || "").toLowerCase().includes(q) ||
       (r.team_name || "").toLowerCase().includes(q) ||
-      (r.event_details?.title || "").toLowerCase().includes(q);
+      (r.event_details?.title || "").toLowerCase().includes(q)
+    );
   });
 
   return (
-    <div>
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-neutral-800/80">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 bg-[#C3FF16] border-2 border-black shadow-[3px_3px_0px_#000]">
-            <Users className="w-4 h-4 text-black" />
+          <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white text-neutral-950 shadow-sm">
+            <Users className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="font-pixel text-xl font-bold text-white uppercase">Registrations</h1>
-            <p className="font-mono text-[10px] text-white/30 uppercase">{registrations.length} total records</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              Registrations
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-400 mt-0.5">
+              {registrations.length} registered participant records
+            </p>
           </div>
         </div>
+
         {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30" />
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
           <input
             type="text"
-            placeholder="Search name, email, phone, college..."
+            placeholder="Search attendee, email, college..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2 bg-[#161622] border-2 border-white/20 text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-[#FFE816] w-72 transition-colors"
+            className="w-full pl-10 pr-4 py-2 bg-neutral-950/80 border border-neutral-800 rounded-xl text-xs sm:text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-neutral-600 transition-all"
           />
         </div>
       </div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-[#FFE816]" />
-          <span className="font-pixel text-[10px] text-white/30 uppercase animate-pulse">Loading...</span>
+          <Loader2 className="w-8 h-8 animate-spin text-white" />
+          <span className="text-xs text-neutral-400 uppercase tracking-widest font-medium">
+            Loading registrations...
+          </span>
         </div>
       ) : (
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)]">
+        <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/50 backdrop-blur-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b-2 border-white/15 bg-white/[0.03]">
-                  {["ID", "User / Contact", "College & Dept", "Event", "Status", "Team", "Payment", "Action"].map((h) => (
-                    <th key={h} className="text-left p-3 font-pixel text-[9px] text-white/40 uppercase tracking-wider whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
+                <tr className="border-b border-neutral-800 bg-neutral-950/40">
+                  {["ID", "User / Contact", "College & Dept", "Event", "Status", "Team", "Payment", "Action"].map(
+                    (h) => (
+                      <th
+                        key={h}
+                        className="text-left p-3.5 text-xs font-medium text-neutral-400 uppercase tracking-wider whitespace-nowrap"
+                      >
+                        {h}
+                      </th>
+                    )
+                  )}
                 </tr>
               </thead>
-              <tbody>
-                {filtered.map((reg: any, i) => (
-                  <tr
-                    key={reg.id}
-                    className={`border-b border-white/5 hover:bg-white/[0.04] transition-colors ${i % 2 === 0 ? "" : "bg-white/[0.015]"}`}
-                  >
-                    <td className="p-3 font-mono text-white/30">#{reg.id}</td>
-                    <td className="p-3">
-                      <div className="font-mono text-white font-bold">{reg.user_name || reg.user_email}</div>
-                      <div className="font-mono text-white/40 text-[10px]">{reg.user_email}</div>
+              <tbody className="divide-y divide-neutral-800/60">
+                {filtered.map((reg: any) => (
+                  <tr key={reg.id} className="hover:bg-neutral-800/30 transition-colors">
+                    <td className="p-3.5 font-medium text-neutral-500">#{reg.id}</td>
+                    <td className="p-3.5">
+                      <div className="font-semibold text-white">{reg.user_name || reg.user_email}</div>
+                      <div className="text-[11px] text-neutral-400">{reg.user_email}</div>
                       {(reg.phone_number || reg.user_phone) && (
-                        <div className="font-mono text-[#FFE816] text-[10px] mt-0.5">📞 {reg.phone_number || reg.user_phone}</div>
-                      )}
-                    </td>
-                    <td className="p-3 font-mono text-white/70 max-w-[180px] truncate">
-                      <div>{reg.college || reg.user_college || "—"}</div>
-                      {reg.department && <div className="text-white/40 text-[10px]">{reg.department} ({reg.year_of_study || ""})</div>}
-                    </td>
-                    <td className="p-3 text-white/80 max-w-[200px] truncate font-mono">
-                      {reg.event_details?.title || `Event #${reg.event}`}
-                    </td>
-                    <td className="p-3"><StatusBadge status={reg.status} /></td>
-                    <td className="p-3 font-mono text-white/60">
-                      {reg.team_name ? (
-                        <div>
-                          <span className="font-bold text-white/80">{reg.team_name}</span>
-                          {reg.team_members && <div className="text-[10px] text-white/30 truncate max-w-[140px]">{reg.team_members}</div>}
+                        <div className="text-[11px] text-neutral-500 mt-0.5">
+                          📞 {reg.phone_number || reg.user_phone}
                         </div>
-                      ) : "—"}
-                    </td>
-                    <td className="p-3 font-mono">
-                      {reg.payment_details ? (
-                        <span className={reg.payment_details.status === "SUCCESS" ? "text-[#C3FF16]" : "text-[#FFE816]"}>
-                          {reg.payment_details.status} (₹{reg.payment_details.amount})
-                        </span>
-                      ) : (
-                        <span className="text-white/30">Free</span>
                       )}
                     </td>
-                    <td className="p-3 font-mono">
+                    <td className="p-3.5 max-w-[200px]">
+                      <div className="text-neutral-300 truncate">{reg.college || reg.user_college || "—"}</div>
+                      {(reg.department || reg.user_dept) && (
+                        <div className="text-[11px] text-neutral-500">
+                          {reg.department || reg.user_dept} • {reg.semester || reg.user_sem || ""}
+                        </div>
+                      )}
+                    </td>
+                    <td className="p-3.5">
+                      <span className="font-medium text-white block max-w-[180px] truncate">
+                        {reg.event_details?.title || `Event #${reg.event}`}
+                      </span>
+                    </td>
+                    <td className="p-3.5">
+                      <StatusBadge status={reg.status} />
+                    </td>
+                    <td className="p-3.5 text-neutral-400">
+                      {reg.team_name ? (
+                        <span className="text-purple-300 font-medium">{reg.team_name}</span>
+                      ) : (
+                        "—"
+                      )}
+                    </td>
+                    <td className="p-3.5">
+                      {reg.payment_verified ? (
+                        <span className="text-emerald-400 font-medium">Verified</span>
+                      ) : reg.event_details?.requires_payment ? (
+                        <span className="text-amber-400">Pending</span>
+                      ) : (
+                        <span className="text-neutral-500">Free</span>
+                      )}
+                    </td>
+                    <td className="p-3.5">
                       <button
                         onClick={() => setSelectedReg(reg)}
-                        className="flex items-center gap-1 px-2 py-1 bg-white/10 hover:bg-[#FFE816] hover:text-black text-white font-mono text-[10px] uppercase border border-white/20 transition-colors"
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-medium transition-colors cursor-pointer"
+                        title="View Pass"
                       >
-                        <Eye className="w-3 h-3" /> Ticket Pass
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Pass</span>
                       </button>
                     </td>
                   </tr>
                 ))}
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="p-12 text-center font-pixel text-[10px] text-white/20 uppercase">
-                      No registrations found.
+                    <td colSpan={8} className="p-12 text-center text-xs text-neutral-500">
+                      No registrations found matching your query.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 border-t-2 border-white/10 flex items-center justify-between">
-            <span className="font-pixel text-[9px] text-white/30 uppercase">
-              {filtered.length} / {registrations.length} records
-            </span>
-          </div>
         </div>
       )}
 
-      {/* Ticket Pass Modal */}
+      {/* Ticket Pass Viewer Modal */}
       {selectedReg && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-          <div className="relative w-full max-w-2xl bg-gray-900 border-2 border-white/20 p-6 my-8">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-              <h3 className="font-pixel text-sm text-[#FFE816] uppercase">Registration Ticket Pass Details</h3>
-              <button
-                onClick={() => setSelectedReg(null)}
-                className="p-1 text-white/60 hover:text-white transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <TicketPass registration={selectedReg} showPrintButton={true} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+          <div className="relative max-w-sm w-full">
+            <button
+              onClick={() => setSelectedReg(null)}
+              className="absolute -top-10 right-0 p-1.5 rounded-lg bg-neutral-800 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <TicketPass registration={selectedReg} />
           </div>
         </div>
       )}

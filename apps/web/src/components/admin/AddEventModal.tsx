@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { X, Plus, Edit2, Loader2, Upload } from "lucide-react";
+import { X, Plus, Edit2, Loader2, Upload, CalendarDays, Sparkles } from "lucide-react";
 
 interface AddEventModalProps {
   isOpen: boolean;
@@ -14,8 +14,10 @@ interface AddEventModalProps {
 
 const CATEGORIES = ["KEYNOTE", "WORKSHOP", "FLAGSHIP CTF", "RESEARCH EXPO", "GRAND FINALE", "COMPETITION", "OTHER"];
 
-const INPUT_CLS = "w-full px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-xs text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-[#FFE816] transition-colors";
-const SELECT_CLS = "w-full px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-xs text-white font-mono focus:outline-none focus:border-[#FFE816] transition-colors";
+const INPUT_CLS =
+  "w-full px-3.5 py-2.5 bg-neutral-950/80 border border-neutral-800 rounded-xl text-xs sm:text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-neutral-600 transition-all";
+const SELECT_CLS =
+  "w-full px-3.5 py-2.5 bg-neutral-950/80 border border-neutral-800 rounded-xl text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-neutral-600 transition-all";
 
 const DEFAULT_FORM = {
   title: "",
@@ -189,26 +191,26 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
   const isEditing = !!eventToEdit;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-2xl border-2 border-white/20 bg-[#161622] shadow-[8px_8px_0px_#000] p-6 my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-2xl rounded-2xl border border-neutral-800 bg-neutral-900 shadow-2xl p-6 sm:p-7 my-8">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b-2 border-white/10 mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-neutral-800 mb-6">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-8 h-8 bg-[#FFE816] border-2 border-black shadow-[2px_2px_0px_#000]">
-              {isEditing ? <Edit2 className="w-4 h-4 text-black" /> : <Plus className="w-4 h-4 text-black" />}
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-white text-neutral-950 shadow-sm">
+              {isEditing ? <Edit2 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
             </div>
             <div>
-              <h2 className="font-pixel text-base font-bold text-white uppercase">
+              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
                 {isEditing ? `Edit Event: ${eventToEdit.title}` : "Add New Event"}
               </h2>
-              <p className="font-mono text-[9px] text-white/40 uppercase">
-                {isEditing ? "Modify event configuration" : "Create event entry for ASTRA 2026"}
+              <p className="text-xs text-neutral-400 mt-0.5">
+                {isEditing ? "Modify event configuration and details" : "Create a new event listing for ASTRA 2026"}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="flex items-center justify-center w-8 h-8 border-2 border-white/20 text-white/60 hover:text-white hover:border-white transition-colors"
+            className="flex items-center justify-center w-8 h-8 rounded-lg border border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -218,7 +220,9 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
           {/* Title & Category */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Event Title *</label>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+                Event Title <span className="text-red-400">*</span>
+              </label>
               <input
                 type="text"
                 name="title"
@@ -230,7 +234,9 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
               />
             </div>
             <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Category *</label>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+                Category <span className="text-red-400">*</span>
+              </label>
               <select name="category" value={formData.category} onChange={handleChange} className={SELECT_CLS}>
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -242,7 +248,9 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
           {/* Venue & Date/Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Venue *</label>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+                Venue <span className="text-red-400">*</span>
+              </label>
               <input
                 type="text"
                 name="venue"
@@ -254,7 +262,9 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
               />
             </div>
             <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Date & Start Time</label>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">
+                Date &amp; Start Time
+              </label>
               <input
                 type="datetime-local"
                 name="event_date"
@@ -268,7 +278,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
           {/* Limit, Registration Deadline & Image URL */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Registration Limit</label>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Registration Limit</label>
               <input
                 type="number"
                 name="registration_limit"
@@ -279,7 +289,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
               />
             </div>
             <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Registration Deadline</label>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Registration Deadline</label>
               <input
                 type="datetime-local"
                 name="registration_end"
@@ -289,13 +299,13 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
               />
             </div>
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block font-pixel text-[9px] text-white/40 uppercase">Image (URL or File Upload)</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-medium text-neutral-300">Image</label>
                 {formData.image && (
                   <button
                     type="button"
                     onClick={() => setFormData((prev) => ({ ...prev, image: "" }))}
-                    className="font-pixel text-[8px] text-red-400 hover:text-red-300 uppercase underline cursor-pointer"
+                    className="text-[11px] text-red-400 hover:text-red-300 transition-colors cursor-pointer"
                   >
                     Clear
                   </button>
@@ -307,7 +317,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  placeholder="https://... or click Upload"
+                  placeholder="Image URL or upload"
                   className={INPUT_CLS}
                 />
                 <input
@@ -321,7 +331,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingImage}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-[#FFE816] text-black font-pixel text-[9px] uppercase border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-xl text-xs font-medium border border-neutral-700 transition-colors disabled:opacity-50 whitespace-nowrap cursor-pointer"
                   title="Upload image from computer"
                 >
                   {uploadingImage ? (
@@ -333,53 +343,53 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
                 </button>
               </div>
               {formData.image && (
-                <div className="mt-2 flex items-center gap-2 p-1.5 border border-white/10 bg-[#0C0C14]">
+                <div className="mt-2 flex items-center gap-2 p-1.5 rounded-lg border border-neutral-800 bg-neutral-950/60">
                   <img
                     src={formData.image}
                     alt="Preview"
-                    className="w-7 h-7 object-cover border border-white/20 flex-shrink-0"
+                    className="w-7 h-7 object-cover rounded border border-neutral-800 flex-shrink-0"
                     onError={(e) => {
                       (e.target as HTMLElement).style.display = "none";
                     }}
                   />
-                  <span className="font-mono text-[9px] text-white/60 truncate flex-1">{formData.image}</span>
+                  <span className="text-[11px] text-neutral-400 truncate flex-1">{formData.image}</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* Toggles: Open Status, Payment & Team */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-2 border-white/10 p-3 bg-[#0C0C14]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 rounded-xl border border-neutral-800/80 p-4 bg-neutral-950/50">
             {/* Registration Open Toggle */}
             <div>
-              <label className="flex items-center gap-2 cursor-pointer mb-2">
+              <label className="flex items-center gap-2.5 cursor-pointer mb-1">
                 <input
                   type="checkbox"
                   name="is_registration_open"
                   checked={formData.is_registration_open}
                   onChange={handleChange}
-                  className="w-4 h-4 accent-[#C3FF16]"
+                  className="w-4 h-4 rounded accent-emerald-500"
                 />
-                <span className="font-pixel text-[9px] text-white uppercase">Registration Open</span>
+                <span className="text-xs font-medium text-white">Registration Open</span>
               </label>
-              <p className="font-mono text-[8px] text-white/30">Allow users to register</p>
+              <p className="text-[11px] text-neutral-500">Allow users to register</p>
             </div>
 
             {/* Payment Toggle */}
             <div>
-              <label className="flex items-center gap-2 cursor-pointer mb-2">
+              <label className="flex items-center gap-2.5 cursor-pointer mb-1">
                 <input
                   type="checkbox"
                   name="requires_payment"
                   checked={formData.requires_payment}
                   onChange={handleChange}
-                  className="w-4 h-4 accent-[#FFE816]"
+                  className="w-4 h-4 rounded accent-amber-400"
                 />
-                <span className="font-pixel text-[9px] text-white uppercase">Requires Fee</span>
+                <span className="text-xs font-medium text-white">Requires Fee</span>
               </label>
               {formData.requires_payment && (
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="font-mono text-xs text-[#FFE816]">₹</span>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-xs text-neutral-400">₹</span>
                   <input
                     type="number"
                     name="payment_amount"
@@ -395,35 +405,35 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
 
             {/* Team Event Toggle */}
             <div>
-              <label className="flex items-center gap-2 cursor-pointer mb-2">
+              <label className="flex items-center gap-2.5 cursor-pointer mb-1">
                 <input
                   type="checkbox"
                   name="is_team_event"
                   checked={formData.is_team_event}
                   onChange={handleChange}
-                  className="w-4 h-4 accent-[#E8CCFF]"
+                  className="w-4 h-4 rounded accent-purple-400"
                 />
-                <span className="font-pixel text-[9px] text-white uppercase">Team Event</span>
+                <span className="text-xs font-medium text-white">Team Event</span>
               </label>
               {formData.is_team_event && (
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="font-mono text-[9px] text-white/40">Min:</span>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-[11px] text-neutral-400">Min:</span>
                   <input
                     type="number"
                     name="team_size_min"
                     value={formData.team_size_min}
                     onChange={handleChange}
                     min={1}
-                    className={INPUT_CLS + " w-14"}
+                    className={INPUT_CLS + " w-14 text-xs"}
                   />
-                  <span className="font-mono text-[9px] text-white/40">Max:</span>
+                  <span className="text-[11px] text-neutral-400">Max:</span>
                   <input
                     type="number"
                     name="team_size_max"
                     value={formData.team_size_max}
                     onChange={handleChange}
                     min={1}
-                    className={INPUT_CLS + " w-14"}
+                    className={INPUT_CLS + " w-14 text-xs"}
                   />
                 </div>
               )}
@@ -433,7 +443,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
           {/* Description & Prize */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Description</label>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Description</label>
               <textarea
                 name="description"
                 value={formData.description}
@@ -444,7 +454,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
               />
             </div>
             <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Prize Pool / Rewards</label>
+              <label className="block text-xs font-medium text-neutral-300 mb-1.5">Prize Pool / Rewards</label>
               <input
                 type="text"
                 name="prize"
@@ -457,18 +467,18 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t-2 border-white/10">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-neutral-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border-2 border-white/20 text-white/60 font-pixel text-[10px] uppercase hover:bg-white/5 hover:text-white transition-colors"
+              className="px-4 py-2.5 rounded-xl border border-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-800 text-xs font-medium transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="flex items-center gap-2 px-5 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase tracking-wider border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-neutral-950 hover:bg-neutral-100 text-xs font-semibold tracking-wide transition-all shadow-sm disabled:opacity-50 cursor-pointer"
             >
               {submitting ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -477,7 +487,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
               ) : (
                 <Plus className="w-3.5 h-3.5" />
               )}
-              {isEditing ? "Save Changes" : "Create Event"}
+              <span>{isEditing ? "Save Changes" : "Create Event"}</span>
             </button>
           </div>
         </form>

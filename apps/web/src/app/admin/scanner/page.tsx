@@ -1,8 +1,9 @@
 "use client";
+
 import React, { useState } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { QrCode, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { QrCode, CheckCircle2, XCircle, Loader2, ShieldCheck, User, Mail, Calendar } from "lucide-react";
 
 export default function AdminScanner() {
   const [token, setToken] = useState("");
@@ -11,7 +12,10 @@ export default function AdminScanner() {
   const { showToast } = useToast();
 
   const handleVerify = async () => {
-    if (!token.trim()) { showToast("Please enter a token.", "error"); return; }
+    if (!token.trim()) {
+      showToast("Please enter a token.", "error");
+      return;
+    }
     setVerifying(true);
     setResult(null);
     try {
@@ -22,96 +26,115 @@ export default function AdminScanner() {
       const msg = err.response?.data?.error || err.response?.data?.detail || "Verification failed.";
       setResult({ error: msg });
       showToast(msg, "error");
-    } finally { setVerifying(false); }
+    } finally {
+      setVerifying(false);
+    }
   };
 
   return (
-    <div>
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 bg-[#97F8B7] border-2 border-black shadow-[3px_3px_0px_#000]">
-          <QrCode className="w-4 h-4 text-black" />
+      <div className="flex items-center gap-3 pb-2 border-b border-neutral-800/80">
+        <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white text-neutral-950 shadow-sm">
+          <QrCode className="w-5 h-5" />
         </div>
         <div>
-          <h1 className="font-pixel text-xl font-bold text-white uppercase">QR Scanner</h1>
-          <p className="font-mono text-[10px] text-white/30 uppercase">Token Verification Terminal</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            QR Scanner &amp; Token Verifier
+          </h1>
+          <p className="text-xs sm:text-sm text-neutral-400 mt-0.5">
+            Gate pass verification and attendee check-in
+          </p>
         </div>
       </div>
 
       <div className="max-w-xl">
         {/* Verifier panel */}
-        <div className="border-2 border-white/20 bg-[#161622] shadow-[4px_4px_0px_rgba(255,255,255,0.06)] p-6 mb-4">
-          <div className="flex items-center gap-2 mb-5 pb-4 border-b-2 border-white/10">
-            <div className="w-2 h-2 rounded-full bg-[#C3FF16] animate-pulse" />
-            <span className="font-pixel text-[10px] text-white/60 uppercase tracking-widest">Verification Terminal Online</span>
+        <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/50 backdrop-blur-xl p-6 sm:p-7 shadow-sm">
+          <div className="flex items-center gap-2 mb-5 pb-4 border-b border-neutral-800">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wide">
+              Gate Scanner Active
+            </span>
           </div>
 
-          <label className="block font-pixel text-[9px] text-white/40 uppercase tracking-wider mb-2">
-            Registration Token
+          <label className="block text-xs font-medium text-neutral-300 mb-2">
+            Registration Token / Pass Key
           </label>
           <div className="flex gap-3">
             <input
               type="text"
               value={token}
               onChange={(e) => setToken(e.target.value)}
-              placeholder="Enter or paste token..."
+              placeholder="Paste or type token string..."
               onKeyDown={(e) => e.key === "Enter" && handleVerify()}
-              className="flex-1 px-4 py-3 bg-[#0C0C14] border-2 border-white/20 text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-[#FFE816] transition-colors tracking-wider"
+              className="flex-1 px-4 py-3 bg-neutral-950/80 border border-neutral-800 rounded-xl text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-white/10 focus:border-neutral-600 transition-all font-mono tracking-wide"
             />
             <button
               onClick={handleVerify}
               disabled={verifying}
-              className="flex items-center gap-2 px-5 py-3 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-neutral-950 hover:bg-neutral-100 font-semibold text-xs sm:text-sm tracking-wide transition-all shadow-sm disabled:opacity-50 whitespace-nowrap cursor-pointer"
             >
               {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-              Verify
+              <span>Verify</span>
             </button>
           </div>
 
           {/* Result */}
           {result && (
-            <div className={`mt-5 border-2 p-4 ${
-              result.error
-                ? "border-red-500/50 bg-red-500/5 shadow-[3px_3px_0px_rgba(239,68,68,0.2)]"
-                : "border-[#C3FF16]/50 bg-[#C3FF16]/5 shadow-[3px_3px_0px_rgba(195,255,22,0.2)]"
-            }`}>
+            <div
+              className={`mt-6 rounded-xl border p-5 transition-all ${
+                result.error
+                  ? "border-red-500/30 bg-red-500/10 text-red-300"
+                  : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+              }`}
+            >
               {result.error ? (
-                <div className="flex items-center gap-3">
-                  <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                <div className="flex items-start gap-3">
+                  <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-pixel text-[10px] text-red-400 uppercase mb-1">Verification Failed</p>
-                    <p className="font-mono text-xs text-red-300">{result.error}</p>
+                    <p className="text-sm font-semibold text-red-300">Verification Failed</p>
+                    <p className="text-xs text-red-400/90 mt-1">{result.error}</p>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <CheckCircle2 className="w-5 h-5 text-[#C3FF16]" />
-                    <span className="font-pixel text-[10px] text-[#C3FF16] uppercase tracking-wider">Verified Successfully</span>
+                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-emerald-500/20">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                    <span className="text-sm font-semibold text-emerald-300">
+                      Token Verified Successfully
+                    </span>
                   </div>
-                  <div className="space-y-2 font-mono text-xs">
+                  <div className="space-y-2.5 text-xs text-neutral-300">
                     {result.user_name && (
-                      <div className="flex gap-3">
-                        <span className="text-white/30 w-20 flex-shrink-0">Name</span>
-                        <span className="text-white">{result.user_name}</span>
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-neutral-400 flex-shrink-0" />
+                        <span className="text-neutral-400 w-16 flex-shrink-0">Attendee:</span>
+                        <span className="font-semibold text-white">{result.user_name}</span>
                       </div>
                     )}
                     {result.user_email && (
-                      <div className="flex gap-3">
-                        <span className="text-white/30 w-20 flex-shrink-0">Email</span>
-                        <span className="text-white">{result.user_email}</span>
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-neutral-400 flex-shrink-0" />
+                        <span className="text-neutral-400 w-16 flex-shrink-0">Email:</span>
+                        <span className="text-neutral-200">{result.user_email}</span>
                       </div>
                     )}
                     {result.event_details?.title && (
-                      <div className="flex gap-3">
-                        <span className="text-white/30 w-20 flex-shrink-0">Event</span>
-                        <span className="text-white">{result.event_details.title}</span>
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-neutral-400 flex-shrink-0" />
+                        <span className="text-neutral-400 w-16 flex-shrink-0">Event:</span>
+                        <span className="font-medium text-white">{result.event_details.title}</span>
                       </div>
                     )}
                     {result.status && (
-                      <div className="flex gap-3 pt-2 border-t border-white/10">
-                        <span className="text-white/30 w-20 flex-shrink-0">Status</span>
-                        <span className="font-pixel text-[9px] bg-[#C3FF16] text-black px-2 py-0.5 border border-black shadow-[1px_1px_0px_#000]">
+                      <div className="flex items-center gap-2 pt-2 border-t border-emerald-500/20">
+                        <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <span className="text-neutral-400 w-16 flex-shrink-0">Status:</span>
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                           {result.status}
                         </span>
                       </div>
@@ -122,10 +145,6 @@ export default function AdminScanner() {
             </div>
           )}
         </div>
-
-        <p className="font-mono text-[10px] text-white/20 uppercase text-center">
-          Press ENTER or click Verify to check token
-        </p>
       </div>
     </div>
   );
