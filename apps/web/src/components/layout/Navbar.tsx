@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings, Ticket, ChevronDown, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings, Ticket, ChevronDown, ChevronRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useLenis } from 'lenis/react';
 
@@ -153,37 +153,39 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/dashboard"
                 onClick={() => { if (menuOpen) closeMenu(); }}
-                className="flex items-center gap-1.5 bg-[#C3FF16] text-black border-2 border-black px-2.5 py-1 sm:px-3.5 sm:py-1.5 font-mono text-[10px] sm:text-xs font-bold uppercase hover:bg-th-yellow transition-colors"
+                className="hidden sm:flex items-center gap-1.5 bg-neutral-900 text-white hover:bg-black px-3.5 py-1.5 rounded-full text-xs font-medium tracking-tight transition-all shadow-sm"
               >
-                <Ticket className="w-3.5 h-3.5" />
-                <span className="hidden xs:inline">My Passes</span>
+                <Ticket className="w-3.5 h-3.5 text-amber-300" />
+                <span>My Passes</span>
               </Link>
 
               {/* User Dropdown Toggle */}
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className={`flex items-center gap-2 border-2 border-black px-3 py-1.5 sm:px-3.5 sm:py-1.5 font-mono text-xs font-bold uppercase transition-all select-none cursor-pointer ${
+                className={`flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-medium transition-all select-none cursor-pointer border ${
                   userDropdownOpen
-                    ? "bg-[#FFE816] text-black shadow-[2px_2px_0px_#000]"
-                    : "bg-white/95 backdrop-blur-md text-black hover:bg-[#FFE816] hover:text-black"
+                    ? "bg-neutral-900 text-white border-neutral-900 shadow-md"
+                    : "bg-white/95 backdrop-blur-md text-neutral-800 border-neutral-300 hover:border-neutral-500 hover:bg-neutral-50 shadow-sm"
                 }`}
               >
-                <div className="relative flex items-center justify-center">
+                <div className="relative flex items-center justify-center flex-shrink-0">
                   {user.avatar ? (
                     <img
                       src={user.avatar}
                       alt=""
-                      className="w-5 h-5 rounded-none border border-black object-cover"
+                      className="w-5 h-5 rounded-full object-cover ring-1 ring-black/10"
                     />
                   ) : (
-                    <User className="w-4 h-4 text-black" />
+                    <div className="w-5 h-5 rounded-full bg-neutral-200 flex items-center justify-center text-neutral-600">
+                      <User className="w-3 h-3" />
+                    </div>
                   )}
                   {/* Status Indicator Dot */}
-                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500 border border-black animate-pulse" />
+                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-1.5 ring-white" />
                 </div>
 
-                <span className="max-w-[110px] truncate tracking-wide">
-                  {user.name?.split(' ')[0] || user.full_name?.split(' ')[0] || 'User'}
+                <span className="max-w-[100px] truncate tracking-tight">
+                  {user.name?.split(' ')[0] || user.full_name?.split(' ')[0] || 'Account'}
                 </span>
 
                 <ChevronDown
@@ -197,25 +199,25 @@ export const Navbar: React.FC = () => {
               <AnimatePresence>
                 {userDropdownOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.96 }}
-                    transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
-                    className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white border-2 border-black shadow-[6px_6px_0px_#000] overflow-hidden z-[90]"
+                    transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl border border-neutral-200 shadow-xl shadow-neutral-900/10 overflow-hidden z-[90]"
                   >
                     {/* User Identity Header Card */}
-                    <div className="bg-[#0C0C14] text-white p-4 border-b-2 border-black">
+                    <div className="bg-neutral-950 text-white p-4 border-b border-neutral-800">
                       <div className="flex items-start gap-3">
                         <div className="relative flex-shrink-0">
                           {user.avatar ? (
                             <img
                               src={user.avatar}
                               alt=""
-                              className="w-11 h-11 border-2 border-white/30 shadow-[2px_2px_0px_#FFE816] object-cover"
+                              className="w-11 h-11 rounded-full ring-2 ring-white/10 object-cover"
                             />
                           ) : (
-                            <div className="w-11 h-11 bg-white/10 border-2 border-white/30 flex items-center justify-center text-white">
-                              <User className="w-6 h-6" />
+                            <div className="w-11 h-11 rounded-full bg-white/10 ring-2 ring-white/10 flex items-center justify-center text-neutral-200">
+                              <User className="w-5 h-5" />
                             </div>
                           )}
                         </div>
@@ -223,26 +225,26 @@ export const Navbar: React.FC = () => {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-1">
                             {user.is_staff ? (
-                              <span className="font-pixel text-[8px] bg-[#FFE816] text-black px-1.5 py-0.5 font-bold uppercase tracking-wider">
-                                STAFF // ADMIN
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                                Staff Admin
                               </span>
                             ) : (
-                              <span className="font-pixel text-[8px] bg-white/20 text-white/90 border border-white/20 px-1.5 py-0.5 uppercase tracking-wider">
-                                ATTENDEE // 2026
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wide bg-white/10 text-neutral-300 border border-white/10">
+                                Attendee
                               </span>
                             )}
                           </div>
 
-                          <p className="font-anton text-base sm:text-lg uppercase text-white tracking-wide leading-tight truncate">
+                          <p className="font-sans font-semibold text-sm sm:text-base text-white tracking-tight truncate leading-tight">
                             {user.name || user.full_name || 'Attendee'}
                           </p>
 
-                          <p className="font-mono text-[10px] text-gray-400 truncate mt-0.5">
+                          <p className="font-sans text-xs text-neutral-400 truncate mt-0.5">
                             {user.email}
                           </p>
 
                           {user.college && (
-                            <p className="font-mono text-[9px] text-[#FFE816] truncate mt-0.5">
+                            <p className="font-sans text-[11px] text-neutral-300 truncate mt-1">
                               {user.college}
                             </p>
                           )}
@@ -250,96 +252,93 @@ export const Navbar: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Quick Status Bar */}
-                    <div className="bg-[#FFFEE5] border-b border-black/15 px-4 py-1.5 flex items-center justify-between font-mono text-[10px]">
-                      <span className="flex items-center gap-1.5 text-emerald-800 font-bold uppercase">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        Verified Participant
-                      </span>
-                      <span className="text-gray-500 font-bold">ASTRA '26</span>
-                    </div>
-
                     {/* Menu Links */}
-                    <div className="p-1.5 space-y-1 bg-[#FAF9F6]">
+                    <div className="p-2 space-y-1 bg-white">
                       <Link
                         href="/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="group flex items-center justify-between p-2.5 bg-white border border-black/10 hover:border-black hover:bg-[#FFE816] transition-colors"
+                        className="group flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 transition-colors"
                       >
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 bg-[#C3FF16] border border-black flex items-center justify-center flex-shrink-0 shadow-[1px_1px_0px_#000]">
-                            <Ticket className="w-3.5 h-3.5 text-black" />
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                            <Ticket className="w-4 h-4" />
                           </div>
                           <div>
-                            <span className="font-mono text-xs font-bold text-black uppercase block leading-none">
+                            <span className="font-sans text-xs font-semibold text-neutral-900 block leading-tight">
                               My Registrations
                             </span>
-                            <span className="font-mono text-[9px] text-gray-500 group-hover:text-black mt-0.5 block">
+                            <span className="font-sans text-[11px] text-neutral-500 mt-0.5 block">
                               View QR passes &amp; entry tickets
                             </span>
                           </div>
                         </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                        <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-0.5 transition-all" />
                       </Link>
 
                       <Link
                         href="/profile"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="w-full group flex items-center justify-between p-2.5 bg-white border border-black/10 hover:border-black hover:bg-th-yellow transition-colors text-left"
+                        className="group flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 transition-colors"
                       >
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 bg-[#F79CFF] border border-black flex items-center justify-center flex-shrink-0 shadow-[1px_1px_0px_#000]">
-                            <User className="w-3.5 h-3.5 text-black" />
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                            <User className="w-4 h-4" />
                           </div>
                           <div>
-                            <span className="font-mono text-xs font-bold text-black uppercase block leading-none">
+                            <span className="font-sans text-xs font-semibold text-neutral-900 block leading-tight">
                               Edit Profile
                             </span>
-                            <span className="font-mono text-[9px] text-gray-500 group-hover:text-black mt-0.5 block">
-                              Update phone, college &amp; details
+                            <span className="font-sans text-[11px] text-neutral-500 mt-0.5 block">
+                              Personal details &amp; college info
                             </span>
                           </div>
                         </div>
-                        <ArrowRight className="w-3.5 h-3.5 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                        <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-0.5 transition-all" />
                       </Link>
 
                       {user.is_staff && (
                         <Link
                           href="/admin"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="group flex items-center justify-between p-2.5 bg-white border border-black/10 hover:border-black hover:bg-th-pink transition-colors"
+                          className="group flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 transition-colors"
                         >
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 bg-[#FFE816] border border-black flex items-center justify-center flex-shrink-0 shadow-[1px_1px_0px_#000]">
-                              <Settings className="w-3.5 h-3.5 text-black" />
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                              <Settings className="w-4 h-4" />
                             </div>
                             <div>
-                              <span className="font-mono text-xs font-bold text-black uppercase block leading-none">
-                                Admin Command Center
+                              <span className="font-sans text-xs font-semibold text-neutral-900 block leading-tight">
+                                Admin Dashboard
                               </span>
-                              <span className="font-mono text-[9px] text-gray-500 group-hover:text-black mt-0.5 block">
+                              <span className="font-sans text-[11px] text-neutral-500 mt-0.5 block">
                                 Ticket scanners &amp; event control
                               </span>
                             </div>
                           </div>
-                          <ArrowRight className="w-3.5 h-3.5 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                          <ChevronRight className="w-4 h-4 text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-0.5 transition-all" />
                         </Link>
                       )}
 
-                      <div className="border-t border-black/15 my-1" />
+                      <div className="h-px bg-neutral-100 my-1 mx-2" />
 
                       <button
                         onClick={() => {
                           setUserDropdownOpen(false);
                           logout();
                         }}
-                        className="w-full flex items-center justify-between p-2 bg-white border border-transparent hover:border-red-200 hover:bg-red-50 text-red-600 font-mono text-xs font-bold uppercase transition-colors text-left cursor-pointer"
+                        className="w-full group flex items-center gap-3 p-2.5 rounded-xl text-neutral-600 hover:text-red-600 hover:bg-red-50/70 transition-colors text-left cursor-pointer"
                       >
-                        <div className="flex items-center gap-2">
-                          <LogOut className="w-4 h-4 text-red-600" />
-                          <span>Sign Out</span>
+                        <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-600 flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 group-hover:text-red-600 transition-colors">
+                          <LogOut className="w-4 h-4" />
                         </div>
-                        <span className="font-mono text-[9px] text-red-400">Exit</span>
+                        <div>
+                          <span className="font-sans text-xs font-semibold block leading-tight">
+                            Sign Out
+                          </span>
+                          <span className="font-sans text-[11px] text-neutral-400 group-hover:text-red-400 mt-0.5 block">
+                            Log out of your account
+                          </span>
+                        </div>
                       </button>
                     </div>
                   </motion.div>
@@ -352,11 +351,10 @@ export const Navbar: React.FC = () => {
                 if (menuOpen) closeMenu();
                 setIsLoginModalOpen(true);
               }}
-              className="flex items-center gap-1.5 bg-th-yellow text-black border-2 border-black px-3 py-1.5 sm:px-4 sm:py-2 font-display font-normal text-xs uppercase shadow-none hover:bg-black hover:text-white transition-colors"
-              style={{ boxShadow: 'none', textShadow: 'none' }}
+              className="flex items-center gap-1.5 bg-neutral-900 text-white px-4 py-1.5 sm:px-5 sm:py-2 rounded-full font-sans font-medium text-xs tracking-wide hover:bg-black transition-colors shadow-sm cursor-pointer"
             >
               <User className="w-3.5 h-3.5" />
-              <span style={{ textShadow: 'none', fontWeight: 400 }}>SIGN IN</span>
+              <span>Sign In</span>
             </button>
           )}
         </div>
