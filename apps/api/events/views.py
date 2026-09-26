@@ -90,10 +90,18 @@ class MyRegistrationsView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # Only show registrations that are confirmed (Paid Success OR Free Event)
+        # Auto-clean any unconfirmed PENDING registrations for paid events
+        Registration.objects.filter(
+            user=self.request.user,
+            status='PENDING',
+            event__requires_payment=True
+        ).exclude(payment__status='SUCCESS').delete()
+
+        # Only show confirmed registrations (Paid Success OR Free Event)
         return Registration.objects.filter(user=self.request.user).filter(
             Q(event__requires_payment=False) | 
-            Q(payment__status='SUCCESS')
+            Q(payment__status='SUCCESS') |
+            Q(status__in=['REGISTERED', 'ATTENDED'])
         ).order_by('-timestamp')
 
 class VerifyTokenView(APIView):
@@ -155,9 +163,16 @@ class VerifyTokenView(APIView):
         }, status=status.HTTP_200_OK)
 
 class AdminRegistrationsView(generics.ListAPIView):
-    queryset = Registration.objects.all().order_by('-timestamp')
     serializer_class = RegistrationSerializer
     permission_classes = [IsSuperUser] # Restrict to superusers
+
+    def get_queryset(self):
+        # Exclude incomplete PENDING payment registrations from admin list
+        return Registration.objects.filter(
+            Q(event__requires_payment=False) | 
+            Q(payment__status='SUCCESS') |
+            Q(status__in=['REGISTERED', 'ATTENDED'])
+        ).order_by('-timestamp')
 
 class AdminEventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('-created_at')
@@ -335,12 +350,38 @@ class VerifyPaymentView(APIView):
             else:
                 payment.status = 'FAILED'
                 payment.save()
-                return Response({"error": "Payment verification failed. Invalid signature."}, status=status.HTTP_400_BAD_REQUEST)
+                if hasattr(payment, 'registration') and payment.registration:
+                    payment.registration.delete()
+                return Response({"error": "Payment verification failed. Registration cancelled."}, status=status.HTTP_400_BAD_REQUEST)
                 
         except Payment.DoesNotExist:
             return Response({"error": "Payment record not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": f"Verification error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class CancelPaymentView(APIView):
+    """Cancel payment and remove pending registration if checkout is closed or fails"""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        registration_id = request.data.get('registration_id')
+        order_id = request.data.get('order_id')
+
+        reg_filter = Q(user=request.user) & Q(status='PENDING')
+        if registration_id:
+            reg_filter &= Q(id=registration_id)
+        elif order_id:
+            reg_filter &= Q(payment__razorpay_order_id=order_id)
+
+        pending_regs = Registration.objects.filter(reg_filter)
+        deleted_count = pending_regs.count()
+        pending_regs.delete()
+
+        return Response({
+            'success': True,
+            'message': 'Pending registration cancelled and removed.',
+            'deleted_count': deleted_count
+        }, status=status.HTTP_200_OK)
 
 class ClearRegistrationsView(APIView):
     permission_classes = [IsSuperUser]

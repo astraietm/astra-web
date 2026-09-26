@@ -175,14 +175,34 @@ export default function RegisterPage() {
           },
           theme: { color: "#000000" },
           modal: {
-            ondismiss: () => {
-              showToast("Payment cancelled.", "warning");
+            ondismiss: async () => {
+              try {
+                await api.post("/api/payment/cancel/", {
+                  registration_id: orderData.registration_id,
+                  order_id: orderData.order_id,
+                });
+              } catch {
+                // ignore
+              }
+              showToast("Payment cancelled. Registration removed.", "warning");
               setSubmitting(false);
             },
           },
         };
 
         const razorpay = new (window as any).Razorpay(options);
+        razorpay.on("payment.failed", async (response: any) => {
+          try {
+            await api.post("/api/payment/cancel/", {
+              registration_id: orderData.registration_id,
+              order_id: orderData.order_id,
+            });
+          } catch {
+            // ignore
+          }
+          showToast(response.error?.description || "Payment failed. Registration cancelled.", "error");
+          setSubmitting(false);
+        });
         razorpay.open();
       } catch (err: any) {
         showToast(err.response?.data?.error || "Payment setup failed.", "error");
