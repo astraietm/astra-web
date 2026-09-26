@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MarqueeTicker } from "@/components/ui/MarqueeTicker";
-import { StickerBadge } from "@/components/ui/StickerBadge";
-import { DotMatrixDisplay } from "@/components/ui/DotMatrixDisplay";
-import { PixelFrame } from "@/components/ui/PixelFrame";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
 import api from "@/lib/api";
@@ -14,18 +10,17 @@ import {
   Calendar,
   Clock,
   MapPin,
-  Shield,
-  Terminal,
-  Award,
   Filter,
-  CheckCircle2,
-  Code,
-  Lock,
+  Search,
   ArrowRight,
   Users,
   Loader2,
   CreditCard,
+  CheckCircle2,
+  Sparkles,
+  Ticket,
 } from "lucide-react";
+import { EventDetailModal, EventModalData } from "@/components/events/EventDetailModal";
 
 // Backend Event type matching Django serializer
 interface BackendEvent {
@@ -53,90 +48,53 @@ interface BackendEvent {
   registration_count: number;
 }
 
-// Display event type for the UI
-interface DisplayEvent {
-  id: number | string;
-  day: string;
-  date: string;
-  time: string;
-  title: string;
-  category: string;
-  venue: string;
+interface DisplayEvent extends EventModalData {
   type: "IN-PERSON" | "HYBRID" | "VIRTUAL";
-  badgeColor: "pink" | "yellow" | "lime" | "mint" | "lilac";
-  description: string;
+  badgeColor: string;
   highlights: string[];
-  registrationStatus: string;
-  isTeamEvent: boolean;
-  teamSizeMin: number;
-  teamSizeMax: number;
-  requiresPayment: boolean;
-  paymentAmount: string;
-  isRegistrationOpen: boolean;
-  registrationLimit: number;
-  registrationCount: number;
-  backendId?: number;
-  prize: string;
 }
-
-const categoryColors: Record<string, "pink" | "yellow" | "lime" | "mint" | "lilac"> = {
-  "FLAGSHIP CTF": "pink",
-  KEYNOTE: "yellow",
-  WORKSHOP: "lime",
-  "RESEARCH EXPO": "mint",
-  "GRAND FINALE": "lilac",
-  CTF: "pink",
-  HACKATHON: "pink",
-  SEMINAR: "yellow",
-  WORKSHOP_: "lime",
-};
-
-const categoryIcons: Record<string, React.ReactNode> = {
-  KEYNOTE: <Shield className="w-4 h-4" />,
-  WORKSHOP: <Terminal className="w-4 h-4" />,
-  "FLAGSHIP CTF": <Code className="w-4 h-4" />,
-  CTF: <Code className="w-4 h-4" />,
-  "RESEARCH EXPO": <Award className="w-4 h-4" />,
-  "GRAND FINALE": <Award className="w-4 h-4" />,
-};
 
 function mapBackendEvent(ev: BackendEvent): DisplayEvent {
   const eventDate = new Date(ev.event_date);
-  const day = eventDate.getDate();
+  const dayNum = eventDate.getDate();
   const month = eventDate.toLocaleString("en-US", { month: "short" }).toUpperCase();
-  const dayLabel = day === 6 ? "DAY 1" : day === 7 ? "DAY 2" : `DAY`;
+  const dayLabel = dayNum === 6 ? "DAY 1" : dayNum === 7 ? "DAY 2" : `DAY`;
 
-  const remaining = ev.registration_limit - ev.registration_count;
+  const remaining = ev.registration_limit - (ev.registration_count || 0);
   let status = "OPEN";
   if (!ev.is_registration_open) status = "CLOSED";
   else if (remaining <= 0) status = "FULL";
   else if (remaining <= 10) status = "FEW SLOTS";
 
-  const cat = (ev.category || "").toUpperCase();
+  const cat = (ev.category || "OTHER").toUpperCase();
 
   return {
     id: ev.id,
     backendId: ev.id,
     day: dayLabel,
-    date: `${month} ${String(day).padStart(2, "0")}`,
+    date: `${month} ${String(dayNum).padStart(2, "0")}`,
     time: ev.time || eventDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
+    duration: ev.duration || "2 Hours",
     title: ev.title,
     category: cat,
-    venue: ev.venue,
+    venue: ev.venue || "Campus Venue",
     type: "IN-PERSON",
-    badgeColor: categoryColors[cat] || "yellow",
-    description: ev.description,
+    badgeColor: cat === "FLAGSHIP CTF" ? "pink" : cat === "COMPETITION" ? "yellow" : "lime",
+    description: ev.description || "",
     highlights: ev.content_blocks?.map((b: any) => b.title || b.content).filter(Boolean) || [],
     registrationStatus: status,
     isTeamEvent: ev.is_team_event,
-    teamSizeMin: ev.team_size_min,
-    teamSizeMax: ev.team_size_max,
+    teamSizeMin: ev.team_size_min || 1,
+    teamSizeMax: ev.team_size_max || 1,
     requiresPayment: ev.requires_payment,
-    paymentAmount: ev.payment_amount,
+    paymentAmount: ev.payment_amount || "0.00",
     isRegistrationOpen: ev.is_registration_open,
-    registrationLimit: ev.registration_limit,
-    registrationCount: ev.registration_count,
+    registrationLimit: ev.registration_limit || 100,
+    registrationCount: ev.registration_count || 0,
     prize: ev.prize || "",
+    image: ev.image || "",
+    content_blocks: ev.content_blocks || [],
+    coordinators: ev.coordinators || [],
   };
 }
 
@@ -144,12 +102,15 @@ export default function EventsPage() {
   const [events, setEvents] = useState<DisplayEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeDay, setActiveDay] = useState<string>("ALL");
-  const [expandedEvent, setExpandedEvent] = useState<string | number | null>(null);
-  const [registering, setRegistering] = useState<number | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>("ALL");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedEvent, setSelectedEvent] = useState<DisplayEvent | null>(null);
+  const [userRegisteredEventIds, setUserRegisteredEventIds] = useState<Set<number>>(new Set());
 
   const { user, requireLogin, token } = useAuth();
   const { showToast } = useToast();
 
+  // 1. Fetch Events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -165,218 +126,396 @@ export default function EventsPage() {
     fetchEvents();
   }, []);
 
-  const filteredEvents = activeDay === "ALL" ? events : events.filter((e) => e.day === activeDay);
-  const days = ["ALL", ...Array.from(new Set(events.map((e) => e.day)))];
-
-  const handleRegister = (event: DisplayEvent) => {
-    if (!event.backendId) {
-      showToast("This event is not yet available for online registration.", "info");
-      return;
+  // 2. Fetch User's Existing Registrations
+  useEffect(() => {
+    if (token) {
+      const fetchUserRegistrations = async () => {
+        try {
+          const res = await api.get("/api/my-registrations/");
+          if (Array.isArray(res.data)) {
+            const registeredIds = new Set<number>(
+              res.data.map((r: any) => r.event_details?.id || r.event)
+            );
+            setUserRegisteredEventIds(registeredIds);
+          }
+        } catch {
+          // silently handle
+        }
+      };
+      fetchUserRegistrations();
+    } else {
+      setUserRegisteredEventIds(new Set());
     }
+  }, [token]);
+
+  // Handle Register Action
+  const handleRegister = (event: EventModalData) => {
+    const eventId = event.backendId || event.id;
 
     if (!user) {
       requireLogin({
         label: `Register for ${event.title}`,
         run: () => {
-          window.location.href = `/register/${event.backendId}`;
+          window.location.href = `/register/${eventId}`;
         },
       });
       return;
     }
 
-    window.location.href = `/register/${event.backendId}`;
+    window.location.href = `/register/${eventId}`;
   };
 
+  // Derive unique categories and days
+  const categories = useMemo(() => {
+    const set = new Set(events.map((e) => e.category));
+    return ["ALL", ...Array.from(set)];
+  }, [events]);
+
+  const days = ["ALL", "DAY 1", "DAY 2"];
+
+  // Filtered Events
+  const filteredEvents = useMemo(() => {
+    return events.filter((e) => {
+      const matchesDay = activeDay === "ALL" || e.day === activeDay;
+      const matchesCategory = activeCategory === "ALL" || e.category === activeCategory;
+      const matchesSearch =
+        !searchQuery.trim() ||
+        e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.category.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesDay && matchesCategory && matchesSearch;
+    });
+  }, [events, activeDay, activeCategory, searchQuery]);
+
   return (
-    <div className="w-full relative bg-graph-paper min-h-screen">
+    <div className="w-full relative bg-graph-paper min-h-screen pb-20">
       {/* ─── MARQUEE TICKER HEADER ─── */}
       <div className="pt-20 sm:pt-24">
         <MarqueeTicker
           items={[
-            "ASTRA 2026 //  CYBER SECURITY ASSOCIATION",
+            "ASTRA 2026 // CYBER SECURITY ASSOCIATION",
             "OCT 6 & 7 — KMCT CALICUT",
-            "REGISTER NOW",
+            "WARGAMES • HACKATHONS • CTF • PAPER PRESENTATION",
+            "CLICK ANY EVENT TO VIEW RULES & REGISTER",
           ]}
         />
       </div>
 
-      {/* ─── MAIN EVENT SCHEDULE SECTION ─── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-8 py-10">
-        {/* Section Header */}
-        <div className="mb-8">
+      {/* ─── MAIN EVENT DIRECTORY ─── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Header Section */}
+        <div className="mb-8 sm:mb-12">
           <div className="flex items-center gap-2 mb-3">
-            <StickerBadge color="pink" rotation={-2}>SCHEDULE</StickerBadge>
-            <span className="font-mono text-xs bg-black text-white px-2 py-0.5 font-bold">
-              {events.length} EVENTS
+            <span className="font-mono text-xs font-bold bg-[#FFE816] text-black border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
+              WARGAMES DIRECTORY
+            </span>
+            <span className="font-mono text-xs bg-black text-white px-2 py-0.5 font-bold uppercase">
+              {events.length} TOTAL SESSIONS
             </span>
           </div>
-          <h1 className="font-pixel text-3xl sm:text-5xl font-extrabold uppercase text-black">
-            EVENT SCHEDULE &amp; REGISTRATION
+
+          <h1 className="font-anton text-4xl sm:text-6xl uppercase text-black tracking-tight leading-none mb-3">
+            EVENT POSTERS &amp; DETAILS
           </h1>
-          <p className="font-editorial italic text-xl sm:text-2xl text-gray-700 mt-1">
-            Two days of hacking, research, and sovereign cyber defense.
+
+          <p className="font-editorial italic text-xl sm:text-2xl text-gray-700 max-w-3xl">
+            Explore all symposium events, tournaments, and wargames. Select any event to review the full poster, comprehensive rules, guidelines, and registration options.
           </p>
         </div>
 
-        {/* Day Filter Tabs */}
-        <div className="bg-white border-2 border-black p-4 shadow-[4px_4px_0px_#000] mb-8">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="font-mono text-xs font-bold text-gray-500 uppercase flex items-center gap-1 mr-1">
-              <Filter className="w-3.5 h-3.5" /> DAY:
+        {/* ─── FILTER & SEARCH CONTROL BAR ─── */}
+        <div className="bg-white border-2 border-black p-4 sm:p-5 shadow-[4px_4px_0px_#000] mb-8 space-y-4">
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search events, topics, arena..."
+                className="w-full pl-10 pr-4 py-2 border-2 border-black font-mono text-xs text-black placeholder:text-gray-400 focus:outline-none focus:bg-[#FFFEE5] transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-gray-400 hover:text-black uppercase"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Day Filter Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+              <span className="font-mono text-xs font-bold text-gray-500 uppercase flex items-center gap-1 flex-shrink-0 mr-1">
+                <Calendar className="w-3.5 h-3.5 text-black" /> DAY:
+              </span>
+              {days.map((day) => (
+                <button
+                  key={day}
+                  onClick={() => setActiveDay(day)}
+                  className={`px-3 py-1.5 text-xs font-display font-bold border-2 border-black uppercase transition-colors cursor-pointer select-none whitespace-nowrap ${
+                    activeDay === day
+                      ? "bg-black text-white shadow-[2px_2px_0px_#FFE816]"
+                      : "bg-[#F0F0FA] text-black hover:bg-gray-100"
+                  }`}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-black/10">
+            <span className="font-mono text-[11px] font-bold text-gray-500 uppercase flex items-center gap-1 mr-1">
+              <Filter className="w-3 h-3 text-black" /> CATEGORY:
             </span>
-            {days.map((day) => (
+            {categories.map((cat) => (
               <button
-                key={day}
-                onClick={() => setActiveDay(day)}
-                className={`relative px-3.5 py-1.5 text-xs font-display font-bold border-2 border-black uppercase transition-colors cursor-pointer select-none ${
-                  activeDay === day
-                    ? "bg-th-pink text-black shadow-[2px_2px_0px_#000]"
-                    : "bg-[#F0F0FA] text-black hover:bg-gray-100"
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-2.5 py-1 text-[11px] font-mono font-bold uppercase transition-colors cursor-pointer select-none border border-black ${
+                  activeCategory === cat
+                    ? "bg-[#FFE816] text-black shadow-[2px_2px_0px_#000]"
+                    : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                {day}
+                {cat}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Loading State */}
+        {/* ─── LOADING STATE ─── */}
         {loading && (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-            <span className="ml-3 font-mono text-sm text-gray-500">Loading events...</span>
+          <div className="flex flex-col items-center justify-center py-28 space-y-4">
+            <Loader2 className="w-10 h-10 animate-spin text-black" />
+            <p className="font-mono text-sm uppercase tracking-wider text-gray-600">
+              Loading symposium directory...
+            </p>
           </div>
         )}
 
-        {/* Event Cards */}
-        <motion.div layout className="space-y-6">
-          <AnimatePresence mode="popLayout">
-            {filteredEvents.map((event) => (
-              <motion.div
-                key={event.id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-              >
-                <PixelFrame dotGrid cornerAccent className="p-0 overflow-hidden group">
-                  {/* Event Card Header */}
-                  <div className="p-5 sm:p-6 border-b-2 border-black bg-white">
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                          <StickerBadge color={event.badgeColor} rotation={-2}>
-                            {event.category}
-                          </StickerBadge>
-                          <span className="font-mono text-xs bg-black text-white px-2 py-0.5 font-bold">
+        {/* ─── EVENT POSTERS GRID ─── */}
+        {!loading && (
+          <motion.div
+            layout
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredEvents.map((event) => {
+                const isRegistered = userRegisteredEventIds.has(Number(event.backendId || event.id));
+                const eventWithReg = { ...event, isUserRegistered: isRegistered };
+
+                return (
+                  <motion.div
+                    key={event.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+                    className="flex flex-col h-full bg-white border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#000] hover:-translate-y-1 transition-all duration-200 group overflow-hidden cursor-pointer"
+                    onClick={() => setSelectedEvent(eventWithReg)}
+                  >
+                    {/* 1. Event Poster Container */}
+                    <div className="relative aspect-[3/4] bg-black overflow-hidden border-b-2 border-black flex items-center justify-center">
+                      {event.image ? (
+                        <img
+                          src={event.image}
+                          alt={`${event.title} Poster`}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="p-6 text-center text-white space-y-2">
+                          <Sparkles className="w-8 h-8 text-[#FFE816] mx-auto" />
+                          <p className="font-anton text-2xl uppercase tracking-wider text-white">
+                            {event.title}
+                          </p>
+                          <p className="font-mono text-[10px] text-gray-400 uppercase">
+                            ASTRA 2026 // POSTER COMING SOON
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Top Badges (Category + Day) */}
+                      <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start pointer-events-none">
+                        <span className="font-mono text-[10px] font-bold bg-[#FFE816] text-black border border-black px-2 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
+                          {event.category}
+                        </span>
+                        {event.day && (
+                          <span className="font-mono text-[10px] font-bold bg-white text-black border border-black px-2 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
                             {event.day}
                           </span>
-                          {event.prize && (
-                            <span className="font-mono text-xs bg-th-yellow text-black px-2 py-0.5 font-bold border border-black">
-                              🏆 {event.prize}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-pixel text-xl sm:text-2xl font-bold uppercase text-black mb-2">
-                          {event.title}
-                        </h3>
-                        <p className="font-sans text-sm text-gray-700 leading-relaxed mb-3">
-                          {event.description}
-                        </p>
-                        <div className="flex flex-wrap gap-3 text-xs font-mono text-gray-600">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3.5 h-3.5" /> {event.date}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5" /> {event.time}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5" /> {event.venue}
-                          </span>
-                          {event.isTeamEvent && (
-                            <span className="flex items-center gap-1">
-                              <Users className="w-3.5 h-3.5" /> Team ({event.teamSizeMin}-{event.teamSizeMax})
-                            </span>
-                          )}
-                        </div>
+                        )}
                       </div>
 
-                      {/* Registration Actions */}
-                      <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                        <span
-                          className={`font-pixel text-[10px] px-2 py-0.5 uppercase border border-black shadow-[1px_1px_0px_#000] ${
-                            event.registrationStatus === "OPEN"
-                              ? "bg-emerald-100 text-emerald-800"
-                              : event.registrationStatus === "FEW SLOTS"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : event.registrationStatus === "FULL" || event.registrationStatus === "CLOSED"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {event.registrationStatus}
-                        </span>
-
-                        <span className="font-mono text-[10px] text-gray-500">
-                          {event.registrationCount}/{event.registrationLimit} registered
-                        </span>
-
-                        {event.requiresPayment && (
-                          <span className="font-mono text-xs font-bold text-black flex items-center gap-1">
-                            <CreditCard className="w-3 h-3" /> ₹{event.paymentAmount}
+                      {/* Top Right Badges (Prize or Fee) */}
+                      <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end pointer-events-none">
+                        {event.prize ? (
+                          <span className="font-mono text-[10px] font-bold bg-black text-[#FFE816] border border-black px-2 py-0.5 uppercase shadow-[2px_2px_0px_#FFE816]">
+                            🏆 {event.prize}
+                          </span>
+                        ) : (
+                          <span className="font-mono text-[10px] font-bold bg-white text-black border border-black px-2 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
+                            {event.requiresPayment ? `₹${event.paymentAmount}` : "FREE"}
                           </span>
                         )}
 
-                        {event.isRegistrationOpen && event.registrationStatus !== "FULL" && event.backendId && (
-                          <button
-                            onClick={() => handleRegister(event)}
-                            disabled={registering === event.backendId}
-                            className="mt-1 px-4 py-2 bg-black text-white font-display font-bold text-xs uppercase tracking-wider border-2 border-black hover:bg-th-yellow hover:text-black transition-all shadow-[2px_2px_0px_#000] disabled:opacity-50 flex items-center gap-1.5"
-                          >
-                            {registering === event.backendId ? (
-                              <>
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" /> REGISTERING...
-                              </>
-                            ) : (
-                              <>
-                                <ArrowRight className="w-3.5 h-3.5" /> REGISTER NOW
-                              </>
-                            )}
-                          </button>
+                        {isRegistered && (
+                          <span className="font-pixel text-[9px] bg-[#C3FF16] text-black border border-black px-2 py-0.5 font-bold uppercase shadow-[2px_2px_0px_#000] flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> REGISTERED
+                          </span>
                         )}
+                      </div>
+
+                      {/* Hover Overlay Cue */}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4 pointer-events-none">
+                        <span className="bg-[#FFE816] text-black font-display text-xs font-bold px-4 py-2 border-2 border-black shadow-[3px_3px_0px_#000] uppercase tracking-wider flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                          <span>VIEW RULES &amp; DETAILS</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </span>
                       </div>
                     </div>
 
-                    {/* Highlights */}
-                    {event.highlights.length > 0 && (
-                      <div className="mt-4 pt-3 border-t border-gray-200">
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                          {event.highlights.slice(0, 4).map((h, i) => (
-                            <li key={i} className="flex items-center gap-2 text-xs font-sans text-gray-700">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                              {h}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </PixelFrame>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+                    {/* 2. Card Content & Details */}
+                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
+                      <div className="space-y-2.5">
+                        {/* Title */}
+                        <h3 className="font-anton text-2xl sm:text-3xl uppercase text-black tracking-tight leading-tight group-hover:text-blue-700 transition-colors">
+                          {event.title}
+                        </h3>
 
-        {/* Empty State */}
+                        {/* Metadata Row */}
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] text-gray-700">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3 text-black" /> {event.date}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-black" /> {event.time}
+                          </span>
+                          <span className="flex items-center gap-1 truncate">
+                            <MapPin className="w-3 h-3 text-black" /> {event.venue}
+                          </span>
+                        </div>
+
+                        {/* Description Snippet */}
+                        {event.description && (
+                          <p className="font-sans text-xs text-gray-700 line-clamp-2 leading-relaxed">
+                            {event.description}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* 3. Card Bottom Bar: Format, Slots, and Buttons */}
+                      <div className="pt-3 border-t border-black/10 space-y-3">
+                        <div className="flex items-center justify-between font-mono text-[11px]">
+                          <span className="flex items-center gap-1 text-gray-600">
+                            <Users className="w-3.5 h-3.5 text-black" />
+                            {event.isTeamEvent
+                              ? `Team (${event.teamSizeMin}-${event.teamSizeMax})`
+                              : "Solo Participant"}
+                          </span>
+
+                          <span
+                            className={`px-1.5 py-0.5 text-[9px] font-pixel uppercase font-bold border border-black ${
+                              event.registrationStatus === "OPEN"
+                                ? "bg-emerald-100 text-emerald-900"
+                                : event.registrationStatus === "FEW SLOTS"
+                                ? "bg-yellow-100 text-yellow-900"
+                                : "bg-red-100 text-red-900"
+                            }`}
+                          >
+                            {event.registrationStatus}
+                          </span>
+                        </div>
+
+                        {/* Action CTA Buttons */}
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedEvent(eventWithReg);
+                            }}
+                            className="px-2.5 py-2 bg-[#F0F0FA] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-center"
+                          >
+                            Rules &amp; Intel
+                          </button>
+
+                          {isRegistered ? (
+                            <a
+                              href="/dashboard"
+                              onClick={(e) => e.stopPropagation()}
+                              className="px-2.5 py-2 bg-[#C3FF16] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-th-yellow transition-colors text-center flex items-center justify-center gap-1"
+                            >
+                              <Ticket className="w-3 h-3" /> Pass
+                            </a>
+                          ) : event.isRegistrationOpen && event.registrationStatus !== "FULL" ? (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRegister(event);
+                              }}
+                              className="px-2.5 py-2 bg-[#FFE816] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-center flex items-center justify-center gap-1"
+                            >
+                              <span>Register</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              disabled
+                              className="px-2.5 py-2 bg-gray-200 text-gray-400 font-display font-bold text-[11px] uppercase border-2 border-gray-300 text-center cursor-not-allowed"
+                            >
+                              Closed
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
+        )}
+
+        {/* ─── EMPTY STATE ─── */}
         {!loading && filteredEvents.length === 0 && (
-          <div className="text-center py-16">
-            <p className="font-pixel text-xl text-gray-400">No events found for this filter.</p>
+          <div className="bg-white border-2 border-black p-12 text-center shadow-[4px_4px_0px_#000] my-8 space-y-3">
+            <p className="font-anton text-2xl uppercase text-black">
+              No Events Found Matching Filters
+            </p>
+            <p className="font-mono text-xs text-gray-600">
+              Try adjusting your search query or selecting a different category/day.
+            </p>
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setActiveDay("ALL");
+                setActiveCategory("ALL");
+              }}
+              className="mt-3 px-4 py-2 bg-black text-white font-mono text-xs uppercase font-bold hover:bg-[#FFE816] hover:text-black transition-colors"
+            >
+              Reset Filters
+            </button>
           </div>
         )}
       </section>
+
+      {/* ─── EVENT DETAILS & RULES MODAL ─── */}
+      <EventDetailModal
+        event={selectedEvent}
+        isOpen={!!selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+        onRegister={handleRegister}
+        isLoggedIn={!!user}
+      />
     </div>
   );
 }
-
-
