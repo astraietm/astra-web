@@ -4,7 +4,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { MarqueeTicker } from "@/components/ui/MarqueeTicker";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast-context";
 import api from "@/lib/api";
@@ -17,10 +16,10 @@ import {
   ArrowRight,
   Users,
   Loader2,
-  CreditCard,
   CheckCircle2,
   Sparkles,
   Ticket,
+  Trophy,
 } from "lucide-react";
 
 // Backend Event type matching Django serializer
@@ -82,8 +81,8 @@ interface DisplayEvent {
 function mapBackendEvent(ev: BackendEvent): DisplayEvent {
   const eventDate = new Date(ev.event_date);
   const dayNum = eventDate.getDate();
-  const month = eventDate.toLocaleString("en-US", { month: "short" }).toUpperCase();
-  const dayLabel = dayNum === 6 ? "DAY 1" : dayNum === 7 ? "DAY 2" : `DAY`;
+  const month = eventDate.toLocaleString("en-US", { month: "short" });
+  const dayLabel = dayNum === 6 ? "Day 1" : dayNum === 7 ? "Day 2" : `Day`;
 
   const remaining = ev.registration_limit - (ev.registration_count || 0);
   let status = "OPEN";
@@ -196,7 +195,7 @@ export default function EventsPage() {
     return ["ALL", ...Array.from(set)];
   }, [events]);
 
-  const days = ["ALL", "DAY 1", "DAY 2"];
+  const days = ["ALL", "Day 1", "Day 2"];
 
   // Filtered Events
   const filteredEvents = useMemo(() => {
@@ -213,58 +212,41 @@ export default function EventsPage() {
   }, [events, activeDay, activeCategory, searchQuery]);
 
   return (
-    <div className="w-full relative bg-graph-paper min-h-screen pb-20">
-      {/* ─── MARQUEE TICKER HEADER ─── */}
-      <div className="pt-20 sm:pt-24">
-        <MarqueeTicker
-          items={[
-            "ASTRA 2026 // CYBER SECURITY ASSOCIATION",
-            "OCT 6 & 7 — KMCT CALICUT",
-            "WARGAMES • HACKATHONS • CTF • PAPER PRESENTATION",
-            "CLICK ANY EVENT TO VIEW RULES & REGISTER",
-          ]}
-        />
-      </div>
-
-      {/* ─── MAIN EVENT DIRECTORY ─── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="w-full relative bg-neutral-50/60 min-h-screen pt-24 sm:pt-28 pb-24 font-sans text-neutral-900">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
-        <div className="mb-8 sm:mb-12">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="font-mono text-xs font-bold bg-[#FFE816] text-black border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
-              WARGAMES DIRECTORY
-            </span>
-            <span className="font-mono text-xs bg-black text-white px-2 py-0.5 font-bold uppercase">
-              {events.length} TOTAL SESSIONS
-            </span>
+        <div className="mb-8 sm:mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 text-white text-xs font-medium shadow-sm mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            <span>ASTRA 2026 Schedule &amp; Events</span>
           </div>
 
-          <h1 className="font-anton text-4xl sm:text-6xl uppercase text-black tracking-tight leading-none mb-3">
-            EVENT POSTERS &amp; DETAILS
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950">
+            Events &amp; Workshops
           </h1>
 
-          <p className="font-editorial italic text-xl sm:text-2xl text-gray-700 max-w-3xl">
-            Explore all symposium events, tournaments, and wargames. Select any event to review the full poster, comprehensive rules, guidelines, and registration options.
+          <p className="text-sm sm:text-base text-neutral-500 mt-2 max-w-2xl leading-relaxed">
+            Explore keynote sessions, CTF wargames, expert workshops, and technical competitions. Select any event to review complete guidelines, rules, and registration options.
           </p>
         </div>
 
         {/* ─── FILTER & SEARCH CONTROL BAR ─── */}
-        <div className="bg-white border-2 border-black p-4 sm:p-5 shadow-[4px_4px_0px_#000] mb-8 space-y-4">
+        <div className="bg-white rounded-2xl border border-neutral-200/80 p-4 sm:p-5 shadow-sm mb-8 space-y-4">
           <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
             {/* Search Input */}
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search events, topics, arena..."
-                className="w-full pl-10 pr-4 py-2 border-2 border-black font-mono text-xs text-black placeholder:text-gray-400 focus:outline-none focus:bg-[#FFFEE5] transition-colors"
+                placeholder="Search by event title, arena, or topic..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 text-xs sm:text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-gray-400 hover:text-black uppercase"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400 hover:text-neutral-900"
                 >
                   ✕
                 </button>
@@ -272,18 +254,18 @@ export default function EventsPage() {
             </div>
 
             {/* Day Filter Pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-              <span className="font-mono text-xs font-bold text-gray-500 uppercase flex items-center gap-1 flex-shrink-0 mr-1">
-                <Calendar className="w-3.5 h-3.5 text-black" /> DAY:
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+              <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider flex items-center gap-1 flex-shrink-0 mr-1">
+                <Calendar className="w-3.5 h-3.5 text-neutral-500" /> Day:
               </span>
               {days.map((day) => (
                 <button
                   key={day}
                   onClick={() => setActiveDay(day)}
-                  className={`px-3 py-1.5 text-xs font-display font-bold border-2 border-black uppercase transition-colors cursor-pointer select-none whitespace-nowrap ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${
                     activeDay === day
-                      ? "bg-black text-white shadow-[2px_2px_0px_#FFE816]"
-                      : "bg-[#F0F0FA] text-black hover:bg-gray-100"
+                      ? "bg-neutral-900 text-white shadow-sm font-semibold"
+                      : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900"
                   }`}
                 >
                   {day}
@@ -293,18 +275,18 @@ export default function EventsPage() {
           </div>
 
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-black/10">
-            <span className="font-mono text-[11px] font-bold text-gray-500 uppercase flex items-center gap-1 mr-1">
-              <Filter className="w-3 h-3 text-black" /> CATEGORY:
+          <div className="flex items-center gap-2 flex-wrap pt-3 border-t border-neutral-100">
+            <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider flex items-center gap-1 mr-1">
+              <Filter className="w-3 h-3 text-neutral-500" /> Category:
             </span>
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-2.5 py-1 text-[11px] font-mono font-bold uppercase transition-colors cursor-pointer select-none border border-black ${
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
                   activeCategory === cat
-                    ? "bg-[#FFE816] text-black shadow-[2px_2px_0px_#000]"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
+                    ? "bg-neutral-900 text-white shadow-sm font-semibold"
+                    : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900"
                 }`}
               >
                 {cat}
@@ -315,10 +297,10 @@ export default function EventsPage() {
 
         {/* ─── LOADING STATE ─── */}
         {loading && (
-          <div className="flex flex-col items-center justify-center py-28 space-y-4">
-            <Loader2 className="w-10 h-10 animate-spin text-black" />
-            <p className="font-mono text-sm uppercase tracking-wider text-gray-600">
-              Loading symposium directory...
+          <div className="flex flex-col items-center justify-center py-28 space-y-3">
+            <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
+            <p className="text-xs font-medium uppercase tracking-widest text-neutral-500">
+              Loading event directory...
             </p>
           </div>
         )}
@@ -332,21 +314,20 @@ export default function EventsPage() {
             <AnimatePresence mode="popLayout">
               {filteredEvents.map((event) => {
                 const isRegistered = userRegisteredEventIds.has(Number(event.backendId || event.id));
-                const eventWithReg = { ...event, isUserRegistered: isRegistered };
 
                 return (
                   <motion.div
                     key={event.id}
                     layout
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-                    className="flex flex-col h-full bg-white border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#000] hover:-translate-y-1 transition-all duration-200 group overflow-hidden cursor-pointer"
+                    transition={{ duration: 0.25 }}
+                    className="flex flex-col h-full bg-white rounded-3xl border border-neutral-200/80 shadow-sm hover:shadow-xl hover:border-neutral-300 hover:-translate-y-1 transition-all duration-300 group overflow-hidden cursor-pointer"
                     onClick={() => router.push(`/events/${event.backendId || event.id}`)}
                   >
                     {/* 1. Event Poster Container */}
-                    <div className="relative aspect-[3/4] bg-black overflow-hidden border-b-2 border-black flex items-center justify-center">
+                    <div className="relative aspect-[16/10] sm:aspect-[4/3] bg-neutral-950 overflow-hidden flex items-center justify-center">
                       {event.image ? (
                         <img
                           src={event.image}
@@ -356,105 +337,99 @@ export default function EventsPage() {
                         />
                       ) : (
                         <div className="p-6 text-center text-white space-y-2">
-                          <Sparkles className="w-8 h-8 text-[#FFE816] mx-auto" />
-                          <p className="font-anton text-2xl uppercase tracking-wider text-white">
+                          <Sparkles className="w-8 h-8 text-amber-300 mx-auto" />
+                          <p className="font-bold text-lg text-white">
                             {event.title}
                           </p>
-                          <p className="font-mono text-[10px] text-gray-400 uppercase">
-                            ASTRA 2026 // POSTER COMING SOON
+                          <p className="text-xs text-neutral-400">
+                            ASTRA 2026 • Official Session
                           </p>
                         </div>
                       )}
 
                       {/* Top Badges (Category + Day) */}
-                      <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start pointer-events-none">
-                        <span className="font-mono text-[10px] font-bold bg-[#FFE816] text-black border border-black px-2 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
+                      <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-start pointer-events-none">
+                        <span className="backdrop-blur-md bg-neutral-950/80 text-white border border-white/10 px-2.5 py-0.5 rounded-full text-[11px] font-medium shadow-sm">
                           {event.category}
                         </span>
                         {event.day && (
-                          <span className="font-mono text-[10px] font-bold bg-white text-black border border-black px-2 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
+                          <span className="backdrop-blur-md bg-white/90 text-neutral-950 border border-neutral-200/60 px-2.5 py-0.5 rounded-full text-[11px] font-semibold shadow-sm">
                             {event.day}
                           </span>
                         )}
                       </div>
 
-                      {/* Top Right Badges (Prize or Fee) */}
+                      {/* Top Right Badges (Prize or Fee / Registered) */}
                       <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end pointer-events-none">
-                        {event.prize ? (
-                          <span className="font-mono text-[10px] font-bold bg-black text-[#FFE816] border border-black px-2 py-0.5 uppercase shadow-[2px_2px_0px_#FFE816]">
-                            🏆 {event.prize}
+                        {isRegistered ? (
+                          <span className="backdrop-blur-md bg-emerald-500/90 text-white px-2.5 py-0.5 rounded-full text-[11px] font-semibold shadow-sm flex items-center gap-1">
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Pass Ready
+                          </span>
+                        ) : event.prize ? (
+                          <span className="backdrop-blur-md bg-amber-400/95 text-neutral-950 font-bold px-2.5 py-0.5 rounded-full text-[11px] shadow-sm flex items-center gap-1">
+                            <Trophy className="w-3.5 h-3.5" /> {event.prize}
                           </span>
                         ) : (
-                          <span className="font-mono text-[10px] font-bold bg-white text-black border border-black px-2 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
+                          <span className="backdrop-blur-md bg-white/90 text-neutral-950 border border-neutral-200/60 px-2.5 py-0.5 rounded-full text-[11px] font-semibold shadow-sm">
                             {event.requiresPayment ? `₹${event.paymentAmount}` : "FREE"}
                           </span>
                         )}
-
-                        {isRegistered && (
-                          <span className="font-pixel text-[9px] bg-[#C3FF16] text-black border border-black px-2 py-0.5 font-bold uppercase shadow-[2px_2px_0px_#000] flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" /> REGISTERED
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Hover Overlay Cue */}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4 pointer-events-none">
-                        <span className="bg-[#FFE816] text-black font-display text-xs font-bold px-4 py-2 border-2 border-black shadow-[3px_3px_0px_#000] uppercase tracking-wider flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                          <span>VIEW RULES &amp; DETAILS</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </span>
                       </div>
                     </div>
 
                     {/* 2. Card Content & Details */}
-                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
                       <div className="space-y-2.5">
                         {/* Title */}
-                        <h3 className="font-anton text-2xl sm:text-3xl uppercase text-black tracking-tight leading-tight group-hover:text-blue-700 transition-colors">
+                        <h3 className="text-lg sm:text-xl font-bold text-neutral-950 tracking-tight leading-snug group-hover:text-blue-600 transition-colors line-clamp-1">
                           {event.title}
                         </h3>
 
                         {/* Metadata Row */}
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 font-mono text-[11px] text-gray-700">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500">
                           <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3 text-black" /> {event.date}
+                            <Calendar className="w-3.5 h-3.5 text-neutral-400" /> {event.date}
                           </span>
                           <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-black" /> {event.time}
+                            <Clock className="w-3.5 h-3.5 text-neutral-400" /> {event.time}
                           </span>
-                          <span className="flex items-center gap-1 truncate">
-                            <MapPin className="w-3 h-3 text-black" /> {event.venue}
+                          <span className="flex items-center gap-1 truncate max-w-[180px]">
+                            <MapPin className="w-3.5 h-3.5 text-neutral-400" /> {event.venue}
                           </span>
                         </div>
 
                         {/* Description Snippet */}
                         {event.description && (
-                          <p className="font-sans text-xs text-gray-700 line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-neutral-500 line-clamp-2 leading-relaxed">
                             {event.description}
                           </p>
                         )}
                       </div>
 
                       {/* 3. Card Bottom Bar: Format, Slots, and Buttons */}
-                      <div className="pt-3 border-t border-black/10 space-y-3">
-                        <div className="flex items-center justify-between font-mono text-[11px]">
-                          <span className="flex items-center gap-1 text-gray-600">
-                            <Users className="w-3.5 h-3.5 text-black" />
+                      <div className="pt-3 border-t border-neutral-100 space-y-3">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="flex items-center gap-1 text-neutral-500">
+                            <Users className="w-3.5 h-3.5 text-neutral-400" />
                             {event.isTeamEvent
                               ? `Team (${event.teamSizeMin}-${event.teamSizeMax})`
-                              : "Solo Participant"}
+                              : "Solo"}
                           </span>
 
                           <span
-                            className={`px-1.5 py-0.5 text-[9px] font-pixel uppercase font-bold border border-black ${
+                            className={`px-2 py-0.5 text-[11px] font-medium rounded-full border ${
                               event.registrationStatus === "OPEN"
-                                ? "bg-emerald-100 text-emerald-900"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                 : event.registrationStatus === "FEW SLOTS"
-                                ? "bg-yellow-100 text-yellow-900"
-                                : "bg-red-100 text-red-900"
+                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                : "bg-neutral-100 text-neutral-500 border-neutral-200"
                             }`}
                           >
-                            {event.registrationStatus}
+                            {event.registrationStatus === "OPEN"
+                              ? "● Open"
+                              : event.registrationStatus === "FEW SLOTS"
+                              ? "Few Slots Left"
+                              : "Closed"}
                           </span>
                         </div>
 
@@ -463,7 +438,7 @@ export default function EventsPage() {
                           <Link
                             href={`/events/${event.backendId || event.id}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="px-2.5 py-2 bg-[#F0F0FA] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-center flex items-center justify-center"
+                            className="px-3 py-2 rounded-full border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 text-neutral-800 text-xs font-medium text-center transition-colors flex items-center justify-center"
                           >
                             Rules &amp; Intel
                           </Link>
@@ -472,9 +447,10 @@ export default function EventsPage() {
                             <Link
                               href="/dashboard"
                               onClick={(e) => e.stopPropagation()}
-                              className="px-2.5 py-2 bg-[#C3FF16] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-th-yellow transition-colors text-center flex items-center justify-center gap-1"
+                              className="px-3 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold text-center transition-colors flex items-center justify-center gap-1 shadow-sm"
                             >
-                              <Ticket className="w-3 h-3" /> Pass
+                              <Ticket className="w-3.5 h-3.5" />
+                              <span>View Pass</span>
                             </Link>
                           ) : event.isRegistrationOpen && event.registrationStatus !== "FULL" ? (
                             <button
@@ -483,16 +459,16 @@ export default function EventsPage() {
                                 e.stopPropagation();
                                 handleRegister(event);
                               }}
-                              className="px-2.5 py-2 bg-[#FFE816] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-center flex items-center justify-center gap-1 cursor-pointer"
+                              className="px-3 py-2 rounded-full bg-neutral-900 hover:bg-black text-white text-xs font-semibold text-center transition-colors flex items-center justify-center gap-1 shadow-sm cursor-pointer"
                             >
                               <span>Register</span>
-                              <ArrowRight className="w-3 h-3" />
+                              <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                           ) : (
                             <button
                               type="button"
                               disabled
-                              className="px-2.5 py-2 bg-gray-200 text-gray-400 font-display font-bold text-[11px] uppercase border-2 border-gray-300 text-center cursor-not-allowed"
+                              className="px-3 py-2 rounded-full bg-neutral-100 text-neutral-400 text-xs font-medium text-center cursor-not-allowed"
                             >
                               Closed
                             </button>
@@ -509,12 +485,12 @@ export default function EventsPage() {
 
         {/* ─── EMPTY STATE ─── */}
         {!loading && filteredEvents.length === 0 && (
-          <div className="bg-white border-2 border-black p-12 text-center shadow-[4px_4px_0px_#000] my-8 space-y-3">
-            <p className="font-anton text-2xl uppercase text-black">
+          <div className="bg-white rounded-2xl border border-neutral-200/80 p-12 text-center shadow-sm my-8 space-y-3">
+            <h2 className="text-xl font-bold text-neutral-950">
               No Events Found Matching Filters
-            </p>
-            <p className="font-mono text-xs text-gray-600">
-              Try adjusting your search query or selecting a different category/day.
+            </h2>
+            <p className="text-xs sm:text-sm text-neutral-500 max-w-sm mx-auto">
+              Try adjusting your search query or selecting a different category or day.
             </p>
             <button
               onClick={() => {
@@ -522,7 +498,7 @@ export default function EventsPage() {
                 setActiveDay("ALL");
                 setActiveCategory("ALL");
               }}
-              className="mt-3 px-4 py-2 bg-black text-white font-mono text-xs uppercase font-bold hover:bg-[#FFE816] hover:text-black transition-colors cursor-pointer"
+              className="mt-2 px-5 py-2 rounded-full bg-neutral-900 text-white text-xs font-medium hover:bg-black transition-colors cursor-pointer"
             >
               Reset Filters
             </button>
