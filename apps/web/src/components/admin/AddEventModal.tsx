@@ -24,7 +24,6 @@ const DEFAULT_FORM = {
   event_date: new Date().toISOString().slice(0, 16),
   registration_end: "",
   time: "10:00 AM",
-  duration: "2 Hours",
   registration_limit: 100,
   is_registration_open: true,
   requires_payment: false,
@@ -53,7 +52,6 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
         event_date: eventToEdit.event_date ? new Date(eventToEdit.event_date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
         registration_end: eventToEdit.registration_end ? new Date(eventToEdit.registration_end).toISOString().slice(0, 16) : "",
         time: eventToEdit.time || "10:00 AM",
-        duration: eventToEdit.duration || "2 Hours",
         registration_limit: eventToEdit.registration_limit || 100,
         is_registration_open: eventToEdit.is_registration_open ?? true,
         requires_payment: eventToEdit.requires_payment ?? false,
@@ -268,25 +266,15 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
               />
             </div>
             <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Display Time / Duration</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  name="time"
-                  value={formData.time}
-                  onChange={handleChange}
-                  placeholder="10:00 AM"
-                  className={INPUT_CLS}
-                />
-                <input
-                  type="text"
-                  name="duration"
-                  value={formData.duration}
-                  onChange={handleChange}
-                  placeholder="2 Hours"
-                  className={INPUT_CLS}
-                />
-              </div>
+              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Display Time</label>
+              <input
+                type="text"
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
+                placeholder="10:00 AM"
+                className={INPUT_CLS}
+              />
             </div>
           </div>
 
