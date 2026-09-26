@@ -2,9 +2,17 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Shield } from 'lucide-react';
 
 export const Footer: React.FC = () => {
+  const pathname = usePathname();
+
+  // Do not render public footer on admin portal routes
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <footer className="py-8 sm:py-12 bg-graph-paper border-t-2 border-black/10">
       <div className="max-w-5xl mx-auto px-6 sm:px-12">

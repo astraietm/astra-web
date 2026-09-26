@@ -102,6 +102,11 @@ export const Navbar: React.FC = () => {
     };
   }, []);
 
+  // Do not render public floating navbar on admin routes
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <>
       {/* ─── 1. FLOATING TOP NAVIGATION BAR ─── */}
