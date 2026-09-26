@@ -18,10 +18,9 @@ interface NavLink {
 const navigationLinks: NavLink[] = [
   { number: '01', label: 'ASTRA Overview', href: '/' },
   { number: '02', label: 'Upcoming Events (Oct 6-7)', href: '/events', isSpecial: true },
-  { number: '03', label: 'Wargame Photo Gallery', href: '/gallery', isSpecial: true },
-  { number: '04', label: 'About ASTRA', href: '/about' },
-  { number: '05', label: 'Contact', href: '/contact' },
-  { number: '06', label: 'My Registrations', href: '/dashboard', isSpecial: true },
+  { number: '03', label: 'About ASTRA', href: '/about' },
+  { number: '04', label: 'Contact', href: '/contact' },
+  { number: '05', label: 'My Registrations', href: '/dashboard', isSpecial: true },
 ];
 
 export const Navbar: React.FC = () => {
