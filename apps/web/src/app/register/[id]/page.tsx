@@ -25,6 +25,7 @@ import {
   ChevronRight,
   User,
   Info,
+  AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { TicketPass } from "@/components/events/TicketPass";
@@ -92,12 +93,22 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (user) {
-      setPhone(user.phone_number || "");
-      setCollege(user.college || "");
-      setDepartment(user.department || "");
-      setYearOfStudy(user.semester || "");
+      if (!phone && user.phone_number) setPhone(user.phone_number);
+      if (!college && user.college) setCollege(user.college);
+      if (!department && user.department) setDepartment(user.department);
+      if (!yearOfStudy && user.semester) setYearOfStudy(user.semester);
     }
   }, [user]);
+
+  // Compute live validation status
+  const cleanPhone = phone.trim().replace(/\D/g, "");
+  const isPhoneValid = cleanPhone.length === 10;
+  const isCollegeValid = college.trim().length > 0;
+  const isDepartmentValid = department.trim().length > 0;
+  const isSemesterValid = yearOfStudy.trim().length > 0;
+  const isTeamValid = !event?.is_team_event || (teamName.trim().length > 0 && teamMembers.trim().length > 0);
+
+  const isFormComplete = isPhoneValid && isCollegeValid && isDepartmentValid && isSemesterValid && isTeamValid;
 
   const loadRazorpayScript = (): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -115,6 +126,37 @@ export default function RegisterPage() {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!phone.trim()) {
+      showToast("Please enter your contact phone number.", "error");
+      return;
+    }
+    if (!isPhoneValid) {
+      showToast("Please enter a valid 10-digit mobile number.", "error");
+      return;
+    }
+    if (!college.trim()) {
+      showToast("Please enter your college or institution name.", "error");
+      return;
+    }
+    if (!department.trim()) {
+      showToast("Please select your academic department.", "error");
+      return;
+    }
+    if (!yearOfStudy.trim()) {
+      showToast("Please select your semester or year of study.", "error");
+      return;
+    }
+    if (event?.is_team_event) {
+      if (!teamName.trim()) {
+        showToast("Please enter your team name.", "error");
+        return;
+      }
+      if (!teamMembers.trim()) {
+        showToast("Please specify the members in your team.", "error");
+        return;
+      }
+    }
 
     if (!user || !token) {
       requireLogin({
@@ -344,7 +386,6 @@ export default function RegisterPage() {
           }}
           className="absolute top-1/3 -right-40 w-[650px] h-[650px] bg-blue-400/8 rounded-full blur-[150px]"
         />
-        {/* Subtle grid pattern overlay */}
         <div
           className="absolute inset-0 opacity-[0.35]"
           style={{
@@ -571,9 +612,18 @@ export default function RegisterPage() {
                         onChange={(e) => setPhone(e.target.value)}
                         required
                         placeholder="10-digit mobile number"
-                        className="w-full px-4 py-3 rounded-2xl border border-neutral-200 bg-neutral-50/50 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 focus:bg-white transition-all shadow-sm"
+                        className={`w-full px-4 py-3 rounded-2xl border text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:bg-white transition-all shadow-sm ${
+                          phone && !isPhoneValid
+                            ? "border-red-300 bg-red-50/20 focus:border-red-500 focus:ring-red-500/10"
+                            : "border-neutral-200 bg-neutral-50/50 focus:border-neutral-900 focus:ring-neutral-900/10"
+                        }`}
                       />
                     </div>
+                    {phone && !isPhoneValid && (
+                      <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> Must be exactly 10 digits
+                      </p>
+                    )}
                   </div>
 
                   {/* College / Institution */}
@@ -596,16 +646,21 @@ export default function RegisterPage() {
                   {/* Department Select */}
                   <div>
                     <label className="block text-xs font-semibold text-neutral-800 mb-1.5">
-                      Department
+                      Department <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={department}
                       onChange={(e) => setDepartment(e.target.value)}
-                      className="w-full px-4 py-3 rounded-2xl border border-neutral-200 bg-neutral-50/50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 focus:bg-white transition-all shadow-sm cursor-pointer"
+                      required
+                      className={`w-full px-4 py-3 rounded-2xl border text-sm focus:outline-none focus:ring-2 focus:bg-white transition-all shadow-sm cursor-pointer ${
+                        department
+                          ? "border-neutral-200 bg-neutral-50/50 text-neutral-900 focus:border-neutral-900 focus:ring-neutral-900/10"
+                          : "border-neutral-200 bg-neutral-50/50 text-neutral-400 focus:border-neutral-900 focus:ring-neutral-900/10"
+                      }`}
                     >
-                      <option value="">Select Department</option>
+                      <option value="" disabled>Select Department *</option>
                       {departments.map((d) => (
-                        <option key={d} value={d}>
+                        <option key={d} value={d} className="text-neutral-900">
                           {d}
                         </option>
                       ))}
@@ -615,16 +670,21 @@ export default function RegisterPage() {
                   {/* Semester Select */}
                   <div>
                     <label className="block text-xs font-semibold text-neutral-800 mb-1.5">
-                      Semester / Year
+                      Semester / Year <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={yearOfStudy}
                       onChange={(e) => setYearOfStudy(e.target.value)}
-                      className="w-full px-4 py-3 rounded-2xl border border-neutral-200 bg-neutral-50/50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 focus:bg-white transition-all shadow-sm cursor-pointer"
+                      required
+                      className={`w-full px-4 py-3 rounded-2xl border text-sm focus:outline-none focus:ring-2 focus:bg-white transition-all shadow-sm cursor-pointer ${
+                        yearOfStudy
+                          ? "border-neutral-200 bg-neutral-50/50 text-neutral-900 focus:border-neutral-900 focus:ring-neutral-900/10"
+                          : "border-neutral-200 bg-neutral-50/50 text-neutral-400 focus:border-neutral-900 focus:ring-neutral-900/10"
+                      }`}
                     >
-                      <option value="">Select Semester</option>
+                      <option value="" disabled>Select Semester *</option>
                       {semesters.map((s) => (
-                        <option key={s} value={s}>
+                        <option key={s} value={s} className="text-neutral-900">
                           {s}
                         </option>
                       ))}
@@ -656,17 +716,28 @@ export default function RegisterPage() {
 
                     <div>
                       <label className="block text-xs font-semibold text-neutral-800 mb-1.5">
-                        Team Members ({event.team_size_min || 2}-{event.team_size_max || 4} members, comma separated)
+                        Team Members ({event.team_size_min || 2}-{event.team_size_max || 4} members, comma separated) <span className="text-red-500">*</span>
                       </label>
                       <textarea
                         value={teamMembers}
                         onChange={(e) => setTeamMembers(e.target.value)}
+                        required
                         rows={3}
                         placeholder="Member 1 (Leader), Member 2, Member 3"
                         className="w-full px-4 py-3 rounded-2xl border border-neutral-200 bg-neutral-50/50 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 focus:bg-white transition-all resize-none shadow-sm"
                       />
                     </div>
                   </motion.div>
+                )}
+
+                {/* Form Completion Hint / Validation Guide */}
+                {!isFormComplete && (
+                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs text-amber-900">
+                    <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                    <span>
+                      Please complete all required fields (*) including Department &amp; Semester to proceed.
+                    </span>
+                  </div>
                 )}
 
                 {/* Info Note */}
@@ -680,8 +751,12 @@ export default function RegisterPage() {
                 {/* Submit / Pay Button */}
                 <button
                   type="submit"
-                  disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-8 rounded-full bg-neutral-900 text-white font-semibold text-sm tracking-wide hover:bg-black active:scale-[0.99] transition-all shadow-md hover:shadow-xl disabled:opacity-50 cursor-pointer"
+                  disabled={!isFormComplete || submitting}
+                  className={`w-full flex items-center justify-center gap-2 py-3.5 px-8 rounded-full font-semibold text-sm tracking-wide transition-all ${
+                    isFormComplete && !submitting
+                      ? "bg-neutral-900 text-white hover:bg-black active:scale-[0.99] shadow-md hover:shadow-xl cursor-pointer"
+                      : "bg-neutral-200 text-neutral-400 cursor-not-allowed shadow-none"
+                  }`}
                 >
                   {submitting ? (
                     <>
@@ -691,11 +766,19 @@ export default function RegisterPage() {
                   ) : event?.requires_payment ? (
                     <>
                       <CreditCard className="w-4 h-4" />
-                      <span>Pay ₹{event.payment_amount} &amp; Complete Registration</span>
+                      <span>
+                        {isFormComplete
+                          ? `Pay ₹${event.payment_amount} & Complete Registration`
+                          : "Complete All Fields (*) to Pay"}
+                      </span>
                     </>
                   ) : (
                     <>
-                      <span>Confirm Registration &amp; Get Pass</span>
+                      <span>
+                        {isFormComplete
+                          ? "Confirm Registration & Get Pass"
+                          : "Complete All Fields (*) to Register"}
+                      </span>
                       <ChevronRight className="w-4 h-4" />
                     </>
                   )}
