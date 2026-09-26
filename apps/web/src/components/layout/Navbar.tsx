@@ -4,7 +4,24 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings, Ticket, ChevronDown, ChevronRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import {
+  ArrowRight,
+  Shield,
+  User,
+  LogOut,
+  LayoutDashboard,
+  Settings,
+  Ticket,
+  ChevronDown,
+  ChevronRight,
+  Sparkles,
+  Menu,
+  X,
+  Calendar,
+  Compass,
+  Mail,
+  Home,
+} from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useLenis } from 'lenis/react';
 
@@ -12,22 +29,56 @@ interface NavLink {
   label: string;
   href: string;
   number?: string;
-  isSpecial?: boolean;
+  badge?: string;
+  description?: string;
+  icon?: any;
 }
 
 const navigationLinks: NavLink[] = [
-  { number: '01', label: 'ASTRA Overview', href: '/' },
-  { number: '02', label: 'Upcoming Events (Oct 6-7)', href: '/events', isSpecial: true },
-  { number: '03', label: 'About ASTRA', href: '/about' },
-  { number: '04', label: 'Contact', href: '/contact' },
-  { number: '05', label: 'My Registrations', href: '/dashboard', isSpecial: true },
+  {
+    number: '01',
+    label: 'Home & Overview',
+    href: '/',
+    description: 'Welcome to ASTRA 2026 flagship portal',
+    icon: Home,
+  },
+  {
+    number: '02',
+    label: 'Upcoming Events',
+    href: '/events',
+    badge: 'Oct 6 & 7',
+    description: 'Explore CTF, workshops, and national challenges',
+    icon: Calendar,
+  },
+  {
+    number: '03',
+    label: 'About ASTRA',
+    href: '/#about',
+    description: 'Mission, history, and community pillars',
+    icon: Compass,
+  },
+  {
+    number: '04',
+    label: 'My Registrations',
+    href: '/dashboard',
+    badge: 'Passes',
+    description: 'Access and download your digital entry passes',
+    icon: Ticket,
+  },
+  {
+    number: '05',
+    label: 'Contact & Support',
+    href: '/#contact',
+    description: 'Get in touch with student coordinators',
+    icon: Mail,
+  },
 ];
 
 export const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const { user, setIsLoginModalOpen, setIsProfileModalOpen, logout } = useAuth();
+  const { user, setIsLoginModalOpen, logout } = useAuth();
   const lenis = useLenis();
 
   const userDropdownRef = React.useRef<HTMLDivElement>(null);
@@ -110,42 +161,47 @@ export const Navbar: React.FC = () => {
   return (
     <>
       {/* ─── 1. FLOATING TOP NAVIGATION BAR ─── */}
-      <header className="fixed top-3 left-3 right-3 sm:top-5 sm:left-6 sm:right-6 z-[80] flex items-center justify-between select-none pointer-events-none">
-        {/* Left: Index Button & Brand */}
-        <div className="flex items-center gap-2 sm:gap-3 pointer-events-auto">
+      <header className="fixed top-3 left-3 right-3 sm:top-5 sm:left-6 sm:right-6 z-[80] flex items-center justify-between select-none pointer-events-none font-sans">
+        {/* Left: Menu Trigger & Brand Pill */}
+        <div className="flex items-center gap-2 sm:gap-2.5 pointer-events-auto">
+          {/* Menu Button */}
           <button
             id="nav-index-btn"
             type="button"
             onClick={toggleMenu}
-            className="group relative flex items-center justify-center px-6 py-1.5 sm:px-7 sm:py-2 bg-black transition-opacity duration-150 hover:opacity-90 active:scale-[0.98] cursor-pointer select-none rounded-none"
+            className={`flex items-center gap-2 px-4 py-2 sm:px-4.5 sm:py-2 rounded-full text-xs font-semibold tracking-wide transition-all shadow-md active:scale-95 cursor-pointer ${
+              menuOpen
+                ? 'bg-white text-neutral-950 hover:bg-neutral-100 shadow-xl'
+                : 'bg-neutral-900 text-white hover:bg-black hover:shadow-lg'
+            }`}
             aria-label={menuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             aria-expanded={menuOpen}
           >
-            <span
-              className="uppercase inline-block"
-              style={{
-                fontFamily: "'Anton', sans-serif",
-                fontWeight: 400,
-                fontSize: '20px',
-                lineHeight: '28px',
-                color: 'rgb(255, 255, 255)',
-              }}
-            >
-              {menuOpen ? 'CLOSE ✕' : 'INDEX'}
-            </span>
+            {menuOpen ? (
+              <>
+                <X className="w-4 h-4 text-neutral-950" />
+                <span>Close</span>
+              </>
+            ) : (
+              <>
+                <Menu className="w-4 h-4 text-amber-300" />
+                <span>Menu</span>
+              </>
+            )}
           </button>
 
+          {/* Brand Logo Pill */}
           <Link
             href="/"
             onClick={() => { if (menuOpen) closeMenu(); }}
-            className="flex items-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 hover:bg-th-yellow transition-colors"
+            className="flex items-center gap-2 bg-white/90 backdrop-blur-md border border-neutral-200/80 px-3.5 py-2 rounded-full hover:bg-white hover:border-neutral-300 transition-all shadow-sm group"
           >
-            <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-black" />
-            <span className="font-pixel text-[10px] sm:text-[11px] font-bold text-black uppercase tracking-wider">
+            <Shield className="w-3.5 h-3.5 text-neutral-900 group-hover:text-amber-500 transition-colors" />
+            <span className="text-xs font-bold text-neutral-950 tracking-tight">
               ASTRA 2026
             </span>
-            <span className="hidden md:inline font-mono text-[9px] text-gray-500 uppercase">
-              // KMCT CALICUT
+            <span className="hidden md:inline text-[11px] text-neutral-400 font-medium border-l border-neutral-200 pl-2">
+              KMCT Calicut
             </span>
           </Link>
         </div>
@@ -158,7 +214,7 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/dashboard"
                 onClick={() => { if (menuOpen) closeMenu(); }}
-                className="hidden sm:flex items-center gap-1.5 bg-neutral-900 text-white hover:bg-black px-3.5 py-1.5 rounded-full text-xs font-medium tracking-tight transition-all shadow-sm"
+                className="hidden sm:flex items-center gap-1.5 bg-neutral-900 text-white hover:bg-black px-3.5 py-2 rounded-full text-xs font-medium tracking-tight transition-all shadow-sm"
               >
                 <Ticket className="w-3.5 h-3.5 text-amber-300" />
                 <span>My Passes</span>
@@ -170,7 +226,7 @@ export const Navbar: React.FC = () => {
                 className={`flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full text-xs font-medium transition-all select-none cursor-pointer border ${
                   userDropdownOpen
                     ? "bg-neutral-900 text-white border-neutral-900 shadow-md"
-                    : "bg-white/95 backdrop-blur-md text-neutral-800 border-neutral-300 hover:border-neutral-500 hover:bg-neutral-50 shadow-sm"
+                    : "bg-white/90 backdrop-blur-md text-neutral-800 border-neutral-200 hover:border-neutral-400 hover:bg-white shadow-sm"
                 }`}
               >
                 <div className="relative flex items-center justify-center flex-shrink-0">
@@ -185,7 +241,6 @@ export const Navbar: React.FC = () => {
                       <User className="w-3 h-3" />
                     </div>
                   )}
-                  {/* Status Indicator Dot */}
                   <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-1.5 ring-white" />
                 </div>
 
@@ -208,10 +263,10 @@ export const Navbar: React.FC = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.96 }}
                     transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl border border-neutral-200 shadow-xl shadow-neutral-900/10 overflow-hidden z-[90]"
+                    className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-3xl border border-neutral-200 shadow-2xl overflow-hidden z-[90]"
                   >
                     {/* User Identity Header Card */}
-                    <div className="bg-neutral-950 text-white p-4 border-b border-neutral-800">
+                    <div className="bg-neutral-950 text-white p-5 border-b border-neutral-800">
                       <div className="flex items-start gap-3">
                         <div className="relative flex-shrink-0">
                           {user.avatar ? (
@@ -240,16 +295,16 @@ export const Navbar: React.FC = () => {
                             )}
                           </div>
 
-                          <p className="font-sans font-semibold text-sm sm:text-base text-white tracking-tight truncate leading-tight">
+                          <p className="font-semibold text-sm sm:text-base text-white tracking-tight truncate leading-tight">
                             {user.name || user.full_name || 'Attendee'}
                           </p>
 
-                          <p className="font-sans text-xs text-neutral-400 truncate mt-0.5">
+                          <p className="text-xs text-neutral-400 truncate mt-0.5">
                             {user.email}
                           </p>
 
                           {user.college && (
-                            <p className="font-sans text-[11px] text-neutral-300 truncate mt-1">
+                            <p className="text-[11px] text-neutral-400 truncate mt-1">
                               {user.college}
                             </p>
                           )}
@@ -258,21 +313,21 @@ export const Navbar: React.FC = () => {
                     </div>
 
                     {/* Menu Links */}
-                    <div className="p-2 space-y-1 bg-white">
+                    <div className="p-2.5 space-y-1 bg-white">
                       <Link
                         href="/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="group flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 transition-colors"
+                        className="group flex items-center justify-between p-2.5 rounded-2xl hover:bg-neutral-50 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                          <div className="w-8 h-8 rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
                             <Ticket className="w-4 h-4" />
                           </div>
                           <div>
-                            <span className="font-sans text-xs font-semibold text-neutral-900 block leading-tight">
+                            <span className="text-xs font-semibold text-neutral-900 block leading-tight">
                               My Registrations
                             </span>
-                            <span className="font-sans text-[11px] text-neutral-500 mt-0.5 block">
+                            <span className="text-[11px] text-neutral-500 mt-0.5 block">
                               View QR passes &amp; entry tickets
                             </span>
                           </div>
@@ -283,17 +338,17 @@ export const Navbar: React.FC = () => {
                       <Link
                         href="/profile"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="group flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 transition-colors"
+                        className="group flex items-center justify-between p-2.5 rounded-2xl hover:bg-neutral-50 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                          <div className="w-8 h-8 rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
                             <User className="w-4 h-4" />
                           </div>
                           <div>
-                            <span className="font-sans text-xs font-semibold text-neutral-900 block leading-tight">
+                            <span className="text-xs font-semibold text-neutral-900 block leading-tight">
                               Edit Profile
                             </span>
-                            <span className="font-sans text-[11px] text-neutral-500 mt-0.5 block">
+                            <span className="text-[11px] text-neutral-500 mt-0.5 block">
                               Personal details &amp; college info
                             </span>
                           </div>
@@ -305,17 +360,17 @@ export const Navbar: React.FC = () => {
                         <Link
                           href="/admin"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="group flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 transition-colors"
+                          className="group flex items-center justify-between p-2.5 rounded-2xl hover:bg-neutral-50 transition-colors"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
+                            <div className="w-8 h-8 rounded-xl bg-neutral-100 text-neutral-700 flex items-center justify-center flex-shrink-0 group-hover:bg-neutral-900 group-hover:text-white transition-colors">
                               <Settings className="w-4 h-4" />
                             </div>
                             <div>
-                              <span className="font-sans text-xs font-semibold text-neutral-900 block leading-tight">
+                              <span className="text-xs font-semibold text-neutral-900 block leading-tight">
                                 Admin Dashboard
                               </span>
-                              <span className="font-sans text-[11px] text-neutral-500 mt-0.5 block">
+                              <span className="text-[11px] text-neutral-500 mt-0.5 block">
                                 Ticket scanners &amp; event control
                               </span>
                             </div>
@@ -331,16 +386,16 @@ export const Navbar: React.FC = () => {
                           setUserDropdownOpen(false);
                           logout();
                         }}
-                        className="w-full group flex items-center gap-3 p-2.5 rounded-xl text-neutral-600 hover:text-red-600 hover:bg-red-50/70 transition-colors text-left cursor-pointer"
+                        className="w-full group flex items-center gap-3 p-2.5 rounded-2xl text-neutral-600 hover:text-red-600 hover:bg-red-50/70 transition-colors text-left cursor-pointer"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-600 flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 group-hover:text-red-600 transition-colors">
+                        <div className="w-8 h-8 rounded-xl bg-neutral-100 text-neutral-600 flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 group-hover:text-red-600 transition-colors">
                           <LogOut className="w-4 h-4" />
                         </div>
                         <div>
-                          <span className="font-sans text-xs font-semibold block leading-tight">
+                          <span className="text-xs font-semibold block leading-tight">
                             Sign Out
                           </span>
-                          <span className="font-sans text-[11px] text-neutral-400 group-hover:text-red-400 mt-0.5 block">
+                          <span className="text-[11px] text-neutral-400 group-hover:text-red-400 mt-0.5 block">
                             Log out of your account
                           </span>
                         </div>
@@ -356,16 +411,16 @@ export const Navbar: React.FC = () => {
                 if (menuOpen) closeMenu();
                 setIsLoginModalOpen(true);
               }}
-              className="flex items-center gap-1.5 bg-neutral-900 text-white px-4 py-1.5 sm:px-5 sm:py-2 rounded-full font-sans font-medium text-xs tracking-wide hover:bg-black transition-colors shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 bg-neutral-900 text-white px-4 py-2 rounded-full font-medium text-xs tracking-wide hover:bg-black transition-all shadow-md active:scale-95 cursor-pointer"
             >
-              <User className="w-3.5 h-3.5" />
+              <User className="w-3.5 h-3.5 text-amber-300" />
               <span>Sign In</span>
             </button>
           )}
         </div>
       </header>
 
-      {/* ─── 2. FULL-SCREEN EDITORIAL INDEX OVERLAY ─── */}
+      {/* ─── 2. SLEEK MODERN FULL-SCREEN MENU OVERLAY ─── */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -373,118 +428,125 @@ export const Navbar: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-            className="fixed inset-0 z-[70] bg-[#F0F0FA]/98 backdrop-blur-xl overflow-y-auto"
+            className="fixed inset-0 z-[75] bg-neutral-950/98 backdrop-blur-3xl overflow-y-auto text-white font-sans flex flex-col justify-between"
           >
-            {/* Close Button (Top-Right) */}
-            <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-30">
+            {/* Ambient Background Light Elements */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+              <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-amber-400/10 rounded-full blur-[160px]" />
+              <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[160px]" />
+              <div
+                className="absolute inset-0 opacity-[0.15]"
+                style={{
+                  backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`,
+                  backgroundSize: '32px 32px',
+                }}
+              />
+            </div>
+
+            {/* Top Close Bar */}
+            <div className="relative z-10 max-w-6xl mx-auto w-full px-6 sm:px-10 pt-8 sm:pt-10 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-neutral-200 border border-white/15 text-xs font-semibold backdrop-blur-md">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>ASTRA 2026 Directory</span>
+                </span>
+              </div>
+
               <button
                 type="button"
                 onClick={closeMenu}
-                className="hidden sm:flex items-center gap-1.5 bg-white border-2 border-black px-3.5 py-2 font-mono text-xs font-bold uppercase hover:bg-th-yellow transition-colors cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white transition-all shadow-md active:scale-95 cursor-pointer backdrop-blur-md"
               >
-                <span>[ ESC TO CLOSE ]</span>
+                <span>Close Menu</span>
+                <X className="w-4 h-4 text-neutral-300" />
               </button>
             </div>
 
-            {/* Menu Content */}
-            <div className="relative z-10 flex flex-col min-h-screen max-w-5xl mx-auto w-full px-4 sm:px-12 justify-between py-20 sm:py-28">
-              {/* Header */}
-              <motion.div
-                initial={{ opacity: 0, y: -14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-                className="text-center pt-2 select-none"
-              >
-                <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-black text-white px-2.5 sm:px-3 py-1 font-pixel text-[10px] sm:text-xs tracking-wider uppercase mb-2 shadow-[2px_2px_0px_#000]">
-                  <Terminal className="w-3 h-3 text-[#C3FF16]" />
-                  <span>NATIONAL CYBER SECURITY // DIRECTORY</span>
-                </div>
-                <h2 className="font-pixel font-extrabold text-2xl sm:text-4xl md:text-5xl tracking-tight text-black uppercase">
-                  INDEX <span className="font-editorial italic font-normal text-pink-600">chapters</span>
-                </h2>
-                <p className="font-editorial italic text-xs sm:text-base text-gray-600 mt-1 max-w-lg mx-auto">
-                  Department of Cyber Security — KMCT Institute of Emerging Technology and Management, Calicut
-                </p>
-              </motion.div>
-
-              {/* Navigation Links */}
-              <nav className="my-auto py-4 sm:py-8 flex flex-col justify-center">
-                {navigationLinks.map((link, index) => (
-                  <motion.div
-                    key={link.label}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      duration: 0.32,
-                      delay: 0.06 + index * 0.035,
-                      ease: [0.23, 1, 0.32, 1],
-                    }}
-                  >
-                    <Link
-                      href={link.href}
-                      onClick={(e) => {
-                        if (link.href.startsWith('/#')) {
-                          const sectionId = link.href.replace('/#', '');
-                          handleSectionJump(sectionId, e);
-                        } else {
-                          closeMenu();
-                        }
+            {/* Menu Links Center Content */}
+            <div className="relative z-10 max-w-4xl mx-auto w-full px-6 sm:px-10 py-12 sm:py-16 my-auto">
+              <nav className="space-y-2 sm:space-y-3">
+                {navigationLinks.map((link, index) => {
+                  const Icon = link.icon;
+                  return (
+                    <motion.div
+                      key={link.label}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        delay: 0.05 + index * 0.04,
+                        ease: [0.23, 1, 0.32, 1],
                       }}
-                      className="group block border-t border-gray-300 py-2 sm:py-3.5 md:py-4 transition-[background-color,padding] duration-160 ease-[var(--ease-out)] hover:bg-white/80 px-2 sm:px-6 rounded-md"
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-baseline gap-3 sm:gap-6">
-                          <span className="font-mono text-xs sm:text-sm text-gray-400 font-bold group-hover:text-black group-hover:scale-110 transition-all">
-                            {link.number || `0${index + 1}`}
+                      <Link
+                        href={link.href}
+                        onClick={(e) => {
+                          if (link.href.startsWith('/#')) {
+                            const sectionId = link.href.replace('/#', '');
+                            handleSectionJump(sectionId, e);
+                          } else {
+                            closeMenu();
+                          }
+                        }}
+                        className="group flex items-center justify-between p-4 sm:p-5 rounded-3xl hover:bg-white/10 border border-transparent hover:border-white/10 transition-all duration-200 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-4 sm:gap-6">
+                          <span className="text-xs sm:text-sm font-semibold text-neutral-500 group-hover:text-amber-400 transition-colors w-6">
+                            {link.number}
                           </span>
-                          <span className="font-editorial italic text-xl sm:text-3xl md:text-5xl text-black group-hover:text-pink-600 group-hover:translate-x-2.5 transition-[transform,color] duration-160 select-none">
-                            {link.label}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 sm:gap-2.5">
-                          {link.isSpecial && (
-                            <span className="font-pixel text-[9px] sm:text-[10px] bg-th-yellow text-black border border-black px-1.5 sm:px-2 py-0.5 uppercase shadow-[1px_1px_0px_#000] group-hover:bg-th-lime transition-colors">
-                              EXPLORE
-                            </span>
-                          )}
-                          <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6 text-gray-300 group-hover:text-black group-hover:translate-x-2 transition-[transform,color] duration-160 ease-[var(--ease-out)]" />
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
-                <div className="border-t border-gray-300" />
-              </nav>
 
-              {/* Bottom Actions */}
-              <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: 0.38, ease: [0.23, 1, 0.32, 1] }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2"
-              >
-                <button
-                  type="button"
-                  onClick={closeMenu}
-                  className="w-full sm:w-auto px-5 py-2.5 border-2 border-black bg-white text-black font-display font-semibold text-xs sm:text-sm uppercase tracking-wider hover:bg-gray-100 active:scale-95 transition-[transform,background-color] duration-160 shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] cursor-pointer"
-                >
-                  Close Directory (ESC)
-                </button>
+                          <div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl sm:text-4xl font-bold tracking-tight text-neutral-200 group-hover:text-white transition-colors">
+                                {link.label}
+                              </span>
+                              {link.badge && (
+                                <span className="px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[11px] font-semibold">
+                                  {link.badge}
+                                </span>
+                              )}
+                            </div>
+                            {link.description && (
+                              <p className="text-xs sm:text-sm text-neutral-400 mt-1 hidden sm:block">
+                                {link.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400 group-hover:text-white group-hover:bg-white/20 group-hover:translate-x-1 transition-all">
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Bottom Actions & Credits */}
+            <div className="relative z-10 max-w-6xl mx-auto w-full px-6 sm:px-10 pb-8 sm:pb-10 pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10">
+              <p className="text-xs text-neutral-400 text-center sm:text-left">
+                KMCT Institute of Emerging Technology &amp; Management • Department of Cyber Security
+              </p>
+
+              <div className="flex items-center gap-3">
                 <Link
                   href="/events"
                   onClick={closeMenu}
-                  className="w-full sm:w-auto text-center px-5 py-2.5 bg-black text-white font-display font-semibold text-xs sm:text-sm uppercase tracking-wider hover:bg-th-yellow hover:text-black border-2 border-black active:scale-95 transition-[transform,background-color,color] duration-160 shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000]"
+                  className="px-6 py-2.5 rounded-full bg-white text-neutral-950 hover:bg-neutral-200 text-xs font-semibold transition-all shadow-md active:scale-95"
                 >
-                  Claim Event Pass →
+                  Explore All Events →
                 </Link>
+
                 {user ? (
                   <Link
                     href="/dashboard"
                     onClick={closeMenu}
-                    className="w-full sm:w-auto text-center px-5 py-2.5 bg-th-pink text-black font-display font-semibold text-xs sm:text-sm uppercase tracking-wider border-2 border-black active:scale-95 transition-[transform,background-color,color] duration-160 shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000]"
+                    className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white transition-all shadow-md active:scale-95 flex items-center gap-1.5"
                   >
-                    <LayoutDashboard className="w-4 h-4 inline mr-1" />
-                    My Registrations
+                    <Ticket className="w-3.5 h-3.5 text-amber-300" />
+                    <span>My Passes</span>
                   </Link>
                 ) : (
                   <button
@@ -492,41 +554,13 @@ export const Navbar: React.FC = () => {
                       closeMenu();
                       setIsLoginModalOpen(true);
                     }}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-th-lime text-black font-display font-semibold text-xs sm:text-sm uppercase tracking-wider border-2 border-black active:scale-95 transition-[transform,background-color,color] duration-160 shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] cursor-pointer"
+                    className="px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white transition-all shadow-md active:scale-95"
                   >
-                    Sign In →
+                    Sign In
                   </button>
                 )}
-              </motion.div>
-            </div>
-
-            {/* Floating Badge Card (Desktop) */}
-            <motion.div
-              initial={{ opacity: 0, x: 30, rotate: 12 }}
-              animate={{ opacity: 1, x: 0, rotate: 6 }}
-              exit={{ opacity: 0, x: 20, rotate: 10 }}
-              transition={{ duration: 0.4, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
-              className="hidden xl:block fixed bottom-12 right-12 z-20 pointer-events-none"
-            >
-              <div className="paper-texture border-2 border-black p-6 w-64 shadow-[6px_6px_0px_#000] pointer-events-auto rotate-6 hover:rotate-3 transition-transform duration-200">
-                <p className="font-pixel text-[10px] uppercase tracking-wider text-gray-500 mb-2">
-                  ASTRA 2026
-                </p>
-                <p className="font-pixel text-2xl font-bold uppercase leading-tight text-black">
-                  OCTOBER<br />6 &amp; 7
-                </p>
-                <p className="font-editorial italic text-xs text-gray-600 mt-2">
-                  24H National CTF &amp; Ethical Hacking Hackathon
-                </p>
-                <div className="mt-3 pt-3 border-t border-black/10 flex items-center justify-between text-[9px] font-mono text-gray-600">
-                  <span>KMCT CALICUT</span>
-                  <span className="font-bold text-emerald-600 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    ONLINE
-                  </span>
-                </div>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
