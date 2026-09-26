@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings, Ticket, ChevronDown } from 'lucide-react';
+import { ArrowRight, Terminal, Shield, User, LogOut, LayoutDashboard, Settings, Ticket, ChevronDown, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useLenis } from 'lenis/react';
 
@@ -162,42 +162,124 @@ export const Navbar: React.FC = () => {
               {/* User Dropdown Toggle */}
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-1.5 bg-white/95 backdrop-blur-md border-2 border-black px-2.5 py-1 sm:px-3 sm:py-1.5 font-mono text-[10px] font-bold uppercase hover:bg-gray-100 transition-colors"
+                className={`flex items-center gap-2 border-2 border-black px-3 py-1.5 sm:px-3.5 sm:py-1.5 font-mono text-xs font-bold uppercase transition-all select-none cursor-pointer ${
+                  userDropdownOpen
+                    ? "bg-[#FFE816] text-black shadow-[2px_2px_0px_#000]"
+                    : "bg-white/95 backdrop-blur-md text-black hover:bg-[#FFE816] hover:text-black"
+                }`}
               >
-                {user.avatar ? (
-                  <img src={user.avatar} alt="" className="w-4 h-4 rounded-full border border-black object-cover" />
-                ) : (
-                  <User className="w-3.5 h-3.5 text-black" />
-                )}
-                <span className="hidden sm:inline max-w-[100px] truncate">{user.name?.split(' ')[0] || user.full_name?.split(' ')[0] || 'User'}</span>
-                <ChevronDown className={`w-3 h-3 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
+                <div className="relative flex items-center justify-center">
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt=""
+                      className="w-5 h-5 rounded-none border border-black object-cover"
+                    />
+                  ) : (
+                    <User className="w-4 h-4 text-black" />
+                  )}
+                  {/* Status Indicator Dot */}
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500 border border-black animate-pulse" />
+                </div>
+
+                <span className="max-w-[110px] truncate tracking-wide">
+                  {user.name?.split(' ')[0] || user.full_name?.split(' ')[0] || 'User'}
+                </span>
+
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    userDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
               </button>
 
               {/* Profile Dropdown Popover */}
               <AnimatePresence>
                 {userDropdownOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                    initial={{ opacity: 0, y: 10, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-2 w-56 bg-white border-2 border-black shadow-[4px_4px_0px_#000] overflow-hidden z-[90]"
+                    exit={{ opacity: 0, y: 6, scale: 0.96 }}
+                    transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+                    className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white border-2 border-black shadow-[6px_6px_0px_#000] overflow-hidden z-[90]"
                   >
-                    {/* User Info Header */}
-                    <div className="bg-black text-white p-3 border-b-2 border-black">
-                      <p className="font-display font-bold text-xs truncate">{user.name || user.full_name || 'Attendee'}</p>
-                      <p className="font-mono text-[10px] text-gray-400 truncate">{user.email}</p>
+                    {/* User Identity Header Card */}
+                    <div className="bg-[#0C0C14] text-white p-4 border-b-2 border-black">
+                      <div className="flex items-start gap-3">
+                        <div className="relative flex-shrink-0">
+                          {user.avatar ? (
+                            <img
+                              src={user.avatar}
+                              alt=""
+                              className="w-11 h-11 border-2 border-white/30 shadow-[2px_2px_0px_#FFE816] object-cover"
+                            />
+                          ) : (
+                            <div className="w-11 h-11 bg-white/10 border-2 border-white/30 flex items-center justify-center text-white">
+                              <User className="w-6 h-6" />
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            {user.is_staff ? (
+                              <span className="font-pixel text-[8px] bg-[#FFE816] text-black px-1.5 py-0.5 font-bold uppercase tracking-wider">
+                                STAFF // ADMIN
+                              </span>
+                            ) : (
+                              <span className="font-pixel text-[8px] bg-white/20 text-white/90 border border-white/20 px-1.5 py-0.5 uppercase tracking-wider">
+                                ATTENDEE // 2026
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="font-anton text-base sm:text-lg uppercase text-white tracking-wide leading-tight truncate">
+                            {user.name || user.full_name || 'Attendee'}
+                          </p>
+
+                          <p className="font-mono text-[10px] text-gray-400 truncate mt-0.5">
+                            {user.email}
+                          </p>
+
+                          {user.college && (
+                            <p className="font-mono text-[9px] text-[#FFE816] truncate mt-0.5">
+                              {user.college}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Quick Status Bar */}
+                    <div className="bg-[#FFFEE5] border-b border-black/15 px-4 py-1.5 flex items-center justify-between font-mono text-[10px]">
+                      <span className="flex items-center gap-1.5 text-emerald-800 font-bold uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Verified Participant
+                      </span>
+                      <span className="text-gray-500 font-bold">ASTRA '26</span>
                     </div>
 
                     {/* Menu Links */}
-                    <div className="p-1 space-y-0.5">
+                    <div className="p-1.5 space-y-1 bg-[#FAF9F6]">
                       <Link
                         href="/dashboard"
                         onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 font-mono text-xs text-black font-bold uppercase hover:bg-th-yellow transition-colors border border-transparent hover:border-black"
+                        className="group flex items-center justify-between p-2.5 bg-white border border-black/10 hover:border-black hover:bg-[#FFE816] transition-colors"
                       >
-                        <Ticket className="w-4 h-4 text-black" />
-                        <span>My Registrations</span>
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 bg-[#C3FF16] border border-black flex items-center justify-center flex-shrink-0 shadow-[1px_1px_0px_#000]">
+                            <Ticket className="w-3.5 h-3.5 text-black" />
+                          </div>
+                          <div>
+                            <span className="font-mono text-xs font-bold text-black uppercase block leading-none">
+                              My Registrations
+                            </span>
+                            <span className="font-mono text-[9px] text-gray-500 group-hover:text-black mt-0.5 block">
+                              View QR passes &amp; entry tickets
+                            </span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                       </Link>
 
                       <button
@@ -205,34 +287,61 @@ export const Navbar: React.FC = () => {
                           setUserDropdownOpen(false);
                           setIsProfileModalOpen(true);
                         }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 font-mono text-xs text-black font-bold uppercase hover:bg-th-yellow transition-colors border border-transparent hover:border-black text-left"
+                        className="w-full group flex items-center justify-between p-2.5 bg-white border border-black/10 hover:border-black hover:bg-th-yellow transition-colors text-left cursor-pointer"
                       >
-                        <User className="w-4 h-4 text-black" />
-                        <span>Edit Profile</span>
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 bg-[#F79CFF] border border-black flex items-center justify-center flex-shrink-0 shadow-[1px_1px_0px_#000]">
+                            <User className="w-3.5 h-3.5 text-black" />
+                          </div>
+                          <div>
+                            <span className="font-mono text-xs font-bold text-black uppercase block leading-none">
+                              Edit Profile
+                            </span>
+                            <span className="font-mono text-[9px] text-gray-500 group-hover:text-black mt-0.5 block">
+                              Update phone, college &amp; details
+                            </span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                       </button>
 
                       {user.is_staff && (
                         <Link
                           href="/admin"
                           onClick={() => setUserDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 font-mono text-xs text-black font-bold uppercase hover:bg-th-pink transition-colors border border-transparent hover:border-black"
+                          className="group flex items-center justify-between p-2.5 bg-white border border-black/10 hover:border-black hover:bg-th-pink transition-colors"
                         >
-                          <Settings className="w-4 h-4 text-black" />
-                          <span>Admin Panel</span>
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 bg-[#FFE816] border border-black flex items-center justify-center flex-shrink-0 shadow-[1px_1px_0px_#000]">
+                              <Settings className="w-3.5 h-3.5 text-black" />
+                            </div>
+                            <div>
+                              <span className="font-mono text-xs font-bold text-black uppercase block leading-none">
+                                Admin Command Center
+                              </span>
+                              <span className="font-mono text-[9px] text-gray-500 group-hover:text-black mt-0.5 block">
+                                Ticket scanners &amp; event control
+                              </span>
+                            </div>
+                          </div>
+                          <ArrowRight className="w-3.5 h-3.5 text-black opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
                         </Link>
                       )}
 
-                      <div className="border-t border-black/20 my-1" />
+                      <div className="border-t border-black/15 my-1" />
 
                       <button
                         onClick={() => {
                           setUserDropdownOpen(false);
                           logout();
                         }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 font-mono text-xs text-red-600 font-bold uppercase hover:bg-red-50 transition-colors border border-transparent hover:border-red-200 text-left"
+                        className="w-full flex items-center justify-between p-2 bg-white border border-transparent hover:border-red-200 hover:bg-red-50 text-red-600 font-mono text-xs font-bold uppercase transition-colors text-left cursor-pointer"
                       >
-                        <LogOut className="w-4 h-4 text-red-600" />
-                        <span>Sign Out</span>
+                        <div className="flex items-center gap-2">
+                          <LogOut className="w-4 h-4 text-red-600" />
+                          <span>Sign Out</span>
+                        </div>
+                        <span className="font-mono text-[9px] text-red-400">Exit</span>
                       </button>
                     </div>
                   </motion.div>
