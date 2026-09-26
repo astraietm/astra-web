@@ -4,32 +4,9 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { PixelFrame } from "@/components/ui/PixelFrame";
-import { StickerBadge } from "@/components/ui/StickerBadge";
 import { useAuth } from "@/lib/auth-context";
 import api from "@/lib/api";
-import { Calendar, MapPin, Loader2, QrCode, Ticket, ArrowRight, User } from "lucide-react";
-
-interface Registration {
-  id: number;
-  event_details: {
-    id: number;
-    title: string;
-    event_date: string;
-    venue: string;
-    category: string;
-  };
-  status: string;
-  timestamp: string;
-  qr_code: string;
-  team_name: string;
-  team_members: string;
-  payment_details?: {
-    status: string;
-    amount: string;
-  };
-}
-
+import { Loader2, Ticket, ArrowRight, User, Sparkles, Building, Phone } from "lucide-react";
 import { TicketPass } from "@/components/events/TicketPass";
 
 export default function DashboardPage() {
@@ -57,85 +34,115 @@ export default function DashboardPage() {
       };
       fetchRegistrations();
     }
-  }, [user, token, authLoading]);
+  }, [user, token, authLoading, router]);
 
   if (authLoading || (!user && !authLoading)) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-24">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      <div className="min-h-screen flex items-center justify-center pt-24 bg-neutral-50/50">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
+          <p className="text-xs font-medium uppercase tracking-widest text-neutral-500">
+            Loading Passes...
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-28 pb-16 px-4 bg-graph-paper">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen pt-24 sm:pt-28 pb-24 px-4 bg-neutral-50/60 font-sans">
+      <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
-        <div className="mb-8">
-          <StickerBadge color="pink" rotation={-2}>YOUR PROFILE</StickerBadge>
-          <h1 className="font-pixel text-3xl sm:text-4xl font-extrabold uppercase text-black mt-3">
-            MY EVENT PASSES
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-900 text-white text-xs font-medium shadow-sm mb-3">
+            <Ticket className="w-3.5 h-3.5 text-amber-300" />
+            <span>Participant Passes</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-neutral-950">
+            My Event Passes
           </h1>
-          <p className="font-editorial italic text-xl text-gray-700 mt-1">
-            Welcome back, {user?.name || user?.email}
+          <p className="text-sm sm:text-base text-neutral-500 mt-1.5">
+            Welcome back, {user?.name || user?.email}. Access your verified event passes and entry QR codes.
           </p>
         </div>
 
         {/* User Info Card */}
-        <PixelFrame dotGrid cornerAccent className="p-6 mb-8">
+        <div className="bg-white rounded-2xl border border-neutral-200/80 shadow-sm p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              {user?.avatar && (
-                <img src={user.avatar} alt="" className="w-14 h-14 rounded-full border-2 border-black shadow-[2px_2px_0px_#000]" />
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt=""
+                  className="w-14 h-14 rounded-full object-cover ring-2 ring-neutral-100 shadow-sm"
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-neutral-900 text-white flex items-center justify-center font-bold text-lg">
+                  {user?.name?.[0] || "U"}
+                </div>
               )}
               <div>
-                <p className="font-display font-bold text-lg text-black">{user?.name || user?.full_name}</p>
-                <p className="font-mono text-xs text-gray-600">{user?.email}</p>
-                {user?.college && <p className="font-mono text-xs text-gray-500">{user.college}</p>}
+                <p className="font-semibold text-base sm:text-lg text-neutral-950 leading-snug">
+                  {user?.name || user?.full_name || "Attendee"}
+                </p>
+                <p className="text-xs text-neutral-500">{user?.email}</p>
+                {user?.college && (
+                  <p className="text-xs text-neutral-400 mt-0.5 flex items-center gap-1">
+                    <Building className="w-3 h-3 text-neutral-400" />
+                    {user.college}
+                  </p>
+                )}
               </div>
             </div>
 
             <Link
               href="/profile"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border-2 border-black font-mono text-xs font-bold uppercase hover:bg-th-yellow transition-colors shadow-[2px_2px_0px_#000] self-start sm:self-auto"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-neutral-200 bg-white text-xs font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 transition-all shadow-sm self-start sm:self-auto"
             >
-              <User className="w-3.5 h-3.5" />
+              <User className="w-3.5 h-3.5 text-neutral-500" />
               <span>Edit Profile</span>
             </Link>
           </div>
-        </PixelFrame>
+        </div>
 
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+            <Loader2 className="w-8 h-8 animate-spin text-neutral-900" />
           </div>
         )}
 
-        {/* Registrations */}
+        {/* Empty State */}
         {!loading && registrations.length === 0 && (
-          <PixelFrame dotGrid cornerAccent className="p-8 text-center">
-            <Ticket className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h2 className="font-pixel text-xl font-bold uppercase text-gray-400 mb-2">NO REGISTRATIONS YET</h2>
-            <p className="font-sans text-sm text-gray-500 mb-4">
-              You haven&apos;t registered for any events. Browse upcoming events and register!
-            </p>
+          <div className="bg-white rounded-2xl border border-neutral-200/80 p-12 text-center shadow-sm space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-neutral-100 text-neutral-500 flex items-center justify-center mx-auto shadow-inner">
+              <Ticket className="w-7 h-7" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-neutral-950">No Event Passes Yet</h2>
+              <p className="text-xs sm:text-sm text-neutral-500 mt-1 max-w-sm mx-auto leading-relaxed">
+                You haven&apos;t registered for any events yet. Explore upcoming competitions, workshops, and symposiums.
+              </p>
+            </div>
             <Link
               href="/events"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-display font-bold text-xs uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[3px_3px_0px_#000]"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-neutral-900 text-white font-medium text-xs sm:text-sm tracking-wide hover:bg-black transition-all shadow-sm"
             >
-              <ArrowRight className="w-4 h-4" /> Browse Events
+              <span>Browse Events</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
-          </PixelFrame>
+          </div>
         )}
 
-        <div className="space-y-8">
+        {/* Registrations List */}
+        <div className="space-y-6">
           {registrations.map((reg) => (
             <motion.div
               key={reg.id}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25 }}
             >
               <TicketPass registration={reg} showPrintButton={true} />
             </motion.div>

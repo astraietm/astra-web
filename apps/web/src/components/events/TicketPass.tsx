@@ -1,8 +1,22 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { Printer, Calendar, MapPin, Clock, User, Phone, GraduationCap, Building2, Users, ShieldCheck, Ticket, Download, Loader2 } from "lucide-react";
-import { StickerBadge } from "@/components/ui/StickerBadge";
+import {
+  Printer,
+  Calendar,
+  MapPin,
+  Clock,
+  User,
+  Phone,
+  GraduationCap,
+  Building2,
+  Users,
+  ShieldCheck,
+  Ticket,
+  Download,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
 import { toPng } from "html-to-image";
 
 export interface TicketPassProps {
@@ -69,7 +83,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
         month: "short",
         year: "numeric",
       })
-    : "TBA";
+    : "Oct 6, 2026";
 
   const formattedTime = event.event_date
     ? new Date(event.event_date).toLocaleTimeString("en-US", {
@@ -90,7 +104,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
       });
 
       const cleanTitle = (event.title || "Ticket").replace(/[^a-zA-Z0-9]/g, "_");
-      const filename = `ASTRA-Ticket-${registration.id}-${cleanTitle}.png`;
+      const filename = `ASTRA-Pass-${registration.id}-${cleanTitle}.png`;
 
       const link = document.createElement("a");
       link.download = filename;
@@ -100,7 +114,6 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
       document.body.removeChild(link);
     } catch (err) {
       console.error("Failed to generate ticket image:", err);
-      // Fall back to print if image generation encounters any issue
       handlePrint();
     } finally {
       setDownloading(false);
@@ -146,7 +159,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
           <style>
             @page {
               size: A4 portrait;
-              margin: 10mm;
+              margin: 12mm;
             }
             *, *::before, *::after {
               box-sizing: border-box !important;
@@ -163,6 +176,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
               display: flex !important;
               justify-content: center !important;
               align-items: flex-start !important;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
             }
             .print-container {
               width: 100% !important;
@@ -173,20 +187,6 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
             }
             .print\\:hidden {
               display: none !important;
-            }
-            .ticket-body-grid {
-              display: grid !important;
-              grid-template-columns: 2fr 1fr !important;
-              border-top: none !important;
-            }
-            .ticket-left-side {
-              grid-column: span 1 / span 1 !important;
-              border-right: 4px solid #000000 !important;
-              border-bottom: none !important;
-            }
-            .ticket-right-side {
-              grid-column: span 1 / span 1 !important;
-              border-top: none !important;
             }
           </style>
         </head>
@@ -215,36 +215,42 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto my-4">
-      {/* Print Trigger Header */}
+    <div className="w-full max-w-2xl mx-auto my-4 font-sans">
+      {/* Action Header */}
       {showPrintButton && (
         <div className="flex flex-wrap items-center justify-between mb-3 px-1 gap-2 print:hidden">
-          <span className="font-mono text-xs text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
-            <Ticket className="w-4 h-4 text-black" /> Digital Entry Pass
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-900 text-white text-xs font-medium shadow-sm">
+              <Ticket className="w-3.5 h-3.5 text-amber-300" />
+              <span>Digital Entry Pass</span>
+            </span>
+          </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handleDownloadImage}
               disabled={downloading}
               type="button"
-              className="flex items-center gap-2 px-3.5 py-1.5 bg-black text-white font-mono text-xs font-bold uppercase border-2 border-black hover:bg-th-yellow hover:text-black transition-colors shadow-[2px_2px_0px_#000] disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neutral-900 text-white text-xs font-medium hover:bg-black transition-all shadow-sm hover:shadow disabled:opacity-50 cursor-pointer"
             >
               {downloading ? (
                 <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving PNG...
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Saving...</span>
                 </>
               ) : (
                 <>
-                  <Download className="w-3.5 h-3.5" /> Download Image (PNG)
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Save PNG</span>
                 </>
               )}
             </button>
             <button
               onClick={handlePrint}
               type="button"
-              className="flex items-center gap-2 px-3 py-1.5 bg-white text-black font-mono text-xs font-bold uppercase border-2 border-black hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_#000]"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-neutral-300 bg-white text-neutral-800 text-xs font-medium hover:bg-neutral-50 hover:border-neutral-400 transition-all shadow-sm cursor-pointer"
             >
-              <Printer className="w-3.5 h-3.5" /> Print PDF
+              <Printer className="w-3.5 h-3.5 text-neutral-600" />
+              <span>Print PDF</span>
             </button>
           </div>
         </div>
@@ -254,99 +260,110 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
       <div
         ref={ticketRef}
         id={`ticket-pass-${registration.id}`}
-        className="print-target-ticket bg-white border-4 border-black text-black shadow-[6px_6px_0px_#000] overflow-hidden print:shadow-none print:border-2"
+        className="print-target-ticket bg-white rounded-3xl border border-neutral-200/90 shadow-xl shadow-neutral-900/5 overflow-hidden text-neutral-900 print:shadow-none print:border print:rounded-2xl"
       >
         {/* Ticket Top Banner */}
-        <div className="bg-black text-white px-6 py-4 flex flex-wrap items-center justify-between border-b-4 border-black gap-2">
+        <div className="bg-neutral-950 text-white px-6 py-4 sm:px-8 sm:py-5 flex flex-wrap items-center justify-between border-b border-neutral-800 gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-th-yellow text-black flex items-center justify-center font-pixel font-black text-sm border-2 border-white shadow-[2px_2px_0px_#fff]">
+            <div className="w-9 h-9 rounded-xl bg-white text-neutral-950 flex items-center justify-center font-bold text-sm shadow-sm">
               A
             </div>
             <div>
-              <p className="font-pixel text-[10px] text-th-yellow tracking-widest uppercase">ASTRA IETM 2026</p>
-              <p className="font-display font-bold text-sm uppercase tracking-wider">Official Event Ticket Pass</p>
+              <p className="text-xs font-semibold tracking-wide text-neutral-300">ASTRA 2026</p>
+              <p className="text-sm sm:text-base font-bold text-white tracking-tight">Official Entry Pass</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <StickerBadge
-              color={registration.status === "ATTENDED" ? "mint" : registration.status === "REGISTERED" ? "lime" : "yellow"}
-              rotation={1}
+            <span
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                registration.status === "ATTENDED"
+                  ? "bg-blue-500/15 text-blue-300 border-blue-500/30"
+                  : registration.status === "REGISTERED"
+                  ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                  : "bg-amber-500/15 text-amber-300 border-amber-500/30"
+              }`}
             >
               {registration.status}
-            </StickerBadge>
-            <span className="font-mono text-xs bg-white/20 px-2 py-1 border border-white/30 text-white">
+            </span>
+            <span className="text-xs font-medium text-neutral-400 bg-neutral-900 px-2.5 py-0.5 rounded-full border border-neutral-800">
               #{registration.id.toString().padStart(4, "0")}
             </span>
           </div>
         </div>
 
         {/* Pass Body (Grid layout) */}
-        <div className="ticket-body-grid grid grid-cols-1 sm:grid-cols-3 divide-y-4 sm:divide-y-0 sm:divide-x-4 divide-black">
-          {/* Left Column (2 Cols wide on desktop): Event & Attendee info */}
-          <div className="ticket-left-side col-span-1 sm:col-span-2 p-6 space-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-neutral-200/80">
+          {/* Left Column (2 Cols wide): Event & Attendee info */}
+          <div className="col-span-1 sm:col-span-2 p-6 sm:p-7 space-y-5">
             {/* Event Name & Category */}
             <div>
-              <span className="inline-block px-2 py-0.5 bg-black text-white font-pixel text-[9px] uppercase tracking-wider mb-1">
-                {event.category || "GENERAL"}
+              <span className="inline-block px-2.5 py-0.5 rounded-full bg-neutral-100 text-neutral-700 text-[11px] font-semibold tracking-wide mb-1.5">
+                {event.category || "GENERAL EVENT"}
               </span>
-              <h2 className="font-pixel text-xl sm:text-2xl font-black uppercase text-black leading-tight">
+              <h2 className="text-xl sm:text-2xl font-bold text-neutral-950 tracking-tight leading-snug">
                 {event.title}
               </h2>
             </div>
 
-            {/* Event Specs Badges */}
-            <div className="grid grid-cols-2 gap-3 p-3 bg-gray-100 border-2 border-black font-mono text-xs">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-black shrink-0" />
+            {/* Event Specs Card */}
+            <div className="grid grid-cols-2 gap-3 p-3.5 bg-neutral-50/80 rounded-2xl border border-neutral-200/70 text-xs">
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-white border border-neutral-200/80 flex items-center justify-center flex-shrink-0 text-neutral-700">
+                  <Calendar className="w-3.5 h-3.5" />
+                </div>
                 <div>
-                  <span className="text-[9px] uppercase text-gray-500 block">Date</span>
-                  <span className="font-bold text-black">{formattedDate}</span>
+                  <span className="text-[10px] uppercase text-neutral-400 font-medium block">Date</span>
+                  <span className="font-semibold text-neutral-900">{formattedDate}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-black shrink-0" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-white border border-neutral-200/80 flex items-center justify-center flex-shrink-0 text-neutral-700">
+                  <Clock className="w-3.5 h-3.5" />
+                </div>
                 <div>
-                  <span className="text-[9px] uppercase text-gray-500 block">Time</span>
-                  <span className="font-bold text-black">{formattedTime}</span>
+                  <span className="text-[10px] uppercase text-neutral-400 font-medium block">Time</span>
+                  <span className="font-semibold text-neutral-900">{formattedTime}</span>
                 </div>
               </div>
-              <div className="col-span-2 flex items-center gap-2 pt-2 border-t border-black/20">
-                <MapPin className="w-4 h-4 text-black shrink-0" />
+              <div className="col-span-2 flex items-center gap-2.5 pt-2.5 border-t border-neutral-200/60">
+                <div className="w-7 h-7 rounded-lg bg-white border border-neutral-200/80 flex items-center justify-center flex-shrink-0 text-neutral-700">
+                  <MapPin className="w-3.5 h-3.5" />
+                </div>
                 <div>
-                  <span className="text-[9px] uppercase text-gray-500 block">Venue</span>
-                  <span className="font-bold text-black">{event.venue || "Main Auditorium"}</span>
+                  <span className="text-[10px] uppercase text-neutral-400 font-medium block">Venue</span>
+                  <span className="font-semibold text-neutral-900">{event.venue || "Main Auditorium, KMCT Calicut"}</span>
                 </div>
               </div>
             </div>
 
-            {/* Attendee Metadata */}
-            <div className="space-y-3 pt-2">
-              <div className="border-b-2 border-dashed border-black/30 pb-2">
-                <p className="font-pixel text-[10px] text-gray-500 uppercase">REGISTRANT DETAILS</p>
-                <p className="font-display font-bold text-base text-black flex items-center gap-2 mt-0.5">
-                  <User className="w-4 h-4 text-black" /> {name}
+            {/* Attendee Details */}
+            <div className="space-y-3 pt-1">
+              <div className="border-b border-neutral-100 pb-2.5">
+                <p className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider">Attendee</p>
+                <p className="font-bold text-base text-neutral-950 flex items-center gap-2 mt-0.5">
+                  <User className="w-4 h-4 text-neutral-600" /> {name}
                 </p>
-                {email && <p className="font-mono text-xs text-gray-600 pl-6">{email}</p>}
+                {email && <p className="text-xs text-neutral-500 pl-6">{email}</p>}
               </div>
 
-              <div className="grid grid-cols-2 gap-2 font-mono text-xs pt-1">
+              <div className="grid grid-cols-2 gap-3 text-xs pt-1">
                 <div>
-                  <span className="text-[10px] text-gray-500 uppercase flex items-center gap-1">
-                    <Phone className="w-3 h-3" /> Contact Phone
+                  <span className="text-[10px] text-neutral-400 uppercase font-medium flex items-center gap-1">
+                    <Phone className="w-3 h-3 text-neutral-500" /> Contact Phone
                   </span>
-                  <span className="font-bold text-black block">{phone}</span>
+                  <span className="font-semibold text-neutral-800 block mt-0.5">{phone}</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-gray-500 uppercase flex items-center gap-1">
-                    <GraduationCap className="w-3 h-3" /> Year of Study
+                  <span className="text-[10px] text-neutral-400 uppercase font-medium flex items-center gap-1">
+                    <GraduationCap className="w-3 h-3 text-neutral-500" /> Semester / Year
                   </span>
-                  <span className="font-bold text-black block">{year}</span>
+                  <span className="font-semibold text-neutral-800 block mt-0.5">{year}</span>
                 </div>
                 <div className="col-span-2">
-                  <span className="text-[10px] text-gray-500 uppercase flex items-center gap-1">
-                    <Building2 className="w-3 h-3" /> College & Dept
+                  <span className="text-[10px] text-neutral-400 uppercase font-medium flex items-center gap-1">
+                    <Building2 className="w-3 h-3 text-neutral-500" /> Institution &amp; Branch
                   </span>
-                  <span className="font-bold text-black block">
+                  <span className="font-semibold text-neutral-800 block mt-0.5">
                     {college} {dept !== "N/A" ? `(${dept})` : ""}
                   </span>
                 </div>
@@ -354,12 +371,12 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
 
               {/* Team Information */}
               {registration.team_name && (
-                <div className="mt-3 p-3 bg-th-yellow/20 border-2 border-black font-mono text-xs">
-                  <span className="text-[10px] font-bold uppercase flex items-center gap-1 text-black">
-                    <Users className="w-3.5 h-3.5" /> Team: {registration.team_name}
+                <div className="mt-3 p-3 rounded-xl bg-purple-50/70 border border-purple-100 text-xs">
+                  <span className="text-[11px] font-bold text-purple-950 flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-purple-600" /> Team: {registration.team_name}
                   </span>
                   {registration.team_members && (
-                    <p className="text-[11px] text-gray-700 mt-1 pl-4 border-l-2 border-black">
+                    <p className="text-[11px] text-purple-800 mt-1 pl-4 border-l border-purple-300">
                       Members: {registration.team_members}
                     </p>
                   )}
@@ -369,43 +386,46 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
           </div>
 
           {/* Right Column (1 Col wide): QR Code Stub */}
-          <div className="ticket-right-side col-span-1 p-6 bg-gray-50 flex flex-col items-center justify-between text-center space-y-4">
-            <div className="w-full">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-black text-white font-mono text-[9px] uppercase font-bold mb-3">
-                <ShieldCheck className="w-3 h-3 text-th-lime" /> SCAN FOR ENTRY
+          <div className="col-span-1 p-6 sm:p-7 bg-neutral-50/50 flex flex-col items-center justify-between text-center space-y-4">
+            <div className="w-full flex flex-col items-center">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-neutral-900 text-white text-[10px] font-semibold mb-3.5 shadow-sm">
+                <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                <span>Entry QR Pass</span>
               </span>
 
               {/* QR Code Container */}
               {registration.qr_code ? (
-                <div className="p-3 bg-white border-2 border-black shadow-[3px_3px_0px_#000] inline-block">
+                <div className="p-3 bg-white rounded-2xl border border-neutral-200 shadow-sm inline-block">
                   <img
                     src={registration.qr_code}
                     alt="Scan Ticket QR"
-                    className="w-40 h-40 object-contain mx-auto"
+                    className="w-36 h-36 sm:w-40 sm:h-40 object-contain mx-auto"
                   />
                 </div>
               ) : (
-                <div className="w-40 h-40 bg-gray-200 border-2 border-black flex items-center justify-center font-mono text-xs text-gray-500">
-                  QR GENERATING...
+                <div className="w-36 h-36 sm:w-40 sm:h-40 bg-neutral-100 rounded-2xl border border-neutral-200 flex items-center justify-center text-xs text-neutral-400 font-medium">
+                  Generating QR...
                 </div>
               )}
             </div>
 
-            {/* Token ID & Verification Code */}
-            <div className="w-full space-y-1 font-mono">
-              <span className="text-[9px] text-gray-500 uppercase block tracking-wider">TICKET TOKEN ID</span>
-              <p className="text-[10px] font-bold text-black bg-white px-2 py-1 border border-black truncate">
+            {/* Token ID */}
+            <div className="w-full space-y-1">
+              <span className="text-[10px] text-neutral-400 uppercase font-medium block tracking-wider">
+                Verification Token
+              </span>
+              <p className="text-xs font-mono font-bold text-neutral-800 bg-white px-2.5 py-1 rounded-lg border border-neutral-200 truncate">
                 {registration.token ? registration.token.substring(0, 16) + "..." : "ASTRA-PASS"}
               </p>
-              <p className="text-[9px] text-gray-400 pt-1">Present this QR code at the event check-in desk.</p>
+              <p className="text-[10px] text-neutral-400 pt-0.5">Present this QR code at the event check-in desk.</p>
             </div>
           </div>
         </div>
 
         {/* Ticket Footer / Stub Divider */}
-        <div className="bg-gray-100 px-6 py-2 border-t-2 border-black flex items-center justify-between font-mono text-[10px] text-gray-500">
-          <span>GEN_DATE: {new Date(registration.timestamp || Date.now()).toLocaleDateString("en-IN")}</span>
-          <span className="font-bold text-black">ASTRA IETM SECURE TICKET VERIFICATION SYSTEM</span>
+        <div className="bg-neutral-50 px-6 py-2.5 sm:px-8 border-t border-neutral-200 flex items-center justify-between text-[11px] text-neutral-400">
+          <span>Issued: {new Date(registration.timestamp || Date.now()).toLocaleDateString("en-IN")}</span>
+          <span className="font-medium text-neutral-600">ASTRA 2026 • Verified Credential</span>
         </div>
       </div>
     </div>
