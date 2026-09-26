@@ -20,7 +20,7 @@ export default function PrivacyPage() {
             <h3 className="font-pixel text-sm font-bold uppercase mt-6">Third-Party Services</h3>
             <p>We use Google OAuth for authentication, Razorpay for payments, and Cloudinary for image storage. These services have their own privacy policies.</p>
             <h3 className="font-pixel text-sm font-bold uppercase mt-6">Contact</h3>
-            <p>For privacy-related inquiries, contact us at cybersecurity@kmct.edu.in.</p>
+            <p>For privacy-related inquiries, contact us at contact@astraietm.in.</p>
             <div className="mt-6 pt-4 border-t border-gray-200 font-mono text-xs text-gray-400">Last updated: September 2026</div>
           </div>
         </PixelFrame>

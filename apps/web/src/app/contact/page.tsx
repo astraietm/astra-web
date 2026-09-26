@@ -305,21 +305,6 @@ export default function ContactPage() {
                         )}
                       </button>
                     </div>
-                    <div className="flex items-center justify-between border-t border-neutral-200/60 pt-1.5">
-                      <span className="text-neutral-500">cybersecurity@kmct.edu.in</span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopy("cybersecurity@kmct.edu.in", "mail-kmct")}
-                        className="p-1 text-neutral-400 hover:text-neutral-900 transition-colors"
-                        title="Copy email"
-                      >
-                        {copiedKey === "mail-kmct" ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        ) : (
-                          <Copy className="w-3.5 h-3.5" />
-                        )}
-                      </button>
-                    </div>
                   </div>
                 </div>
 
@@ -333,7 +318,7 @@ export default function ContactPage() {
                       <span>Helpline &amp; Campus Desk</span>
                     </div>
                     <a
-                      href="tel:+919447000000"
+                      href="tel:04952288500"
                       className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
                     >
                       <span>Call</span>
@@ -343,27 +328,12 @@ export default function ContactPage() {
 
                   <div className="space-y-1.5 text-xs text-neutral-600 pl-7">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-neutral-900">+91 94470 00000</span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopy("+919447000000", "phone-mob")}
-                        className="p-1 text-neutral-400 hover:text-neutral-900 transition-colors"
-                        title="Copy phone"
-                      >
-                        {copiedKey === "phone-mob" ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        ) : (
-                          <Copy className="w-3.5 h-3.5" />
-                        )}
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-between border-t border-neutral-200/60 pt-1.5">
-                      <span className="text-neutral-500">0495 2288500 (Campus Reception)</span>
+                      <span className="font-medium text-neutral-900">0495 2288500 (Campus Reception)</span>
                       <button
                         type="button"
                         onClick={() => handleCopy("04952288500", "phone-desk")}
                         className="p-1 text-neutral-400 hover:text-neutral-900 transition-colors"
-                        title="Copy landline"
+                        title="Copy phone"
                       >
                         {copiedKey === "phone-desk" ? (
                           <Check className="w-3.5 h-3.5 text-emerald-600" />

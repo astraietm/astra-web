@@ -18,7 +18,7 @@ export default function RefundPolicyPage() {
             <h3 className="font-pixel text-sm font-bold uppercase mt-6">Cancellation by Organizers</h3>
             <p>If ASTRA 2026 cancels an event, all registered participants will receive a full refund automatically.</p>
             <h3 className="font-pixel text-sm font-bold uppercase mt-6">How to Request</h3>
-            <p>Send a refund request to cybersecurity@kmct.edu.in with your registration ID and reason for cancellation.</p>
+            <p>Send a refund request to contact@astraietm.in with your registration ID and reason for cancellation.</p>
             <div className="mt-6 pt-4 border-t border-gray-200 font-mono text-xs text-gray-400">Last updated: September 2026</div>
           </div>
         </PixelFrame>

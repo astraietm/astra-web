@@ -16,7 +16,7 @@ export default function ShippingPolicyPage() {
             <h3 className="font-pixel text-sm font-bold uppercase mt-6">Physical Materials</h3>
             <p>Delegate kits, badges, and certificates are distributed at the venue during the event. We do not ship physical materials post-event unless explicitly communicated.</p>
             <h3 className="font-pixel text-sm font-bold uppercase mt-6">Contact</h3>
-            <p>For queries regarding delivery, contact cybersecurity@kmct.edu.in.</p>
+            <p>For queries regarding delivery, contact contact@astraietm.in.</p>
             <div className="mt-6 pt-4 border-t border-gray-200 font-mono text-xs text-gray-400">Last updated: September 2026</div>
           </div>
         </PixelFrame>
