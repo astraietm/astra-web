@@ -18,6 +18,15 @@ import {
   TrendingUp,
 } from "lucide-react";
 import AddEventModal from "@/components/admin/AddEventModal";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface Stats {
   totalEvents: number;
@@ -88,6 +97,7 @@ export default function AdminDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [recentRegistrations, setRecentRegistrations] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const isSuperUser = Boolean(user?.is_superuser);
@@ -111,6 +121,23 @@ export default function AdminDashboard() {
           ? regsRes.data
           : regsRes.data?.results || [];
         setRecentRegistrations(regs.slice(0, 8));
+        
+        const dateMap: Record<string, number> = {};
+        // Iterate backwards so older dates come first if it's already descending
+        const reversedRegs = [...regs].reverse();
+        reversedRegs.forEach((r: any) => {
+          const dt = r.timestamp || r.created_at;
+          if (dt) {
+            const dateStr = new Date(dt).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+            dateMap[dateStr] = (dateMap[dateStr] || 0) + 1;
+          }
+        });
+        const chart = Object.keys(dateMap).map(k => ({ date: k, count: dateMap[k] }));
+        // Ensure at least some default data if empty
+        if (chart.length === 0) {
+          chart.push({ date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" }), count: 0 });
+        }
+        setChartData(chart);
       } else {
         const [eventsRes, galleryRes] = await Promise.all([
           api.get("/api/events/"),
@@ -253,9 +280,64 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* ── SuperUser: Recent Registrations / Staff: Quick Actions ── */}
+          {/* ── SuperUser: Registration Trends & Recent Registrations / Staff: Quick Actions ── */}
           {isSuperUser ? (
-            <div>
+            <div className="space-y-8">
+              {/* Registration Trends Chart */}
+              <div>
+                <SectionTitle>Registration Trends</SectionTitle>
+                <AdminCard className="p-5 sm:p-6 h-[320px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={chartData}
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#262626" vertical={false} />
+                      <XAxis
+                        dataKey="date"
+                        stroke="#737373"
+                        fontSize={11}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        stroke="#737373"
+                        fontSize={11}
+                        tickLine={false}
+                        axisLine={false}
+                        allowDecimals={false}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#171717",
+                          border: "1px solid #262626",
+                          borderRadius: "12px",
+                          fontSize: "12px",
+                          color: "#e5e5e5",
+                        }}
+                        itemStyle={{ color: "#10b981" }}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="count"
+                        name="Registrations"
+                        stroke="#10b981"
+                        strokeWidth={2}
+                        fillOpacity={1}
+                        fill="url(#colorCount)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </AdminCard>
+              </div>
+              
+              <div>
               <div className="flex items-center justify-between mb-3">
                 <SectionTitle>Recent Registrations</SectionTitle>
                 <Link
@@ -321,6 +403,7 @@ export default function AdminDashboard() {
                 </div>
               </AdminCard>
             </div>
+          </div>
           ) : (
             <div>
               <SectionTitle>Quick Actions</SectionTitle>

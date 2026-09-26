@@ -54,6 +54,23 @@ export default function AboutPage() {
           </ul>
         </PixelFrame>
 
+        <PixelFrame dotGrid cornerAccent className="p-8 mb-8">
+          <h2 className="font-pixel text-xl font-bold uppercase mb-4 text-center">MEET OUR TEAM</h2>
+          <div className="w-full rounded-xl overflow-hidden shadow-lg border-2 border-black/10 bg-neutral-100 flex items-center justify-center min-h-[300px]">
+            {/* The image uploaded by the user will be displayed here */}
+            <img 
+              src="/team.png" 
+              alt="Meet Our Team - Astra 2026" 
+              className="w-full h-auto object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null; // Prevent infinite loop
+                target.parentElement!.innerHTML = '<div class="text-center p-8 text-neutral-500 font-sans font-medium"><p>Please save your uploaded team image as <strong>team.png</strong> inside the <strong>public/</strong> folder.</p></div>';
+              }}
+            />
+          </div>
+        </PixelFrame>
+
         <PixelFrame dotGrid cornerAccent className="p-8">
           <h2 className="font-pixel text-xl font-bold uppercase mb-4">THE DEPARTMENT</h2>
           <p className="font-sans text-sm text-gray-700 leading-relaxed">
