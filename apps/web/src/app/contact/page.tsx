@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useToast } from "@/lib/toast-context";
 import api from "@/lib/api";
 import {
@@ -14,17 +14,14 @@ import {
   Check,
   ExternalLink,
   MessageSquare,
-  HelpCircle,
   Clock,
   ShieldCheck,
   ArrowRight,
-  ChevronDown,
   Sparkles,
   Radio,
   User,
   AtSign,
   Compass,
-  CheckCircle2,
 } from "lucide-react";
 
 const INQUIRY_TOPICS = [
@@ -36,25 +33,6 @@ const INQUIRY_TOPICS = [
   { id: "volunteer", label: "Volunteering" },
 ];
 
-const FAQS = [
-  {
-    q: "Who can attend ASTRA 2026?",
-    a: "ASTRA is open to students, researchers, developers, and cybersecurity enthusiasts from all colleges and universities nationwide. Both beginner and pro tracks are available.",
-  },
-  {
-    q: "How do I register for the 24H CTF WarGames?",
-    a: "You can register directly from the Events section on the website. Teams can consist of up to 4 members. Early bird access gives priority lab allocation.",
-  },
-  {
-    q: "Is accommodation provided for outstation participants?",
-    a: "Yes! Subsidized hostel accommodation and transit assistance are available at the KMCT Campus in Calicut for verified participants. Details are shared post-registration.",
-  },
-  {
-    q: "How quickly does the organizing committee respond?",
-    a: "Our dispatch terminal operates round the clock. Typical response latency is under 24 hours during regular ops and under 2 hours during peak event countdowns.",
-  },
-];
-
 export default function ContactPage() {
   const { showToast } = useToast();
   const [name, setName] = useState("");
@@ -63,7 +41,6 @@ export default function ContactPage() {
   const [topic, setTopic] = useState("general");
   const [sending, setSending] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -434,60 +411,12 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-
-            {/* Quick Assist FAQ Accordion */}
-            <div className="bg-white rounded-3xl border border-neutral-200/80 p-6 sm:p-7 shadow-sm">
-              <h3 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight mb-4 flex items-center gap-2">
-                <HelpCircle className="w-4 h-4 text-neutral-700" />
-                <span>Frequently Asked Questions</span>
-              </h3>
-
-              <div className="space-y-2.5">
-                {FAQS.map((faq, idx) => {
-                  const isOpen = openFaq === idx;
-                  return (
-                    <div
-                      key={idx}
-                      className="border border-neutral-200/80 rounded-2xl bg-neutral-50/60 overflow-hidden transition-all"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full text-left p-3.5 flex items-center justify-between gap-3 text-xs font-semibold text-neutral-900 hover:bg-neutral-100/70 transition-colors"
-                      >
-                        <span>{faq.q}</span>
-                        <ChevronDown
-                          className={`w-4 h-4 text-neutral-400 flex-shrink-0 transition-transform duration-200 ${
-                            isOpen ? "rotate-180 text-neutral-900" : ""
-                          }`}
-                        />
-                      </button>
-
-                      <AnimatePresence>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="p-3.5 pt-0 text-xs text-neutral-600 leading-relaxed border-t border-neutral-100 bg-white">
-                              {faq.a}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
           </motion.div>
         </div>
       </section>
     </div>
   );
 }
+
 
 
