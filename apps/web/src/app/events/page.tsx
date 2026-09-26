@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { MarqueeTicker } from "@/components/ui/MarqueeTicker";
 import { useAuth } from "@/lib/auth-context";
@@ -20,7 +22,6 @@ import {
   Sparkles,
   Ticket,
 } from "lucide-react";
-import { EventDetailModal, EventModalData } from "@/components/events/EventDetailModal";
 
 // Backend Event type matching Django serializer
 interface BackendEvent {
@@ -48,7 +49,31 @@ interface BackendEvent {
   registration_count: number;
 }
 
-interface DisplayEvent extends EventModalData {
+interface DisplayEvent {
+  id: number | string;
+  backendId?: number;
+  title: string;
+  category: string;
+  venue: string;
+  time: string;
+  duration?: string;
+  event_date?: string;
+  date: string;
+  day?: string;
+  image?: string;
+  description?: string;
+  prize?: string;
+  isTeamEvent: boolean;
+  teamSizeMin: number;
+  teamSizeMax: number;
+  requiresPayment: boolean;
+  paymentAmount: string;
+  isRegistrationOpen: boolean;
+  registrationStatus: string;
+  registrationLimit?: number;
+  registrationCount?: number;
+  content_blocks?: any[];
+  coordinators?: any[];
   type: "IN-PERSON" | "HYBRID" | "VIRTUAL";
   badgeColor: string;
   highlights: string[];
@@ -99,12 +124,12 @@ function mapBackendEvent(ev: BackendEvent): DisplayEvent {
 }
 
 export default function EventsPage() {
+  const router = useRouter();
   const [events, setEvents] = useState<DisplayEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeDay, setActiveDay] = useState<string>("ALL");
   const [activeCategory, setActiveCategory] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedEvent, setSelectedEvent] = useState<DisplayEvent | null>(null);
   const [userRegisteredEventIds, setUserRegisteredEventIds] = useState<Set<number>>(new Set());
 
   const { user, requireLogin, token } = useAuth();
@@ -149,20 +174,20 @@ export default function EventsPage() {
   }, [token]);
 
   // Handle Register Action
-  const handleRegister = (event: EventModalData) => {
+  const handleRegister = (event: DisplayEvent) => {
     const eventId = event.backendId || event.id;
 
     if (!user) {
       requireLogin({
         label: `Register for ${event.title}`,
         run: () => {
-          window.location.href = `/register/${eventId}`;
+          router.push(`/register/${eventId}`);
         },
       });
       return;
     }
 
-    window.location.href = `/register/${eventId}`;
+    router.push(`/register/${eventId}`);
   };
 
   // Derive unique categories and days
@@ -318,7 +343,7 @@ export default function EventsPage() {
                     exit={{ opacity: 0, scale: 0.96 }}
                     transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
                     className="flex flex-col h-full bg-white border-2 border-black shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#000] hover:-translate-y-1 transition-all duration-200 group overflow-hidden cursor-pointer"
-                    onClick={() => setSelectedEvent(eventWithReg)}
+                    onClick={() => router.push(`/events/${event.backendId || event.id}`)}
                   >
                     {/* 1. Event Poster Container */}
                     <div className="relative aspect-[3/4] bg-black overflow-hidden border-b-2 border-black flex items-center justify-center">
@@ -435,25 +460,22 @@ export default function EventsPage() {
 
                         {/* Action CTA Buttons */}
                         <div className="grid grid-cols-2 gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedEvent(eventWithReg);
-                            }}
-                            className="px-2.5 py-2 bg-[#F0F0FA] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-center"
+                          <Link
+                            href={`/events/${event.backendId || event.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="px-2.5 py-2 bg-[#F0F0FA] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-center flex items-center justify-center"
                           >
                             Rules &amp; Intel
-                          </button>
+                          </Link>
 
                           {isRegistered ? (
-                            <a
+                            <Link
                               href="/dashboard"
                               onClick={(e) => e.stopPropagation()}
                               className="px-2.5 py-2 bg-[#C3FF16] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-th-yellow transition-colors text-center flex items-center justify-center gap-1"
                             >
                               <Ticket className="w-3 h-3" /> Pass
-                            </a>
+                            </Link>
                           ) : event.isRegistrationOpen && event.registrationStatus !== "FULL" ? (
                             <button
                               type="button"
@@ -461,7 +483,7 @@ export default function EventsPage() {
                                 e.stopPropagation();
                                 handleRegister(event);
                               }}
-                              className="px-2.5 py-2 bg-[#FFE816] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-center flex items-center justify-center gap-1"
+                              className="px-2.5 py-2 bg-[#FFE816] text-black font-display font-bold text-[11px] uppercase tracking-wider border-2 border-black hover:bg-black hover:text-white transition-colors text-center flex items-center justify-center gap-1 cursor-pointer"
                             >
                               <span>Register</span>
                               <ArrowRight className="w-3 h-3" />
@@ -500,22 +522,13 @@ export default function EventsPage() {
                 setActiveDay("ALL");
                 setActiveCategory("ALL");
               }}
-              className="mt-3 px-4 py-2 bg-black text-white font-mono text-xs uppercase font-bold hover:bg-[#FFE816] hover:text-black transition-colors"
+              className="mt-3 px-4 py-2 bg-black text-white font-mono text-xs uppercase font-bold hover:bg-[#FFE816] hover:text-black transition-colors cursor-pointer"
             >
               Reset Filters
             </button>
           </div>
         )}
       </section>
-
-      {/* ─── EVENT DETAILS & RULES MODAL ─── */}
-      <EventDetailModal
-        event={selectedEvent}
-        isOpen={!!selectedEvent}
-        onClose={() => setSelectedEvent(null)}
-        onRegister={handleRegister}
-        isLoggedIn={!!user}
-      />
     </div>
   );
 }
