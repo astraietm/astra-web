@@ -18,17 +18,17 @@ import {
   ShieldCheck,
   ArrowRight,
   Sparkles,
-  Radio,
   User,
   AtSign,
   Compass,
+  PhoneCall,
 } from "lucide-react";
 
 const INQUIRY_TOPICS = [
-  { id: "general", label: "General Query" },
-  { id: "ctf", label: "CTF WarGames" },
-  { id: "sponsorship", label: "Sponsorship & Collab" },
-  { id: "events", label: "Workshops & Talks" },
+  { id: "general", label: "General Inquiry" },
+  { id: "events", label: "Events & Competitions" },
+  { id: "sponsorship", label: "Sponsorship & Partnerships" },
+  { id: "workshops", label: "Workshops & Sessions" },
   { id: "passes", label: "Passes & Tickets" },
   { id: "volunteer", label: "Volunteering" },
 ];
@@ -86,7 +86,7 @@ export default function ContactPage() {
         <div className="mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-neutral-900 text-white text-xs font-medium shadow-sm mb-3">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>ASTRA 2026 Help Desk &amp; Direct Support</span>
+            <span>ASTRA 2026 Help &amp; Support</span>
           </div>
 
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
@@ -95,7 +95,7 @@ export default function ContactPage() {
                 Get in Touch
               </h1>
               <p className="text-sm sm:text-base text-neutral-500 mt-2 max-w-2xl leading-relaxed">
-                Have questions regarding CTF WarGames, sponsorships, passes, or workshop schedules? Reach out to our organizing committee and we'll assist you right away.
+                Have questions regarding event registrations, sponsorships, passes, or workshop schedules? Reach out to our organizing team and we'll assist you right away.
               </p>
             </div>
           </div>
@@ -121,9 +121,9 @@ export default function ContactPage() {
               </span>
             </div>
 
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-neutral-400 font-medium">
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-neutral-500 font-medium">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>Direct Ops Uplink</span>
+              <span>Verified Official Support</span>
             </div>
           </div>
         </div>
@@ -185,7 +185,7 @@ export default function ContactPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Alex Turing"
+                      placeholder="Your full name"
                       required
                       className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 text-xs sm:text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all bg-neutral-50/40 focus:bg-white"
                     />
@@ -202,7 +202,7 @@ export default function ContactPage() {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="alex@domain.com"
+                      placeholder="yourname@example.com"
                       required
                       className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 text-xs sm:text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all bg-neutral-50/40 focus:bg-white"
                     />
@@ -214,7 +214,7 @@ export default function ContactPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-xs font-semibold text-neutral-700 uppercase tracking-wider">
-                    Message Details <span className="text-red-500">*</span>
+                    Message <span className="text-red-500">*</span>
                   </label>
                   <span className="text-[11px] text-neutral-400">
                     {message.length} / 1000
@@ -226,7 +226,7 @@ export default function ContactPage() {
                     onChange={(e) => setMessage(e.target.value)}
                     maxLength={1000}
                     rows={5}
-                    placeholder="Provide details about your query, proposal, or team details..."
+                    placeholder="How can we help you? Please describe your query or request..."
                     required
                     className="w-full p-3.5 rounded-xl border border-neutral-200 text-xs sm:text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 focus:border-neutral-900 transition-all bg-neutral-50/40 focus:bg-white resize-none leading-relaxed"
                   />
@@ -256,7 +256,7 @@ export default function ContactPage() {
             </form>
           </motion.div>
 
-          {/* Right Column: Direct Info & FAQs (5 Cols) */}
+          {/* Right Column: Direct Info (5 Cols) */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -266,8 +266,8 @@ export default function ContactPage() {
             {/* Direct Channels Card */}
             <div className="bg-white rounded-3xl border border-neutral-200/80 p-6 sm:p-7 shadow-sm">
               <h3 className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight mb-4 flex items-center gap-2">
-                <Radio className="w-4 h-4 text-emerald-600" />
-                <span>Direct Contact Channels</span>
+                <PhoneCall className="w-4 h-4 text-neutral-800" />
+                <span>Contact Channels</span>
               </h3>
 
               <div className="space-y-4">
@@ -315,7 +315,7 @@ export default function ContactPage() {
                       <div className="p-1.5 rounded-lg bg-pink-100 text-pink-800">
                         <Phone className="w-3.5 h-3.5" />
                       </div>
-                      <span>Helpline &amp; Campus Desk</span>
+                      <span>Campus Reception &amp; Help Desk</span>
                     </div>
                     <a
                       href="tel:04952288500"
@@ -328,7 +328,7 @@ export default function ContactPage() {
 
                   <div className="space-y-1.5 text-xs text-neutral-600 pl-7">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-neutral-900">0495 2288500 (Campus Reception)</span>
+                      <span className="font-medium text-neutral-900">0495 2288500</span>
                       <button
                         type="button"
                         onClick={() => handleCopy("04952288500", "phone-desk")}
@@ -352,7 +352,7 @@ export default function ContactPage() {
                       <div className="p-1.5 rounded-lg bg-blue-100 text-blue-800">
                         <MapPin className="w-3.5 h-3.5" />
                       </div>
-                      <span>Event Venue &amp; Campus</span>
+                      <span>Campus Location</span>
                     </div>
                   </div>
 
@@ -370,11 +370,11 @@ export default function ContactPage() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-900 text-white text-xs font-medium hover:bg-black transition-colors"
                       >
-                        <span>Open Maps</span>
+                        <span>Open in Google Maps</span>
                         <ExternalLink className="w-3 h-3" />
                       </a>
                       <span className="text-[11px] text-neutral-400">
-                        GPS: 11.2952° N, 75.9868° E
+                        Mukkam, Calicut
                       </span>
                     </div>
                   </div>

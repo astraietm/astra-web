@@ -297,8 +297,8 @@ class PublicContactView(APIView):
                     )
                     
                     # 2. Send contact message via Resend HTTP API
-                    subject = f"Astra Secure Uplink: Message from {name}"
-                    body = f"Astra Contact Form Submission\n\nUser: {name}\nEmail: {email}\n\nMessage:\n{message}"
+                    subject = f"ASTRA Contact Form: Message from {name}"
+                    body = f"ASTRA Contact Inquiry\n\nName: {name}\nEmail: {email}\n\nMessage:\n{message}"
 
                     import resend
                     resend.api_key = settings.RESEND_API_KEY
@@ -330,12 +330,12 @@ class PublicContactView(APIView):
 
             return Response({
                 "status": "success", 
-                "message": "Transmission received. Secure link established."
+                "message": "Message received successfully."
             })
         except Exception as e:
             return Response({
                 "status": "success", 
-                "message": "Transmission received (buffered)."
+                "message": "Message received successfully."
             })
 
 
