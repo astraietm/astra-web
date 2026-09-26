@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { X, Plus, Edit2, Loader2 } from "lucide-react";
+import { X, Plus, Edit2, Loader2, Upload } from "lucide-react";
 
 interface AddEventModalProps {
   isOpen: boolean;
@@ -40,6 +40,8 @@ const DEFAULT_FORM = {
 export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit }: AddEventModalProps) {
   const { showToast } = useToast();
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState(DEFAULT_FORM);
 
   useEffect(() => {
@@ -69,6 +71,68 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
   }, [eventToEdit, isOpen]);
 
   if (!isOpen) return null;
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showToast("Please select a valid image file.", "error");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("Image file size must be less than 10MB.", "error");
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dykinibqt";
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "astra_gallery";
+
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", uploadPreset);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: data,
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.secure_url) {
+          setFormData((prev) => ({ ...prev, image: json.secure_url }));
+          showToast("Image uploaded successfully!", "success");
+          return;
+        }
+      }
+
+      // Fallback: convert to base64 Data URL if Cloudinary preset response wasn't ok
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setFormData((prev) => ({ ...prev, image: reader.result as string }));
+          showToast("Image attached successfully!", "success");
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setFormData((prev) => ({ ...prev, image: reader.result as string }));
+          showToast("Image attached successfully!", "success");
+        }
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -250,15 +314,62 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
               />
             </div>
             <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Image URL (Optional)</label>
-              <input
-                type="url"
-                name="image"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="https://..."
-                className={INPUT_CLS}
-              />
+              <div className="flex items-center justify-between mb-1">
+                <label className="block font-pixel text-[9px] text-white/40 uppercase">Image (URL or File Upload)</label>
+                {formData.image && (
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, image: "" }))}
+                    className="font-pixel text-[8px] text-red-400 hover:text-red-300 uppercase underline cursor-pointer"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleChange}
+                  placeholder="https://... or click Upload"
+                  className={INPUT_CLS}
+                />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-[#FFE816] text-black font-pixel text-[9px] uppercase border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap cursor-pointer"
+                  title="Upload image from computer"
+                >
+                  {uploadingImage ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Upload className="w-3.5 h-3.5" />
+                  )}
+                  <span>Upload</span>
+                </button>
+              </div>
+              {formData.image && (
+                <div className="mt-2 flex items-center gap-2 p-1.5 border border-white/10 bg-[#0C0C14]">
+                  <img
+                    src={formData.image}
+                    alt="Preview"
+                    className="w-7 h-7 object-cover border border-white/20 flex-shrink-0"
+                    onError={(e) => {
+                      (e.target as HTMLElement).style.display = "none";
+                    }}
+                  />
+                  <span className="font-mono text-[9px] text-white/60 truncate flex-1">{formData.image}</span>
+                </div>
+              )}
             </div>
           </div>
 

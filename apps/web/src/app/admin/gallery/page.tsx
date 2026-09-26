@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { Image as ImageIcon, Loader2, Plus, Trash2 } from "lucide-react";
+import { Image as ImageIcon, Loader2, Plus, Trash2, Upload } from "lucide-react";
 
 const INPUT_CLS = "w-full px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-sm text-white font-mono placeholder:text-white/20 focus:outline-none focus:border-[#FFE816] transition-colors";
 const SELECT_CLS = "px-3 py-2 bg-[#0C0C14] border-2 border-white/20 text-sm text-white font-mono focus:outline-none focus:border-[#FFE816] transition-colors";
@@ -14,11 +14,74 @@ export default function AdminGallery() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("other");
   const [imageUrl, setImageUrl] = useState("");
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { showToast } = useToast();
 
   const fetchGallery = async () => {
     try { const res = await api.get("/api/gallery/"); setItems(res.data); }
     catch {} finally { setLoading(false); }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showToast("Please select a valid image file.", "error");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("Image file size must be less than 10MB.", "error");
+      return;
+    }
+
+    setUploadingFile(true);
+    try {
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dykinibqt";
+      const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "astra_gallery";
+
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", uploadPreset);
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: data,
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.secure_url) {
+          setImageUrl(json.secure_url);
+          showToast("Image uploaded successfully!", "success");
+          return;
+        }
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setImageUrl(reader.result as string);
+          showToast("Image attached successfully!", "success");
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setImageUrl(reader.result as string);
+          showToast("Image attached successfully!", "success");
+        }
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setUploadingFile(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
   };
 
   useEffect(() => { fetchGallery(); }, []);
@@ -61,7 +124,7 @@ export default function AdminGallery() {
           <Plus className="w-4 h-4 text-[#FFE816]" />
           <span className="font-pixel text-[10px] text-white uppercase tracking-wider">Add New Photo</span>
         </div>
-        <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3">
+        <form onSubmit={handleAdd} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <input
             type="text" placeholder="Photo title" value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -74,14 +137,28 @@ export default function AdminGallery() {
             <option value="seminars">Seminars</option>
             <option value="hackathons">Hackathons</option>
           </select>
-          <input
-            type="url" placeholder="https://image-url.com/photo.jpg" value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            className={INPUT_CLS + " flex-1"}
-          />
+          <div className="flex gap-2 flex-1">
+            <input
+              type="text" placeholder="https://image-url.com/photo.jpg or upload" value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              className={INPUT_CLS + " flex-1"}
+            />
+            <input
+              type="file" ref={fileInputRef} accept="image/*" onChange={handleFileUpload} className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingFile}
+              className="flex items-center gap-1.5 px-3 py-2 bg-[#FFE816] text-black font-pixel text-[9px] uppercase border-2 border-black shadow-[2px_2px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap cursor-pointer"
+            >
+              {uploadingFile ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+              Upload
+            </button>
+          </div>
           <button
             type="submit" disabled={uploading}
-            className="flex items-center gap-2 px-5 py-2 bg-[#FFE816] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-2 bg-[#C3FF16] text-black font-pixel text-[10px] uppercase border-2 border-black shadow-[3px_3px_0px_#000] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all disabled:opacity-50 whitespace-nowrap cursor-pointer"
           >
             {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
             Add Photo
