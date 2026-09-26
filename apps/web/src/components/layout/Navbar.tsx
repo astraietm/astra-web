@@ -351,16 +351,16 @@ export const Navbar: React.FC = () => {
               </AnimatePresence>
             </div>
           ) : (
-            <button
+            <Link
+              href="/login"
               onClick={() => {
                 if (menuOpen) closeMenu();
-                setIsLoginModalOpen(true);
               }}
               className="flex items-center gap-1.5 bg-neutral-900 text-white px-4 py-1.5 sm:px-5 sm:py-2 rounded-full font-sans font-medium text-xs tracking-wide hover:bg-black transition-colors shadow-sm cursor-pointer"
             >
               <User className="w-3.5 h-3.5" />
               <span>Sign In</span>
-            </button>
+            </Link>
           )}
         </div>
       </header>
@@ -487,15 +487,13 @@ export const Navbar: React.FC = () => {
                     My Registrations
                   </Link>
                 ) : (
-                  <button
-                    onClick={() => {
-                      closeMenu();
-                      setIsLoginModalOpen(true);
-                    }}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-th-lime text-black font-display font-semibold text-xs sm:text-sm uppercase tracking-wider border-2 border-black active:scale-95 transition-[transform,background-color,color] duration-160 shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] cursor-pointer"
+                  <Link
+                    href="/login"
+                    onClick={closeMenu}
+                    className="w-full sm:w-auto px-5 py-2.5 bg-th-lime text-black font-display font-semibold text-xs sm:text-sm uppercase tracking-wider border-2 border-black active:scale-95 transition-[transform,background-color,color] duration-160 shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] cursor-pointer text-center"
                   >
                     Sign In →
-                  </button>
+                  </Link>
                 )}
               </motion.div>
             </div>

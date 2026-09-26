@@ -158,7 +158,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } else {
         setPendingAction(action);
-        setIsLoginModalOpen(true);
+        if (typeof window !== 'undefined') {
+          const currentPath = window.location.pathname + window.location.search;
+          window.location.href = `/login?next=${encodeURIComponent(currentPath)}`;
+        }
       }
     },
     [user, token]
