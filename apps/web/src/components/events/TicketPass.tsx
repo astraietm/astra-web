@@ -71,6 +71,13 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
       })
     : "TBA";
 
+  const formattedTime = event.event_date
+    ? new Date(event.event_date).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "10:00 AM";
+
   const handleDownloadImage = async () => {
     if (!ticketRef.current) return;
     setDownloading(true);
@@ -300,7 +307,7 @@ export function TicketPass({ registration, showPrintButton = true, compact = fal
                 <Clock className="w-4 h-4 text-black shrink-0" />
                 <div>
                   <span className="text-[9px] uppercase text-gray-500 block">Time</span>
-                  <span className="font-bold text-black">{event.time || "10:00 AM"}</span>
+                  <span className="font-bold text-black">{formattedTime}</span>
                 </div>
               </div>
               <div className="col-span-2 flex items-center gap-2 pt-2 border-t border-black/20">

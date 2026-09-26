@@ -23,7 +23,6 @@ const DEFAULT_FORM = {
   venue: "",
   event_date: new Date().toISOString().slice(0, 16),
   registration_end: "",
-  time: "10:00 AM",
   registration_limit: 100,
   is_registration_open: true,
   requires_payment: false,
@@ -51,7 +50,6 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
         venue: eventToEdit.venue || "",
         event_date: eventToEdit.event_date ? new Date(eventToEdit.event_date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
         registration_end: eventToEdit.registration_end ? new Date(eventToEdit.registration_end).toISOString().slice(0, 16) : "",
-        time: eventToEdit.time || "10:00 AM",
         registration_limit: eventToEdit.registration_limit || 100,
         is_registration_open: eventToEdit.is_registration_open ?? true,
         requires_payment: eventToEdit.requires_payment ?? false,
@@ -242,7 +240,7 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
           </div>
 
           {/* Venue & Date/Time */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Venue *</label>
               <input
@@ -262,17 +260,6 @@ export default function AddEventModal({ isOpen, onClose, onSuccess, eventToEdit 
                 name="event_date"
                 value={formData.event_date}
                 onChange={handleChange}
-                className={INPUT_CLS}
-              />
-            </div>
-            <div>
-              <label className="block font-pixel text-[9px] text-white/40 uppercase mb-1">Display Time</label>
-              <input
-                type="text"
-                name="time"
-                value={formData.time}
-                onChange={handleChange}
-                placeholder="10:00 AM"
                 className={INPUT_CLS}
               />
             </div>

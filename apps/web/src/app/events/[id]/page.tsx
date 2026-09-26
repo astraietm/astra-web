@@ -166,11 +166,12 @@ export default function EventDetailPage() {
     );
   }
 
-  // Formatting date
+  // Formatting date & time
   const eventDateObj = new Date(event.event_date);
   const dayNum = eventDateObj.getDate();
   const month = eventDateObj.toLocaleString("en-US", { month: "short" }).toUpperCase();
   const formattedDate = `${month} ${String(dayNum).padStart(2, "0")}`;
+  const formattedTime = eventDateObj.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
   const dayLabel = dayNum === 6 ? "DAY 1" : dayNum === 7 ? "DAY 2" : "DAY";
 
   // Capacity & Status
@@ -211,7 +212,7 @@ export default function EventDetailPage() {
       {
         title: "Venue & Reporting Rules",
         items: [
-          `Participants must report to ${event.venue || "the designated arena"} at least 20 minutes prior to scheduled start time (${event.time || "10:00 AM"}).`,
+          `Participants must report to ${event.venue || "the designated arena"} at least 20 minutes prior to scheduled start time (${formattedTime}).`,
           "Late arrivals may forfeit initial game rounds or lead to automatic disqualification without refund.",
           "Participants are required to bring their own laptops, chargers, and any required accessories/tools.",
         ],
@@ -375,7 +376,7 @@ export default function EventDetailPage() {
                       {formattedDate}
                     </p>
                     <p className="font-mono text-[11px] text-gray-700">
-                      {event.time || "10:00 AM"}
+                      {formattedTime}
                     </p>
                   </div>
 

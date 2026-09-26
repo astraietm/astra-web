@@ -98,7 +98,7 @@ function mapBackendEvent(ev: BackendEvent): DisplayEvent {
     backendId: ev.id,
     day: dayLabel,
     date: `${month} ${String(dayNum).padStart(2, "0")}`,
-    time: ev.time || eventDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
+    time: eventDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
     duration: ev.duration || "2 Hours",
     title: ev.title,
     category: cat,

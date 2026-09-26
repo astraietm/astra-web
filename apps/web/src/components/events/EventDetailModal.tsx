@@ -302,7 +302,7 @@ export const EventDetailModal: React.FC<EventDetailModalProps> = ({
                         : "Solo Participant"}
                     </p>
                     <p className="font-mono text-[11px] text-gray-700">
-                      {event.duration ? `${event.duration} Duration` : "Timed Event"}
+                      Scheduled Event
                     </p>
                   </div>
                 </div>
