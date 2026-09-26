@@ -385,3 +385,67 @@ class SyncEventsView(APIView):
                 "success": False,
                 "error": str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CertificateAttendeesView(APIView):
+    """
+    GET /api/certificates/attendees/?event_id=<id>
+
+    Staff-only endpoint that returns all registrations with status='ATTENDED'
+    for a given event. Used by the certificate generator GitHub Action.
+
+    Response format:
+    {
+        "event": { id, title, fest_name, event_date, date_str, venue, category },
+        "attendees": [
+            { registration_id, full_name, email, college, department },
+            ...
+        ]
+    }
+    """
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        event_id = request.query_params.get('event_id')
+        if not event_id:
+            return Response(
+                {"error": "event_id query parameter is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        event = get_object_or_404(Event, id=event_id)
+
+        registrations = Registration.objects.filter(
+            event=event,
+            status='ATTENDED'
+        ).select_related('user')
+
+        # Format event date
+        date_str = ''
+        if event.event_date:
+            date_str = event.event_date.strftime('%-d %B %Y').upper()
+
+        attendees = []
+        for reg in registrations:
+            user = reg.user
+            attendees.append({
+                "registration_id": reg.id,
+                "full_name": user.full_name or user.email,
+                "email": user.email,
+                "college": reg.college or getattr(user, 'college', '') or '',
+                "department": reg.department or getattr(user, 'department', '') or '',
+            })
+
+        return Response({
+            "event": {
+                "id": event.id,
+                "title": event.title,
+                "fest_name": "ZERO DAY",  # Update per fest
+                "event_date": event.event_date.isoformat() if event.event_date else '',
+                "date_str": date_str,
+                "venue": event.venue,
+                "category": event.category,
+            },
+            "attendees": attendees,
+            "count": len(attendees),
+        })
