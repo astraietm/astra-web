@@ -7,7 +7,7 @@ import { Providers } from '@/lib/providers';
 export const metadata: Metadata = {
   title: 'ASTRA 2026 — Department of Cyber Security | KMCT Institute of Emerging Technology and Management, Calicut, Kerala',
   description:
-    'ASTRA 2026 is the Flagship National Cyber Security Symposium & 24H National CTF hosted by the Department of Cyber Security, KMCT Institute of Emerging Technology and Management, Calicut, Kerala on October 6 & 7, 2026.',
+    'ASTRA 2026, anassociation event hosted by the Department of Cyber Security, KMCT Institute of Emerging Technology and Management, Calicut, Kerala on October 6 & 7, 2026.',
   keywords: [
     'ASTRA 2026',
     'ASTRA Cyber Security',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     url: 'https://astra.kmct.edu.in',
     title: 'ASTRA 2026 — Department of Cyber Security | KMCT Calicut, Kerala (Oct 6 & 7)',
     description:
-      'The Flagship National Cyber Security Symposium & 24H National CTF WarGames hosted by KMCT Institute of Emerging Technology and Management, Calicut on October 6 & 7, 2026.',
+      'ASTRA 2026, anassociation event hosted by the Department of Cyber Security, KMCT Institute of Emerging Technology and Management, Calicut, Kerala on October 6 & 7, 2026.',
     siteName: 'ASTRA 2026 — KMCT Cyber Security',
   },
 };
