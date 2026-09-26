@@ -206,7 +206,7 @@ export default function RegisterPage() {
         const orderData = orderRes.data;
 
         const options = {
-          key: orderData.key_id,
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || orderData.key_id,
           amount: orderData.amount,
           currency: orderData.currency,
           name: "ASTRA 2026",

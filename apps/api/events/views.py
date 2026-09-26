@@ -261,10 +261,23 @@ class CreatePaymentOrderView(APIView):
         
         # Create Razorpay order
         try:
-            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-            
             # Amount in paise (multiply by 100)
             amount_in_paise = int(float(event.payment_amount) * 100)
+            if amount_in_paise < 100:
+                registration.delete()
+                return Response(
+                    {"error": "Minimum order amount must be at least ₹1.00 (100 paise)."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            if not getattr(settings, 'RAZORPAY_KEY_ID', '') or not getattr(settings, 'RAZORPAY_KEY_SECRET', ''):
+                registration.delete()
+                return Response(
+                    {"error": "Payment gateway configuration missing."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            
+            client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
             
             order_data = {
                 'amount': amount_in_paise,
@@ -313,19 +326,20 @@ class VerifyPaymentView(APIView):
         razorpay_signature = request.data.get('razorpay_signature')
         
         if not all([razorpay_order_id, razorpay_payment_id, razorpay_signature]):
-            return Response({"error": "Missing payment details."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Missing payment details (order_id, payment_id, or signature)."}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             payment = Payment.objects.get(razorpay_order_id=razorpay_order_id)
             
-            # Verify signature
+            # Verify signature using HMAC SHA256
+            secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
             generated_signature = hmac.new(
-                settings.RAZORPAY_KEY_SECRET.encode(),
+                secret.encode(),
                 f"{razorpay_order_id}|{razorpay_payment_id}".encode(),
                 hashlib.sha256
             ).hexdigest()
             
-            if generated_signature == razorpay_signature:
+            if hmac.compare_digest(generated_signature, razorpay_signature):
                 # Payment successful
                 payment.razorpay_payment_id = razorpay_payment_id
                 payment.razorpay_signature = razorpay_signature
@@ -352,7 +366,7 @@ class VerifyPaymentView(APIView):
                 payment.save()
                 if hasattr(payment, 'registration') and payment.registration:
                     payment.registration.delete()
-                return Response({"error": "Payment verification failed. Registration cancelled."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Payment verification failed: signature mismatch."}, status=status.HTTP_400_BAD_REQUEST)
                 
         except Payment.DoesNotExist:
             return Response({"error": "Payment record not found."}, status=status.HTTP_404_NOT_FOUND)
