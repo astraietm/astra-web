@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import api from "@/lib/api";
 import { useToast } from "@/lib/toast-context";
-import { Search, Loader2, Users, Eye, X, Phone, Mail, Building, Ticket } from "lucide-react";
-import { TicketPass } from "@/components/events/TicketPass";
+import { Search, Loader2, Users, Eye, Phone, Mail, Building, Ticket } from "lucide-react";
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { bg: string; text: string; border: string }> = {
@@ -30,7 +30,6 @@ export default function AdminRegistrations() {
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedReg, setSelectedReg] = useState<any | null>(null);
   const { showToast } = useToast();
 
   const fetchRegistrations = async () => {
@@ -62,7 +61,7 @@ export default function AdminRegistrations() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 font-sans">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-neutral-800/80">
         <div className="flex items-center gap-3">
@@ -100,7 +99,7 @@ export default function AdminRegistrations() {
           </span>
         </div>
       ) : (
-        <div className="rounded-2xl border border-neutral-800/80 bg-neutral-900/50 backdrop-blur-xl shadow-sm overflow-hidden">
+        <div className="rounded-3xl border border-neutral-800/80 bg-neutral-900/50 backdrop-blur-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -109,7 +108,7 @@ export default function AdminRegistrations() {
                     (h) => (
                       <th
                         key={h}
-                        className="text-left p-3.5 text-xs font-medium text-neutral-400 uppercase tracking-wider whitespace-nowrap"
+                        className="text-left p-4 text-xs font-medium text-neutral-400 uppercase tracking-wider whitespace-nowrap"
                       >
                         {h}
                       </th>
@@ -120,8 +119,8 @@ export default function AdminRegistrations() {
               <tbody className="divide-y divide-neutral-800/60">
                 {filtered.map((reg: any) => (
                   <tr key={reg.id} className="hover:bg-neutral-800/30 transition-colors">
-                    <td className="p-3.5 font-medium text-neutral-500">#{reg.id}</td>
-                    <td className="p-3.5">
+                    <td className="p-4 font-medium text-neutral-500">#{reg.id}</td>
+                    <td className="p-4">
                       <div className="font-semibold text-white">{reg.user_name || reg.user_email}</div>
                       <div className="text-[11px] text-neutral-400">{reg.user_email}</div>
                       {(reg.phone_number || reg.user_phone) && (
@@ -130,7 +129,7 @@ export default function AdminRegistrations() {
                         </div>
                       )}
                     </td>
-                    <td className="p-3.5 max-w-[200px]">
+                    <td className="p-4 max-w-[200px]">
                       <div className="text-neutral-300 truncate">{reg.college || reg.user_college || "—"}</div>
                       {(reg.department || reg.user_dept) && (
                         <div className="text-[11px] text-neutral-500">
@@ -138,22 +137,22 @@ export default function AdminRegistrations() {
                         </div>
                       )}
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-4">
                       <span className="font-medium text-white block max-w-[180px] truncate">
                         {reg.event_details?.title || `Event #${reg.event}`}
                       </span>
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-4">
                       <StatusBadge status={reg.status} />
                     </td>
-                    <td className="p-3.5 text-neutral-400">
+                    <td className="p-4 text-neutral-400">
                       {reg.team_name ? (
                         <span className="text-purple-300 font-medium">{reg.team_name}</span>
                       ) : (
                         "—"
                       )}
                     </td>
-                    <td className="p-3.5">
+                    <td className="p-4">
                       {reg.payment_verified ? (
                         <span className="text-emerald-400 font-medium">Verified</span>
                       ) : reg.event_details?.requires_payment ? (
@@ -162,15 +161,15 @@ export default function AdminRegistrations() {
                         <span className="text-neutral-500">Free</span>
                       )}
                     </td>
-                    <td className="p-3.5">
-                      <button
-                        onClick={() => setSelectedReg(reg)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-neutral-700 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-medium transition-colors cursor-pointer"
-                        title="View Pass"
+                    <td className="p-4">
+                      <Link
+                        href={`/admin/registrations/${reg.id}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-700 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold transition-colors shadow-sm"
+                        title="View Full Pass Page"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>Pass</span>
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -183,21 +182,6 @@ export default function AdminRegistrations() {
                 )}
               </tbody>
             </table>
-          </div>
-        </div>
-      )}
-
-      {/* Ticket Pass Viewer Modal */}
-      {selectedReg && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-          <div className="relative max-w-sm w-full">
-            <button
-              onClick={() => setSelectedReg(null)}
-              className="absolute -top-10 right-0 p-1.5 rounded-lg bg-neutral-800 text-neutral-400 hover:text-white transition-colors cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <TicketPass registration={selectedReg} />
           </div>
         </div>
       )}
